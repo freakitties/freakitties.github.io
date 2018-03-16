@@ -1,4 +1,5 @@
 Basic utility page to help make playing Cryptokitties easier
 
-https://freakitties.github.io/w3.html
+[Go here](/w3.html)
+
 
