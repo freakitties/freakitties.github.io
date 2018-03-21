@@ -49,7 +49,7 @@
             return;
         }
         
-        $.get({url: "http://api.cryptokitties.co/auctions?state=closed&limit=10&type=sale&status=closed", dataType:"json"}, (data) => { 
+        $.get({url: "https://api.cryptokitties.co/auctions?state=closed&limit=10&type=sale&status=closed", dataType:"json"}, (data) => { 
             var auctions = data['auctions']; 
             for (let i in auctions) { 
                 if (auctions[i].type != "sale") continue;
