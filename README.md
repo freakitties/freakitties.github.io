@@ -5,3 +5,6 @@ Basic utility page to help make playing Cryptokitties easier
 Real Time kitty sales
 
 [Go here](/auctions/auctions.html)
+
+
+Donations: 0x209045cFE98445D6541D4FDf560d0d63fAd77753
