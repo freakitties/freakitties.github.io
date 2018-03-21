@@ -48,9 +48,10 @@
         if (hash.indexOf("noAPI") != -1) {
             return;
         }
-        
-        $.get({url: "https://api.cryptokitties.co/auctions?state=closed&limit=10&type=sale&status=closed", dataType:"json"}, (data) => { 
-            var auctions = data['auctions']; 
+
+        //Not sure how this is sorted. There doesn't seem to be an auction completed time/block. So this just returns some random cats.
+        $.get({url: "https://api.cryptokitties.co/auctions?type=sale&limit=20&status=closed", dataType:"json"}, (data) => { 
+            var auctions = data['auctions'];
             for (let i in auctions) { 
                 if (auctions[i].type != "sale") continue;
 
@@ -91,6 +92,7 @@
             date = new Date(date);
         } 
 
+        //duplicate detection from dupe events (reorgs)
         ignoreCat = added.find(function(cat) {
             return cat.id == kittyId && Math.abs(date.getTime() - cat.date.getTime()) < 60000;
         });
@@ -163,9 +165,9 @@
                     let id = tableBody.getElementsByTagName('tr')[numRows - 1].children[0].id;
                     let price = parseFloat(tableBody.getElementsByTagName('tr')[numRows - 1].children[2]);
                     //remove auction from duplicate detection list
-                    added = added.find(function(cat) {
+                    added = $.grep(added, function(cat){ 
                         return !(cat.id == id && cat.salePrice == price);
-                    });                                
+                    });
                     tableBody.deleteRow(-1);
                     numRows--;
                 }
@@ -222,4 +224,5 @@
         </div>
     </div>
 </footer>
+<br/>
 </html>
