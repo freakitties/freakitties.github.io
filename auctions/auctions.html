@@ -94,7 +94,8 @@
         kittyId = parseInt(kittyId);
         generation = parseInt(generation);
         salePrice = parseFloat(salePrice);
-        web3.isAddress(winner);
+        winner = web3.isAddress(winner) ? winner : "";
+
         if (!(date instanceof Date)) {
             date = new Date(date);
         } 
