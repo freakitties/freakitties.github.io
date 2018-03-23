@@ -44,7 +44,7 @@
         clearInterval(acctInt);
     }
 
-    window.addEventListener('load', function () { 
+    window.addEventListener('load', function () {
         if (typeof web3 !== 'undefined') {
             // Use the browser's ethereum provider
             var provider = web3.currentProvider;
@@ -57,6 +57,10 @@
     
     function getTotal() {
         coreInstance.totalSupply(function(error, result) {
+            if (error) {
+                alert(error);
+                return;
+            }
             console.log(result.toString()); 
             document.getElementById("total").innerHTML = "total cats: " + result;        
 
@@ -64,6 +68,10 @@
     }
 
     function finishedBidSale(error, result) {
+        if (error) {
+            alert(error);
+            return;
+        }
         document.getElementById("saleResult").innerHTML = "bid result: " + result;
     }
 
@@ -81,6 +89,10 @@
     }
 
     function finishedBidSire(error, result) {
+        if (error) {
+            alert(error);
+            return;
+        }
         document.getElementById("sireResult").innerHTML = "sire bid result: " + result
     }
 
