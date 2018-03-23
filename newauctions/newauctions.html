@@ -90,7 +90,7 @@
 
         //duplicate detection from dupe events (reorgs)
         ignoreCat = added.find(function(cat) {
-            return cat.id == kittyId && Math.abs(date.getTime() - cat.date.getTime()) < 60000;
+            return cat.id == kittyId && Math.abs(date.getTime() - cat.date.getTime()) < 180000;
         });
         
         if (ignoreCat) {
