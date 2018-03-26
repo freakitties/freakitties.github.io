@@ -13,8 +13,8 @@
         gtag('config', 'UA-116189657-1');
         </script>
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">        
-        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>        
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
         <script defer src="https://use.fontawesome.com/releases/v5.0.8/js/solid.js" integrity="sha384-+Ga2s7YBbhOD6nie0DzrZpJes+b2K1xkpKxTFFcx59QmVPaSA8c7pycsNaFwUK6l" crossorigin="anonymous"></script>
         <script defer src="https://use.fontawesome.com/releases/v5.0.8/js/fontawesome.js" integrity="sha384-7ox8Q2yzO/uWircfojVuCQOZl+ZZBg2D2J5nkpLqzH1HY0C1dHlTKIbpRz/LG23c" crossorigin="anonymous"></script>
     </head>
@@ -27,79 +27,163 @@
             clearInterval(acctInt);
 
             document.getElementById("account").textContent = "Your Account: " + web3.eth.accounts[0];
-                    
+
             coreContract = web3.eth.contract(core_abi);
             coreInstance = coreContract.at(core_addr);
-            
+
             coreInstance.autoBirthFee(function(error, result) {autoBirthFee = result.toNumber(); } );
-            
+
         }
 
         window.addEventListener('load', function () {
             if (typeof web3 !== 'undefined') {
                 // Use the browser's ethereum provider
                 web3js = new Web3(web3.currentProvider);
-            } else {        
-                document.write("web3 not detected. Are you using MetaMask?");        
+            } else {
+                document.write("web3 not detected. Are you using MetaMask?");
                 return;
             }
             acctInt = setInterval(initContract, 1000);
+
+            var hash = window.location.hash.substr(1);
+            if (hash == "") {
+                return;
+            }
+            reconstructBookmark(hash);
         });
-        
+
+        function reconstructBookmark(hash) {
+            try {
+                let pairs = JSON.parse(atob(hash));
+                for (let i = 0; i < pairs.length; i++) {
+                    let matronId = pairs[i].matronId;
+                    let sireId = pairs[i].sireId;
+                    let notes = pairs[i].notes;
+                    if (i != 0) {
+                        createForm();
+                    }
+                    setFormValues(numPairs, matronId, sireId, notes);
+                }
+            } catch (err) {
+                console.log("Error reconstructing bookmark: " + err);
+            }
+        }
+
         function isNumber(str) {
             if (str.match("^[0-9]+$")) return true;
             return false;
         }
 
+        function setMsg(id, msg, type = "error") {
+            var box = $("#msg" + id);
+
+            box.text(msg);
+            box.removeClass();
+
+            if (msg == "") return;
+
+            if (type == "error") {
+                box.addClass("alert alert-danger");
+            } else {
+                box.addClass("alert alert-success");
+            }
+        }
+
         function selfBreed(id) {
             console.log("Breeding pair " + id);
-            
+
             var matronId = $("#matronId"+id).val().trim();
             if (!isNumber(matronId)) {
-                alert("Invalid matron ID");
+                setMsg(id, "Invalid matron ID");
                 return;
             }
             var sireId = $("#sireId"+id).val().trim();
             if (!isNumber(sireId)) {
-                alert("Invalid sire ID");
+                setMsg(id, "Invalid sire ID");
                 return;
-            }            
+            }
             matronId = parseInt(matronId);
             sireId = parseInt(sireId);
             if (autoBirthFee != 0.008*1e18) {alert("new autoBirthFee?" + autoBirthFee); return;}
-            coreInstance.breedWithAuto(matronId, sireId, {from: web3.eth.accounts[0], value: autoBirthFee}, (err, result) => {
+            coreInstance.canBreedWith(matronId, sireId, (err, result) => {
                 if (err) {
-                    alert(err);
+                    setMsg(id, "Error checking breedability: " + err);
                     return;
-                } 
-                document.getElementById("selfSireResult").innerHTML = "breedWithAuto result: " + result; 
-            } );        
+                }
+                if (!result) {
+                    setMsg(id, "The pair is not breedable (this checks for ownership and some auction cases).");
+                    return;
+                }
+                coreInstance.breedWithAuto(matronId, sireId, {from: web3.eth.accounts[0], value: autoBirthFee}, (err, result) => {
+                    if (err) {
+                        alert(err);
+                        return;
+                    }
+                    setMsg(id, "breedWithAuto result: " + result, 'black');
+                });
+            });
+        }
+
+        function setFormValues(index, matronId, sireId, notes) {
+            $("#matronId" + index).val(matronId);
+            $("#sireId" + index).val(sireId);
+            $("#notes" + index).val(notes);
         }
 
         function createForm() {
             numPairs++;
-            var template = 
+            var template =
                 '<div class="col-md-9 border">' +
-                '<br/>' + 
-                '<div class="form-group row mb-1">' + 
-                '<label class="col-form-label col-md-3" for="notes{ID}">Notes for pair {ID}</label>' + 
-                '<input class="form-control col-md-9" type="text" placeholder="Notes about this pair. Not used in TX." id="notes{ID}"/>' + 
-                '</div>' + 
-                '<div class="form-group row mb-1">' + 
-                '<label class="col-form-label col-md-3" for="matronId{ID}">Matron ID</label>' + 
-                '<input class="form-control col-md-7" type="text" id="matronId{ID}"/>' + 
-                '</div>' + 
-                '<div class="form-group row mb-1">' + 
-                '<label class="col-form-label col-md-3" for="sireId{ID}">Sire ID</label>' + 
-                '<input class="form-control col-md-7" type="text" id="sireId{ID}"/>' + 
-                '</div>' + 
-                '<button type="submit" class="btn btn-primary" onclick="selfBreed({ID});" id="breedButton{ID}">Breed Pair {ID}</button><br/>' + 
+                '<br/>' +
+                '<div class="form-group row mb-1 mr-1">' +
+                '<label class="col-form-label col-md-3" for="notes{ID}">Notes for pair {ID}</label>' +
+                '<input class="form-control col-md-9" type="text" placeholder="Notes about this pair. Not used in TX." id="notes{ID}"/>' +
+                '</div>' +
+                '<div class="form-group row mb-1 mr-1">' +
+                '<label class="col-form-label col-md-3" for="matronId{ID}">Matron ID</label>' +
+                '<input class="form-control col-md-7" type="text" id="matronId{ID}" onchange="setMsg({ID}, \'\');"/>' +
+                '</div>' +
+                '<div class="form-group row mb-1 mr-1">' +
+                '<label class="col-form-label col-md-3" for="sireId{ID}">Sire ID</label>' +
+                '<input class="form-control col-md-7" type="text" id="sireId{ID}" onchange="setMsg({ID}, \'\');"/>' +
+                '</div>' +
+                '<button type="submit" class="btn btn-primary" onclick="selfBreed({ID});" id="breedButton{ID}">Breed Pair {ID}</button><br/>' +
+                '<br/><div id="msg{ID}"></div>' +
                 '</div>' +
                 '<br/>';
-                        
+
             newForm = template.replace(/{ID}/g, numPairs);
             $("#breedersDiv").append(newForm);
 
+        }
+
+        function bookmark() {
+            $("#bmMsg").text("");
+
+            var pairs = [];
+            for (let i = 0; i <= numPairs; i++) {
+                let matronId = $("#matronId" + i).val();
+                if (!isNumber(matronId)) {
+                    $("#bmMsg").append("matron ID is invalid in pair " + i + "<br>");
+                    return;
+                }
+                let sireId = $("#sireId" + i).val();
+                if (!isNumber(sireId)) {
+                    $("#bmMsg").append("Sire ID is invalid in pair " + i + "<br>");
+                    return;
+                }
+                let notes = $("#notes" + i).val();
+                console.log(matronId + ", " + sireId + " : " + notes);
+                let json = {"matronId": matronId, "sireId": sireId, "notes": notes};
+                pairs.push(json);
+            }
+            let bmHash = "#"+btoa(JSON.stringify(pairs));
+            if(history.pushState) {
+                history.pushState(null, null, bmHash);
+            }
+            else {
+                location.hash = bmHash;
+            }
         }
 
     </script>
@@ -111,27 +195,35 @@
     <br/>
 
     <div id="breedersDiv" class="container">
-        <i class="fas fa-plus-circle" onclick="createForm()"></i> Add a breeding pair<br/><br/>        
+        <div class="col-md-9 pl-0 pr-0">
+            <div >
+                <button class="btn btn-outline-secondary" onclick="createForm()"><i class="fas fa-plus-circle"></i> Add a breeding pair</button>
+                <button class="btn btn-outline-secondary float-right" onclick="bookmark()"><i class="fas fa-bookmark"></i> Bookmark</button>
+            </div>
+            <div class="float-right" id="bmMsg"></div>
+        </div>
+        <br/>
         <div class="col-md-9 border">
             <br/>
-            <div class="form-group row mb-1">
+            <div class="form-group row mb-1 mr-1">
                 <label class="col-form-label col-md-3" for="notes0">Notes for pair 0</label>
                 <input class="form-control col-md-9" type="text" placeholder="Notes about this pair. Not used in TX." id="notes0"/>
             </div>
 
-            <div class="form-group row mb-1">
+            <div class="form-group row mb-1 mr-1">
                 <label class="col-form-label col-md-3" for="matronId0">Matron ID</label>
-                <input class="form-control col-md-7" type="text" id="matronId0"/>
+                <input class="form-control col-md-7" type="text" id="matronId0" onchange="setMsg(0, '');"/>
             </div>
 
-            <div class="form-group row mb-1">
+            <div class="form-group row mb-1 mr-1">
                 <label class="col-form-label col-md-3" for="sireId0">Sire ID</label>
-                <input class="form-control col-md-7" type="text" id="sireId0"/>
+                <input class="form-control col-md-7" type="text" id="sireId0" onchange="setMsg(0, '');"/>
             </div>
-
             <button type="submit" class="btn btn-primary" onclick="selfBreed(0);" id="breedButton0">Breed Pair 0</button><br/>
+            <br/>
+            <div id="msg0"></div>
         </div>
-        <br/>        
+        <br/>
     </div>
 
 </html>
