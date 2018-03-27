@@ -173,6 +173,27 @@
             $("#breedersDiv").append(newForm);
 
         }
+        var bmInterval;
+        function setBookmarkMsg(msg, type) {
+            $("#bmMsg").removeClass();
+            $("#bmMsg").text("");
+            if (type == "warning") {
+                $("#bmMsg").addClass("alert alert-warning");
+                $("#bmMsg").text(msg);
+                $("#bmMsg").alert();
+            } else if (type == "success") {
+                $("#bmMsg").addClass("alert alert-success");
+                $("#bmMsg").text(msg);
+                $("#bmMsg").alert();
+            }
+            $("#bmMsg").show();
+            bmInterval = setInterval(clearBmMsg, 5000);
+        }
+
+        function clearBmMsg() {
+            $("#bmMsg").fadeOut(1000);
+            clearInterval(bmInterval);
+        }
 
         function bookmark() {
             $("#bmMsg").text("");
@@ -181,12 +202,12 @@
             for (let i = 0; i <= numPairs; i++) {
                 let matronId = $("#matronId" + i).val();
                 if (!isNumber(matronId)) {
-                    $("#bmMsg").append("matron ID is invalid in pair " + i + "<br>");
+                    setBookmarkMsg("Matron ID is invalid in pair " + i, "warning");
                     return;
                 }
                 let sireId = $("#sireId" + i).val();
                 if (!isNumber(sireId)) {
-                    $("#bmMsg").append("Sire ID is invalid in pair " + i + "<br>");
+                    setBookmarkMsg("Sire ID is invalid in pair " + i, "warning");
                     return;
                 }
                 let notes = $("#notes" + i).val();
@@ -201,6 +222,7 @@
             else {
                 location.hash = bmHash;
             }
+            setBookmarkMsg("The URL has been updated. You can use your browser to bookmark this page and the breeding pairs will be saved.", "success");
         }
 
         function clearMsgs(id) {
@@ -264,8 +286,8 @@
             <div >
                 <button class="btn btn-outline-secondary" onclick="createForm()"><i class="fas fa-plus-circle"></i> Add a breeding pair</button>
                 <button class="btn btn-outline-secondary float-right" onclick="bookmark()"><i class="fas fa-bookmark"></i> Bookmark</button>
-            </div>
-            <div class="float-right" id="bmMsg" style="color:red"></div>
+            </div><br/>
+            <div class="alert" role="alert" id="bmMsg"></div>
         </div>
         <br/>
         <div class="col-md-9 border">
