@@ -32,10 +32,10 @@
     function doStuff() {
 
         document.getElementById("account").innerHTML = "Account: " + web3.eth.accounts[0];
-                
+
         coreContract = web3.eth.contract(core_abi);
         coreInstance = coreContract.at(core_addr);
-        
+
         salesContract = web3.eth.contract(sales_abi);
         salesInstance = salesContract.at(sales_addr);
         salesInstance.gen0SaleCount(function(error, result) {console.log(result.toString())});
@@ -53,22 +53,22 @@
             // Use the browser's ethereum provider
             var provider = web3.currentProvider;
 
-        } else {        
-            document.write("web3 not detected. Are you using MetaMask?");        
+        } else {
+            document.write("web3 not detected. Are you using MetaMask?");
         }
         acctInt = setInterval(doStuff, 1000);
     });
-    
+
     function getTotal() {
         coreInstance.totalSupply(function(error, result) {
             if (error) {
                 alert(error);
                 return;
             }
-            console.log(result.toString()); 
-            document.getElementById("total").innerHTML = "total cats: " + result;        
+            console.log(result.toString());
+            document.getElementById("total").innerHTML = "total cats: " + result;
 
-        });        
+        });
     }
 
     function finishedBidSale(error, result) {
@@ -87,9 +87,9 @@
             if (error) {
                 alert(error);
                 return;
-            }        
+            }
             salesInstance.bid(kittyId, {from: web3.eth.accounts[0], value: wei}, finishedBidSale);
-        });        
+        });
     }
 
     function finishedBidSire(error, result) {
@@ -103,9 +103,9 @@
     function bidOnSiring() {
         var sireId = parseInt(document.getElementById("sireId").value);
         var matronId = parseFloat(document.getElementById("matronId").value);
-        var sirePrice = parseFloat(document.getElementById("siringPrice").value);                
+        var sirePrice = parseFloat(document.getElementById("siringPrice").value);
         if (!autoBirthFee.equals(new BigNumber(0.008).mul(1e18)) ) {alert("new autoBirthFee?" + autoBirthFee); return;}
-        siringInstance.getCurrentPrice(sireId, function(error, result) { 
+        siringInstance.getCurrentPrice(sireId, function(error, result) {
             if (error) {
                 alert(error);
                 return;
@@ -119,15 +119,45 @@
     function getSiringPrice() {
         var sireId = parseInt(document.getElementById("sireId").value);
         console.log("getting price for " + sireId);
-        siringInstance.getCurrentPrice(sireId, function(error, result) { 
+        siringInstance.getCurrentPrice(sireId, function(error, result) {
             if (error) {
                 alert(error);
                 return;
             }
-            console.log(result); 
+            console.log(result);
             document.getElementById("siringPrice").value = result.div(1e18).toFixed(4);
         } );
     }
+
+    function getAuctionPrice() {
+        var saleId = parseInt(document.getElementById("saleId").value);
+        console.log("getting price for " + saleId);
+        salesInstance.getCurrentPrice(saleId, function(error, result) {
+            if (error) {
+                alert(error);
+                return;
+            }
+            priceResult = result;
+            salesInstance.getAuction(saleId, (err, result) => {
+                if (error) {
+                    alert(error);
+                    return;
+                }
+                starting = result[0];
+                endinging = result[1];
+                //add on some eth if the auction is increasing in value to take into account TX delay. Excess will get refunded by the smart contract.
+                if (endinging > starting) {
+                    //probably need to tweak this value.
+                    console.log("Adding 0.0005 ETH to bid price to account for increasing auction price.");
+                    document.getElementById("salePrice").value = priceResult.div(1e18).add(0.0005).toFixed(4);
+                } else {
+                    document.getElementById("salePrice").value = priceResult.div(1e18).toFixed(4);
+                }
+
+            });
+        } );
+    }
+
     function selfBreed() {
         var matronId = parseFloat(document.getElementById("selfMatronId").value);
         var sireId = parseInt(document.getElementById("selfSireId").value);
@@ -136,9 +166,9 @@
             if (err) {
                 alert(err);
                 return;
-            } 
-            document.getElementById("selfSireResult").innerHTML = "breedWithAuto result: " + result; 
-        } );        
+            }
+            document.getElementById("selfSireResult").innerHTML = "breedWithAuto result: " + result;
+        } );
     }
 </script>
 
@@ -153,7 +183,7 @@ Test to make sure the page is working. Click here to get the total number of cat
 <button onclick="getTotal()">getTotal</button><br/>
 <br/>
 
-<label>Kitty ID to bid on: </label><input type="text" id="saleId"/><br/>
+<label>Kitty ID to bid on: </label><input type="text" id="saleId" onfocusout="getAuctionPrice()"/><br/>
 <label>Price you are paying: </label><input type="text" id="salePrice"/><br/>
 <button onclick="bidOnSale()">Bid on sale contract</button><br/>
 <div id="saleResult"></div>

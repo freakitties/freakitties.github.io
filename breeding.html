@@ -114,12 +114,27 @@
                     setMsg(id, "The pair is not breedable (this checks for ownership and some auction cases).");
                     return;
                 }
-                coreInstance.breedWithAuto(matronId, sireId, {from: web3.eth.accounts[0], value: autoBirthFee}, (err, result) => {
+                web3.eth.getBlockNumber((err, result) => {
                     if (err) {
-                        alert(err);
+                        console.log("Error getting block number: " + err);
+                        alert("Error getting block number: " + err);
                         return;
                     }
-                    setMsg(id, "breedWithAuto result: " + result, 'black');
+                    if (typeof result == "number") {
+                        checkCooldowns(id, result, function(ready) {
+                            if (ready) {
+                                coreInstance.breedWithAuto(matronId, sireId, {from: web3.eth.accounts[0], value: autoBirthFee}, (err, result) => {
+                                    if (err) {
+                                        alert(err);
+                                        return;
+                                    }
+                                    setMsg(id, "breedWithAuto result: " + result, 'black');
+                                });
+                            }
+                        });
+                    } else {
+                        console.log("Unknown result type");
+                    }
                 });
             });
         }
@@ -141,11 +156,13 @@
                 '</div>' +
                 '<div class="form-group row mb-1 mr-1">' +
                 '<label class="col-form-label col-md-3" for="matronId{ID}">Matron ID</label>' +
-                '<input class="form-control col-md-7" type="text" id="matronId{ID}" onchange="setMsg({ID}, \'\');"/>' +
+                '<input class="form-control col-md-2" type="text" id="matronId{ID}" onchange="clearMsgs({ID});"/>' +
+                '<div class="col-md-7 col-form-label-sm" id="matronReady{ID}"></div>' +
                 '</div>' +
                 '<div class="form-group row mb-1 mr-1">' +
                 '<label class="col-form-label col-md-3" for="sireId{ID}">Sire ID</label>' +
-                '<input class="form-control col-md-7" type="text" id="sireId{ID}" onchange="setMsg({ID}, \'\');"/>' +
+                '<input class="form-control col-md-2" type="text" id="sireId{ID}" onchange="clearMsgs({ID});"/>' +
+                '<div class="col-md-7 col-form-label-sm" id="sireReady{ID}"></div>' +
                 '</div>' +
                 '<button type="submit" class="btn btn-primary" onclick="selfBreed({ID});" id="breedButton{ID}">Breed Pair {ID}</button><br/>' +
                 '<br/><div id="msg{ID}"></div>' +
@@ -186,6 +203,54 @@
             }
         }
 
+        function clearMsgs(id) {
+            setMsg(id, '');
+            $("#bmMsg").text("");
+            $("#sireReady" + id).text("");
+            $("#matronReady" + id).text("");
+        }
+
+        function checkCatCooldown(id, catId, type, currentBlock, callback) {
+            if (type != "sire" && type != "matron") return;
+            coreInstance.getKitty(catId, (err, result) => {
+                if (err) {
+                    console.log("Error getting kitty: " + err);
+                    $("#" + type + "Ready" + id).text("?");
+                    callback(false);
+                    return;
+                }
+                var nextActionAt = result[3].toNumber();
+                if (currentBlock >= nextActionAt) {
+                    //$("#" + type + "Ready" + id).text("Ready to breed");
+                    callback(true);
+                } else {
+                    let diff = nextActionAt - currentBlock;
+                    $("#" + type + "Ready" + id).text("Ready to breed in " + diff + " blocks.");
+                    callback(false);
+                }
+            });
+        }
+
+        function checkCooldowns(index, currentBlock, callback) {
+            let matronId = $("#matronId" + index).val();
+            if (!isNumber(matronId)) {
+                return;
+            }
+            let sireId = $("#sireId" + index).val();
+            if (!isNumber(sireId)) {
+                return;
+            }
+            checkCatCooldown(index, matronId, "matron", currentBlock, function(matronReady) {
+                checkCatCooldown(index, sireId, "sire", currentBlock, function(sireReady) {
+                    if (matronReady == false || sireReady == false) {
+                        callback(false);
+                    } else {
+                        callback(true);
+                    }
+                });
+            });
+        }
+
     </script>
     <!-- header -->
     <div class="text-right">Donations: 0x209045cFE98445D6541D4FDf560d0d63fAd77753 &nbsp;</div>
@@ -200,7 +265,7 @@
                 <button class="btn btn-outline-secondary" onclick="createForm()"><i class="fas fa-plus-circle"></i> Add a breeding pair</button>
                 <button class="btn btn-outline-secondary float-right" onclick="bookmark()"><i class="fas fa-bookmark"></i> Bookmark</button>
             </div>
-            <div class="float-right" id="bmMsg"></div>
+            <div class="float-right" id="bmMsg" style="color:red"></div>
         </div>
         <br/>
         <div class="col-md-9 border">
@@ -212,12 +277,12 @@
 
             <div class="form-group row mb-1 mr-1">
                 <label class="col-form-label col-md-3" for="matronId0">Matron ID</label>
-                <input class="form-control col-md-7" type="text" id="matronId0" onchange="setMsg(0, '');"/>
+                <input class="form-control col-md-2" type="text" id="matronId0" onchange="clearMsgs(0);"/><div class="col-md-7 col-form-label-sm" id="matronReady0"></div>
             </div>
 
             <div class="form-group row mb-1 mr-1">
                 <label class="col-form-label col-md-3" for="sireId0">Sire ID</label>
-                <input class="form-control col-md-7" type="text" id="sireId0" onchange="setMsg(0, '');"/>
+                <input class="form-control col-md-2" type="text" id="sireId0" onchange="clearMsgs(0);"/><div class="col-md-7 col-form-label-sm" id="sireReady0"></div>
             </div>
             <button type="submit" class="btn btn-primary" onclick="selfBreed(0);" id="breedButton0">Breed Pair 0</button><br/>
             <br/>
