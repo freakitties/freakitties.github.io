@@ -254,12 +254,12 @@
 
             var pairs = [];
             for (let i = 0; i <= numPairs; i++) {
-                let matronId = $("#matronId" + i).val();
+                let matronId = $("#matronId" + i).val().trim();
                 if (!isNumber(matronId)) {
                     setBookmarkMsg("Matron ID is invalid in pair " + i, "warning");
                     return;
                 }
-                let sireId = $("#sireId" + i).val();
+                let sireId = $("#sireId" + i).val().trim();
                 if (!isNumber(sireId)) {
                     setBookmarkMsg("Sire ID is invalid in pair " + i, "warning");
                     return;
@@ -308,11 +308,11 @@
         }
 
         function checkCooldowns(index, currentBlock, callback) {
-            let matronId = $("#matronId" + index).val();
+            let matronId = $("#matronId" + index).val().trim();
             if (!isNumber(matronId)) {
                 return;
             }
-            let sireId = $("#sireId" + index).val();
+            let sireId = $("#sireId" + index).val().trim();
             if (!isNumber(sireId)) {
                 return;
             }
