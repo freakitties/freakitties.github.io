@@ -26,7 +26,7 @@
         function initContract() {
             clearInterval(acctInt);
 
-            document.getElementById("account").textContent = "Your Account: " + web3.eth.accounts[0];
+            $("#account").text("Your Account: " + web3.eth.accounts[0]);
 
             coreContract = web3.eth.contract(core_abi);
             coreInstance = coreContract.at(core_addr);
@@ -164,7 +164,7 @@
                 '<input class="form-control col-md-2" type="text" id="sireId{ID}" onchange="clearMsgs({ID});"/>' +
                 '<div class="col-md-7 col-form-label-sm" id="sireReady{ID}"></div>' +
                 '</div>' +
-                '<button type="submit" class="btn btn-primary" onclick="selfBreed({ID});" id="breedButton{ID}">Breed Pair {ID}</button><br/>' +
+                '<button type="submit" class="btn btn-dark" onclick="selfBreed({ID});" id="breedButton{ID}">Breed Pair {ID}</button><br/>' +
                 '<br/><div id="msg{ID}"></div>' +
                 '</div>' +
                 '<br/>';
@@ -187,7 +187,7 @@
                 $("#bmMsg").alert();
             }
             $("#bmMsg").show();
-            bmInterval = setInterval(clearBmMsg, 5000);
+            bmInterval = setInterval(clearBmMsg, 3500);
         }
 
         function clearBmMsg() {
@@ -275,13 +275,23 @@
 
     </script>
     <!-- header -->
-    <div class="text-right">Donations: 0x209045cFE98445D6541D4FDf560d0d63fAd77753 &nbsp;</div>
-    <div class="container">
-        <div class="text-left" id="account"></div>
+    <div class="fixed-top">
+        <div class="navbar  navbar-dark bg-dark">
+            <div class="container-fluid">
+                <div class="navbar-header row">
+                    <button class="text-white btn btn-outline-secondary" onclick="createForm()"><i class="fas fa-plus-circle"></i> Add a breeding pair</button>&nbsp;
+                    <button class="text-white btn btn-outline-secondary float-right" onclick="bookmark()"><i class="fas fa-bookmark"></i> Bookmark</button>&nbsp; &nbsp;
+                    <div class="text-white pt-2" id="account"></div>
+                </div>
+                <div class="text-white">Donations: 0x209045cfe98445d6541d4fdf560d0d63fad77753 &nbsp;</div>
+            </div>
+        </div>
+        <div class="alert" role="alert" id="bmMsg"></div>
     </div>
-    <br/>
 
+    <br/><br/>
     <div id="breedersDiv" class="container">
+        <!--
         <div class="col-md-9 pl-0 pr-0">
             <div >
                 <button class="btn btn-outline-secondary" onclick="createForm()"><i class="fas fa-plus-circle"></i> Add a breeding pair</button>
@@ -289,7 +299,9 @@
             </div><br/>
             <div class="alert" role="alert" id="bmMsg"></div>
         </div>
+        -->
         <br/>
+
         <div class="col-md-9 border">
             <br/>
             <div class="form-group row mb-1 mr-1">
@@ -306,7 +318,7 @@
                 <label class="col-form-label col-md-3" for="sireId0">Sire ID</label>
                 <input class="form-control col-md-2" type="text" id="sireId0" onchange="clearMsgs(0);"/><div class="col-md-7 col-form-label-sm" id="sireReady0"></div>
             </div>
-            <button type="submit" class="btn btn-primary" onclick="selfBreed(0);" id="breedButton0">Breed Pair 0</button><br/>
+            <button type="submit" class="btn btn-dark" onclick="selfBreed(0);" id="breedButton0">Breed Pair 0</button><br/>
             <br/>
             <div id="msg0"></div>
         </div>
