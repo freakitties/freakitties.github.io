@@ -35,7 +35,11 @@
         function initContract() {
             clearInterval(acctInt);
 
-            $("#account").text("Your Account: " + web3.eth.accounts[0]);
+            if (typeof web3.eth.accounts[0] == "undefined") {
+                $("#account").text("Can't detect your account. Unlock your wallet or try reloading the page and waiting a few seconds.");
+            } else {
+                $("#account").text("Your Account: " + web3.eth.accounts[0]);
+            }
 
             coreContract = web3.eth.contract(core_abi);
             coreInstance = coreContract.at(core_addr);
