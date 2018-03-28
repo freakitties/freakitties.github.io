@@ -153,9 +153,48 @@
         }
 
         function setFormValues(index, matronId, sireId, notes) {
+            matronId = parseInt(matronId);
+            sireId = parseInt(sireId);
             $("#matronId" + index).val(matronId);
             $("#sireId" + index).val(sireId);
             $("#notes" + index).val(notes);
+
+            let imgURL = "https://storage.googleapis.com/ck-kitty-image/0x06012c8cf97bead5deae237070f9587f8e7a266d/";
+
+            $("#matronImg" + index).attr("src", imgURL + matronId + ".svg");
+            $("#matronImg" + index).on("error", function() { this.src =  imgURL + matronId + ".png"; });
+            $("#matronImg" + index).show();
+
+            $("#sireImg" + index).attr("src", imgURL + sireId + ".svg");
+            $("#sireImg" + index).on("error", function() { this.src =  imgURL + sireId + ".png"; });
+            $("#sireImg" + index).show();
+
+        }
+
+        function handleChange(id, type) {
+            clearMsgs(id);
+            var img = null;
+            var kittyId = null;
+            if (type == "matron") {
+                img = $("#matronImg" + id);
+                kittyId = $("#matronId"+id).val().trim();
+            } else if (type == "sire") {
+                img = $("#sireImg" + id);
+                kittyId = $("#sireId"+id).val().trim();
+            }
+
+            if (img == null || kittyId == null || !isNumber(kittyId)) {
+                if (img != null) {
+                    img.attr("src", "");
+                    img.hide();
+                }
+                return;
+            }
+
+            let imgURL = "https://storage.googleapis.com/ck-kitty-image/0x06012c8cf97bead5deae237070f9587f8e7a266d/" + kittyId;
+            img.attr("src", imgURL + ".svg");
+            img.on("error", function() { this.src =  imgURL + ".png"; });
+            img.show();
         }
 
         function createForm() {
@@ -169,13 +208,15 @@
                 '</div>' +
                 '<div class="form-group row mb-1 mr-1">' +
                 '<label class="col-form-label col-md-3" for="matronId{ID}">Matron ID</label>' +
-                '<input class="form-control col-md-2" type="text" id="matronId{ID}" onchange="clearMsgs({ID});"/>' +
-                '<div class="col-md-7 col-form-label-sm" id="matronReady{ID}"></div>' +
+                '<input class="form-control col-md-2" type="text" id="matronId{ID}" onchange="handleChange({ID}, \'matron\');"/>' +
+                '<img height="38" src="" style="display: none;" id="matronImg{ID}"/>' +
+                '<div class="col-md-6 col-form-label-sm" id="matronReady{ID}"></div>' +
                 '</div>' +
                 '<div class="form-group row mb-1 mr-1">' +
                 '<label class="col-form-label col-md-3" for="sireId{ID}">Sire ID</label>' +
-                '<input class="form-control col-md-2" type="text" id="sireId{ID}" onchange="clearMsgs({ID});"/>' +
-                '<div class="col-md-7 col-form-label-sm" id="sireReady{ID}"></div>' +
+                '<input class="form-control col-md-2" type="text" id="sireId{ID}" onchange="handleChange({ID}, \'sire\');"/>' +
+                '<img height="38" src="" style="display: none;" id="sireImg{ID}"/>' +
+                '<div class="col-md-6 col-form-label-sm" id="sireReady{ID}"></div>' +
                 '</div>' +
                 '<button type="submit" class="btn btn-dark" onclick="selfBreed({ID});" id="breedButton{ID}">Breed Pair {ID}</button><br/>' +
                 '<br/><div id="msg{ID}"></div>' +
@@ -324,12 +365,12 @@
 
             <div class="form-group row mb-1 mr-1">
                 <label class="col-form-label col-md-3" for="matronId0">Matron ID</label>
-                <input class="form-control col-md-2" type="text" id="matronId0" onchange="clearMsgs(0);"/><div class="col-md-7 col-form-label-sm" id="matronReady0"></div>
+                <input class="form-control col-md-2" type="text" id="matronId0" onchange="handleChange(0, 'matron');"/><img height="38" src="" style="display: none;" id="matronImg0"/><div class="col-md-6 col-form-label-sm" id="matronReady0"></div>
             </div>
 
             <div class="form-group row mb-1 mr-1">
                 <label class="col-form-label col-md-3" for="sireId0">Sire ID</label>
-                <input class="form-control col-md-2" type="text" id="sireId0" onchange="clearMsgs(0);"/><div class="col-md-7 col-form-label-sm" id="sireReady0"></div>
+                <input class="form-control col-md-2" type="text" id="sireId0" onchange="handleChange(0, 'sire');"/><img height="38" src="" style="display: none;" id="sireImg0"/><div class="col-md-6 col-form-label-sm" id="sireReady0"></div>
             </div>
             <button type="submit" class="btn btn-dark" onclick="selfBreed(0);" id="breedButton0">Breed Pair 0</button><br/>
             <br/>
