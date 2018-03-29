@@ -349,10 +349,12 @@
         function openCalc(id) {
             let matronId = $("#matronId" + id).val().trim();
             if (!isNumber(matronId)) {
+                setMsg(id, "Invalid matron ID");
                 return;
             }
             let sireId = $("#sireId" + id).val().trim();
             if (!isNumber(sireId)) {
+                setMsg(id, "Invalid sire ID");
                 return;
             }
             window.open("https://kittycalc.co/?k1=" + sireId + "&k2=" + matronId);
