@@ -226,7 +226,9 @@
                 '<img height="38" src="" style="display: none;" id="sireImg{ID}"/>' +
                 '<div class="col-md-6 col-form-label-sm" id="sireReady{ID}"></div>' +
                 '</div>' +
-                '<button type="submit" class="btn btn-dark" onclick="selfBreed({ID});" id="breedButton{ID}">Breed Pair {ID}</button><br/>' +
+                '<button type="submit" class="btn btn-dark" onclick="selfBreed({ID});" id="breedButton{ID}">Breed Pair {ID}</button>&nbsp;' +
+                '<button type="submit" class="btn btn-light" onclick="openCalc({ID});" id="CalcButton{ID}">Check KittyCalc</button>' +
+                '<br/>' +
                 '<br/><div id="msg{ID}"></div>' +
                 '</div>' +
                 '<br/>' +
@@ -344,6 +346,18 @@
             }
         }
 
+        function openCalc(id) {
+            let matronId = $("#matronId" + id).val().trim();
+            if (!isNumber(matronId)) {
+                return;
+            }
+            let sireId = $("#sireId" + id).val().trim();
+            if (!isNumber(sireId)) {
+                return;
+            }
+            window.open("https://kittycalc.co/?k1=" + sireId + "&k2=" + matronId);
+        }
+
     </script>
     <!-- header -->
     <div class="fixed-top">
@@ -382,12 +396,15 @@
                 <label class="col-form-label col-md-3" for="sireId0">Sire ID</label>
                 <input class="form-control col-md-2" type="text" id="sireId0" onchange="handleChange(0, 'sire');"/><img height="38" src="" style="display: none;" id="sireImg0"/><div class="col-md-6 col-form-label-sm" id="sireReady0"></div>
             </div>
-            <button type="submit" class="btn btn-dark" onclick="selfBreed(0);" id="breedButton0">Breed Pair 0</button><br/>
+            <button type="submit" class="btn btn-dark" onclick="selfBreed(0);" id="breedButton0">Breed Pair 0</button>&nbsp;
+            <button type="submit" class="btn btn-light" onclick="openCalc(0);" id="CalcButton0">Check KittyCalc</button>
+            <br/>
             <br/>
             <div id="msg0"></div>
         </div>
         <br/>
         </div>
     </div>
+
 
 </html>
