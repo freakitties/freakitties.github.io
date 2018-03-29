@@ -25,6 +25,9 @@
                 background-color: #5a5a5a!important;
                 border-color: #5a5a5a!important;
             }
+            .default-hide {
+                display: none;
+            }
         </style>
     </head>
     <script>
@@ -161,6 +164,7 @@
 
             let imgURL = "https://storage.googleapis.com/ck-kitty-image/0x06012c8cf97bead5deae237070f9587f8e7a266d/";
 
+            //This doesn't work right for early exclusives and fancies...both svg and png exist for those early cats.
             $("#matronImg" + index).attr("src", imgURL + matronId + ".svg");
             $("#matronImg" + index).on("error", function() { this.src =  imgURL + matronId + ".png"; });
             $("#matronImg" + index).show();
@@ -200,7 +204,9 @@
         function createForm() {
             numPairs++;
             var template =
-                '<div class="col-md-9 border">' +
+                '<div id="pair{ID}">' +
+                '<div class="col-md-9 border" onmouseover="$(\'#closeButton{ID}\').show()" onmouseout="$(\'#closeButton{ID}\').hide()">' +
+                '<i class="default-hide mt-1 float-right fas fa-times-circle" id="closeButton{ID}" onclick="removePair({ID});"></i>' +
                 '<br/>' +
                 '<div class="form-group row mb-1 mr-1">' +
                 '<label class="col-form-label col-md-3" for="notes{ID}">Notes for pair {ID}</label>' +
@@ -221,7 +227,8 @@
                 '<button type="submit" class="btn btn-dark" onclick="selfBreed({ID});" id="breedButton{ID}">Breed Pair {ID}</button><br/>' +
                 '<br/><div id="msg{ID}"></div>' +
                 '</div>' +
-                '<br/>';
+                '<br/>' +
+                '</div>';
 
             newForm = template.replace(/{ID}/g, numPairs);
             $("#breedersDiv").append(newForm);
@@ -254,6 +261,7 @@
 
             var pairs = [];
             for (let i = 0; i <= numPairs; i++) {
+                if ($("#pair" + i).length == 0) continue;
                 let matronId = $("#matronId" + i).val().trim();
                 if (!isNumber(matronId)) {
                     setBookmarkMsg("Matron ID is invalid in pair " + i, "warning");
@@ -327,6 +335,13 @@
             });
         }
 
+        function removePair(id) {
+            let div = $("#pair" + id);
+            if (div.length > 0) {
+                div.remove();
+            }
+        }
+
     </script>
     <!-- header -->
     <div class="fixed-top">
@@ -355,8 +370,10 @@
         </div>
         -->
         <br/>
-
-        <div class="col-md-9 border">
+        <br/>
+        <div id="pair0">
+        <div class="col-md-9 border" onmouseover="$('#closeButton0').show()" onmouseout="$('#closeButton0').hide()" >
+            <i class="default-hide mt-1 float-right fas fa-times-circle" id="closeButton0" onclick="removePair(0);"></i>
             <br/>
             <div class="form-group row mb-1 mr-1">
                 <label class="col-form-label col-md-3" for="notes0">Notes for pair 0</label>
@@ -377,6 +394,7 @@
             <div id="msg0"></div>
         </div>
         <br/>
+        </div>
     </div>
 
 </html>
