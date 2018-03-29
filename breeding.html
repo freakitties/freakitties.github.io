@@ -14,7 +14,8 @@
         </script>
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
-        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+        <!--<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script> -->
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.bundle.min.js" integrity="sha384-feJI7QwhOS+hwpX2zkaeJQjeiwlhOP+SdQDqhgvvo1DsjtiSQByFdThsxO669S2D" crossorigin="anonymous"></script>
         <script defer src="https://use.fontawesome.com/releases/v5.0.8/js/solid.js" integrity="sha384-+Ga2s7YBbhOD6nie0DzrZpJes+b2K1xkpKxTFFcx59QmVPaSA8c7pycsNaFwUK6l" crossorigin="anonymous"></script>
         <script defer src="https://use.fontawesome.com/releases/v5.0.8/js/fontawesome.js" integrity="sha384-7ox8Q2yzO/uWircfojVuCQOZl+ZZBg2D2J5nkpLqzH1HY0C1dHlTKIbpRz/LG23c" crossorigin="anonymous"></script>
         <style type="text/css">
@@ -66,6 +67,7 @@
                 return;
             }
             reconstructBookmark(hash);
+            $('[data-toggle="tooltip"]').tooltip();
         });
 
         function reconstructBookmark(hash) {
@@ -206,7 +208,7 @@
             var template =
                 '<div id="pair{ID}">' +
                 '<div class="col-md-9 border" onmouseover="$(\'#closeButton{ID}\').show()" onmouseout="$(\'#closeButton{ID}\').hide()">' +
-                '<i class="default-hide mt-1 float-right fas fa-times-circle" id="closeButton{ID}" onclick="removePair({ID});"></i>' +
+                '<div data-toggle="tooltip" data-placement="right" title="Remove pair"><i class="default-hide mt-1 float-right fas fa-times-circle" id="closeButton{ID}" onclick="removePair({ID});"></i></div>' +
                 '<br/>' +
                 '<div class="form-group row mb-1 mr-1">' +
                 '<label class="col-form-label col-md-3" for="notes{ID}">Notes for pair {ID}</label>' +
@@ -373,7 +375,7 @@
         <br/>
         <div id="pair0">
         <div class="col-md-9 border" onmouseover="$('#closeButton0').show()" onmouseout="$('#closeButton0').hide()" >
-            <i class="default-hide mt-1 float-right fas fa-times-circle" id="closeButton0" onclick="removePair(0);"></i>
+            <div data-toggle="tooltip" data-placement="right" title="Remove pair"><i  class="default-hide mt-1 float-right fas fa-times-circle" id="closeButton0" onclick="removePair(0);"></i></div>
             <br/>
             <div class="form-group row mb-1 mr-1">
                 <label class="col-form-label col-md-3" for="notes0">Notes for pair 0</label>
