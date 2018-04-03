@@ -14,6 +14,7 @@
             body {background-color: #efefef;}
         </style>
         <script type="text/javascript" src="data.js"></script>
+        <script type="text/javascript" src="allaxie-small.js"></script>
         <style>
             .btn-plant, .btn-plant:hover, .btn-plant:active, .btn-plant:visited {
                 background-color: rgb(108, 192, 0) !important;
@@ -44,10 +45,22 @@
 <script>
     var NUM_TOP = 10;
 
+    function getAxie(num) {
+        if (typeof num != "number") {
+            num = parseInt(num)
+        }
+        if (num >= 5) {
+            return axies[num - 5];
+        } else {
+            return null;
+        }
+    }
+
     function generateIDs(ids) {
         var list = "";
         for (let i in ids) {
-            list += '<a role="button" class="mb-1 btn btn-sm btn-info" href="https://axieinfinity.com/axie/' + ids[i] + '?r=CHl5UkYrgttjndv97yqxcY_6dnY">#' + ids[i] + '</a> ';
+            let btnColor = "btn-" + getAxie(ids[i])['class'];
+            list += '<a target="_blank" role="button" class="mb-1 btn btn-sm btn-info ' + btnColor + '" href="https://axieinfinity.com/axie/' + ids[i] + '?r=CHl5UkYrgttjndv97yqxcY_6dnY">#' + ids[i] + '</a> ';
         }
         return list;
     }
@@ -125,12 +138,6 @@
             if (typ == "mystics") continue;
             createTable(typ);
             populateTable(typ, allCounts[typ].sortedCounts);
-            let axies = $("#" + typ + "Table").find("a");
-            let btnColor;
-            btnColor = "btn-" + typ;
-            for (let axie in axies) {
-                axies.addClass(btnColor);
-            }
         }
     });
 </script>

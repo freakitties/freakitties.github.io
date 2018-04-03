@@ -14,6 +14,36 @@
             body {background-color: #efefef;}
         </style>
         <script type="text/javascript" src="data.js"></script>
+        <script type="text/javascript" src="allaxie-small.js"></script>
+        <style>
+            .btn-plant, .btn-plant:hover, .btn-plant:active, .btn-plant:visited {
+                background-color: rgb(108, 192, 0) !important;
+                border-color: rgb(108, 192, 0) !important;
+            }
+            .btn-reptile, .btn-reptile:hover, .btn-reptile:active, .btn-reptile:visited {
+                background-color: rgb(200, 138, 224) !important;
+                border-color: rgb(200, 138, 224) !important;
+            }
+            .btn-beast, .btn-beast:hover, .btn-beast:active, .btn-beast:visited {
+                background-color: rgb(255, 184, 18) !important;
+                border-color: rgb(255, 184, 18) !important;
+            }
+            .btn-aquatic, .btn-aquatic:hover, .btn-aquatic:active, .btn-aquatic:visited {
+                background-color: rgb(0, 184, 206) !important;
+                border-color: rgb(0, 184, 206) !important;
+            }
+            .btn-bird, .btn-bird:hover, .btn-bird:active, .btn-bird:visited {
+                background-color: rgb(255, 139, 189) !important;
+                border-color: rgb(255, 139, 189) !important;
+            }
+            .btn-bug, .btn-bug:hover, .btn-bug:active, .btn-bug:visited {
+                background-color: rgb(255, 83, 65) !important;
+                border-color: rgb(255, 83, 65) !important;
+            }
+            .w-45 {
+                width: 45% !important;
+            }
+        </style>
     </head>
 <script>
 
@@ -24,9 +54,26 @@
     function generateIDs(ids) {
         var list = "";
         for (let i in ids) {
-            list += '<a role="button" class="mb-1 btn btn-sm btn-info" href="https://axieinfinity.com/axie/' + ids[i] + '?r=CHl5UkYrgttjndv97yqxcY_6dnY">#' + ids[i] + '</a> ';
+            let axie = getAxie(ids[i]);
+            let color = "btn-" + axie['class'];
+            //if (axie['auction']) {
+            //    list += '<a target="_blank" role="button" class="mb-1 btn btn-sm btn-info ' + color + '" href="https://axieinfinity.com/axie/' + ids[i] + '?r=CHl5UkYrgttjndv97yqxcY_6dnY">#' + ids[i] + '*</a> ';
+            //} else {
+                list += '<a target="_blank" role="button" class="mb-1 btn btn-sm btn-info ' + color + '" href="https://axieinfinity.com/axie/' + ids[i] + '?r=CHl5UkYrgttjndv97yqxcY_6dnY">#' + ids[i] + '</a> ';
+            //}
         }
         return list;
+    }
+
+    function getAxie(num) {
+        if (typeof num != "number") {
+            num = parseInt(num)
+        }
+        if (num >= 5) {
+            return axies[num - 5];
+        } else {
+            return null;
+        }
     }
 
     var mystics = [];
@@ -44,21 +91,31 @@
 
 $(document).ready(function(){
     for (let t in mystics) {
-        $("#mysticTable").append('<tr><td><img width=100 src="' + mystics[t].image + '"/></td><td>' + mystics[t].name + "</td><td>" + mystics[t].type + "</td><td>" + mystics[t].class + "</td><td>" + mystics[t].count + '</td><td><a class="btn btn-sm btn-info" href="https://axieinfinity.com/axie/' + mystics[t].ids[0] + '">#' + mystics[t].ids[0] + '</a></td><td class="all">' + generateIDs(mystics[t].ids) + '</td></tr>');
+        let axie = getAxie(mystics[t].ids[0]);
+        let color = "btn-" + axie['class'];
+        let classPercent = 100 * mystics[t].count / classCounts[mystics[t].class];
+        $("#mysticTable").append('<tr><td><img width=60 src="' + mystics[t].image + '"/></td><td>' + mystics[t].name + "</td><td>" + mystics[t].type + "</td><td>" + mystics[t].class + "</td><td>" + mystics[t].count + ' (' + classPercent.toFixed(1) + '% of class)</td><td class="example"><a target="_blank" class="btn btn-sm btn-info ' + color + '" href="https://axieinfinity.com/axie/' + mystics[t].ids[0] + '">#' + mystics[t].ids[0] + '</a></td><td class="all w-45">' + generateIDs(mystics[t].ids) + '</td></tr>');
     }
     for (let t in normal) {
-        $("#normalTable").append('<tr><td><img width=100 src="' + normal[t].image + '"/></td><td>' + normal[t].name + "</td><td>" + normal[t].type + "</td>><td>" + normal[t].class + "</td><td>" + normal[t].count + '</td><td><a class="btn btn-sm btn-info" href="https://axieinfinity.com/axie/' + normal[t].ids[0] + '">#' + normal[t].ids[0] + '</a></td><td class="all">' + generateIDs(normal[t].ids) + '</td></tr>');
+        let axie = getAxie(normal[t].ids[0]);
+        let color = "btn-" + axie['class'];
+        let classPercent = 100 * normal[t].count / classCounts[normal[t].class];
+        $("#normalTable").append('<tr><td><img width=60 src="' + normal[t].image + '"/></td><td>' + normal[t].name + "</td><td>" + normal[t].type + "</td>><td>" + normal[t].class + "</td><td>" + normal[t].count + ' (' + classPercent.toFixed(1) + '% of class)</td><td class="example"><a target="_blank" class="btn btn-sm btn-info ' + color + '" href="https://axieinfinity.com/axie/' + normal[t].ids[0] + '">#' + normal[t].ids[0] + '</a></td><td class="all w-45">' + generateIDs(normal[t].ids) + '</td></tr>');
     }
     console.log($("#main"));
 
     $("input:checkbox:not(:checked)").each(function() {
         var column = "table ." + $(this).attr("name");
         $(column).hide();
+
+        $('table .example').show();
     });
 
     $("input:checkbox").click(function(){
         var column = "table ." + $(this).attr("name");
         $(column).toggle();
+
+        $('table .example').toggle();
     });
 });
 </script>
@@ -89,7 +146,7 @@ $(document).ready(function(){
                    <th>Type</th>
                    <th>Class</th>
                    <th>Count</th>
-                   <th>Example</th>
+                   <th class="example">Example</th>
                    <th class="all">All IDs</th>
                 </tr>
             </table>
@@ -103,7 +160,7 @@ $(document).ready(function(){
                    <th>Type</th>
                    <th>Class</th>
                    <th>Count</th>
-                   <th>Example</th>
+                   <th class="example">Example</th>
                    <th class="all">All IDs</th>
                 </tr>
             </table>
