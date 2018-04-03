@@ -1,0 +1,153 @@
+<html>
+    <head>
+        <title>Top Axie Traits</title>
+        <script async src="https://www.googletagmanager.com/gtag/js?id=UA-116189657-1"></script>
+        <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'UA-116189657-1');
+        </script>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+        <style>
+            body {background-color: #efefef;}
+        </style>
+        <script type="text/javascript" src="data.js"></script>
+        <style>
+            .btn-plant, .btn-plant:hover, .btn-plant:active, .btn-plant:visited {
+                background-color: rgb(108, 192, 0) !important;
+                border-color: rgb(108, 192, 0) !important;
+            }
+            .btn-reptile, .btn-reptile:hover, .btn-reptile:active, .btn-reptile:visited {
+                background-color: rgb(200, 138, 224) !important;
+                border-color: rgb(200, 138, 224) !important;
+            }
+            .btn-beast, .btn-beast:hover, .btn-beast:active, .btn-beast:visited {
+                background-color: rgb(255, 184, 18) !important;
+                border-color: rgb(255, 184, 18) !important;
+            }
+            .btn-aquatic, .btn-aquatic:hover, .btn-aquatic:active, .btn-aquatic:visited {
+                background-color: rgb(0, 184, 206) !important;
+                border-color: rgb(0, 184, 206) !important;
+            }
+            .btn-bird, .btn-bird:hover, .btn-bird:active, .btn-bird:visited {
+                background-color: rgb(255, 139, 189) !important;
+                border-color: rgb(255, 139, 189) !important;
+            }
+            .btn-bug, .btn-bug:hover, .btn-bug:active, .btn-bug:visited {
+                background-color: rgb(255, 83, 65) !important;
+                border-color: rgb(255, 83, 65) !important;
+            }
+        </style>
+    </head>
+<script>
+    var NUM_TOP = 10;
+
+    function generateIDs(ids) {
+        var list = "";
+        for (let i in ids) {
+            list += '<a role="button" class="mb-1 btn btn-sm btn-info" href="https://axieinfinity.com/axie/' + ids[i] + '?r=CHl5UkYrgttjndv97yqxcY_6dnY">#' + ids[i] + '</a> ';
+        }
+        return list;
+    }
+
+    function tally(key, arr) {
+        if (key in arr) {
+            arr[key]++;
+        } else {
+            arr[key] = 1;
+        }
+    }
+
+    function calcTop() {
+        var mysticCounts = {"sortedCounts": []};
+        var classCounts = {"plant": {"sortedCounts": []}, "bird": {"sortedCounts": []}, "bug": {"sortedCounts": []}, "reptile": {"sortedCounts": []}, "aquatic": {"sortedCounts": []}, "beast": {"sortedCounts": []}};
+        for (let name in traits) {
+
+            for (let i in traits[name].ids) {
+                let key = traits[name].ids[i].toString();
+
+                if (traits[name].mystic) {
+                    tally(key, mysticCounts);
+                }
+                tally(key, classCounts[traits[name].class]);
+            }
+        }
+
+        var keysSorted = Object.keys(mysticCounts).sort(function(a, b){return mysticCounts[b]-mysticCounts[a]});
+
+        for (let c in classCounts) {
+            let classKeysSorted = Object.keys(classCounts[c]).sort(function(a, b){return classCounts[c][b]-classCounts[c][a]});
+            for (let i = 0; i < NUM_TOP; i++) {
+                classCounts[c].sortedCounts.push({"count": classCounts[c][classKeysSorted[i]], "id": classKeysSorted[i]});
+            }
+        }
+
+        for (let i = 0; i < NUM_TOP; i++) {
+            mysticCounts.sortedCounts.push({"count": mysticCounts[keysSorted[i]], "id": keysSorted[i]});
+        }
+        classCounts["mystics"] = mysticCounts;
+
+        return classCounts;
+    }
+
+    function populateTable(tableId, counts) {
+        for (let c in counts) {
+            $("#" + tableId + 'Table').append("<tr><td>" + generateIDs([counts[c].id]) + "</td><td>" + counts[c].count + "</td></tr>")
+        }
+    }
+
+    String.prototype.capitalize = function() {
+        return this.charAt(0).toUpperCase() + this.slice(1);
+    }
+
+    function createTable(typ) {
+        var template = '<div class="col-md-3">' +
+            '<div class="text-center"><h5>Top ' + NUM_TOP + " " + typ.capitalize() + '</h5></div>' +
+            '<table id="' + typ + 'Table" class="table border table-striped">' +
+                '<tr>' +
+                    '<th>ID</th>' +
+                    '<th>Count</th>' +
+                '</tr>' +
+            '</table>' +
+        '</div>' +
+        '<!--<br/>-->';
+        $("#mainDiv").append(template);
+    }
+
+    var allCounts = calcTop();
+
+    $(document).ready(function(){
+        createTable('mystics');
+        populateTable('mystics', allCounts['mystics'].sortedCounts);
+        for(let typ in allCounts) {
+            if (typ == "mystics") continue;
+            createTable(typ);
+            populateTable(typ, allCounts[typ].sortedCounts);
+            let axies = $("#" + typ + "Table").find("a");
+            let btnColor;
+            btnColor = "btn-" + typ;
+            for (let axie in axies) {
+                axies.addClass(btnColor);
+            }
+        }
+    });
+</script>
+
+    <!-- header -->
+    <div class="fixed-top">
+        <div class="navbar navbar-light bg-secondary">
+            <div class="container-fluid">
+                <div class="navbar-header">
+                </div>
+                <a role="button" class="btn btn-primary" href="https://axieinfinity.com/adopt-axies?r=CHl5UkYrgttjndv97yqxcY_6dnY">Adopt an Axie!</a>
+                <div class="text-white">Donations: 0x209045cfe98445d6541d4fdf560d0d63fad77753 &nbsp;</div><br/>
+            </div>
+        </div>
+    </div>
+    <br/><br/><br/>
+    <div id="mainDiv" class="row">
+
+    </div>
+</html>
