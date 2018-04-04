@@ -20,11 +20,11 @@ Real-time new kitty auctions [Go here](/newauctions/newauctions.html)
 
 ## Axie Infinity Tools
 
-(Adopt an Axie!)[https://axieinfinity.com/adopt-axies?r=CHl5UkYrgttjndv97yqxcY_6dnY]
+[Adopt an Axie!](https://axieinfinity.com/adopt-axies?r=CHl5UkYrgttjndv97yqxcY_6dnY)
 
-(Parts glossary ordered by rarity)[https://freakitties.github.io/axie/traits.html]
+[Parts glossary ordered by rarity](https://freakitties.github.io/axie/traits.html)
 
-(Axies by purebredness)[https://freakitties.github.io/axie/top.html]
+[Axies by purebredness](https://freakitties.github.io/axie/top.html)
 
 
 Donations: 0x209045cFE98445D6541D4FDf560d0d63fAd77753
