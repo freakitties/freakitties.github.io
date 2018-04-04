@@ -5,15 +5,15 @@ Live site: [https://freakitties.github.io/](https://freakitties.github.io/)
 
 ## CryptoKitties Tools
 
-Convenience tool to breed multiple pairs from a single page [Go here](/breeding.html)
+[Breeding pair bookmarking tool](/breeding.html)
 
-Basic utility page to help make playing Cryptokitties easier [Go here](/w3.html)
+[Basic utility page to help make playing Cryptokitties easier](/w3.html)
 
-Real-time kitty sales [Go here](/auctions/auctions.html)
+[Real-time kitty sales](/auctions/auctions.html)
 
-Real-time kitty sires [Go here](/sires/sires.html)
+[Real-time kitty sires](/sires/sires.html)
 
-Real-time new kitty auctions [Go here](/newauctions/newauctions.html)
+[Real-time new kitty auctions](/newauctions/newauctions.html)
 
 
 ---
