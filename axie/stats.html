@@ -49,7 +49,7 @@
     </head>
 <script>
 
-    var baseStats = {"hp": 23, "speed": 23, "skill": 23, "morale": 23};
+    var baseStats = {"hp": 23, "speed": 23, "skill": 23, "morale": 23 /*, "attack": 23, "defense": 23, "accuracy": 23*/};
     var classAttribs = {"beast": {"hp": 2, "speed": 3, "skill": 2, "morale": 5, "attack": 3, "defense": 2, "accuracy": 5},
     "aquatic": {"hp": 4, "speed": 4, "skill": 3, "morale": 1, "attack": 5, "defense": 3, "accuracy": 2},
     "plant": {"hp": 5, "speed": 2, "skill": 2, "morale": 3, "attack": 2, "defense": 5, "accuracy": 3},
@@ -81,7 +81,6 @@
             if (!(id in axieStats)) {
                 let axie = getAxie(id);
                 if (id != axie.id.toString()) {console.log("ERROR: id mismatch!"); } //just in case
-                //axieStats[id] = classStats[axie.class].copy();
                 axieStats[id] = {};
                 Object.assign(axieStats[id], classStats[axie.class]);
             }
@@ -100,16 +99,18 @@
     }
     var sortedIDs = Object.keys(axieStats).sort(function(a,b){return axieStats[a].total - axieStats[b].total});
 
+    var hash = window.location.hash.substr(1);
     function generateIDs(ids) {
         var list = "";
         for (let i in ids) {
             let axie = getAxie(ids[i]);
             let color = "btn-" + axie['class'];
-            //if (axie['auction']) {
-            //    list += '<a target="_blank" role="button" class="mb-1 btn btn-sm btn-info ' + color + '" href="https://axieinfinity.com/axie/' + ids[i] + '?r=CHl5UkYrgttjndv97yqxcY_6dnY">#' + ids[i] + '*</a> ';
-            //} else {
+            if (axie['auction'] && hash.indexOf("auction") != -1) {
+                //like everything else, auction data is not real-time
+                list += '<a target="_blank" role="button" class="mb-1 btn btn-sm btn-info ' + color + '" href="https://axieinfinity.com/axie/' + ids[i] + '?r=CHl5UkYrgttjndv97yqxcY_6dnY">#' + ids[i] + '*</a> ';
+            } else {
                 list += '<a target="_blank" role="button" class="mb-1 btn btn-sm btn-info ' + color + '" href="https://axieinfinity.com/axie/' + ids[i] + '?r=CHl5UkYrgttjndv97yqxcY_6dnY">#' + ids[i] + '</a> ';
-            //}
+            }
         }
         return list;
     }
@@ -149,6 +150,11 @@ $(document).ready(function(){
         {title: "Speed", data: "speed", "searchable": false},
         {title: "Skill", data: "skill", "searchable": false},
         {title: "Morale", data: "morale", "searchable": false},
+        /*
+        {title: "Attack", data: "attack", "searchable": false},
+        {title: "Defense", data: "defense", "searchable": false},
+        {title: "Accuracy", data: "accuracy", "searchable": false},
+        */
         //{title: "Total", data: "total"}
         ],
         "language": {"search": "Search ID:"},

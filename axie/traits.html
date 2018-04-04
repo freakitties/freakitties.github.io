@@ -46,7 +46,7 @@
         </style>
     </head>
 <script>
-
+    var hash = window.location.hash.substr(1);
     function compare(a, b) {
         return a.count - b.count;
     }
@@ -56,11 +56,11 @@
         for (let i in ids) {
             let axie = getAxie(ids[i]);
             let color = "btn-" + axie['class'];
-            //if (axie['auction']) {
-            //    list += '<a target="_blank" role="button" class="mb-1 btn btn-sm btn-info ' + color + '" href="https://axieinfinity.com/axie/' + ids[i] + '?r=CHl5UkYrgttjndv97yqxcY_6dnY">#' + ids[i] + '*</a> ';
-            //} else {
+            if (axie['auction'] && hash.indexOf("auction") != -1) {
+                list += '<a target="_blank" role="button" class="mb-1 btn btn-sm btn-info ' + color + '" href="https://axieinfinity.com/axie/' + ids[i] + '?r=CHl5UkYrgttjndv97yqxcY_6dnY">#' + ids[i] + '*</a> ';
+            } else {
                 list += '<a target="_blank" role="button" class="mb-1 btn btn-sm btn-info ' + color + '" href="https://axieinfinity.com/axie/' + ids[i] + '?r=CHl5UkYrgttjndv97yqxcY_6dnY">#' + ids[i] + '</a> ';
-            //}
+            }
         }
         return list;
     }
@@ -90,7 +90,6 @@
     normal.sort(compare);
 
 $(document).ready(function(){
-    var hash = window.location.hash.substr(1);
     for (let t in mystics) {
         let axie = getAxie(mystics[t].ids[0]);
         let color = "btn-" + axie['class'];
