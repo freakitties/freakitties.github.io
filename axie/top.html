@@ -1,6 +1,6 @@
 <html>
     <head>
-        <title>Top Axie Traits</title>
+        <title>Top Axies By Trait</title>
         <script async src="https://www.googletagmanager.com/gtag/js?id=UA-116189657-1"></script>
         <script>
         window.dataLayer = window.dataLayer || [];
@@ -73,11 +73,10 @@
         }
     }
 
-    function calcTop() {
-        var mysticCounts = {"sortedCounts": []};
-        var classCounts = {"plant": {"sortedCounts": []}, "bird": {"sortedCounts": []}, "bug": {"sortedCounts": []}, "reptile": {"sortedCounts": []}, "aquatic": {"sortedCounts": []}, "beast": {"sortedCounts": []}};
+    function calcCounts() {
+        var mysticCounts = {};
+        var classCounts = {"plant": {}, "bird": {}, "bug": {}, "reptile": {}, "aquatic": {}, "beast": {}};
         for (let name in traits) {
-
             for (let i in traits[name].ids) {
                 let key = traits[name].ids[i].toString();
 
@@ -88,56 +87,73 @@
             }
         }
 
-        var keysSorted = Object.keys(mysticCounts).sort(function(a, b){return mysticCounts[b]-mysticCounts[a]});
-
+        var binnedCounts = {"plant": {}, "bird": {}, "bug": {}, "reptile": {}, "aquatic": {}, "beast": {}, "mystics": {}};
+        for (let id in mysticCounts) {
+            let cntStr = mysticCounts[id].toString();
+            if (!(cntStr in binnedCounts["mystics"])) {
+                binnedCounts["mystics"][cntStr] = [];
+            }
+            binnedCounts["mystics"][cntStr].push(id);
+        }
         for (let c in classCounts) {
-            let classKeysSorted = Object.keys(classCounts[c]).sort(function(a, b){return classCounts[c][b]-classCounts[c][a]});
-            for (let i = 0; i < NUM_TOP; i++) {
-                classCounts[c].sortedCounts.push({"count": classCounts[c][classKeysSorted[i]], "id": classKeysSorted[i]});
+            for (let id in classCounts[c]) {
+                let cntStr = classCounts[c][id].toString();
+                if (!(cntStr in binnedCounts[c])) {
+                    binnedCounts[c][cntStr] = [];
+                }
+                binnedCounts[c][cntStr].push(id);
             }
         }
-
-        for (let i = 0; i < NUM_TOP; i++) {
-            mysticCounts.sortedCounts.push({"count": mysticCounts[keysSorted[i]], "id": keysSorted[i]});
-        }
-        classCounts["mystics"] = mysticCounts;
-
-        return classCounts;
+        return binnedCounts;
     }
 
-    function populateTable(tableId, counts) {
-        for (let c in counts) {
-            $("#" + tableId + 'Table').append("<tr><td>" + generateIDs([counts[c].id]) + "</td><td>" + counts[c].count + "</td></tr>")
+    function populateBinnedTable(typ, ids) {
+        let myObj = ids;
+        let keysSorted = Object.keys(myObj).sort(function(a, b){return parseInt(b)-parseInt(a)});
+        for (let num in keysSorted) {
+            if (parseInt(keysSorted[num]) > 2 && ids[keysSorted[num]].length < 90) {
+                $("#" + typ + "TableBinned").append('<tr><td>' + keysSorted[num] + '</td><td>' + generateIDs(ids[keysSorted[num]]) + '</td></tr>')
+            }
         }
+    }
+
+    function generateIDs(ids) {
+        var list = "";
+        for (let i in ids) {
+            let axie = getAxie(ids[i]);
+            let color = "btn-" + axie['class'];
+            list += '<a target="_blank" role="button" class="mb-1 btn btn-sm btn-info ' + color + '" href="https://axieinfinity.com/axie/' + ids[i] + '?r=CHl5UkYrgttjndv97yqxcY_6dnY">#' + ids[i] + '</a> ';
+        }
+        return list;
     }
 
     String.prototype.capitalize = function() {
         return this.charAt(0).toUpperCase() + this.slice(1);
     }
 
-    function createTable(typ) {
-        var template = '<div class="col-md-3">' +
-            '<div class="text-center"><h5>Top ' + NUM_TOP + " " + typ.capitalize() + '</h5></div>' +
-            '<table id="' + typ + 'Table" class="table border table-striped">' +
+    function createBinnedTable(typ) {
+        var template = '<div class="col-md-6">' +
+            '<div class="text-center"><h5>' + typ.capitalize() + ' Traits By Count</h5></div>' +
+            '<table id="' + typ + 'TableBinned" class="table border table-striped">' +
                 '<tr>' +
-                    '<th>ID</th>' +
                     '<th>Count</th>' +
+                    '<th>IDs</th>' +
                 '</tr>' +
             '</table>' +
-        '</div>' +
-        '<!--<br/>-->';
-        $("#mainDiv").append(template);
+        '</div>';
+        $("#binnedDiv").append(template);
     }
 
-    var allCounts = calcTop();
+    var binned = calcCounts();
 
     $(document).ready(function(){
-        createTable('mystics');
-        populateTable('mystics', allCounts['mystics'].sortedCounts);
-        for(let typ in allCounts) {
+        createBinnedTable('mystics');
+        populateBinnedTable('mystics', binned['mystics']);
+        for (let typ in binned) {
             if (typ == "mystics") continue;
-            createTable(typ);
-            populateTable(typ, allCounts[typ].sortedCounts);
+            createBinnedTable(typ);
+            populateBinnedTable(typ, binned[typ]);
+
         }
     });
 </script>
@@ -154,7 +170,7 @@
         </div>
     </div>
     <br/><br/><br/>
-    <div id="mainDiv" class="row">
-
+    <div class="container">
+        <div id="binnedDiv" class="row"></div>
     </div>
 </html>
