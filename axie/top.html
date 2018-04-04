@@ -103,7 +103,7 @@
         let myObj = ids;
         let keysSorted = Object.keys(myObj).sort(function(a, b){return parseInt(b)-parseInt(a)});
         for (let num in keysSorted) {
-            if (parseInt(keysSorted[num]) > 2 && ids[keysSorted[num]].length < 90) {
+            if (parseInt(keysSorted[num]) > 1 && ids[keysSorted[num]].length < 130) {
                 $("#" + typ + "TableBinned").append('<tr><td>' + keysSorted[num] + '</td><td class="btn-toolbar">' + generateIDs(ids[keysSorted[num]]) + '</td></tr>')
             }
         }
@@ -161,7 +161,9 @@
             </div>
         </div>
     </div>
-    <br/><br/><br/>
+    <br/><br/>
+    * counts with over 130 Axie are omitted<br/><br/>
+
     <div class="container">
         <div id="binnedDiv" class="row"></div>
     </div>
