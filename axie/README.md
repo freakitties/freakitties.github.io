@@ -2,5 +2,5 @@ Tools for [Axie Infinity](https://axieinfinity.com/adopt-axies?r=CHl5UkYrgttjndv
 
 [Traits for noobs](traits.html)
 
-[Top 10 traits](top.html)
+[Top Axies by Traits per Class](top.html)
 
