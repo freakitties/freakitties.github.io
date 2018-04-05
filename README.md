@@ -28,5 +28,7 @@ Live site: [https://freakitties.github.io/](https://freakitties.github.io/)
 
 [Table of all Axies and their stats](/axie/stats.html)
 
+[Gene breakdown of Axies by class and trait](/axie/genes.html)
+
 
 Donations: 0x209045cFE98445D6541D4FDf560d0d63fAd77753
