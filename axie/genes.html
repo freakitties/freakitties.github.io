@@ -1,0 +1,171 @@
+<html>
+    <head>
+        <title>Axie Genes</title>
+        <script async src="https://www.googletagmanager.com/gtag/js?id=UA-116189657-1"></script>
+        <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'UA-116189657-1');
+        </script>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+        <style>
+            body {background-color: #efefef;}
+        </style>
+        <script type="text/javascript" src="data.js"></script>
+        <script type="text/javascript" src="allaxie-small.js"></script>
+        <script type="text/javascript" src="binarygenes.js"></script>
+    </head>
+<script>
+    var hash = window.location.hash.substr(1);
+    function compare(a, b) {
+        if (a.type < b.type) return -1;
+        if (a.type > b.type) return 1;
+        if (a.class < b.class) return -1;
+        if (a.class > b.class) return 1;
+        return 0;
+    }
+
+    function maskString(str1, str2) {
+        if (str1.length != str2.length) {
+            let padding = "";
+            for (let i = 0; i < (str1.length - str2.length); i++) {
+                padding += "0";
+            }
+            str2 = padding + str2;
+        }
+        let out = "";
+        for (let i = 0; i < str1.length; i++) {
+            if (str1[i] == str2[i] && str1[i] == "1") {
+                out += "1";
+            } else {
+                out += "0";
+            }
+        }
+        return out;
+    }
+
+    function formatMask(mask, ignore = 0) {
+        let out = "";
+        for (let i = 0; i < mask.length; i++) {
+            out += mask[i];
+            if ((i + 1) % 32 == 0) {
+                out += "|";
+            }
+        }
+        let splits = out.split("|");
+        for (let piece in splits) {
+            if (piece == ignore) {
+                if (splits[piece] == "00000000000000000100000000000000") {
+                    splits[piece] = "[0.1.0]";
+                }
+                continue;
+            }
+            if ((splits[piece].match(/1/g) || []).length > 0) {
+                splits[piece] = "<b>" + splits[piece] + "</b>";
+            } else if (splits[piece] == "00000000000000000000000000000000") {
+                splits[piece] = "[0...0]"
+            }
+        }
+        out = splits.join(" ");
+        return out;
+    }
+
+    function getAxie(num) {
+        if (typeof num != "number") {
+            num = parseInt(num)
+        }
+        if (num >= 5) {
+            let axie = axies[num - 5];
+            axie.genes = genes[axie.id.toString()];
+            return axie;
+        } else {
+            return null;
+        }
+    }
+
+    var mystics = [];
+    var normal = [];
+    for (let name in traits) {
+        if (traits[name].mystic) {
+            mystics.push(traits[name]);
+        } else {
+            normal.push(traits[name]);
+        }
+    }
+
+    alltraits = mystics.concat(normal);
+    alltraits.sort(compare);
+
+$(document).ready(function(){
+    //Group by Traits
+    for (let t in alltraits) {
+        let axie = getAxie(alltraits[t].ids[0]);
+        let color = "btn-" + axie['class'];
+
+        let mask = "1111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111";
+        for (let i in alltraits[t].ids) {
+            mask = maskString(mask, genes[alltraits[t].ids[i].toString()]);
+        }
+        mask = formatMask(mask);
+        $("#traitsTable").append('<tr><td>' + (alltraits[t].mystic ? '<b>' + alltraits[t].name + '</b>' : alltraits[t].name) + "</td><td>" + alltraits[t].type + "</td><td>" + alltraits[t].class + "</td><td>" + mask + '</td>');
+    }
+    //Group by class
+    var classes = {"plant": [], "bird": [], "bug": [], "reptile": [], "aquatic": [], "beast": []};
+    for (let i in axies) {
+        classes[axies[i].class].push(genes[axies[i].id.toString()]);
+    }
+    //var classMaskes = {};
+    for (let c in classes) {
+        let mask = "1111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111";
+        for (let g in classes[c]) {
+            let gene = classes[c][g];
+            mask = maskString(mask, gene);
+        }
+        //classMaskes[c] = mask;
+        mask = formatMask(mask, null);
+        $("#classTable").append('<tr><td>' + c + "</td><td>" + mask + '</td></tr>');
+    }
+
+
+});
+</script>
+
+    <!-- header -->
+    <div class="fixed-top">
+        <div class="navbar navbar-light bg-secondary">
+            <div class="container-fluid">
+                <div class="navbar-header">
+                </div>
+                <a role="button" class="btn btn-primary" href="https://axieinfinity.com/adopt-axies?r=CHl5UkYrgttjndv97yqxcY_6dnY">Adopt an Axie!</a>
+                <div class="text-white">Donations: 0x209045cfe98445d6541d4fdf560d0d63fad77753 &nbsp;</div><br/>
+            </div>
+        </div>
+    </div>
+    <br/><br/><br/>
+    <div id="mainDiv" class="container">
+        <h1>Classes</h1>
+        <div id="classes">
+            <table class="table" id="classTable">
+                <tr>
+                   <th>Class</th>
+                   <th>Gene Mask</th>
+                </tr>
+            </table>
+        </div><br/><br/>
+        <h1>Parts</h1>
+        <div id="traits">
+            <table class="table" id="traitsTable">
+                <tr>
+                   <th>Name</th>
+                   <th>Type</th>
+                   <th>Class</th>
+                   <th>Gene Mask</th>
+                </tr>
+            </table>
+        </div><br/><br/>
+
+
+    </div>
+</html>
