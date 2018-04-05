@@ -1,0 +1,73 @@
+<!DOCTYPE html><html><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8"><title>Sequencing the Axie Genome</title><meta name="description" content="Before I jump into how genes work in Axie Infinity, let me first give a brief introduction to the project for those that are unfamiliar…"><style>
+      * {
+        font-family: Georgia, Cambria, "Times New Roman", Times, serif;
+      }
+      html, body {
+        margin: 0;
+        padding: 0;
+      }
+      h1 {
+        font-size: 50px;
+        margin-bottom: 17px;
+        color: #333;
+      }
+      h2 {
+        font-size: 24px;
+        line-height: 1.6;
+        margin: 30px 0 0 0;
+        margin-bottom: 18px;
+        margin-top: 33px;
+        color: #333;
+      }
+      h3 {
+        font-size: 30px;
+        margin: 10px 0 20px 0;
+        color: #333;
+      }
+      header {
+        width: 640px;
+        margin: auto;
+      }
+      section {
+        width: 640px;
+        margin: auto;
+      }
+      section p {
+        margin-bottom: 27px;
+        font-size: 20px;
+        line-height: 1.6;
+        color: #333;
+      }
+      section img {
+        max-width: 640px;
+      }
+      footer {
+        padding: 0 20px;
+        margin: 50px 0;
+        text-align: center;
+        font-size: 12px;
+      }
+      .aspectRatioPlaceholder {
+        max-width: auto !important;
+        max-height: auto !important;
+      }
+      .aspectRatioPlaceholder-fill {
+        padding-bottom: 0 !important;
+      }
+      header,
+      section[data-field=subtitle] {
+        display: none;
+      }
+      </style></head><body><article class="h-entry">
+<header>
+<h1 class="p-name">Sequencing the Axie Genome</h1>
+</header>
+<section data-field="subtitle" class="p-summary">
+Before I jump into how genes work in Axie Infinity, let me first give a brief introduction to the project for those that are unfamiliar…
+</section>
+<section data-field="body" class="e-content">
+<section name="7aec" class="section section--body section--first section--last"><div class="section-divider"><hr class="section-divider"></div><div class="section-content"><div class="section-inner sectionLayout--insetColumn"><h3 name="c584" id="c584" class="graf graf--h3 graf--leading graf--title">Sequencing the Axie Genome</h3><p name="5c90" id="5c90" class="graf graf--p graf-after--h3">Before I jump into how genes work in Axie Infinity, let me first give a brief introduction to the project for those that are unfamiliar with it. Axie Infinity is a new cryptogame similar to CryptoKitties where you buy digital creatures that are stored on the Ethereum blockchain. Although Axie Infinity is still quite early in the development stage, they plan to have a much stronger gaming element to their project than CryptoKitties. Currently, they are in pre-sale mode where you can <a href="https://axieinfinity.com/adopt-axies?r=CHl5UkYrgttjndv97yqxcY_6dnY" data-href="https://axieinfinity.com/adopt-axies?r=CHl5UkYrgttjndv97yqxcY_6dnY" class="markup--anchor markup--p-anchor" rel="noopener" target="_blank">adopt</a> “origin” Axies similar to CryptoKitty founder cats (which, by the way, are currently selling for a <a href="https://www.cryptokitties.co/marketplace/sale?search=gen%3A0%20jaguar" data-href="https://www.cryptokitties.co/marketplace/sale?search=gen%3A0%20jaguar" class="markup--anchor markup--p-anchor" rel="noopener" target="_blank">minimum</a> of 25 ETH).</p><p name="7fc3" id="7fc3" class="graf graf--p graf-after--p">On to the genes! In CryptoKitties, genes define what traits your cat has. For example, they dictate what colors, pattern and body style your cat has. The seminal work done in cracking the CryptoKitties genome was done by kaigani. In his post <a href="https://medium.com/@kaigani/the-cryptokitties-genome-project-68582016f687" data-href="https://medium.com/@kaigani/the-cryptokitties-genome-project-68582016f687" class="markup--anchor markup--p-anchor" target="_blank">The CryptoKitties Genome Project</a>, he illustrated exactly how a 256-bit number defines what traits a CryptoKitty has. His post is the basis for understanding how to effectively play CryptoKitties and paved the way for follow-up research like <a href="https://medium.com/@sean.soria/cryptokitties-mixgenes-function-69207883fc80" data-href="https://medium.com/@sean.soria/cryptokitties-mixgenes-function-69207883fc80" class="markup--anchor markup--p-anchor" target="_blank">this post</a> from Sean Soria that describes exactly how breeding works. Most Cryptogames use a similar strategy where they store a bunch of information in a large number (since it’s a compact way of storing information on a blockchain) and Axie Infinity is no different.</p><p name="8e01" id="8e01" class="graf graf--p graf-after--p">Like CryptoKitties, the Axie gene consists of a 256-bit number. However, at the time of this writing, some Axie attributes have not yet been fully released so we can only do a partial analysis of the genome. Things like attack, defense, and accuracy have been exposed, but their specific values have not been released to the public. Other traits like the color of an Axie are visually exposed but that information is not present in the API, so it would be a more involved process to determine the specifics of those genes — I’ll leave that to another day (or another person). <em class="markup--em markup--p-em">The information presented below is based on deductive reasoning and guesswork, so take all of this information with a grain of salt and please forgive any errors.</em></p><p name="d3eb" id="d3eb" class="graf graf--p graf-after--p"><strong class="markup--strong markup--p-strong">Classes</strong></p><figure name="d893" id="d893" class="graf graf--figure graf-after--p"><div class="aspectRatioPlaceholder is-locked" style="max-width: 700px; max-height: 277px;"><div class="aspectRatioPlaceholder-fill" style="padding-bottom: 39.6%;"></div><img class="graf-image" data-image-id="1*ZygpbcJGl7qg_F2B39s4hw.png" data-width="2034" data-height="806" src="https://cdn-images-1.medium.com/max/800/1*ZygpbcJGl7qg_F2B39s4hw.png"></div><figcaption class="imageCaption">Axie Infinity Classes</figcaption></figure><p name="32ee" id="32ee" class="graf graf--p graf-after--figure">Currently, only six classes have been released to the public, though there is room for many more. Here’s what each class looks like at a binary level:</p><figure name="261e" id="261e" class="graf graf--figure graf-after--p"><div class="aspectRatioPlaceholder is-locked" style="max-width: 700px; max-height: 258px;"><div class="aspectRatioPlaceholder-fill" style="padding-bottom: 36.9%;"></div><img class="graf-image" data-image-id="1*Z_WBIDE20SS-DwXQ4hUxHw.png" data-width="1702" data-height="628" src="https://cdn-images-1.medium.com/max/800/1*Z_WBIDE20SS-DwXQ4hUxHw.png"></div><figcaption class="imageCaption">Class Genes</figcaption></figure><p name="395c" id="395c" class="graf graf--p graf-after--figure">At a macro level, each 256-bit Axie gene can be divided into (at least) 8 sub-parts — 8 groups of 32-bit segments. The first 32-bit group represents the Axie class as you can see above. In fact, this 32-bit segment is likely further divided as you can see a common 1 in the 15th bit (starting from the right), so in actuality there are likely 16 groups of 16-bit slices (for simplicity we’re only focusing on the 8 groups). This single bit is present in all <a href="https://axieinfinity.com/adopt-axies?r=CHl5UkYrgttjndv97yqxcY_6dnY" data-href="https://axieinfinity.com/adopt-axies?r=CHl5UkYrgttjndv97yqxcY_6dnY" class="markup--anchor markup--p-anchor" rel="noopener" target="_blank">pre-sale</a> Axies…my guess is this means the Axie is an adult.</p><p name="cb78" id="cb78" class="graf graf--p graf-after--p"><strong class="markup--strong markup--p-strong">Parts</strong></p><figure name="2633" id="2633" class="graf graf--figure graf-after--p"><div class="aspectRatioPlaceholder is-locked" style="max-width: 385px; max-height: 319px;"><div class="aspectRatioPlaceholder-fill" style="padding-bottom: 82.89999999999999%;"></div><img class="graf-image" data-image-id="1*h2eQYzag9R-RMVRzpmjNzQ.png" data-width="385" data-height="319" data-is-featured="true" src="https://cdn-images-1.medium.com/max/800/1*h2eQYzag9R-RMVRzpmjNzQ.png"></div><figcaption class="imageCaption">Axie Parts</figcaption></figure><p name="f283" id="f283" class="graf graf--p graf-after--figure">Each Axie has six traits or parts that will eventually affect how it battles. The six parts are: eyes, mouth, ears, horn, back, and tail. There is also the possibility that each of these parts could be a special “mystic” part that could allow you to evolve that part into a legendary part — the rarest of parts.</p><figure name="9f9c" id="9f9c" class="graf graf--figure graf-after--p"><div class="aspectRatioPlaceholder is-locked" style="max-width: 700px; max-height: 272px;"><div class="aspectRatioPlaceholder-fill" style="padding-bottom: 38.9%;"></div><img class="graf-image" data-image-id="1*jt-R-5KnDeykMNjjvVl6bQ.png" data-width="1986" data-height="772" src="https://cdn-images-1.medium.com/max/800/1*jt-R-5KnDeykMNjjvVl6bQ.png"></div><figcaption class="imageCaption">Eye Genes</figcaption></figure><p name="8464" id="8464" class="graf graf--p graf-after--figure">In the above image, you can see that the third group (from the left) is bolded and represents the “eyes” type. The names in bold are mystic parts and you can see that each one of those parts is prefixed with a “11”. Again, only the first half (16-bits) define the part, the second half is all masked to zeroes which likely means it defines something else or it could define other things specific to that part that we haven’t been exposed to yet.</p><p name="1fae" id="1fae" class="graf graf--p graf-after--p">The third through eighth group represent each of the six parts. I created <a href="https://freakitties.github.io/axie/genes.html" data-href="https://freakitties.github.io/axie/genes.html" class="markup--anchor markup--p-anchor" rel="noopener" target="_blank">this page</a> if you want to explore the genes in more detail.</p><p name="0820" id="0820" class="graf graf--p graf-after--p">So the first group defines class and third through eighth define the parts. What about the second group? At this point it’s unclear, but I think at least one or two things can be found here by doing a little more analysis. Specifically, the color and possibly the body shape (everyone loves fuzzy bodies!) are probably define in this group.</p><p name="2668" id="2668" class="graf graf--p graf-after--p">Shameless plugs.</p><p name="1e6b" id="1e6b" class="graf graf--p graf-after--p">Axie Infinity is currently running a give-away for a free axie. Fill out this survey to get tickets to the raffle: <a href="https://www.rafflecopter.com/rafl/display/993b92bb1/" data-href="https://www.rafflecopter.com/rafl/display/993b92bb1/" class="markup--anchor markup--p-anchor" rel="nofollow noopener" target="_blank">https://www.rafflecopter.com/rafl/display/993b92bb1/</a></p><p name="c728" id="c728" class="graf graf--p graf-after--p graf--trailing">If you want to adopt an Axie, you can use this link: <a href="https://axieinfinity.com/adopt-axies?r=CHl5UkYrgttjndv97yqxcY_6dnY" data-href="https://axieinfinity.com/adopt-axies?r=CHl5UkYrgttjndv97yqxcY_6dnY" class="markup--anchor markup--p-anchor" rel="noopener" target="_blank">https://axieinfinity.com/adopt-axies?r=CHl5UkYrgttjndv97yqxcY_6dnY</a> and I’ll get a referral bonus :)</p></div></div></section>
+</section>
+<footer><p class="p-tags">Tagged in <a href="https://medium.com/tag/genetics" class="p-tag">Genetics</a>, <a href="https://medium.com/tag/axieinfinity" class="p-tag">Axieinfinity</a>, <a href="https://medium.com/tag/cryptocurrency" class="p-tag">Cryptocurrency</a>, <a href="https://medium.com/tag/crypto-gaming" class="p-tag">Cryptogaming</a>, <a href="https://medium.com/tag/cryptokitties" class="p-tag">Cryptokitties</a></p><p>By <a href="https://medium.com/@freakitties" class="p-author h-card">freak kitty</a> on <a href="https://medium.com/p/572f147c45d9"><time class="dt-published" datetime="2018-04-05T18:08:41.044Z">April 5, 2018</time></a>.</p><p><a href="https://medium.com/@freakitties/sequencing-the-axie-genome-572f147c45d9" class="p-canonical">Canonical link</a></p><p>Exported from <a href="https://medium.com">Medium</a> on April 5, 2018.</p></footer></article>
+
+</body></html>
