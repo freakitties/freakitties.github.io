@@ -68,7 +68,7 @@
                 splits[piece] = "[0...0]"
             }
         }
-        out = splits.join(" ");
+        out = splits.join("");
         return out;
     }
 
@@ -109,7 +109,7 @@ $(document).ready(function(){
             mask = maskString(mask, genes[alltraits[t].ids[i].toString()]);
         }
         mask = formatMask(mask);
-        $("#traitsTable").append('<tr><td>' + (alltraits[t].mystic ? '<b>' + alltraits[t].name + '</b>' : alltraits[t].name) + "</td><td>" + alltraits[t].type + "</td><td>" + alltraits[t].class + "</td><td>" + mask + '</td>');
+        $("#traitsTable").append('<tr><td>' + (alltraits[t].mystic ? '<b>' + alltraits[t].name + '</b>' : alltraits[t].name) + "</td><td>" + alltraits[t].type + "</td><td>" + alltraits[t].class + "</td><td><pre>" + mask + '</pre></td>');
     }
     //Group by class
     var classes = {"plant": [], "bird": [], "bug": [], "reptile": [], "aquatic": [], "beast": []};
@@ -125,7 +125,7 @@ $(document).ready(function(){
         }
         //classMaskes[c] = mask;
         mask = formatMask(mask, null);
-        $("#classTable").append('<tr><td>' + c + "</td><td>" + mask + '</td></tr>');
+        $("#classTable").append('<tr><td>' + c + "</td><td><pre>" + mask + '</pre></td></tr>');
     }
 
 
