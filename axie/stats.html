@@ -83,7 +83,10 @@
                 if (id != axie.id.toString()) {console.log("ERROR: id mismatch!"); } //just in case
                 axieStats[id] = {};
                 Object.assign(axieStats[id], classStats[axie.class]);
+                axieStats[id].parts = [];
             }
+            axieStats[id].parts.push(traits[t].name);
+
             for (let b in bonus[c]) {
                 axieStats[id][b] += bonus[c][b];
             }
@@ -150,6 +153,7 @@ $(document).ready(function(){
         {title: "Speed", data: "speed", "searchable": false},
         {title: "Skill", data: "skill", "searchable": false},
         {title: "Morale", data: "morale", "searchable": false},
+        {title: "Parts", data: "parts[, ]", "searchable": true},
         /*
         {title: "Attack", data: "attack", "searchable": false},
         {title: "Defense", data: "defense", "searchable": false},
