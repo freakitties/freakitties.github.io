@@ -153,6 +153,9 @@ $(document).ready(function(){
         {title: "Speed", data: "speed", "searchable": false},
         {title: "Skill", data: "skill", "searchable": false},
         {title: "Morale", data: "morale", "searchable": false},
+        {title: "HP+Speed", data: null, "searchable": false, "render": function (data, type, full) {return (full.hp + full.speed)}},
+        {title: "HP+Morale", data: null, "searchable": false, "render": function (data, type, full) {return full.hp + full.morale}},
+        {title: "Speed+Morale", data: null, "searchable": false, "render": function (data, type, full) {return full.speed + full.morale}},
         {title: "Parts", data: "parts[, ]", "searchable": true},
         /*
         {title: "Attack", data: "attack", "searchable": false},
@@ -161,7 +164,7 @@ $(document).ready(function(){
         */
         //{title: "Total", data: "total"}
         ],
-        "language": {"search": "Search (ID or trait name):"},
+        "language": {"search": "Search (ID or part name):"},
         pageLength: 100
     });
 });
