@@ -143,6 +143,7 @@ $(document).ready(function(){
         for (let stat in axieStats[a]) {
             d[stat] = axieStats[a][stat];
         }
+        d["owner"] = getAxie(a)["owner"]
         data.push(d);
     }
     $('#axieTable').DataTable({
@@ -157,6 +158,7 @@ $(document).ready(function(){
         {title: "HP+Morale", data: null, "searchable": false, "render": function (data, type, full) {return full.hp + full.morale}},
         {title: "Speed+Morale", data: null, "searchable": false, "render": function (data, type, full) {return full.speed + full.morale}},
         {title: "Parts", data: "parts[, ]", "searchable": true},
+        {title: "Owner", data: "owner", "visible": false, "searchable": true},
         /*
         {title: "Attack", data: "attack", "searchable": false},
         {title: "Defense", data: "defense", "searchable": false},
@@ -164,7 +166,7 @@ $(document).ready(function(){
         */
         //{title: "Total", data: "total"}
         ],
-        "language": {"search": "Search (ID or part name):"},
+        "language": {"search": "Search (ID, part name, or owner address):"},
         pageLength: 100
     });
 });
