@@ -146,7 +146,7 @@ $(document).ready(function(){
         d["owner"] = getAxie(a)["owner"]
         data.push(d);
     }
-    $('#axieTable').DataTable({
+    var axieTable = $('#axieTable').DataTable({
         data: data,
         columns: [
         {title: "ID", data: "id", "render": render},
@@ -168,6 +168,21 @@ $(document).ready(function(){
         ],
         "language": {"search": "Search (ID, part name, or owner address):"},
         pageLength: 100
+    });
+
+    $('.dataTables_filter input').on( 'keyup click', function () {
+        var searchVal = $('.dataTables_filter input').val().trim();
+
+        if (searchVal.startsWith("0x")) {
+            axieTable.search( '' ).columns().search( '' ).draw();
+            axieTable.column(9).search(searchVal).draw();
+        } else if (isNaN(searchVal)) {
+            axieTable.search( '' ).columns().search( '' ).draw();
+            axieTable.column(8).search(searchVal).draw();
+        } else {
+            axieTable.search( '' ).columns().search( '' ).draw();
+            axieTable.column(0).search(searchVal).draw();
+        }
     });
 });
 </script>
