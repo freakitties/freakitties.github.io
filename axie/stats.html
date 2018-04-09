@@ -85,7 +85,7 @@
                 Object.assign(axieStats[id], classStats[axie.class]);
                 axieStats[id].parts = [];
             }
-            axieStats[id].parts.push(traits[t].name);
+            axieStats[id].parts.push({"name": traits[t].name, "type": traits[t].type});
 
             for (let b in bonus[c]) {
                 axieStats[id][b] += bonus[c][b];
@@ -93,7 +93,12 @@
         }
     }
 
+    var typeOrder = {"eyes": 2, "mouth": 3, "ears": 4, "horn": 5, "back": 6, "tail": 7};
     for (let a in axieStats) {
+        axieStats[a].parts.sort(function(a, b) {
+            if (typeOrder[a.type] < typeOrder[b.type]) return -1;
+            if (typeOrder[a.type] > typeOrder[b.type]) return 1;
+        });
         let total = 0;
         for(let stat in axieStats[a]) {
             total += axieStats[a][stat];
@@ -128,12 +133,21 @@
             return null;
         }
     }
-function render(data, type, row, meta) {
-    if(type === 'display'){
-        data = generateIDs([data]);
+
+    function render(data, type, row, meta) {
+        if(type === 'display'){
+            data = generateIDs([data]);
+        }
+        return data;
     }
-    return data;
-}
+
+    function renderParts(data, type, row, meta) {
+        let outData = [];
+        for (let d in data) {
+            outData.push(data[d].name);
+        }
+        return outData.join(", ");
+    }
 
 $(document).ready(function(){
     //TODO: don't keep duplicating this data structure
@@ -157,7 +171,7 @@ $(document).ready(function(){
         {title: "HP+Speed", data: null, "searchable": false, "render": function (data, type, full) {return (full.hp + full.speed)}},
         {title: "HP+Morale", data: null, "searchable": false, "render": function (data, type, full) {return full.hp + full.morale}},
         {title: "Speed+Morale", data: null, "searchable": false, "render": function (data, type, full) {return full.speed + full.morale}},
-        {title: "Parts", data: "parts[, ]", "searchable": true},
+        {title: "Parts", data: "parts", "render": renderParts, "searchable": true},
         {title: "Owner", data: "owner", "visible": false, "searchable": true},
         /*
         {title: "Attack", data: "attack", "searchable": false},
