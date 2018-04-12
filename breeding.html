@@ -29,6 +29,13 @@
             .default-hide {
                 display: none;
             }
+            .autoBig:hover {
+                width: 38;
+            }
+            .autoBig:hover {
+                height:120;
+                width: 120;
+            }
         </style>
     </head>
     <script>
@@ -225,14 +232,14 @@
                 '<div class="form-group row mb-1 mr-1">' +
                 '<label class="col-form-label col-md-3" for="matronId{ID}">Matron ID</label>' +
                 '<input class="form-control col-md-2" type="text" id="matronId{ID}" onchange="handleChange({ID}, \'matron\');"/>' +
-                '<a target="_blank" id="matronImgLink{ID}" href=""><img height="38" src="" style="display: none;" id="matronImg{ID}"/></a>' +
-                '<div class="col-md-6 col-form-label-sm" id="matronReady{ID}"></div>' +
+                '<a target="_blank" id="matronImgLink{ID}" href=""><img class="autoBig" height="38" src="" style="display: none;" id="matronImg{ID}"/></a>' +
+                '<div class="col-md-5 col-form-label-sm" id="matronReady{ID}"></div>' +
                 '</div>' +
                 '<div class="form-group row mb-1 mr-1">' +
                 '<label class="col-form-label col-md-3" for="sireId{ID}">Sire ID</label>' +
                 '<input class="form-control col-md-2" type="text" id="sireId{ID}" onchange="handleChange({ID}, \'sire\');"/>' +
-                '<a target="_blank" id="sireImgLink{ID}" href=""><img height="38" src="" style="display: none;" id="sireImg{ID}"/></a>' +
-                '<div class="col-md-6 col-form-label-sm" id="sireReady{ID}"></div>' +
+                '<a target="_blank" id="sireImgLink{ID}" href=""><img class="autoBig" height="38" src="" style="display: none;" id="sireImg{ID}"/></a>' +
+                '<div class="col-md-5 col-form-label-sm" id="sireReady{ID}"></div>' +
                 '</div>' +
                 '<button type="submit" class="btn btn-dark" onclick="selfBreed({ID});" id="breedButton{ID}">Breed Pair {ID}</button>&nbsp;' +
                 '<button type="submit" class="btn btn-light" onclick="openCalc({ID});" id="CalcButton{ID}">Check KittyCalc</button>' +
@@ -399,12 +406,12 @@
 
             <div class="form-group row mb-1 mr-1">
                 <label class="col-form-label col-md-3" for="matronId0">Matron ID</label>
-                <input class="form-control col-md-2" type="text" id="matronId0" onchange="handleChange(0, 'matron');"/><a target="_blank" id="matronImgLink0" href=""><img height="38" src="" style="display: none;" id="matronImg0"/></a><div class="col-md-6 col-form-label-sm" id="matronReady0"></div>
+                <input class="form-control col-md-2" type="text" id="matronId0" onchange="handleChange(0, 'matron');"/><a target="_blank" id="matronImgLink0" href=""><img class="autoBig" height="38" src="" style="display: none;" id="matronImg0"/></a><div class="col-md-5 col-form-label-sm" id="matronReady0"></div>
             </div>
 
             <div class="form-group row mb-1 mr-1">
                 <label class="col-form-label col-md-3" for="sireId0">Sire ID</label>
-                <input class="form-control col-md-2" type="text" id="sireId0" onchange="handleChange(0, 'sire');"/><a target="_blank" id="sireImgLink0" href=""><img height="38" src="" style="display: none;" id="sireImg0"/></a><div class="col-md-6 col-form-label-sm" id="sireReady0"></div>
+                <input class="form-control col-md-2" type="text" id="sireId0" onchange="handleChange(0, 'sire');"/><a target="_blank" id="sireImgLink0" href=""><img class="autoBig" height="38" src="" style="display: none;" id="sireImg0"/></a><div class="col-md-5 col-form-label-sm" id="sireReady0"></div>
             </div>
             <button type="submit" class="btn btn-dark" onclick="selfBreed(0);" id="breedButton0">Breed Pair 0</button>&nbsp;
             <button type="submit" class="btn btn-light" onclick="openCalc(0);" id="CalcButton0">Check KittyCalc</button>
