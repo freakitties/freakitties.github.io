@@ -183,10 +183,12 @@ $(document).ready(function(){
         "language": {"search": "Search (ID, part name, or owner address):"},
         pageLength: 100
     });
+    $("#axieTable_filter").append('<br/>Results for:&nbsp; <div class="float-right" id="searchParams"></div>');
+
 
     $('.dataTables_filter input').on( 'keyup click', function () {
         var searchVal = $('.dataTables_filter input').val().trim();
-
+        searchParams.textContent = searchVal;
         if (searchVal.startsWith("0x")) {
             axieTable.search( '' ).columns().search( '' ).draw();
             axieTable.column(9).search(searchVal).draw();
