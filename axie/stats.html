@@ -10,6 +10,7 @@
         </script>
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.bundle.min.js" integrity="sha384-feJI7QwhOS+hwpX2zkaeJQjeiwlhOP+SdQDqhgvvo1DsjtiSQByFdThsxO669S2D" crossorigin="anonymous"></script>
         <style>
             body {background-color: #efefef;}
         </style>
@@ -143,62 +144,93 @@
 
     function renderParts(data, type, row, meta) {
         let outData = [];
+        out = "";
         for (let d in data) {
+            parts = $.grep(bodyParts, function(element, index) {
+                return element.name == data[d].name;
+            });
+            part = parts[0];
+            let title = "";
+            if (part.moves.length > 0) {
+                title += "Type: " + part.moves[0].type + ", Atk: " + part.moves[0].attack + ", Def: " + part.moves[0].defense + ", Acc: " + part.moves[0].accuracy;
+                if (part.moves[0].effects.length > 0) {
+                    title += ", " + part.moves[0].effects[0].name;
+                    if (part.moves[0].effects[0].type == "passive") {
+                        title += "(passive)";
+                    }
+                    title += ": " + part.moves[0].effects[0].description;
+                }
+            }
+            if (part.mystic) {
+                out += '<span class="text-primary" data-toggle="tooltip"  data-placement="top" title="' + title + '">' + data[d].name + '</span>, ';
+            } else {
+                out += '<span data-toggle="tooltip" data-placement="top" title="' + title + '">' + data[d].name + "</span>, ";
+            }
+
+
             outData.push(data[d].name);
         }
-        return outData.join(", ");
+        //return outData.join(", ");
+        return out.slice(0, -2);
     }
-
+var bodyParts;
 $(document).ready(function(){
-    //TODO: don't keep duplicating this data structure
-    data = [];
-    for (let a in axieStats) {
-        let d = {id: a};
-        for (let stat in axieStats[a]) {
-            d[stat] = axieStats[a][stat];
+
+    $.get("https://axieinfinity.com/api/body-parts", function(data) {
+        bodyParts = data;
+
+        //TODO: don't keep duplicating this data structure
+        data = [];
+        for (let a in axieStats) {
+            let d = {id: a};
+            for (let stat in axieStats[a]) {
+                d[stat] = axieStats[a][stat];
+            }
+            d["owner"] = getAxie(a)["owner"]
+            data.push(d);
         }
-        d["owner"] = getAxie(a)["owner"]
-        data.push(d);
-    }
-    var axieTable = $('#axieTable').DataTable({
-        data: data,
-        columns: [
-        {title: "ID", data: "id", "render": render},
-        {title: "HP", data: "hp", "searchable": false},
-        {title: "Speed", data: "speed", "searchable": false},
-        {title: "Skill", data: "skill", "searchable": false},
-        {title: "Morale", data: "morale", "searchable": false},
-        {title: "HP+Speed", data: null, "searchable": false, "render": function (data, type, full) {return (full.hp + full.speed)}},
-        {title: "HP+Morale", data: null, "searchable": false, "render": function (data, type, full) {return full.hp + full.morale}},
-        {title: "Speed+Morale", data: null, "searchable": false, "render": function (data, type, full) {return full.speed + full.morale}},
-        {title: "Parts", data: "parts", "render": renderParts, "searchable": true},
-        {title: "Owner", data: "owner", "visible": false, "searchable": true},
-        /*
-        {title: "Attack", data: "attack", "searchable": false},
-        {title: "Defense", data: "defense", "searchable": false},
-        {title: "Accuracy", data: "accuracy", "searchable": false},
-        */
-        //{title: "Total", data: "total"}
-        ],
-        "language": {"search": "Search (ID, part name, or owner address):"},
-        pageLength: 100
-    });
-    $("#axieTable_filter").append('<br/>Results for:&nbsp; <div class="float-right" id="searchParams"></div>');
+        var axieTable = $('#axieTable').DataTable({
+            data: data,
+            columns: [
+            {title: "ID", data: "id", "render": render},
+            {title: "HP", data: "hp", "searchable": false},
+            {title: "Speed", data: "speed", "searchable": false},
+            {title: "Skill", data: "skill", "searchable": false},
+            {title: "Morale", data: "morale", "searchable": false},
+            {title: "HP+Speed", data: null, "searchable": false, "render": function (data, type, full) {return (full.hp + full.speed)}},
+            {title: "HP+Morale", data: null, "searchable": false, "render": function (data, type, full) {return full.hp + full.morale}},
+            {title: "Speed+Morale", data: null, "searchable": false, "render": function (data, type, full) {return full.speed + full.morale}},
+            {title: "Parts", data: "parts", "render": renderParts, "searchable": true},
+            {title: "Owner", data: "owner", "visible": false, "searchable": true},
+            /*
+            {title: "Attack", data: "attack", "searchable": false},
+            {title: "Defense", data: "defense", "searchable": false},
+            {title: "Accuracy", data: "accuracy", "searchable": false},
+            */
+            //{title: "Total", data: "total"}
+            ],
+            "language": {"search": "Search (ID, part name, or owner address):"},
+            pageLength: 100
+        });
+        $("#axieTable_filter").append('<br/>Results for:&nbsp; <div class="float-right" id="searchParams"></div>');
 
 
-    $('.dataTables_filter input').on( 'keyup click', function () {
-        var searchVal = $('.dataTables_filter input').val().trim();
-        searchParams.textContent = searchVal;
-        if (searchVal.startsWith("0x")) {
-            axieTable.search( '' ).columns().search( '' ).draw();
-            axieTable.column(9).search(searchVal).draw();
-        } else if (isNaN(searchVal)) {
-            axieTable.search( '' ).columns().search( '' ).draw();
-            axieTable.column(8).search(searchVal).draw();
-        } else {
-            axieTable.search( '' ).columns().search( '' ).draw();
-            axieTable.column(0).search(searchVal).draw();
-        }
+        $('.dataTables_filter input').on( 'keyup click', function () {
+            var searchVal = $('.dataTables_filter input').val().trim();
+            searchParams.textContent = searchVal;
+            if (searchVal.startsWith("0x")) {
+                axieTable.search( '' ).columns().search( '' ).draw();
+                axieTable.column(9).search(searchVal).draw();
+            } else if (isNaN(searchVal)) {
+                axieTable.search( '' ).columns().search( '' ).draw();
+                axieTable.column(8).search(searchVal).draw();
+            } else {
+                axieTable.search( '' ).columns().search( '' ).draw();
+                axieTable.column(0).search(searchVal).draw();
+            }
+        });
+
+        $('[data-toggle="tooltip"]').tooltip();
     });
 });
 </script>
