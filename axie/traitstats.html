@@ -36,7 +36,7 @@ $(document).ready(function(){
         for (let p in bodyParts) {
             let part = bodyParts[p];
             let key = part.name + "_" + part.type + "_" + part.class;
-            console.log(key);
+            //console.log(key);
             let row = {image: traits[key].image, name: part.name, type: part.type, class: part.class};
             if (part.moves.length > 0) {
                 row.moveType = part.moves[0].type;
