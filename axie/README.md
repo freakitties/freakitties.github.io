@@ -3,6 +3,8 @@ Tools for [Axie Infinity](https://axieinfinity.com/adopt-axies?r=CHl5UkYrgttjndv
 
 [Parts glossary ordered by rarity](traits.html)
 
+[Part stats and moves](traitstats.html)
+
 [Axies by purebredness](top.html)
 
 [Table of all Axies and their stats](stats.html)
@@ -12,4 +14,3 @@ Tools for [Axie Infinity](https://axieinfinity.com/adopt-axies?r=CHl5UkYrgttjndv
 [Blog about the gene breakdown](blog/2018-04-05_Sequencing-the-Axie-Genome-572f147c45d9.html)
 
 
-[testing](allgenes.html)

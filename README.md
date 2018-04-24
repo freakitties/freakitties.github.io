@@ -24,6 +24,8 @@ Live site: [https://freakitties.github.io/](https://freakitties.github.io/)
 
 [Parts glossary ordered by rarity](/axie/traits.html)
 
+[Part stats and moves](/axie/traitstats.html)
+
 [Axies by purebredness](/axie/top.html)
 
 [Table of all Axies and their stats](/axie/stats.html)
