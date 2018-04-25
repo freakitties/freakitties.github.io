@@ -44,6 +44,9 @@
             .w-45 {
                 width: 45% !important;
             }
+            div.tooltip-inner {
+                max-width: 350px;
+            }
         </style>
         <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.16/css/jquery.dataTables.min.css" integrity="sha384-1UXhfqyOyO+W+XsGhiIFwwD3hsaHRz2XDGMle3b8bXPH5+cMsXVShDoHA3AH/y/p" crossorigin="anonymous">
         <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js" integrity="sha384-Z9D45cp3elqajO+xEyjRTIK1Gr3eYsXiyCPIKNog1sIQzpo2fqFDqFdADGiJjzOv" crossorigin="anonymous"></script>
@@ -158,7 +161,7 @@
                     if (part.moves[0].effects[0].type == "passive") {
                         title += "(passive)";
                     }
-                    title += ": " + part.moves[0].effects[0].description;
+                    title += ": " + part.moves[0].effects[0].description.replace(/"/g, "&quot;").replace(/</g, '&lt;');
                 }
             }
             if (part.mystic) {
@@ -210,7 +213,8 @@ $(document).ready(function(){
             //{title: "Total", data: "total"}
             ],
             "language": {"search": "Search (ID, part name, or owner address):"},
-            pageLength: 100
+            pageLength: 100,
+            drawCallback: function() { $('[data-toggle="tooltip"]').tooltip(); }
         });
         $("#axieTable_filter").append('<br/>Results for:&nbsp; <div class="float-right" id="searchParams"></div>');
 
