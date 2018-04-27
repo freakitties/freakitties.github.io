@@ -22,9 +22,17 @@
 
     function render(data, type, row, meta) {
         if(type === 'display'){
-            data = '<img width=60 src="' + data + '"/>';
+            data = '<img width=60 src="' + data + '"/><br/>' + row.name;
         }
         return data;
+    }
+
+    function renderFloat(data, type, row, meta) {
+        if (typeof data == "number") {
+            return data.toFixed(2);
+        } else {
+            return data;
+        }
     }
 
 var bodyParts;
@@ -40,9 +48,13 @@ $(document).ready(function(){
             let row = {image: traits[key].image.replace(/"/g, "&quot;").replace(/</g, '&lt;'), name: part.name.replace(/"/g, "&quot;").replace(/</g, '&lt;'), type: part.type.replace(/"/g, "&quot;").replace(/</g, '&lt;'), class: part.class.replace(/"/g, "&quot;").replace(/</g, '&lt;')};
             if (part.moves.length > 0) {
                 row.moveType = part.moves[0].type.replace(/"/g, "&quot;").replace(/</g, '&lt;');
+                row.moveName = part.moves[0].name.replace(/"/g, "&quot;").replace(/</g, '&lt;');
                 row.attack = parseInt(part.moves[0].attack);
                 row.defense = parseInt(part.moves[0].defense);
                 row.accuracy = parseInt(part.moves[0].accuracy);
+                row.effectiveAttack = row.attack * (row.accuracy/100);
+                row.adRatio = row.effectiveAttack / row.defense;
+                row.adMultiple = row.effectiveAttack * row.defense;
                 row.effects = "";
                 if (part.moves[0].effects.length > 0) {
                     row.effects = part.moves[0].effects[0].name.replace(/"/g, "&quot;").replace(/</g, '&lt;');
@@ -52,7 +64,7 @@ $(document).ready(function(){
                     row.effects += ": " + part.moves[0].effects[0].description.replace(/"/g, "&quot;").replace(/</g, '&lt;');
                 }
             } else {
-                row.moveType = row.attack = row.defense = row.accuracy = row.effects = "-";
+                row.moveType = row.moveName = row.attack = row.defense = row.accuracy = row.effects = row.effectiveAttack = row.adRatio = row.adMultiple = "-";
             }
             data.push(row);
         }
@@ -61,18 +73,27 @@ $(document).ready(function(){
         var axieTable = $('#axieTable').DataTable({
             data: data,
             columns: [
-            {title: "Image", data: "image", "render": render},
-            {title: "Name", data: "name"},
+            {title: "Part", data: "image", "render": render},
+            {title: "Move Name", data: "moveName"},
             {title: "Type", data: "type"},
             {title: "Class", data: "class"},
             {title: "Move Type", data: "moveType"},
-            {title: "Attack", data: "attack", "searchable": false},
-            {title: "Defense", data: "defense", "searchable": false},
-            {title: "Accuracy", data: "accuracy", "searchable": false},
+            {title: "Attack", data: "attack", searchable: false},
+            {title: "Defense", data: "defense", searchable: false},
+            {title: "Accuracy", data: "accuracy", searchable: false},
+            /*
+            {title: "Effective attack", data: "effectiveAttack", searchable: false, render: renderFloat},
+            {title: "A/D", data: "adRatio", searchable: false,render: renderFloat},
+            {title: "A*D", data: "adMultiple", searchable: false,render: renderFloat},
+            */
             {title: "Effect", data: "effects"},
             ],
             "language": {"search": "Search (part name, type, class, move type, or effect):"},
-            pageLength: 100
+            pageLength: 150,
+            "columnDefs": [
+                { className: "text-center", "targets": [0, 2, 3, 4, 5, 6, 7] }
+            ]
+
         });
     });
 });
