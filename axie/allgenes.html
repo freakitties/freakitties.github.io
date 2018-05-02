@@ -73,6 +73,8 @@
     }
 
     function getAxie(num) {
+        return axiesDict[num];
+/*
         if (typeof num != "number") {
             num = parseInt(num)
         }
@@ -81,6 +83,7 @@
         } else {
             return null;
         }
+*/
     }
 
     function render(data, type, row, meta) {
@@ -91,48 +94,64 @@
     }
 
     function renderGroup0(data, type, row, meta) {
+        let bin = data.slice(0, 4);
         if(type === 'display') {
-            let bin = data.slice(0, 4)
-            return bin + "(" + parseInt(data.slice(0, 4), 2) + ") " + classGeneMap[bin];
+            if (bin in classGeneMap) {
+                return bin + "(" + parseInt(bin, 2) + ") " + classGeneMap[bin];
+            } else{
+                return bin + "(" + parseInt(bin, 2) + ") ???";
+            }
+
         }
-        return data;
+        return bin;
     }
 
     function renderGroup01(data, type, row, meta) {
         return data.slice(4, 8);;
     }
-    function renderGroup02(data, type, row, meta) {
-        return data.slice(8, 32);
-    }
 
+    function renderGroup02(data, type, row, meta) {
+        //return data.slice(8, 32);
+        let bin = data.slice(8, 32);
+        return bin.slice(0, 9) + "<b>" + bin.slice(9, 10) + "</b>" + bin.slice(10, 32);
+    }
 
     function renderGroup1(data, type, row, meta) {
         return data.slice(0, 4);
     }
 
     function renderGroup11(data, type, row, meta) {
+        let bin = data.slice(4, 8);
         if(type === 'display'){
             //Patterns
-            return "<b>" + data.slice(4, 8) +  "(" + parseInt(data.slice(4, 8), 2) + ")</b>";
+            return "<b>" + bin +  "(" + parseInt(bin, 2) + ")</b>";
             return out;
         }
-        return data;
+        return bin;
     }
 
     function renderGroup12(data, type, row, meta) {
-        return data.slice(8, 20);
+        let bin = data.slice(8, 20);
+        let out = bin.slice(0, 4);
+        out += "_" + bin.slice(4, 8);
+        out += "_" + bin.slice(8, 12);
+        return out;
     }
 
     function renderGroup13(data, type, row, meta) {
+        let bin = data.slice(20, 24);
         if(type === 'display'){
             //Colors
-            return "<b>" + data.slice(20, 24) + "(" + parseInt(data.slice(20, 24), 2) + ")</b>";
+            return "<b>" + bin + "(" + parseInt(bin, 2) + ")</b>";
         }
-        return data;
+        return bin;
     }
 
     function renderGroup14(data, type, row, meta) {
-        return data.slice(24, 32);
+        let bin = data.slice(24, 32);
+        let out = bin.slice(0, 4);
+        out += "_" + bin.slice(4, 8);
+        return out;
     }
 
     function renderGroup2(data, type, row, meta) {
@@ -140,15 +159,18 @@
     }
 
     function renderGroup21(data, type, row, meta) {
+        let bin = data.slice(2, 6);
         if(type === 'display'){
-            let bin = data.slice(2, 6);
-            return "<b>" + bin + "</b> " + classGeneMap[bin];;
+            return "<b>" + bin + "</b> " + classGeneMap[bin];
         }
-        return data;
+        return bin;
     }
 
     function getTraitName(firstSix, traitBinary, type, checkMystic = false) {
         let classBinary = firstSix.slice(2, 6);
+        if (traitMapping[classGeneMap[classBinary]][type] == null) {
+            console.log("classBinary: " + classBinary + "classGeneMap[classBinary]" + classGeneMap[classBinary] + " type: "+type + " traitMapping[classGeneMap[classBinary]][type] " + traitMapping[classGeneMap[lassBinary]][type]);
+        }
         if (!(traitBinary in traitMapping[classGeneMap[classBinary]][type])) return "UNKNOWN";
         let name = "";
         if (checkMystic) {
@@ -161,31 +183,38 @@
     }
 
     function renderGroup22(data, type, row, meta) {
+        let bin = data.slice(6, 11);
         if(type === 'display'){
-            let name = getTraitName(data.slice(0, 6), data.slice(6, 11), meta.settings.aoColumns[meta.col].sTitle.toLowerCase(), true);
-            return "<b>" + data.slice(6, 11) + "</b><br/>" + name;
+            let name = getTraitName(data.slice(0, 6), bin, meta.settings.aoColumns[meta.col].sTitle.toLowerCase(), true);
+            return "<b>" + bin + "</b><br/>" + name;
         }
-        return data;
+        return bin;
     }
 
     function renderGroup23(data, type, row, meta) {
-        let name = getTraitName(data.slice(0, 6), data.slice(11,16), meta.settings.aoColumns[meta.col].sTitle.toLowerCase().slice(0, -1));
-        return data.slice(11,16) + "<br/>" + name;
+        //let name = getTraitName(data.slice(0, 6), data.slice(11,16), meta.settings.aoColumns[meta.col].sTitle.toLowerCase().slice(0, -1));
+        //return data.slice(11,16) + "<br/>" + name;
+        return data.slice(11,12) + "? " + data.slice(12,16) + "<br/>" + classGeneMap[data.slice(12,16)];
     }
 
     function renderGroup24(data, type, row, meta) {
-        let name = getTraitName(data.slice(0, 6), data.slice(16,21), meta.settings.aoColumns[meta.col].sTitle.toLowerCase().slice(0, -1));
-        return data.slice(16,21) + "<br/>" + name;
+        let bin = data.slice(16,21);
+        //let name = getTraitName(data.slice(0, 6), data.slice(16,21), meta.settings.aoColumns[meta.col].sTitle.toLowerCase().slice(0, -1));
+        let name = getTraitName(data.slice(10,16), bin, meta.settings.aoColumns[meta.col].sTitle.toLowerCase().slice(0, -1));
+        return bin + "<br/>" + name;
     }
 
     function renderGroup25(data, type, row, meta) {
-        let name = getTraitName(data.slice(0, 6), data.slice(21,26), meta.settings.aoColumns[meta.col].sTitle.toLowerCase().slice(0, -1));
-        return data.slice(21,26) + "<br/>" + name;
+        //let name = getTraitName(data.slice(0, 6), data.slice(21,26), meta.settings.aoColumns[meta.col].sTitle.toLowerCase().slice(0, -1));
+        //return data.slice(21,26) + "<br/>" + name;
+        return data.slice(21,22) + "? " + data.slice(22,26) + "<br/>" + classGeneMap[data.slice(22,26)];
     }
 
     function renderGroup26(data, type, row, meta) {
-        let name = getTraitName(data.slice(0, 6), data.slice(26,31), meta.settings.aoColumns[meta.col].sTitle.toLowerCase().slice(0, -1));
-        return data.slice(26,31) + "<br/>" + name;
+        let bin = data.slice(26,31);
+        //let name = getTraitName(data.slice(0, 6), data.slice(26,31), meta.settings.aoColumns[meta.col].sTitle.toLowerCase().slice(0, -1));
+        let name = getTraitName(data.slice(20,26), bin, meta.settings.aoColumns[meta.col].sTitle.toLowerCase().slice(0, -1));
+        return bin + "<br/>" + name;
     }
 
     function renderGroup27(data, type, row, meta) {
@@ -198,6 +227,16 @@ $(document).ready(function(){
         let id = traits[t].ids[0].toString();
         let axieType = traits[t].type;
         let axieClass = traits[t].class;
+        for (let i in traits[t].ids) {
+            id = traits[t].ids[i].toString();
+            if (id in genes) {
+                break;
+            }
+        }
+        if (!(id in genes)) {
+            console.log("ID " + id + " not in genes!");
+            continue;
+        }
         let traitBinary = genes[id].slice(typeOrder[axieType] * 32 + 6, typeOrder[axieType] * 32 + 11);
         if (!(axieClass in traitMapping)) {
             traitMapping[axieClass] = {};
@@ -246,6 +285,12 @@ $(document).ready(function(){
             }
         }
         row['mystics'] = numMystic;
+        let axie = getAxie(id)
+        if (axie != null && 'owner' in axie) {
+            row['owner'] = axie['owner'];
+        } else {
+            row['owner'] = "?";
+        }
         data.push(row);
     }
 
@@ -253,71 +298,72 @@ $(document).ready(function(){
         data: data,
         columns: [
         {title: "ID", data: "id", "render": render},
-        {title: "Mystics", data: "mystics"},
+        {title: "Num Mystics", data: "mystics"},
         {title: "Class", data: "group0", render: renderGroup0, searchable: false},
         {title: "0.1", data: "group0", render: renderGroup01, searchable: false},
-        {title: "0.2", data: "group0", render: renderGroup02, searchable: false},
+        {title: "0.2 (Origin)", data: "group0", render: renderGroup02, searchable: false},
         {title: "1.0", data: "group1", render: renderGroup1, searchable: false},
         {title: "Pattern", data: "group1", render: renderGroup11, searchable: false},
-        {title: "1.2", data: "group1", render: renderGroup12, searchable: false},
+        {title: "Pattern recessive?", data: "group1", render: renderGroup12, searchable: false},
         {title: "Color", data: "group1", render: renderGroup13, searchable: false},
-        {title: "1.4", data: "group1", render: renderGroup14, searchable: false},
+        {title: "Color recessive?", data: "group1", render: renderGroup14, searchable: false},
 
         {title: "Mystic", data: "group2", render: renderGroup2, searchable: false},
         {title: "Eyes Class", data: "group2", render: renderGroup21, searchable: false},
         {title: "Eyes", data: "group2", render: renderGroup22, searchable: false},
-        {title: "Eyes?", data: "group2", render: renderGroup23, searchable: false},
+        {title: "Eyes Class?", data: "group2", render: renderGroup23, searchable: false},
         {title: "Eyes?", data: "group2", render: renderGroup24, searchable: false},
-        {title: "Eyes?", data: "group2", render: renderGroup25, searchable: false},
+        {title: "Eyes Class?", data: "group2", render: renderGroup25, searchable: false},
         {title: "Eyes?", data: "group2", render: renderGroup26, searchable: false},
         {title: "?", data: "group2", render: renderGroup27, searchable: false},
 
         {title: "Mystic", data: "group3", render: renderGroup2, searchable: false},
         {title: "Mouth Class", data: "group3", render: renderGroup21, searchable: false},
         {title: "Mouth", data: "group3", render: renderGroup22, searchable: false},
-        {title: "Mouth?", data: "group3", render: renderGroup23, searchable: false},
+        {title: "Mouth Class?", data: "group3", render: renderGroup23, searchable: false},
         {title: "Mouth?", data: "group3", render: renderGroup24, searchable: false},
-        {title: "Mouth?", data: "group3", render: renderGroup25, searchable: false},
+        {title: "Mouth Class?", data: "group3", render: renderGroup25, searchable: false},
         {title: "Mouth?", data: "group3", render: renderGroup26, searchable: false},
         {title: "?", data: "group3", render: renderGroup27, searchable: false},
 
         {title: "Mystic", data: "group4", render: renderGroup2, searchable: false},
         {title: "Ears Class", data: "group4", render: renderGroup21, searchable: false},
         {title: "Ears", data: "group4", render: renderGroup22, searchable: false},
-        {title: "Ears?", data: "group4", render: renderGroup23, searchable: false},
+        {title: "Ears Class?", data: "group4", render: renderGroup23, searchable: false},
         {title: "Ears?", data: "group4", render: renderGroup24, searchable: false},
-        {title: "Ears?", data: "group4", render: renderGroup25, searchable: false},
+        {title: "Ears Class?", data: "group4", render: renderGroup25, searchable: false},
         {title: "Ears?", data: "group4", render: renderGroup26, searchable: false},
         {title: "?", data: "group4", render: renderGroup27, searchable: false},
 
         {title: "Mystic", data: "group5", render: renderGroup2, searchable: false},
         {title: "Horn Class", data: "group5", render: renderGroup21, searchable: false},
         {title: "Horn", data: "group5", render: renderGroup22, searchable: false},
-        {title: "Horn?", data: "group5", render: renderGroup23, searchable: false},
+        {title: "Horn Class?", data: "group5", render: renderGroup23, searchable: false},
         {title: "Horn?", data: "group5", render: renderGroup24, searchable: false},
-        {title: "Horn?", data: "group5", render: renderGroup25, searchable: false},
+        {title: "Horn Class?", data: "group5", render: renderGroup25, searchable: false},
         {title: "Horn?", data: "group5", render: renderGroup26, searchable: false},
         {title: "?", data: "group5", render: renderGroup27, searchable: false},
 
         {title: "Mystic", data: "group6", render: renderGroup2, searchable: false},
         {title: "Back Class", data: "group6", render: renderGroup21, searchable: false},
         {title: "Back", data: "group6", render: renderGroup22, searchable: false},
-        {title: "Back?", data: "group6", render: renderGroup23, searchable: false},
+        {title: "Back Class?", data: "group6", render: renderGroup23, searchable: false},
         {title: "Back?", data: "group6", render: renderGroup24, searchable: false},
-        {title: "Back?", data: "group6", render: renderGroup25, searchable: false},
+        {title: "Back Class?", data: "group6", render: renderGroup25, searchable: false},
         {title: "Back?", data: "group6", render: renderGroup26, searchable: false},
         {title: "?", data: "group6", render: renderGroup27, searchable: false},
 
         {title: "Mystic", data: "group7", render: renderGroup2, searchable: false},
         {title: "Tail Class", data: "group7", render: renderGroup21, searchable: false},
         {title: "Tail", data: "group7", render: renderGroup22, searchable: false},
-        {title: "Tail?", data: "group7", render: renderGroup23, searchable: false},
+        {title: "Tail Class?", data: "group7", render: renderGroup23, searchable: false},
         {title: "Tail?", data: "group7", render: renderGroup24, searchable: false},
-        {title: "Tail?", data: "group7", render: renderGroup25, searchable: false},
+        {title: "Tail Class?", data: "group7", render: renderGroup25, searchable: false},
         {title: "Tail?", data: "group7", render: renderGroup26, searchable: false},
-        {title: "?", data: "group7", render: renderGroup27, searchable: false}
+        {title: "?", data: "group7", render: renderGroup27, searchable: false},
+        {title: "owner", data: "owner", searchable: true}
         ],
-        "language": {"search": "Search ID:"},
+        "language": {"search": "Search (ID or owner):"},
         pageLength: 100
     });
 
@@ -330,7 +376,7 @@ $(document).ready(function(){
             <div class="container-fluid">
                 <div class="navbar-header">
                 </div>
-                <a role="button" class="btn btn-primary" href="https://axieinfinity.com/adopt-axies?r=CHl5UkYrgttjndv97yqxcY_6dnY">Adopt an Axie!</a>
+                <!--<a role="button" class="btn btn-primary" href="https://axieinfinity.com/adopt-axies?r=CHl5UkYrgttjndv97yqxcY_6dnY">Adopt an Axie!</a>-->
                 <div class="text-white">Donations: 0x209045cfe98445d6541d4fdf560d0d63fad77753 &nbsp;</div><br/>
             </div>
         </div>
