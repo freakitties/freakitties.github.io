@@ -190,19 +190,6 @@
         return out;
     }
 
-    function getAxie(num) {
-        if (typeof num != "number") {
-            num = parseInt(num)
-        }
-        if (num >= 5) {
-            let axie = axies[num - 5];
-            axie.genes = genes[axie.id.toString()];
-            return axie;
-        } else {
-            return null;
-        }
-    }
-
     var mystics = [];
     var normal = [];
     for (let name in traits) {
@@ -219,9 +206,6 @@
 $(document).ready(function(){
     //Group by Traits
     for (let t in alltraits) {
-        let axie = getAxie(alltraits[t].ids[0]);
-        let color = "btn-" + axie['class'];
-
         let mask = "1111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111";
         for (let i in alltraits[t].ids) {
             mask = maskString(mask, genes[alltraits[t].ids[i].toString()]);
@@ -231,8 +215,8 @@ $(document).ready(function(){
     }
     //Group by class
     var classes = {"plant": [], "bird": [], "bug": [], "reptile": [], "aquatic": [], "beast": []};
-    for (let i in axies) {
-        classes[axies[i].class].push(genes[axies[i].id.toString()]);
+    for (let i in axiesDict) {
+        classes[axiesDict[i].class].push(genes[i]);
     }
     //var classMaskes = {};
     for (let c in classBits) {
