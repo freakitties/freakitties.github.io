@@ -68,7 +68,6 @@
             classStats[cls][b] = 23 + 4 * classAttribs[cls][b];
         }
     }
-    console.log(classStats);
 
     var bonus = {"beast": {"speed": 1, "morale": 3},
                 "aquatic": {"hp": 1, "speed": 3},
@@ -84,7 +83,6 @@
             let id = traits[t].ids[i].toString();
             if (!(id in axieStats)) {
                 let axie = getAxie(id);
-                if (id != axie.id.toString()) {console.log("ERROR: id mismatch!"); } //just in case
                 axieStats[id] = {};
                 Object.assign(axieStats[id], classStats[axie.class]);
                 axieStats[id].parts = [];
@@ -128,14 +126,11 @@
     }
 
     function getAxie(num) {
-        if (typeof num != "number") {
-            num = parseInt(num)
+        let n = num.toString();
+        if (n in axiesDict) {
+            return axiesDict[n];
         }
-        if (num >= 5) {
-            return axies[num - 5];
-        } else {
-            return null;
-        }
+        return null;
     }
 
     function render(data, type, row, meta) {
@@ -189,7 +184,7 @@ $(document).ready(function(){
             for (let stat in axieStats[a]) {
                 d[stat] = axieStats[a][stat];
             }
-            d["owner"] = getAxie(a)["owner"]
+            d["owner"] = getAxie(a)["owner"];
             data.push(d);
         }
         var axieTable = $('#axieTable').DataTable({
