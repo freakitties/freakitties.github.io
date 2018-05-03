@@ -367,6 +367,15 @@ $(document).ready(function(){
         pageLength: 100
     });
 
+    $('.dataTables_filter input').on( 'keyup click', function () {
+        var searchVal = $('.dataTables_filter input').val().trim();
+        if (searchVal.startsWith("0x")) {
+            axieTable.column("owner").search(searchVal).draw();
+        } else {
+            axieTable.column(0).search(searchVal).draw();
+        }
+    });
+
 });
 </script>
 
