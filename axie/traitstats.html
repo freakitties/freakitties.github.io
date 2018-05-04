@@ -45,6 +45,7 @@ $(document).ready(function(){
             let part = bodyParts[p];
             let key = part.name + "_" + part.type + "_" + part.class;
             //console.log(key);
+            if (!(key in traits)) continue;
             let row = {image: traits[key].image.replace(/"/g, "&quot;").replace(/</g, '&lt;'), name: part.name.replace(/"/g, "&quot;").replace(/</g, '&lt;'), type: part.type.replace(/"/g, "&quot;").replace(/</g, '&lt;'), class: part.class.replace(/"/g, "&quot;").replace(/</g, '&lt;')};
             if (part.moves.length > 0) {
                 row.moveType = part.moves[0].type.replace(/"/g, "&quot;").replace(/</g, '&lt;');
