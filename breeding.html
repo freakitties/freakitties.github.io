@@ -149,6 +149,8 @@
                     if (typeof result == "number") {
                         checkCooldowns(id, result, function(ready) {
                             if (ready) {
+                                $("#sireReady" + id).text("");
+                                $("#matronReady" + id).text("");
                                 coreInstance.breedWithAuto(matronId, sireId, {from: web3.eth.accounts[0], value: autoBirthFee}, (err, result) => {
                                     if (err) {
                                         alert(err);
