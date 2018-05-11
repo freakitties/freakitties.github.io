@@ -1,0 +1,505 @@
+<html>
+    <head>
+        <title>All Axie Genes</title>
+        <script async src="https://www.googletagmanager.com/gtag/js?id=UA-116189657-1"></script>
+        <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'UA-116189657-1');
+        </script>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+        <script src="../bignumber.min.js"></script>
+        <script src="traitmapping.js"></script>
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+        <style>
+            body {background-color: #efefef;}
+        </style>
+        <style>
+            .btn-plant, .btn-plant:hover, .btn-plant:active, .btn-plant:visited {
+                background-color: rgb(108, 192, 0) !important;
+                border-color: rgb(108, 192, 0) !important;
+            }
+            .btn-reptile, .btn-reptile:hover, .btn-reptile:active, .btn-reptile:visited {
+                background-color: rgb(200, 138, 224) !important;
+                border-color: rgb(200, 138, 224) !important;
+            }
+            .btn-beast, .btn-beast:hover, .btn-beast:active, .btn-beast:visited {
+                background-color: rgb(255, 184, 18) !important;
+                border-color: rgb(255, 184, 18) !important;
+            }
+            .btn-aquatic, .btn-aquatic:hover, .btn-aquatic:active, .btn-aquatic:visited {
+                background-color: rgb(0, 184, 206) !important;
+                border-color: rgb(0, 184, 206) !important;
+            }
+            .btn-bird, .btn-bird:hover, .btn-bird:active, .btn-bird:visited {
+                background-color: rgb(255, 139, 189) !important;
+                border-color: rgb(255, 139, 189) !important;
+            }
+            .btn-bug, .btn-bug:hover, .btn-bug:active, .btn-bug:visited {
+                background-color: rgb(255, 83, 65) !important;
+                border-color: rgb(255, 83, 65) !important;
+            }
+            .w-45 {
+                width: 45% !important;
+            }
+        </style>
+        <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.16/css/jquery.dataTables.min.css" integrity="sha384-1UXhfqyOyO+W+XsGhiIFwwD3hsaHRz2XDGMle3b8bXPH5+cMsXVShDoHA3AH/y/p" crossorigin="anonymous">
+        <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js" integrity="sha384-Z9D45cp3elqajO+xEyjRTIK1Gr3eYsXiyCPIKNog1sIQzpo2fqFDqFdADGiJjzOv" crossorigin="anonymous"></script>
+    </head>
+<script>
+
+    var classGeneMap = {"0000": "beast", "0001": "bug", "0010": "bird", "0011": "plant", "0100": "aquatic", "0101": "reptile"};
+    var typeOrder = {"eyes": 2, "mouth": 3, "ears": 4, "horn": 5, "back": 6, "tail": 7};
+    var hash = window.location.hash.substr(1);
+
+    function getClassFromGenes(id) {
+        let bin = axies[id].genes.slice(0, 4);
+        if (!(bin in classGeneMap)) {
+            console.log(bin + " is not in the gene map. unknown class.");
+            return "unknown";
+        }
+        return classGeneMap[bin];
+    }
+
+    function generateIDs(ids) {
+        var list = "";
+        for (let i in ids) {
+            let axie = axies[ids[i]];
+            let color = "";
+            if (axie == null || axie['class'] == null || typeof axie == "undefined") {
+                color = "btn-" + getClassFromGenes(ids[i]);
+            } else {
+                color = "btn-" + axie['class'];
+            }
+            if (typeof axie != "undefined" && axie['auction'] && hash.indexOf("auction") != -1) {
+                //like everything else, auction data is not real-time
+                list += '<a target="_blank" role="button" class="mb-1 btn btn-sm btn-info ' + color + '" href="https://axieinfinity.com/axie/' + ids[i] + '?r=CHl5UkYrgttjndv97yqxcY_6dnY">#' + ids[i] + '*</a> ';
+            } else {
+                list += '<a target="_blank" role="button" class="mb-1 btn btn-sm btn-info ' + color + '" href="https://axieinfinity.com/axie/' + ids[i] + '?r=CHl5UkYrgttjndv97yqxcY_6dnY">#' + ids[i] + '</a> ';
+            }
+        }
+        return list;
+    }
+
+    function render(data, type, row, meta) {
+        if(type === 'display'){
+            data = generateIDs([data]);
+        }
+        return data;
+    }
+
+    function renderGroup0(data, type, row, meta) {
+        let bin = data.slice(0, 4);
+        if(type === 'display') {
+            if (bin in classGeneMap) {
+                return bin + "(" + parseInt(bin, 2) + ") " + classGeneMap[bin];
+            } else{
+                return bin + "(" + parseInt(bin, 2) + ") ???";
+            }
+
+        }
+        return bin;
+    }
+
+    function renderGroup01(data, type, row, meta) {
+        return data.slice(4, 8);
+    }
+
+    function renderGroup02(data, type, row, meta) {
+        let bin = data.slice(8, 32);
+        return bin.slice(0, 4);
+    }
+
+    function renderGroup03(data, type, row, meta) {
+        let bin = data.slice(8, 32);
+        return bin.slice(4, 5);
+    }
+
+    function renderGroup04(data, type, row, meta) {
+        let bin = data.slice(8, 32);
+        return bin.slice(5, 9);
+    }
+
+    function renderGroup05(data, type, row, meta) {
+        let bin = data.slice(8, 32);
+        return bin.slice(9, 10);
+    }
+
+    function renderGroup06(data, type, row, meta) {
+        let bin = data.slice(8, 32);
+        return bin.slice(10, 24);
+    }
+
+    function renderGroup1(data, type, row, meta) {
+        return data.slice(0, 4);
+    }
+
+    function renderGroup11(data, type, row, meta) {
+        let bin = data.slice(4, 8);
+        if(type === 'display'){
+            //Patterns
+            return "<b>" + bin +  "(" + parseInt(bin, 2) + ")</b>";
+            return out;
+        }
+        return bin;
+    }
+
+    function renderGroup12(data, type, row, meta) {
+        let bin = data.slice(8, 20);
+        let out = bin.slice(0, 4);
+        out += "_" + bin.slice(4, 8);
+        out += "_" + bin.slice(8, 12);
+        return out;
+    }
+
+    function renderGroup13(data, type, row, meta) {
+        let bin = data.slice(20, 24);
+        if(type === 'display'){
+            //Colors
+            return "<b>" + bin + "(" + parseInt(bin, 2) + ")</b>";
+        }
+        return bin;
+    }
+
+    function renderGroup14(data, type, row, meta) {
+        let bin = data.slice(24, 32);
+        let out = bin.slice(0, 4);
+        out += "_" + bin.slice(4, 8);
+        return out;
+    }
+
+    function renderGroup2(data, type, row, meta) {
+            return data.slice(0, 2);
+    }
+
+    function renderGroup21(data, type, row, meta) {
+        let bin = data.slice(2, 6);
+        if(type === 'display'){
+            return "<b>" + bin + "</b> " + classGeneMap[bin];
+        }
+        return bin;
+    }
+
+    var regionMap = {"0": "global", "1": "japan"};
+    function getTraitName(row, firstSix, traitBinary, type, checkMystic = false) {
+
+        let rBit = row.group0.slice(12,13);
+        if (rBit in regionMap) {
+            region = regionMap[rBit];
+        } else {
+            console.log("unknown region");
+            return "Unknown regional trait";
+        }
+
+        let classBinary = firstSix.slice(2, 6);
+        if (traitMapping[classGeneMap[classBinary]][type] == null) {
+            console.log("classBinary: " + classBinary + "classGeneMap[classBinary]" + classGeneMap[classBinary] + " type: " + type + " traitMapping[classGeneMap[classBinary]][type] " + traitMapping[classGeneMap[lassBinary]][type]);
+        }
+        if (!(traitBinary in traitMapping[classGeneMap[classBinary]][type])) return "UNKNOWN";
+        let name = "";
+        if (checkMystic) {
+            let isMystic = firstSix.slice(0, 2) == "11";
+            name = traitMapping[classGeneMap[classBinary]][type][traitBinary][isMystic ? "mystic" : region];
+        } else {
+            name = traitMapping[classGeneMap[classBinary]][type][traitBinary][region];
+        }
+        return name;
+    }
+
+    function renderGroup22(data, type, row, meta) {
+        let bin = data.slice(6, 11);
+        if(type === 'display'){
+            name = getTraitName(row, data.slice(0, 6), bin, meta.settings.aoColumns[meta.col].sTitle.toLowerCase(), true);
+            return "<b>" + bin + "</b><br/>" + name;
+        }
+        return bin;
+    }
+
+    function renderGroup23(data, type, row, meta) {
+        //let name = getTraitName(data.slice(0, 6), data.slice(11,16), meta.settings.aoColumns[meta.col].sTitle.toLowerCase().slice(0, -1));
+        //return data.slice(11,16) + "<br/>" + name;
+        return data.slice(11,12) + "? " + data.slice(12,16) + "<br/>" + classGeneMap[data.slice(12,16)];
+    }
+
+    function renderGroup24(data, type, row, meta) {
+        let bin = data.slice(16,21);
+        //let name = getTraitName(data.slice(0, 6), data.slice(16,21), meta.settings.aoColumns[meta.col].sTitle.toLowerCase().slice(0, -1));
+        let name = getTraitName(row, data.slice(10,16), bin, meta.settings.aoColumns[meta.col].sTitle.toLowerCase().slice(0, -1));
+        return bin + "<br/>" + name;
+    }
+
+    function renderGroup25(data, type, row, meta) {
+        //let name = getTraitName(data.slice(0, 6), data.slice(21,26), meta.settings.aoColumns[meta.col].sTitle.toLowerCase().slice(0, -1));
+        //return data.slice(21,26) + "<br/>" + name;
+        return data.slice(21,22) + "? " + data.slice(22,26) + "<br/>" + classGeneMap[data.slice(22,26)];
+    }
+
+    function renderGroup26(data, type, row, meta) {
+        let bin = data.slice(26,31);
+        //let name = getTraitName(data.slice(0, 6), data.slice(26,31), meta.settings.aoColumns[meta.col].sTitle.toLowerCase().slice(0, -1));
+        let name = getTraitName(row, data.slice(20,26), bin, meta.settings.aoColumns[meta.col].sTitle.toLowerCase().slice(0, -1));
+        return bin + "<br/>" + name;
+    }
+
+    function renderGroup27(data, type, row, meta) {
+        return data.slice(31, 32);
+    }
+
+
+    function strMul(str, num) {
+        var s = "";
+        for (var i = 0; i < num; i++) {
+            s += str;
+        }
+        return s;
+    }
+
+    function genesToBin(genes) {
+        var genesString = genes.toString(2);
+        genesString = strMul("0", 256 - genesString.length) + genesString
+        return genesString;
+    }
+
+    var axies = {};
+    function getAxies(offset) {
+        console.log(offset);
+        let url = "https://axieinfinity.com/api/addresses/" + web3.eth.accounts[0] + "/axies?offset=" + offset;
+
+        $.get(url, function(data, status, xhr) {
+            for (let i in data.axies) {
+                if (data.axies[i].stage < 3) continue;
+                axies[data.axies[i].id] = {"genes": genesToBin(new BigNumber(data.axies[i].genes)), "owner": data.axies[i].owner, "class": data.class};
+            }
+            if (offset + 12 < data.totalAxies) {
+                getAxies(offset + 12);
+            } else {
+                initData();
+            }
+        });
+    }
+
+
+function initData() {
+    data = [];
+    for (let id in axies) {
+        let row = {id: id};
+        let numMystic = 0;
+        for (let i = 0; i < 8; i++) {
+            row["group" + i] = axies[id].genes.slice(i * 32, i * 32 + 32);
+            if (i > 1 && row["group" + i].slice(0, 2) == "11") {
+                numMystic++;
+            }
+        }
+        row['mystics'] = numMystic;
+        let axie = axies[id]
+        if (axie != null && 'owner' in axie) {
+            row['owner'] = axie['owner'];
+        } else {
+            row['owner'] = "?";
+        }
+        data.push(row);
+    }
+
+    var axieTable = $('#axieTable').DataTable({
+        data: data,
+        columns: [
+        {title: "ID", data: "id", "render": render},
+        {title: "Num Mystics", data: "mystics", className: "text-center"},
+
+        {title: "Class", data: "group0", render: renderGroup0, searchable: false},
+        {title: "0.1", data: "group0", render: renderGroup01, searchable: false},
+        {title: "0.2", data: "group0", render: renderGroup02, searchable: false},
+        {title: "Region", data: "group0", render: renderGroup03, searchable: false, className: "text-center"},
+        {title: "0.4", data: "group0", render: renderGroup04, searchable: false},
+        {title: "Origin", data: "group0", render: renderGroup05, searchable: false, className: "text-center"},
+        {title: "0.6", data: "group0", render: renderGroup06, searchable: false},
+        {title: "1.0", data: "group1", render: renderGroup1, searchable: false},
+        {title: "Pattern", data: "group1", render: renderGroup11, searchable: false},
+        {title: "Pattern recessive?", data: "group1", render: renderGroup12, searchable: false},
+        {title: "Color", data: "group1", render: renderGroup13, searchable: false},
+        {title: "Color recessive?", data: "group1", render: renderGroup14, searchable: false},
+
+        {title: "Mystic", data: "group2", render: renderGroup2, searchable: false},
+        {title: "Eyes Class", data: "group2", render: renderGroup21, searchable: false},
+        {title: "Eyes", data: "group2", render: renderGroup22, searchable: false},
+        {title: "Eyes Class?", data: "group2", render: renderGroup23, searchable: false},
+        {title: "Eyes?", data: "group2", render: renderGroup24, searchable: false},
+        {title: "Eyes Class?", data: "group2", render: renderGroup25, searchable: false},
+        {title: "Eyes?", data: "group2", render: renderGroup26, searchable: false},
+        {title: "?", data: "group2", render: renderGroup27, searchable: false},
+
+        {title: "Mystic", data: "group3", render: renderGroup2, searchable: false},
+        {title: "Mouth Class", data: "group3", render: renderGroup21, searchable: false},
+        {title: "Mouth", data: "group3", render: renderGroup22, searchable: false},
+        {title: "Mouth Class?", data: "group3", render: renderGroup23, searchable: false},
+        {title: "Mouth?", data: "group3", render: renderGroup24, searchable: false},
+        {title: "Mouth Class?", data: "group3", render: renderGroup25, searchable: false},
+        {title: "Mouth?", data: "group3", render: renderGroup26, searchable: false},
+        {title: "?", data: "group3", render: renderGroup27, searchable: false},
+
+        {title: "Mystic", data: "group4", render: renderGroup2, searchable: false},
+        {title: "Ears Class", data: "group4", render: renderGroup21, searchable: false},
+        {title: "Ears", data: "group4", render: renderGroup22, searchable: false},
+        {title: "Ears Class?", data: "group4", render: renderGroup23, searchable: false},
+        {title: "Ears?", data: "group4", render: renderGroup24, searchable: false},
+        {title: "Ears Class?", data: "group4", render: renderGroup25, searchable: false},
+        {title: "Ears?", data: "group4", render: renderGroup26, searchable: false},
+        {title: "?", data: "group4", render: renderGroup27, searchable: false},
+
+        {title: "Mystic", data: "group5", render: renderGroup2, searchable: false},
+        {title: "Horn Class", data: "group5", render: renderGroup21, searchable: false},
+        {title: "Horn", data: "group5", render: renderGroup22, searchable: false},
+        {title: "Horn Class?", data: "group5", render: renderGroup23, searchable: false},
+        {title: "Horn?", data: "group5", render: renderGroup24, searchable: false},
+        {title: "Horn Class?", data: "group5", render: renderGroup25, searchable: false},
+        {title: "Horn?", data: "group5", render: renderGroup26, searchable: false},
+        {title: "?", data: "group5", render: renderGroup27, searchable: false},
+
+        {title: "Mystic", data: "group6", render: renderGroup2, searchable: false},
+        {title: "Back Class", data: "group6", render: renderGroup21, searchable: false},
+        {title: "Back", data: "group6", render: renderGroup22, searchable: false},
+        {title: "Back Class?", data: "group6", render: renderGroup23, searchable: false},
+        {title: "Back?", data: "group6", render: renderGroup24, searchable: false},
+        {title: "Back Class?", data: "group6", render: renderGroup25, searchable: false},
+        {title: "Back?", data: "group6", render: renderGroup26, searchable: false},
+        {title: "?", data: "group6", render: renderGroup27, searchable: false},
+
+        {title: "Mystic", data: "group7", render: renderGroup2, searchable: false},
+        {title: "Tail Class", data: "group7", render: renderGroup21, searchable: false},
+        {title: "Tail", data: "group7", render: renderGroup22, searchable: false},
+        {title: "Tail Class?", data: "group7", render: renderGroup23, searchable: false},
+        {title: "Tail?", data: "group7", render: renderGroup24, searchable: false},
+        {title: "Tail Class?", data: "group7", render: renderGroup25, searchable: false},
+        {title: "Tail?", data: "group7", render: renderGroup26, searchable: false},
+        {title: "?", data: "group7", render: renderGroup27, searchable: false},
+        {title: "owner", data: "owner", searchable: true}
+        ],
+        "language": {"search": "Search (ID or owner):"},
+        pageLength: 100
+    });
+
+    $('.dataTables_filter input').on( 'keyup click', function () {
+        var searchVal = $('.dataTables_filter input').val().trim();
+        if (searchVal.startsWith("0x")) {
+            axieTable.column("owner").search(searchVal).draw();
+        } else {
+            axieTable.column(0).search(searchVal).draw();
+        }
+    });
+}
+
+var traitMapping = traits;
+$(document).ready(function(){
+    if (typeof web3 == 'undefined') return;
+
+    if (typeof web3.eth.accounts[0] == "undefined") {
+        $("#account").text("Can't detect your account. Unlock your wallet or try reloading the page and waiting a few seconds.");
+        return;
+    } else {
+        $("#account").text("Your Account: " + web3.eth.accounts[0]);
+    }
+
+    getAxies(0);
+
+});
+</script>
+
+    <!-- header -->
+    <div class="fixed-top">
+        <div class="navbar navbar-light bg-secondary">
+            <div class="container-fluid">
+                <div class="navbar-header">
+                </div>
+                <!--<a role="button" class="btn btn-primary" href="https://axieinfinity.com/adopt-axies?r=CHl5UkYrgttjndv97yqxcY_6dnY">Adopt an Axie!</a>-->
+                <div class="text-white pt-2" id="account"></div>
+
+                <div class="text-white">Donations: 0x209045cfe98445d6541d4fdf560d0d63fad77753 &nbsp;</div><br/>
+            </div>
+        </div>
+    </div>
+    <br/><br/><br/>
+    <div id="mainDiv" class="container">
+        <table class="table display" id="axieTable">
+            <thead>
+                <tr>
+                    <th rowspan="2">ID</th>
+                    <th rowspan="2">Mystics</th>
+                    <th colspan="3">Group 0</th>
+                    <th colspan="5">Group 1</th>
+                    <th colspan="8">Group 2</th>
+                    <th colspan="8">Group 3</th>
+                    <th colspan="8">Group 4</th>
+                    <th colspan="8">Group 5</th>
+                    <th colspan="8">Group 6</th>
+                    <th colspan="8">Group 7</th>
+                </tr>
+                <tr>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+            </tbody>
+        </table>
+    </div>
+</html>
