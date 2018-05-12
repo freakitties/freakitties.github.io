@@ -26,8 +26,22 @@
         if (classValues[a.class] > classValues[b.class]) return 1;
         //console.log(a.name + " "+genes[a.ids[0]].length + " " + a.ids[0] + " " + a.type +" " + a.class + " " + genes[a.ids[0]].slice(32 * typeOrder[a.type] +2 , 32 * typeOrder[a.type] + 6 + 5));
         //console.log(b.name + " "+genes[b.ids[0]].length + " " + b.ids[0] + " " + b.type +" " + b.class + " " + genes[b.ids[0]].slice(32 * typeOrder[b.type] +2 , 32 * typeOrder[b.type] + 6 + 5));
-        if (genes[a.ids[0]].slice(32 * typeOrder[a.type] + 2, 32 * typeOrder[a.type] + 6 + 5) < genes[b.ids[0]].slice(32 * typeOrder[b.type] + 2, 32 * typeOrder[b.type] + 6 + 5)) return -1;
-        if (genes[a.ids[0]].slice(32 * typeOrder[a.type] + 2, 32 * typeOrder[a.type] + 6 + 5) > genes[b.ids[0]].slice(32 * typeOrder[b.type] + 2, 32 * typeOrder[b.type] + 6 + 5)) return 1;
+        let id1 = a.ids[0];
+        for (let i in a.ids) {
+            if (a.ids[i] in genes) {
+                id1 = a.ids[i];
+                break;
+            }
+        }
+        let id2 = b.ids[0];
+        for (let i in b.ids) {
+            if (b.ids[i] in genes) {
+                id2 = b.ids[i];
+                break;
+            }
+        }
+        if (genes[id1].slice(32 * typeOrder[a.type] + 2, 32 * typeOrder[a.type] + 6 + 5) < genes[id2].slice(32 * typeOrder[b.type] + 2, 32 * typeOrder[b.type] + 6 + 5)) return -1;
+        if (genes[id1].slice(32 * typeOrder[a.type] + 2, 32 * typeOrder[a.type] + 6 + 5) > genes[id2].slice(32 * typeOrder[b.type] + 2, 32 * typeOrder[b.type] + 6 + 5)) return 1;
         return 0;
     }
 
@@ -208,7 +222,9 @@ $(document).ready(function(){
     for (let t in alltraits) {
         let mask = "1111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111";
         for (let i in alltraits[t].ids) {
-            mask = maskString(mask, genes[alltraits[t].ids[i].toString()]);
+            let id = alltraits[t].ids[i].toString();
+            if (!(id in genes)) continue;
+            mask = maskString(mask, genes[id]);
         }
         mask = formatTraitMask(mask);
         $("#traitsTable").append('<tr><td>' + (alltraits[t].mystic ? '<b>' + alltraits[t].name + '</b>' : alltraits[t].name) + "</td><td>" + alltraits[t].type + "</td><td>" + alltraits[t].class + "</td><td><pre>" + mask + '</pre></td>');
@@ -216,6 +232,7 @@ $(document).ready(function(){
     //Group by class
     var classes = {"plant": [], "bird": [], "bug": [], "reptile": [], "aquatic": [], "beast": []};
     for (let i in axiesDict) {
+        if (!(i in genes)) continue;
         classes[axiesDict[i].class].push(genes[i]);
     }
     //var classMaskes = {};
