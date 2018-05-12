@@ -204,6 +204,9 @@
         } else {
             name = traitMapping[classGeneMap[classBinary]][type][traitBinary][region];
         }
+        if (typeof name == "undefined") {
+            name = traitMapping[classGeneMap[classBinary]][type][traitBinary]["global"];
+        }
         return name;
     }
 
