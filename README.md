@@ -22,6 +22,8 @@ Live site: [https://freakitties.github.io/](https://freakitties.github.io/)
 
 [Adopt an Axie!](https://axieinfinity.com/adopt-axies?r=CHl5UkYrgttjndv97yqxcY_6dnY)
 
+[Preliminary Gene Browser with search](/axie/jeans.html)
+
 [Parts glossary ordered by rarity](/axie/traits.html)
 
 [Part stats and moves](/axie/traitstats.html)

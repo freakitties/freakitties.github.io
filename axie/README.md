@@ -1,6 +1,8 @@
 
 Tools for [Axie Infinity](https://axieinfinity.com/adopt-axies?r=CHl5UkYrgttjndv97yqxcY_6dnY)
 
+[Preliminary Gene Browser with search](jeans.html)
+
 [Parts glossary ordered by rarity](traits.html)
 
 [Part stats and moves](traitstats.html)
