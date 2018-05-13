@@ -147,9 +147,10 @@
 
     function renderGroup12(data, type, row, meta) {
         let bin = data.slice(8, 20);
-        let out = bin.slice(0, 4);
-        out += "_" + bin.slice(4, 8);
-        out += "_" + bin.slice(8, 12);
+        let out = bin.slice(0, 2);
+        out += "_" + bin.slice(2, 6);
+        out += "_" + bin.slice(6, 10);
+        out += "_" + bin.slice(10, 12);
         return out;
     }
 
