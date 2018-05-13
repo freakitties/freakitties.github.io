@@ -146,15 +146,21 @@
     }
 
     function renderGroup12(data, type, row, meta) {
-        let bin = data.slice(8, 20);
+        let bin = data.slice(8, 18);
         let out = bin.slice(0, 2);
         out += "_" + bin.slice(2, 6);
         out += "_" + bin.slice(6, 10);
-        out += "_" + bin.slice(10, 12);
+        //out += "_" + bin.slice(10, 12);
         return out;
     }
 
     function renderGroup13(data, type, row, meta) {
+        let bin = data.slice(18, 20);
+        return bin;
+    }
+
+
+    function renderGroup14(data, type, row, meta) {
         let bin = data.slice(20, 24);
         if(type === 'display'){
             //Colors
@@ -163,7 +169,7 @@
         return bin;
     }
 
-    function renderGroup14(data, type, row, meta) {
+    function renderGroup15(data, type, row, meta) {
         let bin = data.slice(24, 32);
         let out = bin.slice(0, 4);
         out += "_" + bin.slice(4, 8);
@@ -334,11 +340,13 @@
                 {title: "0.4", data: "group0", render: renderGroup04, searchable: false},
                 {title: "Origin", data: "group0", render: renderGroup05, searchable: false, className: "text-center"},
                 {title: "0.6", data: "group0", render: renderGroup06, searchable: false},
+
                 {title: "1.0", data: "group1", render: renderGroup1, searchable: false},
                 {title: "Pattern", data: "group1", render: renderGroup11, searchable: false},
                 {title: "Pattern recessive?", data: "group1", render: renderGroup12, searchable: false},
-                {title: "Color", data: "group1", render: renderGroup13, searchable: false},
-                {title: "Color recessive?", data: "group1", render: renderGroup14, searchable: false},
+                {title: "??", data: "group1", render: renderGroup13, searchable: false},
+                {title: "Color", data: "group1", render: renderGroup14, searchable: false},
+                {title: "Color recessive?", data: "group1", render: renderGroup15, searchable: false},
 
                 {title: "Mystic", data: "group2", render: renderGroup2, searchable: false},
                 {title: "Eyes Class", data: "group2", render: renderGroup21, searchable: false},
@@ -537,7 +545,7 @@
                     <th rowspan="2">ID</th>
                     <th rowspan="2">Mystics</th>
                     <th colspan="7">Group 0</th>
-                    <th colspan="5">Group 1</th>
+                    <th colspan="6">Group 1</th>
                     <th colspan="8">Group 2</th>
                     <th colspan="8">Group 3</th>
                     <th colspan="8">Group 4</th>
@@ -546,6 +554,7 @@
                     <th colspan="8">Group 7</th>
                 </tr>
                 <tr>
+                    <th></th>
                     <th></th>
                     <th></th>
                     <th></th>
