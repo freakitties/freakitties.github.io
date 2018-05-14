@@ -13,9 +13,10 @@
         <style>
             body {background-color: #efefef;}
         </style>
-        <script type="text/javascript" src="data.js"></script>
+        <script src="traitmapping.js"></script>
         <script type="text/javascript" src="allaxie-small.js"></script>
         <script type="text/javascript" src="binarygenes.js"></script>
+        <script type="text/javascript" src="petitegenes.js"></script>
         <style>
             .btn-plant, .btn-plant:hover, .btn-plant:active, .btn-plant:visited {
                 background-color: rgb(108, 192, 0) !important;
@@ -54,12 +55,23 @@
     var typeOrder = {"eyes": 2, "mouth": 3, "ears": 4, "horn": 5, "back": 6, "tail": 7};
     var hash = window.location.hash.substr(1);
 
+    function getClassFromGenes(id) {
+        let bin = genes[id].slice(0, 4);
+        if (!(bin in classGeneMap)) {
+            console.log(bin + " is not in the gene map. unknown class.");
+            return "unknown";
+        }
+        return classGeneMap[bin];
+    }
+
     function generateIDs(ids) {
         var list = "";
         for (let i in ids) {
             let axie = getAxie(ids[i]);
             let color = "";
-            if (typeof axie != "undefined") {
+            if (axie == null || axie['class'] == null || typeof axie == "undefined") {
+                color = "btn-" + getClassFromGenes(ids[i]);
+            } else {
                 color = "btn-" + axie['class'];
             }
             if (typeof axie != "undefined" && axie['auction'] && hash.indexOf("auction") != -1) {
@@ -107,13 +119,32 @@
     }
 
     function renderGroup01(data, type, row, meta) {
-        return data.slice(4, 8);;
+        return data.slice(4, 8);
     }
 
     function renderGroup02(data, type, row, meta) {
-        //return data.slice(8, 32);
         let bin = data.slice(8, 32);
-        return bin.slice(0, 9) + "<b>" + bin.slice(9, 10) + "</b>" + bin.slice(10, 32);
+        return bin.slice(0, 4);
+    }
+
+    function renderGroup03(data, type, row, meta) {
+        let bin = data.slice(8, 32);
+        return bin.slice(4, 5);
+    }
+
+    function renderGroup04(data, type, row, meta) {
+        let bin = data.slice(8, 32);
+        return bin.slice(5, 9);
+    }
+
+    function renderGroup05(data, type, row, meta) {
+        let bin = data.slice(8, 32);
+        return bin.slice(9, 10);
+    }
+
+    function renderGroup06(data, type, row, meta) {
+        let bin = data.slice(8, 32);
+        return bin.slice(10, 24);
     }
 
     function renderGroup1(data, type, row, meta) {
@@ -131,14 +162,21 @@
     }
 
     function renderGroup12(data, type, row, meta) {
-        let bin = data.slice(8, 20);
-        let out = bin.slice(0, 4);
-        out += "_" + bin.slice(4, 8);
-        out += "_" + bin.slice(8, 12);
+        let bin = data.slice(8, 18);
+        let out = bin.slice(0, 2);
+        out += "_" + bin.slice(2, 6);
+        out += "_" + bin.slice(6, 10);
+        //out += "_" + bin.slice(10, 12);
         return out;
     }
 
     function renderGroup13(data, type, row, meta) {
+        let bin = data.slice(18, 20);
+        return bin;
+    }
+
+
+    function renderGroup14(data, type, row, meta) {
         let bin = data.slice(20, 24);
         if(type === 'display'){
             //Colors
@@ -147,7 +185,7 @@
         return bin;
     }
 
-    function renderGroup14(data, type, row, meta) {
+    function renderGroup15(data, type, row, meta) {
         let bin = data.slice(24, 32);
         let out = bin.slice(0, 4);
         out += "_" + bin.slice(4, 8);
@@ -221,46 +259,8 @@
         return data.slice(31, 32);
     }
 
-var traitMapping = {};
-$(document).ready(function(){
-    for (let t in traits) {
-        let id = traits[t].ids[0].toString();
-        let axieType = traits[t].type;
-        let axieClass = traits[t].class;
-        for (let i in traits[t].ids) {
-            id = traits[t].ids[i].toString();
-            if (id in genes) {
-                break;
-            }
-        }
-        if (!(id in genes)) {
-            console.log("ID " + id + " not in genes!");
-            continue;
-        }
-        let traitBinary = genes[id].slice(typeOrder[axieType] * 32 + 6, typeOrder[axieType] * 32 + 11);
-        if (!(axieClass in traitMapping)) {
-            traitMapping[axieClass] = {};
-        }
-        if (!(axieType in traitMapping[axieClass])) {
-            traitMapping[axieClass][axieType] = {};
-        }
-        if (!(traitBinary in traitMapping[axieClass][axieType])) {
-            traitMapping[axieClass][axieType][traitBinary] = {};
-        }
-        if (traits[t].mystic) {
-            if ("normal" in traitMapping[axieClass][axieType][traitBinary]) {
-                Object.assign(traitMapping[axieClass][axieType][traitBinary], {mystic: traits[t].name});
-            } else {
-                traitMapping[axieClass][axieType][traitBinary] = {mystic: traits[t].name};
-            }
-        } else {
-            if ("mystic" in traitMapping[axieClass][axieType][traitBinary]) {
-                Object.assign(traitMapping[axieClass][axieType][traitBinary], {normal: traits[t].name});
-            } else {
-                traitMapping[axieClass][axieType][traitBinary] = {normal: traits[t].name};
-            }
-        }
-    }
+function initData() {
+    traitMapping = traits;
     var mysticMap = {};
     for (let cls in traitMapping) {
         for (let type in traitMapping[cls]) {
@@ -299,14 +299,21 @@ $(document).ready(function(){
         columns: [
         {title: "ID", data: "id", "render": render},
         {title: "Num Mystics", data: "mystics"},
+
         {title: "Class", data: "group0", render: renderGroup0, searchable: false},
         {title: "0.1", data: "group0", render: renderGroup01, searchable: false},
-        {title: "0.2 (Origin)", data: "group0", render: renderGroup02, searchable: false},
+        {title: "0.2", data: "group0", render: renderGroup02, searchable: false},
+        {title: "Region", data: "group0", render: renderGroup03, searchable: false, className: "text-center"},
+        {title: "0.4", data: "group0", render: renderGroup04, searchable: false},
+        {title: "Origin", data: "group0", render: renderGroup05, searchable: false, className: "text-center"},
+        {title: "0.6", data: "group0", render: renderGroup06, searchable: false},
+
         {title: "1.0", data: "group1", render: renderGroup1, searchable: false},
         {title: "Pattern", data: "group1", render: renderGroup11, searchable: false},
         {title: "Pattern recessive?", data: "group1", render: renderGroup12, searchable: false},
-        {title: "Color", data: "group1", render: renderGroup13, searchable: false},
-        {title: "Color recessive?", data: "group1", render: renderGroup14, searchable: false},
+        {title: "??", data: "group1", render: renderGroup13, searchable: false},
+        {title: "Color", data: "group1", render: renderGroup14, searchable: false},
+        {title: "Color recessive?", data: "group1", render: renderGroup15, searchable: false},
 
         {title: "Mystic", data: "group2", render: renderGroup2, searchable: false},
         {title: "Eyes Class", data: "group2", render: renderGroup21, searchable: false},
@@ -375,6 +382,11 @@ $(document).ready(function(){
             axieTable.column(0).search(searchVal).draw();
         }
     });
+}
+
+var traitMapping = {};
+$(document).ready(function(){
+    initData();
 
 });
 </script>
@@ -397,8 +409,8 @@ $(document).ready(function(){
                 <tr>
                     <th rowspan="2">ID</th>
                     <th rowspan="2">Mystics</th>
-                    <th colspan="3">Group 0</th>
-                    <th colspan="5">Group 1</th>
+                    <th colspan="7">Group 0</th>
+                    <th colspan="6">Group 1</th>
                     <th colspan="8">Group 2</th>
                     <th colspan="8">Group 3</th>
                     <th colspan="8">Group 4</th>
@@ -407,8 +419,13 @@ $(document).ready(function(){
                     <th colspan="8">Group 7</th>
                 </tr>
                 <tr>
-                    <th>Class</th>
-                    <th>Mystics</th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
                     <th></th>
                     <th></th>
                     <th></th>
