@@ -204,26 +204,40 @@
         return bin;
     }
 
-    function getTraitName(firstSix, traitBinary, type, checkMystic = false) {
+    var regionMap = {"0": "global", "1": "japan"};
+    function getTraitName(row, firstSix, traitBinary, type, checkMystic = false) {
+
+        let rBit = row.group0.slice(12,13);
+        if (rBit in regionMap) {
+            region = regionMap[rBit];
+        } else {
+            console.log("unknown region");
+            return "Unknown regional trait";
+        }
+
         let classBinary = firstSix.slice(2, 6);
         if (traitMapping[classGeneMap[classBinary]][type] == null) {
-            console.log("classBinary: " + classBinary + "classGeneMap[classBinary]" + classGeneMap[classBinary] + " type: "+type + " traitMapping[classGeneMap[classBinary]][type] " + traitMapping[classGeneMap[lassBinary]][type]);
+            console.log("classBinary: " + classBinary + "classGeneMap[classBinary]" + classGeneMap[classBinary] + " type: " + type + " traitMapping[classGeneMap[classBinary]][type] " + traitMapping[classGeneMap[lassBinary]][type]);
         }
         if (!(traitBinary in traitMapping[classGeneMap[classBinary]][type])) return "UNKNOWN";
         let name = "";
         if (checkMystic) {
             let isMystic = firstSix.slice(0, 2) == "11";
-            name = traitMapping[classGeneMap[classBinary]][type][traitBinary][isMystic ? "mystic" : "normal"];
+            name = traitMapping[classGeneMap[classBinary]][type][traitBinary][isMystic ? "mystic" : region];
         } else {
-            name = traitMapping[classGeneMap[classBinary]][type][traitBinary].normal;
+            name = traitMapping[classGeneMap[classBinary]][type][traitBinary][region];
+        }
+        if (typeof name == "undefined") {
+            name = traitMapping[classGeneMap[classBinary]][type][traitBinary]["global"];
         }
         return name;
     }
 
+
     function renderGroup22(data, type, row, meta) {
         let bin = data.slice(6, 11);
         if(type === 'display'){
-            let name = getTraitName(data.slice(0, 6), bin, meta.settings.aoColumns[meta.col].sTitle.toLowerCase(), true);
+            let name = getTraitName(row, data.slice(0, 6), bin, meta.settings.aoColumns[meta.col].sTitle.toLowerCase(), true);
             return "<b>" + bin + "</b><br/>" + name;
         }
         return bin;
@@ -238,7 +252,7 @@
     function renderGroup24(data, type, row, meta) {
         let bin = data.slice(16,21);
         //let name = getTraitName(data.slice(0, 6), data.slice(16,21), meta.settings.aoColumns[meta.col].sTitle.toLowerCase().slice(0, -1));
-        let name = getTraitName(data.slice(10,16), bin, meta.settings.aoColumns[meta.col].sTitle.toLowerCase().slice(0, -1));
+        let name = getTraitName(row, data.slice(10,16), bin, meta.settings.aoColumns[meta.col].sTitle.toLowerCase().slice(0, -1));
         return bin + "<br/>" + name;
     }
 
@@ -251,7 +265,7 @@
     function renderGroup26(data, type, row, meta) {
         let bin = data.slice(26,31);
         //let name = getTraitName(data.slice(0, 6), data.slice(26,31), meta.settings.aoColumns[meta.col].sTitle.toLowerCase().slice(0, -1));
-        let name = getTraitName(data.slice(20,26), bin, meta.settings.aoColumns[meta.col].sTitle.toLowerCase().slice(0, -1));
+        let name = getTraitName(row, data.slice(20,26), bin, meta.settings.aoColumns[meta.col].sTitle.toLowerCase().slice(0, -1));
         return bin + "<br/>" + name;
     }
 
