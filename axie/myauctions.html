@@ -1,0 +1,357 @@
+<!--
+    Copyright 2018 freakitties@gmail.com
+    You can copy and use this code if you agree to pay $1 per page load.
+-->
+<html>
+    <head>
+        <title>My Cumulative Axie Sales</title>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+        <script async src="https://www.googletagmanager.com/gtag/js?id=UA-116189657-1"></script>
+        <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'UA-116189657-1');
+        </script>
+        <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.16/css/jquery.dataTables.min.css" integrity="sha384-1UXhfqyOyO+W+XsGhiIFwwD3hsaHRz2XDGMle3b8bXPH5+cMsXVShDoHA3AH/y/p" crossorigin="anonymous">
+        <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js" integrity="sha384-Z9D45cp3elqajO+xEyjRTIK1Gr3eYsXiyCPIKNog1sIQzpo2fqFDqFdADGiJjzOv" crossorigin="anonymous"></script>
+    </head>
+
+<script>
+    const FIRST_BLOCK = 5316433;
+    const BATCH_SIZE = 10000;
+
+    var auctionAddress = '0xf4985070ce32b6b1994329df787d1acc9a2dd9e2';
+    var auctionABI = [{"constant":false,"inputs":[{"name":"_nftAddress","type":"address"},{"name":"_tokenId","type":"uint256"}],"name":"cancelAuctionWhenPaused","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":false,"inputs":[],"name":"unpause","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[{"name":"","type":"address"},{"name":"","type":"uint256"}],"name":"auctions","outputs":[{"name":"seller","type":"address"},{"name":"startingPrice","type":"uint128"},{"name":"endingPrice","type":"uint128"},{"name":"duration","type":"uint64"},{"name":"startedAt","type":"uint64"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[{"name":"_nftAddress","type":"address"},{"name":"_tokenId","type":"uint256"}],"name":"bid","outputs":[],"payable":true,"stateMutability":"payable","type":"function"},{"constant":true,"inputs":[],"name":"paused","outputs":[{"name":"","type":"bool"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[{"name":"_nftAddress","type":"address"},{"name":"_tokenId","type":"uint256"}],"name":"getCurrentPrice","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[{"name":"_nftAddress","type":"address"},{"name":"_tokenId","type":"uint256"}],"name":"getAuction","outputs":[{"name":"seller","type":"address"},{"name":"startingPrice","type":"uint256"},{"name":"endingPrice","type":"uint256"},{"name":"duration","type":"uint256"},{"name":"startedAt","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"ownerCut","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[],"name":"pause","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":false,"inputs":[{"name":"_nftAddress","type":"address"},{"name":"_tokenId","type":"uint256"}],"name":"cancelAuction","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[],"name":"owner","outputs":[{"name":"","type":"address"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[{"name":"_nftAddress","type":"address"},{"name":"_tokenId","type":"uint256"},{"name":"_startingPrice","type":"uint256"},{"name":"_endingPrice","type":"uint256"},{"name":"_duration","type":"uint256"}],"name":"createAuction","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":false,"inputs":[],"name":"reclaimEther","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":false,"inputs":[{"name":"newOwner","type":"address"}],"name":"transferOwnership","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"inputs":[{"name":"_ownerCut","type":"uint256"}],"payable":false,"stateMutability":"nonpayable","type":"constructor"},{"payable":false,"stateMutability":"nonpayable","type":"fallback"},{"anonymous":false,"inputs":[{"indexed":true,"name":"_nftAddress","type":"address"},{"indexed":true,"name":"_tokenId","type":"uint256"},{"indexed":false,"name":"_startingPrice","type":"uint256"},{"indexed":false,"name":"_endingPrice","type":"uint256"},{"indexed":false,"name":"_duration","type":"uint256"},{"indexed":false,"name":"_seller","type":"address"}],"name":"AuctionCreated","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"name":"_nftAddress","type":"address"},{"indexed":true,"name":"_tokenId","type":"uint256"},{"indexed":false,"name":"_totalPrice","type":"uint256"},{"indexed":false,"name":"_winner","type":"address"}],"name":"AuctionSuccessful","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"name":"_nftAddress","type":"address"},{"indexed":true,"name":"_tokenId","type":"uint256"}],"name":"AuctionCancelled","type":"event"},{"anonymous":false,"inputs":[],"name":"Pause","type":"event"},{"anonymous":false,"inputs":[],"name":"Unpause","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"name":"previousOwner","type":"address"},{"indexed":true,"name":"newOwner","type":"address"}],"name":"OwnershipTransferred","type":"event"}];
+
+    var coreAddress = '0xf5b0a3efb8e8e4c201e2a935f110eaaf3ffecb8d';
+    var coreABI = [{"constant":true,"inputs":[{"name":"interfaceID","type":"bytes4"}],"name":"supportsInterface","outputs":[{"name":"","type":"bool"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"cfoAddress","outputs":[{"name":"","type":"address"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"name","outputs":[{"name":"","type":"string"}],"payable":false,"stateMutability":"pure","type":"function"},{"constant":true,"inputs":[{"name":"_tokenId","type":"uint256"}],"name":"getApproved","outputs":[{"name":"","type":"address"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[{"name":"_approved","type":"address"},{"name":"_tokenId","type":"uint256"}],"name":"approve","outputs":[],"payable":true,"stateMutability":"payable","type":"function"},{"constant":true,"inputs":[],"name":"ceoAddress","outputs":[{"name":"","type":"address"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[{"name":"_axieId","type":"uint256"},{"name":"_genes","type":"uint256"}],"name":"rebirthAxie","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[],"name":"whitelistSetterAddress","outputs":[{"name":"","type":"address"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"totalSupply","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"marketplaceManager","outputs":[{"name":"","type":"address"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[{"name":"_manager","type":"address"}],"name":"setRetirementManager","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":false,"inputs":[{"name":"_geneScientist","type":"address"},{"name":"_whitelisted","type":"bool"}],"name":"setGeneScientist","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":false,"inputs":[{"name":"_from","type":"address"},{"name":"_to","type":"address"},{"name":"_tokenId","type":"uint256"}],"name":"transferFrom","outputs":[],"payable":true,"stateMutability":"payable","type":"function"},{"constant":false,"inputs":[{"name":"_newCEO","type":"address"}],"name":"setCEO","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":false,"inputs":[{"name":"_newCOO","type":"address"}],"name":"setCOO","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[{"name":"_owner","type":"address"},{"name":"_index","type":"uint256"}],"name":"tokenOfOwnerByIndex","outputs":[{"name":"_tokenId","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[{"name":"_manager","type":"address"}],"name":"setMarketplaceManager","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":false,"inputs":[],"name":"unpause","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":false,"inputs":[{"name":"_from","type":"address"},{"name":"_to","type":"address"},{"name":"_tokenId","type":"uint256"}],"name":"safeTransferFrom","outputs":[],"payable":true,"stateMutability":"payable","type":"function"},{"constant":false,"inputs":[{"name":"_newCFO","type":"address"}],"name":"setCFO","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[{"name":"_index","type":"uint256"}],"name":"tokenByIndex","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"retirementManager","outputs":[{"name":"","type":"address"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[{"name":"_newSetter","type":"address"}],"name":"setWhitelistSetter","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[],"name":"paused","outputs":[{"name":"","type":"bool"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[{"name":"_genes","type":"uint256"},{"name":"_owner","type":"address"}],"name":"spawnAxie","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":false,"inputs":[],"name":"withdrawBalance","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[{"name":"_tokenId","type":"uint256"}],"name":"ownerOf","outputs":[{"name":"","type":"address"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[{"name":"_owner","type":"address"}],"name":"balanceOf","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[{"name":"_marketplace","type":"address"},{"name":"_whitelisted","type":"bool"}],"name":"setMarketplace","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[],"name":"geneManager","outputs":[{"name":"","type":"address"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[{"name":"_byeSayer","type":"address"},{"name":"_whitelisted","type":"bool"}],"name":"setByeSayer","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":false,"inputs":[],"name":"pause","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":false,"inputs":[{"name":"_manager","type":"address"}],"name":"setSpawningManager","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":false,"inputs":[{"name":"_manager","type":"address"}],"name":"setGeneManager","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[],"name":"symbol","outputs":[{"name":"","type":"string"}],"payable":false,"stateMutability":"pure","type":"function"},{"constant":true,"inputs":[{"name":"","type":"address"}],"name":"whitelistedByeSayer","outputs":[{"name":"","type":"bool"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"spawningManager","outputs":[{"name":"","type":"address"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[{"name":"","type":"address"}],"name":"whitelistedGeneScientist","outputs":[{"name":"","type":"bool"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[{"name":"_spawner","type":"address"},{"name":"_whitelisted","type":"bool"}],"name":"setSpawner","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":false,"inputs":[{"name":"_operator","type":"address"},{"name":"_approved","type":"bool"}],"name":"setApprovalForAll","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[{"name":"","type":"address"}],"name":"whitelistedMarketplace","outputs":[{"name":"","type":"bool"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[{"name":"_axieId","type":"uint256"}],"name":"getAxie","outputs":[{"name":"","type":"uint256"},{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[{"name":"_axieId","type":"uint256"},{"name":"_newGenes","type":"uint256"}],"name":"evolveAxie","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[],"name":"cooAddress","outputs":[{"name":"","type":"address"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[{"name":"_from","type":"address"},{"name":"_to","type":"address"},{"name":"_tokenId","type":"uint256"},{"name":"_data","type":"bytes"}],"name":"safeTransferFrom","outputs":[],"payable":true,"stateMutability":"payable","type":"function"},{"constant":true,"inputs":[],"name":"tokenURIPrefix","outputs":[{"name":"","type":"string"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[{"name":"","type":"address"}],"name":"whitelistedSpawner","outputs":[{"name":"","type":"bool"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[{"name":"_tokenId","type":"uint256"}],"name":"tokenURI","outputs":[{"name":"","type":"string"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[{"name":"_axieId","type":"uint256"},{"name":"_rip","type":"bool"}],"name":"retireAxie","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[],"name":"tokenURISuffix","outputs":[{"name":"","type":"string"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[{"name":"_owner","type":"address"},{"name":"_operator","type":"address"}],"name":"isApprovedForAll","outputs":[{"name":"","type":"bool"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[{"name":"_prefix","type":"string"},{"name":"_suffix","type":"string"}],"name":"setTokenURIAffixes","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"inputs":[],"payable":false,"stateMutability":"nonpayable","type":"constructor"},{"anonymous":false,"inputs":[{"indexed":true,"name":"_axieId","type":"uint256"},{"indexed":true,"name":"_owner","type":"address"},{"indexed":false,"name":"_genes","type":"uint256"}],"name":"AxieSpawned","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"name":"_axieId","type":"uint256"},{"indexed":false,"name":"_genes","type":"uint256"}],"name":"AxieRebirthed","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"name":"_axieId","type":"uint256"}],"name":"AxieRetired","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"name":"_axieId","type":"uint256"},{"indexed":false,"name":"_oldGenes","type":"uint256"},{"indexed":false,"name":"_newGenes","type":"uint256"}],"name":"AxieEvolved","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"name":"_from","type":"address"},{"indexed":true,"name":"_to","type":"address"},{"indexed":false,"name":"_tokenId","type":"uint256"}],"name":"Transfer","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"name":"_owner","type":"address"},{"indexed":true,"name":"_approved","type":"address"},{"indexed":false,"name":"_tokenId","type":"uint256"}],"name":"Approval","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"name":"_owner","type":"address"},{"indexed":true,"name":"_operator","type":"address"},{"indexed":false,"name":"_approved","type":"bool"}],"name":"ApprovalForAll","type":"event"}];
+
+
+    var synth = window.speechSynthesis;
+    var utterThis = new SpeechSynthesisUtterance("You sold an axi.");
+    utterThis.voice = synth.getVoices()[17];
+
+    var axieTable;
+
+    function addRow(date, id, price, winner, tx) {
+        console.log("id: " + id + " Price: " + price + " Winner: " + winner + " Date: " + date);
+        let row = [date, id, price, winner, tx];
+        let sales = localStorage.getItem("sales");
+        sales = JSON.parse(sales);
+        if (sales) {
+            if (!(tx in sales)) {
+                sales[tx] = [date, id, price, winner];
+            }
+        } else {
+            sales = {};
+            sales[tx] = [date, id, price, winner];
+        }
+        localStorage.setItem("sales", JSON.stringify(sales));
+        let d = axieTable.columns(4).data();
+        if (!d[0].includes(tx)) {
+            axieTable.row.add( row );
+            axieTable.columns.adjust().draw();
+        }
+    }
+
+    function sucessfulAuction(result) {
+        let tx = result["transactionHash"];
+        let logIndex = result['logIndex'];
+        let blockNumber = result["blockNumber"];
+        let id = result['args']['_tokenId'];
+        let winner = result['args']['_winner'];
+        let price = result['args']['_totalPrice'];
+
+        let earliestBlock = localStorage.getItem("earliestBlock");
+        let lastBlock = localStorage.getItem("lastBlock");
+        if (earliestBlock == null || blockNumber < earliestBlock) {
+            localStorage.setItem("earliestBlock", blockNumber);
+        }
+        if (lastBlock == null || blockNumber > lastBlock) {
+            localStorage.setItem("lastBlock", blockNumber);
+        }
+        auctionInstance.getAuction(coreAddress, id, blockNumber - 1, function(error, result){
+            if (error) {
+                console.log("Error getting Auction: " + error);
+                localStorage.setItem("earliestBlock", earliestBlock);
+                localStorage.setItem("lastBlock", lastBlock);
+                return;
+            }
+            if (web3.eth.accounts[0] == result[0]) {
+                coreInstance.Transfer({}, {fromBlock: blockNumber, toBlock: blockNumber}, function(error, result) {
+                    if (error) {
+                        console.log("ERROR getting Tranfer event: " + error);
+                        localStorage.setItem("earliestBlock", earliestBlock);
+                        localStorage.setItem("lastBlock", lastBlock);
+                        return;
+                    }
+                    if (tx == result["transactionHash"] && logIndex + 2 == result['logIndex']) {
+                        web3.eth.getBlock(blockNumber, (error, result) => {
+                            if (error) {
+                                console.log("Error getting block: " + error);
+                                localStorage.setItem("earliestBlock", earliestBlock);
+                                localStorage.setItem("lastBlock", lastBlock);
+                                return;
+                            }
+                            addRow(new Date(result['timestamp'] * 1000), id, price/1e18, winner, tx);
+                            localStorage.setItem("lastBlock", blockNumber);
+                        });
+                    } else {
+                        localStorage.setItem("lastBlock", blockNumber);
+                    }
+                });
+            }
+
+        });
+    }
+
+    //really?
+    function round(number, precision) {
+        var shift = function (number, precision) {
+            var numArray = ("" + number).split("e");
+            return +(numArray[0] + "e" + (numArray[1] ? (+numArray[1] + precision) : precision));
+        };
+        return shift(Math.round(shift(number, +precision)), -precision);
+    }
+
+    function sumFooter(row, data, start, end, display) {
+        var api = this.api();
+
+        // Total over all pages
+        total = api
+            .column( 2 )
+            .data()
+            .reduce( function (a, b) {
+                if (a == "") a = 0;
+                if (b == "") b = 0;
+                return a + b;
+            }, 0 );
+
+        // Total over this page
+        pageTotal = api
+            .column( 2, { page: 'current'} )
+            .data()
+            .reduce( function (a, b) {
+                if (a == "") a = 0;
+                if (b == "") b = 0;
+                return a + b;
+            }, 0 );
+
+        // Update footer
+        $( api.column( 2 ).footer() ).html(
+            round(pageTotal, 4) +' ( '+ round(total, 4) +' total)'
+        );
+
+    }
+
+    function renderDate(data, type, row, meta) {
+        if (data instanceof Date) {
+            if (type == "display") {
+                return data.toLocaleString();
+            } else {
+                return data;
+            }
+        }
+        //array
+        if (data instanceof Array) {
+            if (type == "display") {
+                    return data[0].toLocaleString() + " " + data[1];
+            } else {
+                    return data[0];
+            }
+        }
+        return data;
+    }
+
+    function getAllPastAuctions(endBlock, earliestBlock=FIRST_BLOCK) {
+        if (endBlock < earliestBlock) return;
+        //console.log("getting batch " + endBlock);
+        let start = endBlock - BATCH_SIZE;
+        if (start < earliestBlock) {
+            start = earliestBlock;
+        }
+        auctionInstance.AuctionSuccessful({}, {fromBlock: start, toBlock: endBlock}, function(error, result) {
+            if (error) {
+                console.log("ERROR in AuctionSuccessful " + JSON.stringify(error));
+            }
+            //console.log("Auction AuctionSuccessful: " + result['args']['_tokenId']);
+            sucessfulAuction(result);
+        });
+        getAllPastAuctions(endBlock - BATCH_SIZE, earliestBlock);
+    }
+
+    function loadTable(sales) {
+        for(let tx in sales) {
+            let r = sales[tx];
+            addRow(new Date(r[0]), r[1], r[2], r[3], tx);
+        }
+    }
+
+    var cleared = false;
+    $(document).ready(function(){
+        if (typeof web3 !== 'undefined') {
+            // Use the browser's ethereum provider
+            var provider = web3.currentProvider;
+            //web3.currentProvider = new Web3(new Web3.providers.HttpProvider("http://localhost:8545"));
+
+        } else {
+            document.write("web3 not detected. Are you using MetaMask?");
+        }
+
+        if (typeof web3.eth.accounts[0] == "undefined") {
+            $("#account").text("Can't detect your account. Unlock your wallet or try reloading the page and waiting a few seconds.");
+            return;
+        } else {
+            $("#account").text("Your Account: " + web3.eth.accounts[0]);
+        }
+
+        axieTable = $('#auctionTable').DataTable({
+            order: [[ 0, "desc" ]],
+            columns: [
+                {title: "Date Time", render: renderDate, type: "date" },
+                {title: "Axie", render: function(data, type, row, meta) {if (type == "display") return '<a href="https://axieinfinity.com/axie/' + data + '" target="_blank">' + data + '</a>'; else return data;}},
+                {title: "Sale Price"},
+                {title: "Winner", render: function(data, type, row, meta) {
+                    if (type == "display") {
+                        return '<a href="https://axieinfinity.com/profile/' + data + '">' + data.slice(0, 10) + "..." + data.slice(30, 40) +  '</a>';
+                    }
+                    return data;
+                }},
+                {title: "TX Hash", render: function(data, type, row, meta) {
+                    if (type == "display") {
+                        return '<a href="https://etherscan.io/tx/' + data + '">' + data.slice(0, 10) + "..." + data.slice(54, 64) +  '</a>';
+                    }
+                    return data;
+                }}
+            ],
+            pageLength: 50,
+            searching: false,
+            "columnDefs": [
+                { className: "text-center", "targets": [1, 2, 3] }
+            ],
+            "footerCallback": sumFooter
+        });
+
+        axieTable.clear().draw();
+
+        auctionContract = web3.eth.contract(auctionABI);
+        auctionInstance = auctionContract.at(auctionAddress);
+        auctionInstance.owner(function(error, result) {console.log(result.toString())});
+
+        coreContract = web3.eth.contract(coreABI);
+        coreInstance = coreContract.at(coreAddress);
+        coreInstance.totalSupply(function(error, result) {console.log("total supply: " + result.toString())});
+
+
+        var hash = window.location.hash.substr(1);
+        if (hash.indexOf("noHistory") != -1) {
+            blocksBack = 0;
+        }
+
+        console.log("Starting to watch Auction contract");
+        web3.eth.getBlock('latest', function(error, result) {
+            if (error) {
+                console.log("Error getting block: " + error);
+                return;
+            }
+            let currentBlock = result['number'];
+            let earliest = localStorage.getItem("earliestBlock");
+            let latest = localStorage.getItem("latestBlock");
+
+            let sales = JSON.parse(localStorage.getItem("sales"));
+            if (sales) {
+                loadTable(sales);
+            }
+            if (earliest != null && earliest > FIRST_BLOCK) {
+                getAllPastAuctions(earliest);
+            } else if (earliest == null) {
+                getAllPastAuctions(currentBlock);
+            }
+            if (latest != null && latest < currentBlock) {
+                getAllPastAuctions(latest, currentBlock);
+            }
+            auctionInstance.AuctionSuccessful({}, "latest", function(error, result) {
+                if (error) {
+                    console.log("ERROR in AuctionSuccessful " + JSON.stringify(error));
+                    return;
+                }
+                //console.log("Auction AuctionSuccessful: " + result['args']['_tokenId']);
+                sucessfulAuction(result);
+            });
+        });
+          /*
+  event AuctionSuccessful(
+    address indexed _nftAddress,
+    uint256 indexed _tokenId,
+    uint256 _totalPrice,
+    address _winner
+  );          */
+
+
+    });
+
+</script>
+
+<!-- header -->
+<div class="fixed-top">
+    <div class="navbar navbar-light bg-secondary">
+        <div class="container-fluid">
+            <div class="navbar-header">
+            </div>
+            <!--<a role="button" class="btn btn-primary" href="https://axieinfinity.com/adopt-axies?r=CHl5UkYrgttjndv97yqxcY_6dnY">Adopt an Axie!</a>-->
+            <div class="text-white pt-2" id="account"></div>
+
+            <div class="text-white">Donations: 0x209045cfe98445d6541d4fdf560d0d63fad77753 &nbsp;</div><br/>
+        </div>
+    </div>
+</div>
+<br/><br/><br/>
+
+<div class="container">
+  <table class="table table-striped" id="auctionTable">
+    <thead>
+      <tr>
+        <th scope="col"></th>
+        <th scope="col"></th>
+        <th scope="col"></th>
+        <th scope="col"></th>
+        <th scope="col"></th>
+      </tr>
+    </thead>
+    <tbody id="tableBody">
+      <tr>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+      </tr>
+    </tbody>
+    <tfoot>
+        <tr>
+            <th></th>
+            <th>Total:</th>
+            <th></th>
+            <th></th>
+            <th></th>
+        </tr>
+    </tfoot>
+  </table>
+  <div id="loading"></div>
+</div>
+<br/><br/><br/><br/><br/><br/><br/><br/>
+<footer class="page-footer font-small">
+    <div class="container">
+        <div class="row col-md-10">
+                <div class="col-md text-center"><a href="#noDrops" onclick="window.location.reload(true);">No audio</a></div>
+                <div class="col-md text-center"><a href="#noHistory" onclick="window.location.reload(true);">Don't load old auctions when starting</a></div>
+                <div class="col-md text-center"><a href="#noHistorynoDrops" onclick="window.location.reload(true);">Neither</a></div>
+                <div class="col-md text-center"><a href="" onclick="window.location.reload(true);">Both</a></div>
+        </div>
+    </div>
+</footer>
+<br/>
+</html>
