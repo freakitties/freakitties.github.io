@@ -167,7 +167,9 @@
     }
 
     function getAllPastAuctions(endBlock, earliestBlock=FIRST_BLOCK) {
-        if (endBlock < earliestBlock) return;
+        if (endBlock < earliestBlock) {
+            return;
+        }
         //console.log("getting batch " + endBlock);
         let start = endBlock - BATCH_SIZE;
         if (start < earliestBlock) {
@@ -179,6 +181,9 @@
             }
             //console.log("Auction AuctionSuccessful: " + result['args']['_tokenId']);
             sucessfulAuction(result);
+            if (endBlock - BATCH_SIZE < earliestBlock) {
+                $("#loading").fadeOut(2000);
+            }
         });
         getAllPastAuctions(endBlock - BATCH_SIZE, earliestBlock);
     }
@@ -340,7 +345,7 @@
         </tr>
     </tfoot>
   </table>
-  <div id="loading"></div>
+  <div id="loading">Looading data...</div>
 </div>
 <br/><br/><br/><br/><br/><br/><br/><br/>
 <footer class="page-footer font-small">
