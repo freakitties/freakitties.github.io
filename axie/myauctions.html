@@ -36,11 +36,25 @@
     }
     var axieTable;
 
+    function storeLocal(account, key, value) {
+        let acctStorage = JSON.parse(localStorage.getItem(account));
+        if (acctStorage == null) {
+            acctStorage = {};
+        }
+        acctStorage[key] = value;
+        localStorage.setItem(account, JSON.stringify(acctStorage));
+    }
+
+    function getLocal(account, key) {
+        let acctStorage = JSON.parse(localStorage.getItem(account));
+        if (acctStorage == null) return null;
+        return acctStorage[key];
+    }
+
     function addRow(date, id, price, winner, tx) {
         console.log("id: " + id + " Price: " + price + " Winner: " + winner + " Date: " + date);
         let row = [date, id, price, winner, tx];
-        let sales = localStorage.getItem("sales");
-        sales = JSON.parse(sales);
+        let sales = getLocal(web3.eth.accounts[0], "sales");
         if (sales) {
             if (!(tx in sales)) {
                 sales[tx] = [date, id, price, winner];
@@ -49,7 +63,7 @@
             sales = {};
             sales[tx] = [date, id, price, winner];
         }
-        localStorage.setItem("sales", JSON.stringify(sales));
+        storeLocal(web3.eth.accounts[0], "sales", sales);
         let d = axieTable.columns(4).data();
         if (!d[0].includes(tx)) {
             axieTable.row.add( row );
@@ -57,7 +71,7 @@
         }
     }
 
-    function sucessfulAuction(result) {
+    function sucessfulAuction(result, sound=false) {
         let tx = result["transactionHash"];
         let logIndex = result['logIndex'];
         let blockNumber = result["blockNumber"];
@@ -65,42 +79,44 @@
         let winner = result['args']['_winner'];
         let price = result['args']['_totalPrice'];
 
-        let earliestBlock = localStorage.getItem("earliestBlock");
-        let lastBlock = localStorage.getItem("lastBlock");
+        let earliestBlock = getLocal(web3.eth.accounts[0], "earliestBlock");
+        let lastBlock = getLocal(web3.eth.accounts[0], "lastBlock");
+
         if (earliestBlock == null || blockNumber < earliestBlock) {
-            localStorage.setItem("earliestBlock", blockNumber);
+            storeLocal(web3.eth.accounts[0], "earliestBlock", blockNumber);
         }
         if (lastBlock == null || blockNumber > lastBlock) {
-            localStorage.setItem("lastBlock", blockNumber);
+            storeLocal(web3.eth.accounts[0], "lastBlock", blockNumber);
         }
         auctionInstance.getAuction(coreAddress, id, blockNumber - 1, function(error, result){
             if (error) {
                 console.log("Error getting Auction: " + error);
-                localStorage.setItem("earliestBlock", earliestBlock);
-                localStorage.setItem("lastBlock", lastBlock);
+                storeLocal(web3.eth.accounts[0], "earliestBlock", earliestBlock);
+                storeLocal(web3.eth.accounts[0], "lastBlock", lastBlock);
                 return;
             }
             if (web3.eth.accounts[0] == result[0]) {
                 coreInstance.Transfer({}, {fromBlock: blockNumber, toBlock: blockNumber}, function(error, result) {
                     if (error) {
                         console.log("ERROR getting Tranfer event: " + error);
-                        localStorage.setItem("earliestBlock", earliestBlock);
-                        localStorage.setItem("lastBlock", lastBlock);
+                        storeLocal(web3.eth.accounts[0], "earliestBlock", earliestBlock);
+                        storeLocal(web3.eth.accounts[0], "lastBlock", lastBlock);
                         return;
                     }
                     if (tx == result["transactionHash"] && logIndex + 2 == result['logIndex']) {
                         web3.eth.getBlock(blockNumber, (error, result) => {
                             if (error) {
                                 console.log("Error getting block: " + error);
-                                localStorage.setItem("earliestBlock", earliestBlock);
-                                localStorage.setItem("lastBlock", lastBlock);
+                                storeLocal(web3.eth.accounts[0], "earliestBlock", earliestBlock);
+                                storeLocal(web3.eth.accounts[0], "lastBlock", lastBlock);
                                 return;
                             }
                             addRow(new Date(result['timestamp'] * 1000), id, price/1e18, winner, tx);
-                            localStorage.setItem("lastBlock", blockNumber);
+                            storeLocal(web3.eth.accounts[0], "lastBlock", blockNumber);
+
                         });
                     } else {
-                        localStorage.setItem("lastBlock", blockNumber);
+                        storeLocal(web3.eth.accounts[0], "lastBlock", blockNumber);
                     }
                 });
 
@@ -261,17 +277,16 @@
         coreInstance.totalSupply(function(error, result) {console.log("total supply: " + result.toString())});
 
 
-        console.log("Starting to watch Auction contract");
         web3.eth.getBlock('latest', function(error, result) {
             if (error) {
                 console.log("Error getting block: " + error);
                 return;
             }
             let currentBlock = result['number'];
-            let earliest = localStorage.getItem("earliestBlock");
-            let latest = localStorage.getItem("latestBlock");
+            let earliest = getLocal(web3.eth.accounts[0], "earliestBlock");
+            let latest = getLocal(web3.eth.accounts[0], "latestBlock");
 
-            let sales = JSON.parse(localStorage.getItem("sales"));
+            let sales = getLocal(web3.eth.accounts[0], "sales");
             if (sales) {
                 loadTable(sales);
             }
@@ -283,13 +298,15 @@
             if (latest != null && latest < currentBlock) {
                 getAllPastAuctions(latest, currentBlock);
             }
+
+            console.log("Starting to watch Auction contract");
             auctionInstance.AuctionSuccessful({}, "latest", function(error, result) {
                 if (error) {
                     console.log("ERROR in AuctionSuccessful " + JSON.stringify(error));
                     return;
                 }
                 //console.log("Auction AuctionSuccessful: " + result['args']['_tokenId']);
-                sucessfulAuction(result);
+                sucessfulAuction(result, true);
             });
         });
           /*
