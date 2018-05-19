@@ -22,7 +22,7 @@ Live site: [https://freakitties.github.io/](https://freakitties.github.io/)
 
 [Adopt an Axie!](https://axieinfinity.com/adopt-axies?r=CHl5UkYrgttjndv97yqxcY_6dnY)
 
-[Personal History of Axie Sales](myauctions.html)
+[Personal History of Axie Sales](/axie/myauctions.html)
 
 [Preliminary Gene Browser with search](/axie/jeans.html)
 
