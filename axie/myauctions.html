@@ -103,6 +103,11 @@
                         localStorage.setItem("lastBlock", blockNumber);
                     }
                 });
+
+                if (hash.indexOf("dontSpeak") != -1 || sound == false) {
+                    return;
+                }
+                synth.speak(utterThis);
             }
 
         });
@@ -182,6 +187,7 @@
             //console.log("Auction AuctionSuccessful: " + result['args']['_tokenId']);
             sucessfulAuction(result);
             if (endBlock - BATCH_SIZE < earliestBlock) {
+                $("#loading").text("Done loading.")
                 $("#loading").fadeOut(2000);
             }
         });
@@ -195,6 +201,7 @@
         }
     }
 
+    var hash = window.location.hash.substr(1);
     var cleared = false;
     $(document).ready(function(){
         if (typeof web3 !== 'undefined') {
@@ -250,11 +257,6 @@
         coreInstance = coreContract.at(coreAddress);
         coreInstance.totalSupply(function(error, result) {console.log("total supply: " + result.toString())});
 
-
-        var hash = window.location.hash.substr(1);
-        if (hash.indexOf("noHistory") != -1) {
-            blocksBack = 0;
-        }
 
         console.log("Starting to watch Auction contract");
         web3.eth.getBlock('latest', function(error, result) {
@@ -351,10 +353,8 @@
 <footer class="page-footer font-small">
     <div class="container">
         <div class="row col-md-10">
-                <div class="col-md text-center"><a href="#noDrops" onclick="window.location.reload(true);">No audio</a></div>
-                <div class="col-md text-center"><a href="#noHistory" onclick="window.location.reload(true);">Don't load old auctions when starting</a></div>
-                <div class="col-md text-center"><a href="#noHistorynoDrops" onclick="window.location.reload(true);">Neither</a></div>
-                <div class="col-md text-center"><a href="" onclick="window.location.reload(true);">Both</a></div>
+                <div class="col-md text-center"><a href="#dontSpeak" onclick="window.location.reload(true);">Don't speak when new auction occurs</a></div>
+                <div class="col-md text-center"><a href="" onclick="window.location.reload(true);">Do speak when new auction occurs</a></div>
         </div>
     </div>
 </footer>
