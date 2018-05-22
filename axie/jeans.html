@@ -43,6 +43,9 @@
             .w-45 {
                 width: 45% !important;
             }
+            .changebg {
+                background-color: #D9D9D9;
+            }
         </style>
         <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.16/css/jquery.dataTables.min.css" integrity="sha384-1UXhfqyOyO+W+XsGhiIFwwD3hsaHRz2XDGMle3b8bXPH5+cMsXVShDoHA3AH/y/p" crossorigin="anonymous">
         <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js" integrity="sha384-Z9D45cp3elqajO+xEyjRTIK1Gr3eYsXiyCPIKNog1sIQzpo2fqFDqFdADGiJjzOv" crossorigin="anonymous"></script>
@@ -113,7 +116,8 @@
 
     function renderGroup03(data, type, row, meta) {
         let bin = data.slice(8, 32);
-        return bin.slice(4, 5);
+        let region = bin.slice(4, 5)
+        return region + "<br/>" + regionMap[region];
     }
 
     function renderGroup04(data, type, row, meta) {
@@ -135,45 +139,99 @@
         return data.slice(0, 4);
     }
 
+    var patternMap = {"0001": "greyfuzzy","0010": "(0, 0, 64, 130)", "0011": "(0, 0, 61, 107)", "0100": "(0, 0, 82, 74)", "0101": "(0, 0, 66, 101)", "0110": "(0, 0, 51, 134)", "0111": "(0, 0, 57, 117)", "1000": "(0, 0, 59, 67)", "1001": "(0, 0, 51, 104)", "1010": "(0, 0, 63, 131)", "1011": "(0, 0, 73, 153)", "1100": "(0, 0, 78, 127)", "1101": "(0, 0, 63, 99)"}
     function renderGroup11(data, type, row, meta) {
         let bin = data.slice(4, 8);
         if(type === 'display'){
-            //Patterns
-            return "<b>" + bin +  "(" + parseInt(bin, 2) + ")</b>";
-            return out;
+            let pattern = patternMap[bin];
+            return "<b>" + bin +  "(" + parseInt(bin, 2) + ') <br/><img height="25" class="changebg" src="colors/' + pattern + '-pattern.png"></b>';
         }
         return bin;
     }
 
     function renderGroup12(data, type, row, meta) {
-        let bin = data.slice(8, 18);
-        let out = bin.slice(0, 2);
-        out += "_" + bin.slice(2, 6);
-        out += "_" + bin.slice(6, 10);
-        //out += "_" + bin.slice(10, 12);
-        return out;
+        return data.slice(8, 10);
     }
 
     function renderGroup13(data, type, row, meta) {
-        let bin = data.slice(18, 20);
-        return bin;
+        let bin = data.slice(10, 14);
+        if(type === 'display'){
+            let pattern = patternMap[bin];
+            return bin +  "(" + parseInt(bin, 2) + ') <br/><img height="25" class="changebg" src="colors/' + pattern + '-pattern.png">';
+        }
+        return bin +  "(" + parseInt(bin, 2) + ")";
     }
 
-
     function renderGroup14(data, type, row, meta) {
-        let bin = data.slice(20, 24);
-        if(type === 'display'){
-            //Colors
-            return "<b>" + bin + "(" + parseInt(bin, 2) + ")</b>";
-        }
+        let bin = data.slice(14, 16);
         return bin;
     }
 
     function renderGroup15(data, type, row, meta) {
-        let bin = data.slice(24, 32);
-        let out = bin.slice(0, 4);
-        out += "_" + bin.slice(4, 8);
-        return out;
+        let bin = data.slice(16, 20);
+        if(type === 'display'){
+            let pattern = patternMap[bin];
+            return bin +  "(" + parseInt(bin, 2) + ') <br/><img height="25" class="changebg" src="colors/' + pattern + '-pattern.png">';
+        }
+        return bin +  "(" + parseInt(bin, 2) + ")";
+    }
+
+    var geneColorMap = {"0000": {"0010": "ffec51","0011": "ffa12a","0100": "f0c66e"},
+    "0001": {"0010": "ff7183", "0011": "ff6d61", "0100": "f74e4e",},
+    "0010": {"0010": "ff9ab8","0011": "ffb4bb","0100": "ff778e"},
+    "0011": {"0010": "ccef5e","0011": "efd636","0100": "c5ffd9"},
+    "0100": {"0010": "4cffdf","0011": "2de8f2","0100": "759edb"},
+    "0101": {"0010": "fdbcff","0011": "ef93ff","0100": "f5e1ff"}};
+    function renderGroup16(data, type, row, meta) {
+        let bin = data.slice(20, 24);
+        let color = "";
+        if(type === 'display'){
+            if (bin == "0000") {
+                color = "ffffff";
+            } else if (bin == "0001") {
+                color = "7a6767";
+            } else {
+                let cls = row.group0.slice(0, 4);
+                color = geneColorMap[cls][bin];
+            }
+            return "<b>" + bin + "(" + parseInt(bin, 2) + ')<br/><img width="25" src="colors/' + color + '-body.png">' + "</b>";
+        }
+        return bin;
+    }
+
+    function renderGroup17(data, type, row, meta) {
+        let bin = data.slice(24, 28);
+        let color = "";
+        if(type === 'display'){
+            if (bin == "0000") {
+                color = "ffffff";
+            } else if (bin == "0001") {
+                color = "7a6767";
+            } else {
+                let cls = row.group0.slice(0, 4);
+                color = geneColorMap[cls][bin];
+            }
+            return bin + "(" + parseInt(bin, 2) + ')<br/><img width="25" src="colors/' + color + '-body.png">';
+        }
+
+        return bin;
+    }
+
+    function renderGroup18(data, type, row, meta) {
+        let bin = data.slice(28, 32);
+        let color = "";
+        if(type === 'display'){
+            if (bin == "0000") {
+                color = "ffffff";
+            } else if (bin == "0001") {
+                color = "7a6767";
+            } else {
+                let cls = row.group0.slice(0, 4);
+                color = geneColorMap[cls][bin];
+            }
+            return bin + "(" + parseInt(bin, 2) + ')<br/><img width="25" src="colors/' + color + '-body.png">';
+        }
+        return bin
     }
 
     function renderGroup2(data, type, row, meta) {
@@ -201,7 +259,7 @@
 
         let classBinary = firstSix.slice(2, 6);
         if (traitMapping[classGeneMap[classBinary]][type] == null) {
-            console.log("classBinary: " + classBinary + "classGeneMap[classBinary]" + classGeneMap[classBinary] + " type: " + type + " traitMapping[classGeneMap[classBinary]][type] " + traitMapping[classGeneMap[lassBinary]][type]);
+            console.log("classBinary: " + classBinary + "classGeneMap[classBinary]" + classGeneMap[classBinary] + " type: " + type + " traitMapping[classGeneMap[classBinary]][type] " + traitMapping[classGeneMap[classBinary]][type]);
         }
         if (!(traitBinary in traitMapping[classGeneMap[classBinary]][type])) return "UNKNOWN";
         let name = "";
@@ -227,32 +285,40 @@
     }
 
     function renderGroup23(data, type, row, meta) {
-        //let name = getTraitName(data.slice(0, 6), data.slice(11,16), meta.settings.aoColumns[meta.col].sTitle.toLowerCase().slice(0, -1));
-        //return data.slice(11,16) + "<br/>" + name;
-        return data.slice(11,12) + "? " + data.slice(12,16) + "<br/>" + classGeneMap[data.slice(12,16)];
+        return data.slice(11,12);
     }
 
     function renderGroup24(data, type, row, meta) {
-        let bin = data.slice(16,21);
-        //let name = getTraitName(data.slice(0, 6), data.slice(16,21), meta.settings.aoColumns[meta.col].sTitle.toLowerCase().slice(0, -1));
-        let name = getTraitName(row, data.slice(10,16), bin, meta.settings.aoColumns[meta.col].sTitle.toLowerCase().slice(0, -1));
-        return bin + "<br/>" + name;
+        //let name = getTraitName(data.slice(0, 6), data.slice(11,16), meta.settings.aoColumns[meta.col].sTitle.toLowerCase().slice(0, -1));
+        //return data.slice(11,16) + "<br/>" + name;
+        return data.slice(12,16) + "<br/>" + classGeneMap[data.slice(12,16)];
     }
 
     function renderGroup25(data, type, row, meta) {
-        //let name = getTraitName(data.slice(0, 6), data.slice(21,26), meta.settings.aoColumns[meta.col].sTitle.toLowerCase().slice(0, -1));
-        //return data.slice(21,26) + "<br/>" + name;
-        return data.slice(21,22) + "? " + data.slice(22,26) + "<br/>" + classGeneMap[data.slice(22,26)];
-    }
-
-    function renderGroup26(data, type, row, meta) {
-        let bin = data.slice(26,31);
-        //let name = getTraitName(data.slice(0, 6), data.slice(26,31), meta.settings.aoColumns[meta.col].sTitle.toLowerCase().slice(0, -1));
-        let name = getTraitName(row, data.slice(20,26), bin, meta.settings.aoColumns[meta.col].sTitle.toLowerCase().slice(0, -1));
+        let bin = data.slice(16,21);
+        //let name = getTraitName(data.slice(0, 6), data.slice(16,21), meta.settings.aoColumns[meta.col].sTitle.toLowerCase().slice(0, -1));
+        let name = getTraitName(row, data.slice(10,16), bin, meta.settings.aoColumns[meta.col].sTitle.toLowerCase().slice(0, -3));
         return bin + "<br/>" + name;
     }
 
+    function renderGroup26(data, type, row, meta) {
+        return data.slice(21,22);
+    }
+
     function renderGroup27(data, type, row, meta) {
+        //let name = getTraitName(data.slice(0, 6), data.slice(21,26), meta.settings.aoColumns[meta.col].sTitle.toLowerCase().slice(0, -1));
+        //return data.slice(21,26) + "<br/>" + name;
+        return data.slice(22,26) + "<br/>" + classGeneMap[data.slice(22,26)];
+    }
+
+    function renderGroup28(data, type, row, meta) {
+        let bin = data.slice(26,31);
+        //let name = getTraitName(data.slice(0, 6), data.slice(26,31), meta.settings.aoColumns[meta.col].sTitle.toLowerCase().slice(0, -1));
+        let name = getTraitName(row, data.slice(20,26), bin, meta.settings.aoColumns[meta.col].sTitle.toLowerCase().slice(0, -3));
+        return bin + "<br/>" + name;
+    }
+
+    function renderGroup29(data, type, row, meta) {
         return data.slice(31, 32);
     }
 
@@ -343,64 +409,79 @@
 
                 {title: "1.0", data: "group1", render: renderGroup1, searchable: false},
                 {title: "Pattern", data: "group1", render: renderGroup11, searchable: false},
-                {title: "Pattern recessive?", data: "group1", render: renderGroup12, searchable: false},
-                {title: "??", data: "group1", render: renderGroup13, searchable: false},
-                {title: "Color", data: "group1", render: renderGroup14, searchable: false},
-                {title: "Color recessive?", data: "group1", render: renderGroup15, searchable: false},
+                {title: "??", data: "group1", render: renderGroup12, searchable: false},
+                {title: "Pattern R1", data: "group1", render: renderGroup13, searchable: false},
+                {title: "??", data: "group1", render: renderGroup14, searchable: false},
+                {title: "Pattern R2", data: "group1", render: renderGroup15, searchable: false},
+                {title: "Color", data: "group1", render: renderGroup16, searchable: false},
+                {title: "Color R1", data: "group1", render: renderGroup17, searchable: false},
+                {title: "Color R2", data: "group1", render: renderGroup18, searchable: false},
 
                 {title: "Mystic", data: "group2", render: renderGroup2, searchable: false},
                 {title: "Eyes Class", data: "group2", render: renderGroup21, searchable: false},
                 {title: "Eyes", data: "group2", render: renderGroup22, searchable: false},
-                {title: "Eyes Class?", data: "group2", render: renderGroup23, searchable: false},
-                {title: "Eyes?", data: "group2", render: renderGroup24, searchable: false},
-                {title: "Eyes Class?", data: "group2", render: renderGroup25, searchable: false},
-                {title: "Eyes?", data: "group2", render: renderGroup26, searchable: false},
-                {title: "?", data: "group2", render: renderGroup27, searchable: false},
+                {title: "?", data: "group2", render: renderGroup23, searchable: false},
+                {title: "Eyes Class R1", data: "group2", render: renderGroup24, searchable: false},
+                {title: "Eyes R1", data: "group2", render: renderGroup25, searchable: false},
+                {title: "?", data: "group2", render: renderGroup26, searchable: false},
+                {title: "Eyes Class R2", data: "group2", render: renderGroup27, searchable: false},
+                {title: "Eyes R2", data: "group2", render: renderGroup28, searchable: false},
+                {title: "?", data: "group2", render: renderGroup29, searchable: false},
 
                 {title: "Mystic", data: "group3", render: renderGroup2, searchable: false},
                 {title: "Mouth Class", data: "group3", render: renderGroup21, searchable: false},
                 {title: "Mouth", data: "group3", render: renderGroup22, searchable: false},
-                {title: "Mouth Class?", data: "group3", render: renderGroup23, searchable: false},
-                {title: "Mouth?", data: "group3", render: renderGroup24, searchable: false},
-                {title: "Mouth Class?", data: "group3", render: renderGroup25, searchable: false},
-                {title: "Mouth?", data: "group3", render: renderGroup26, searchable: false},
-                {title: "?", data: "group3", render: renderGroup27, searchable: false},
+                {title: "?", data: "group2", render: renderGroup23, searchable: false},
+                {title: "Mouth Class R1", data: "group3", render: renderGroup24, searchable: false},
+                {title: "Mouth R1", data: "group3", render: renderGroup25, searchable: false},
+                {title: "?", data: "group2", render: renderGroup26, searchable: false},
+                {title: "Mouth Class R2", data: "group3", render: renderGroup27, searchable: false},
+                {title: "Mouth R2", data: "group3", render: renderGroup28, searchable: false},
+                {title: "?", data: "group3", render: renderGroup29, searchable: false},
 
                 {title: "Mystic", data: "group4", render: renderGroup2, searchable: false},
                 {title: "Ears Class", data: "group4", render: renderGroup21, searchable: false},
                 {title: "Ears", data: "group4", render: renderGroup22, searchable: false},
-                {title: "Ears Class?", data: "group4", render: renderGroup23, searchable: false},
-                {title: "Ears?", data: "group4", render: renderGroup24, searchable: false},
-                {title: "Ears Class?", data: "group4", render: renderGroup25, searchable: false},
-                {title: "Ears?", data: "group4", render: renderGroup26, searchable: false},
-                {title: "?", data: "group4", render: renderGroup27, searchable: false},
+                {title: "?", data: "group2", render: renderGroup23, searchable: false},
+                {title: "Ears Class R1", data: "group4", render: renderGroup24, searchable: false},
+                {title: "Ears R1", data: "group4", render: renderGroup25, searchable: false},
+                {title: "?", data: "group2", render: renderGroup26, searchable: false},
+                {title: "Ears Class R2", data: "group4", render: renderGroup27, searchable: false},
+                {title: "Ears R2", data: "group4", render: renderGroup28, searchable: false},
+                {title: "?", data: "group4", render: renderGroup29, searchable: false},
 
                 {title: "Mystic", data: "group5", render: renderGroup2, searchable: false},
                 {title: "Horn Class", data: "group5", render: renderGroup21, searchable: false},
                 {title: "Horn", data: "group5", render: renderGroup22, searchable: false},
-                {title: "Horn Class?", data: "group5", render: renderGroup23, searchable: false},
-                {title: "Horn?", data: "group5", render: renderGroup24, searchable: false},
-                {title: "Horn Class?", data: "group5", render: renderGroup25, searchable: false},
-                {title: "Horn?", data: "group5", render: renderGroup26, searchable: false},
-                {title: "?", data: "group5", render: renderGroup27, searchable: false},
+                {title: "?", data: "group2", render: renderGroup23, searchable: false},
+                {title: "Horn Class R1", data: "group5", render: renderGroup24, searchable: false},
+                {title: "Horn R1", data: "group5", render: renderGroup25, searchable: false},
+                {title: "?", data: "group2", render: renderGroup26, searchable: false},
+                {title: "Horn Class R2", data: "group5", render: renderGroup27, searchable: false},
+                {title: "Horn R2", data: "group5", render: renderGroup28, searchable: false},
+                {title: "?", data: "group5", render: renderGroup29, searchable: false},
 
                 {title: "Mystic", data: "group6", render: renderGroup2, searchable: false},
                 {title: "Back Class", data: "group6", render: renderGroup21, searchable: false},
                 {title: "Back", data: "group6", render: renderGroup22, searchable: false},
-                {title: "Back Class?", data: "group6", render: renderGroup23, searchable: false},
-                {title: "Back?", data: "group6", render: renderGroup24, searchable: false},
-                {title: "Back Class?", data: "group6", render: renderGroup25, searchable: false},
-                {title: "Back?", data: "group6", render: renderGroup26, searchable: false},
-                {title: "?", data: "group6", render: renderGroup27, searchable: false},
+                {title: "?", data: "group2", render: renderGroup23, searchable: false},
+                {title: "Back Class R1", data: "group6", render: renderGroup24, searchable: false},
+                {title: "Back R1", data: "group6", render: renderGroup25, searchable: false},
+                {title: "?", data: "group2", render: renderGroup26, searchable: false},
+                {title: "Back Class R2", data: "group6", render: renderGroup27, searchable: false},
+                {title: "Back R2", data: "group6", render: renderGroup28, searchable: false},
+                {title: "?", data: "group6", render: renderGroup29, searchable: false},
 
                 {title: "Mystic", data: "group7", render: renderGroup2, searchable: false},
                 {title: "Tail Class", data: "group7", render: renderGroup21, searchable: false},
                 {title: "Tail", data: "group7", render: renderGroup22, searchable: false},
-                {title: "Tail Class?", data: "group7", render: renderGroup23, searchable: false},
-                {title: "Tail?", data: "group7", render: renderGroup24, searchable: false},
-                {title: "Tail Class?", data: "group7", render: renderGroup25, searchable: false},
-                {title: "Tail?", data: "group7", render: renderGroup26, searchable: false},
-                {title: "?", data: "group7", render: renderGroup27, searchable: false},
+                {title: "?", data: "group2", render: renderGroup23, searchable: false},
+                {title: "Tail Class R1", data: "group7", render: renderGroup24, searchable: false},
+                {title: "Tail R1", data: "group7", render: renderGroup25, searchable: false},
+                {title: "?", data: "group2", render: renderGroup26, searchable: false},
+                {title: "Tail Class R2", data: "group7", render: renderGroup27, searchable: false},
+                {title: "Tail R2", data: "group7", render: renderGroup28, searchable: false},
+                {title: "?", data: "group7", render: renderGroup29, searchable: false},
                 {title: "owner", data: "owner", searchable: true}
                 ],
                 "language": {"search": "Filter (ID or owner):"},
@@ -545,15 +626,31 @@
                     <th rowspan="2">ID</th>
                     <th rowspan="2">Mystics</th>
                     <th colspan="7">Group 0</th>
-                    <th colspan="6">Group 1</th>
-                    <th colspan="8">Group 2</th>
-                    <th colspan="8">Group 3</th>
-                    <th colspan="8">Group 4</th>
-                    <th colspan="8">Group 5</th>
-                    <th colspan="8">Group 6</th>
-                    <th colspan="8">Group 7</th>
+                    <th colspan="9">Group 1</th>
+                    <th colspan="10">Group 2</th>
+                    <th colspan="10">Group 3</th>
+                    <th colspan="10">Group 4</th>
+                    <th colspan="10">Group 5</th>
+                    <th colspan="10">Group 6</th>
+                    <th colspan="10">Group 7</th>
                 </tr>
                 <tr>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
                     <th></th>
                     <th></th>
                     <th></th>
