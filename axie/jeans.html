@@ -376,11 +376,42 @@
         for (let id in axies) {
             let row = {id: id};
             let numMystic = 0;
+            let numBeast = 0;
+            let numBug = 0;
+            let numBird = 0;
+            let numPlant = 0;
+            let numAquatic = 0;
+            let numReptile = 0;
             for (let i = 0; i < 8; i++) {
                 row["group" + i] = axies[id].genes.slice(i * 32, i * 32 + 32);
-                if (i > 1 && row["group" + i].slice(0, 2) == "11") {
-                    numMystic++;
+                if (i > 1) {
+                    if (row["group" + i].slice(0, 2) == "11") {
+                        numMystic++;
+                    }
+                    let cls = row["group" + i].slice(2, 6);
+                    switch(classGeneMap[cls]) {
+                        case "beast":
+                            numBeast++;
+                            break;
+                        case "bug":
+                            numBug++;
+                            break;
+                        case "bird":
+                            numBird++;
+                            break;
+                        case "plant":
+                            numPlant++;
+                            break;
+                        case "aquatic":
+                            numAquatic++;
+                            break;
+                        case "reptile":
+                            numReptile++;
+                            break;
+                    }
                 }
+                //row["group" + i].slice(12,16) //R2
+                //row["group" + i].slice(22,26) //R1
             }
             row['mystics'] = numMystic;
             let axie = axies[id]
@@ -389,6 +420,12 @@
             } else {
                 row['owner'] = "?";
             }
+            row["beasts"] = numBeast;
+            row["bugs"] = numBug;
+            row["birds"] = numBird;
+            row["plants"] = numPlant;
+            row["aquatics"] = numAquatic;
+            row["reptiles"] = numReptile;
             data.push(row);
         }
 
@@ -397,7 +434,6 @@
                 data: data,
                 columns: [
                 {title: "ID", data: "id", "render": render},
-                {title: "Num Mystics", data: "mystics", className: "text-center"},
 
                 {title: "Class", data: "group0", render: renderGroup0, searchable: false},
                 {title: "0.1", data: "group0", render: renderGroup01, searchable: false},
@@ -482,6 +518,14 @@
                 {title: "Tail Class R2", data: "group7", render: renderGroup27, searchable: false},
                 {title: "Tail R2", data: "group7", render: renderGroup28, searchable: false},
                 {title: "?", data: "group7", render: renderGroup29, searchable: false},
+
+                {title: "Num Mystics", data: "mystics", className: "text-center"},
+                {title: "Num Beast", data: "beasts", className: "text-center"},
+                {title: "Num Bug", data: "bugs", className: "text-center"},
+                {title: "Num Bird", data: "birds", className: "text-center"},
+                {title: "Num Plant", data: "plants", className: "text-center"},
+                {title: "Num Aquatic", data: "aquatics", className: "text-center"},
+                {title: "Num Reptile", data: "reptiles", className: "text-center"},
                 {title: "owner", data: "owner", searchable: true}
                 ],
                 "language": {"search": "Filter (ID or owner):"},
@@ -624,17 +668,24 @@
             <thead>
                 <tr>
                     <th rowspan="2">ID</th>
-                    <th rowspan="2">Mystics</th>
-                    <th colspan="7">Group 0</th>
-                    <th colspan="9">Group 1</th>
-                    <th colspan="10">Group 2</th>
-                    <th colspan="10">Group 3</th>
-                    <th colspan="10">Group 4</th>
-                    <th colspan="10">Group 5</th>
-                    <th colspan="10">Group 6</th>
-                    <th colspan="10">Group 7</th>
+                    <th colspan="7">Group 0 (Class, Region, Origin, Misc)</th>
+                    <th colspan="9">Group 1 (Pattern and Color)</th>
+                    <th colspan="10">Group 2 (Eyes)</th>
+                    <th colspan="10">Group 3 (Mouth)</th>
+                    <th colspan="10">Group 4 (Ears)</th>
+                    <th colspan="10">Group 5 (Horn)</th>
+                    <th colspan="10">Group 6 (Back)</th>
+                    <th colspan="10">Group 7 (Tail)</th>
+                    <th colspan="8">Additional Info</th>
                 </tr>
                 <tr>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
                     <th></th>
                     <th></th>
                     <th></th>
