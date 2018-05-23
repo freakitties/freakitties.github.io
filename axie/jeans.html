@@ -313,7 +313,7 @@
         let bin = data.slice(6, 11);
         if(type === 'display'){
             name = getTraitName(row, data.slice(0, 6), bin, meta.settings.aoColumns[meta.col].sTitle.toLowerCase(), true);
-            return '<b><div class="binary">' + bin + "</div></b>" + name;
+            return '<b><div class="binary">' + bin + "</div>" + name + "</b>";
         }
         return bin;
     }
