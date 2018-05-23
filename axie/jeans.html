@@ -96,9 +96,9 @@
         let bin = data.slice(0, 4);
         if(type === 'display') {
             if (bin in classGeneMap) {
-                return bin + "(" + parseInt(bin, 2) + ") " + classGeneMap[bin];
+                return '<div class="binary">' + bin + "(" + parseInt(bin, 2) + ")</div>" + classGeneMap[bin];
             } else{
-                return bin + "(" + parseInt(bin, 2) + ") ???";
+                return '<div class="binary">' + bin + "(" + parseInt(bin, 2) + ")</div>???";
             }
 
         }
@@ -106,37 +106,59 @@
     }
 
     function renderGroup01(data, type, row, meta) {
-        return data.slice(4, 8);
+        let bin = data.slice(4, 8);
+        if(type === 'display'){
+            return '<div class="binary">' + bin + '</div>';
+        }
+        return bin;
     }
 
     function renderGroup02(data, type, row, meta) {
-        let bin = data.slice(8, 32);
-        return bin.slice(0, 4);
+        let bin = data.slice(8, 12);
+        if(type === 'display'){
+            return '<div class="binary">' + bin + '</div>';
+        }
+        return bin;
     }
 
     function renderGroup03(data, type, row, meta) {
-        let bin = data.slice(8, 32);
-        let region = bin.slice(4, 5)
-        return region + "<br/>" + regionMap[region];
+        let bin = data.slice(12, 13);
+        if(type === 'display'){
+            return '<div class="binary">' + bin + "</div>" + regionMap[bin];
+        }
+        return bin;
     }
 
     function renderGroup04(data, type, row, meta) {
-        let bin = data.slice(8, 32);
-        return bin.slice(5, 9);
+        let bin = data.slice(13, 17);
+        if(type === 'display'){
+            return '<div class="binary">'+ bin + '</div>';
+        }
+        return bin;
     }
 
     function renderGroup05(data, type, row, meta) {
-        let bin = data.slice(8, 32);
-        return bin.slice(9, 10);
+        let bin = data.slice(17, 18);
+        if(type === 'display'){
+            return '<div class="binary">' + bin + '</div>';
+        }
+        return bin;
     }
 
     function renderGroup06(data, type, row, meta) {
-        let bin = data.slice(8, 32);
-        return bin.slice(10, 24);
+        let bin = data.slice(18, 32);
+        if(type === 'display'){
+            return '<div class="binary">' + bin + '</div>';
+        }
+        return bin;
     }
 
     function renderGroup1(data, type, row, meta) {
-        return data.slice(0, 4);
+        let bin = data.slice(0, 4);
+        if(type === 'display'){
+            return '<div class="binary">' + bin + '</div>';
+        }
+        return bin;
     }
 
     var patternMap = {"0001": "greyfuzzy","0010": "(0, 0, 64, 130)", "0011": "(0, 0, 61, 107)", "0100": "(0, 0, 82, 74)", "0101": "(0, 0, 66, 101)", "0110": "(0, 0, 51, 134)", "0111": "(0, 0, 57, 117)", "1000": "(0, 0, 59, 67)", "1001": "(0, 0, 51, 104)", "1010": "(0, 0, 63, 131)", "1011": "(0, 0, 73, 153)", "1100": "(0, 0, 78, 127)", "1101": "(0, 0, 63, 99)"}
@@ -144,26 +166,33 @@
         let bin = data.slice(4, 8);
         if(type === 'display'){
             let pattern = patternMap[bin];
-            return "<b>" + bin +  "(" + parseInt(bin, 2) + ') <br/><img height="25" class="changebg" src="colors/' + pattern + '-pattern.png"></b>';
+            return '<b><div class="binary">' + bin +  "(" + parseInt(bin, 2) + ')</div><img height="25" class="changebg" src="colors/' + pattern + '-pattern.png"></b>';
         }
         return bin;
     }
 
     function renderGroup12(data, type, row, meta) {
-        return data.slice(8, 10);
+        let bin = data.slice(8, 10);
+        if (type === 'display') {
+            return '<div class="binary">' + bin + '</div>';
+        }
+        return bin;
     }
 
     function renderGroup13(data, type, row, meta) {
         let bin = data.slice(10, 14);
         if(type === 'display'){
             let pattern = patternMap[bin];
-            return bin +  "(" + parseInt(bin, 2) + ') <br/><img height="25" class="changebg" src="colors/' + pattern + '-pattern.png">';
+            return '<div class="binary">' + bin +  "(" + parseInt(bin, 2) + ')</div><img height="25" class="changebg" src="colors/' + pattern + '-pattern.png">';
         }
-        return bin +  "(" + parseInt(bin, 2) + ")";
+        return bin;
     }
 
     function renderGroup14(data, type, row, meta) {
         let bin = data.slice(14, 16);
+        if (type === 'display') {
+            return '<div class="binary">' + bin + '</div>';
+        }
         return bin;
     }
 
@@ -171,9 +200,9 @@
         let bin = data.slice(16, 20);
         if(type === 'display'){
             let pattern = patternMap[bin];
-            return bin +  "(" + parseInt(bin, 2) + ') <br/><img height="25" class="changebg" src="colors/' + pattern + '-pattern.png">';
+            return '<div class="binary">' + bin +  "(" + parseInt(bin, 2) + ')</div><img height="25" class="changebg" src="colors/' + pattern + '-pattern.png">';
         }
-        return bin +  "(" + parseInt(bin, 2) + ")";
+        return bin;
     }
 
     var geneColorMap = {"0000": {"0010": "ffec51","0011": "ffa12a","0100": "f0c66e"},
@@ -194,7 +223,7 @@
                 let cls = row.group0.slice(0, 4);
                 color = geneColorMap[cls][bin];
             }
-            return "<b>" + bin + "(" + parseInt(bin, 2) + ')<br/><img width="25" src="colors/' + color + '-body.png">' + "</b>";
+            return '<b><div class="binary">' + bin + "(" + parseInt(bin, 2) + ')</div><img width="25" src="colors/' + color + '-body.png">' + "</b>";
         }
         return bin;
     }
@@ -211,7 +240,7 @@
                 let cls = row.group0.slice(0, 4);
                 color = geneColorMap[cls][bin];
             }
-            return bin + "(" + parseInt(bin, 2) + ')<br/><img width="25" src="colors/' + color + '-body.png">';
+            return '<div class="binary">' + bin + "(" + parseInt(bin, 2) + ')</div><img width="25" src="colors/' + color + '-body.png">';
         }
 
         return bin;
@@ -229,19 +258,24 @@
                 let cls = row.group0.slice(0, 4);
                 color = geneColorMap[cls][bin];
             }
-            return bin + "(" + parseInt(bin, 2) + ')<br/><img width="25" src="colors/' + color + '-body.png">';
+            return '<div class="binary">' + bin + "(" + parseInt(bin, 2) + ')</div><img width="25" src="colors/' + color + '-body.png">';
         }
         return bin
     }
 
+    //Mystic
     function renderGroup2(data, type, row, meta) {
-            return data.slice(0, 2);
+        let bin = data.slice(0, 2);
+        if (type === 'display') {
+            return '<div class="binary">' + bin + '</div>' + ((bin == "11") ? "Yes" : "No");
+        }
+        return bin;
     }
 
     function renderGroup21(data, type, row, meta) {
         let bin = data.slice(2, 6);
         if(type === 'display'){
-            return "<b>" + bin + "</b> " + classGeneMap[bin];
+            return '<b><div class="binary">' + bin + '</div>' + classGeneMap[bin] + "</b>";
         }
         return bin;
     }
@@ -279,47 +313,69 @@
         let bin = data.slice(6, 11);
         if(type === 'display'){
             name = getTraitName(row, data.slice(0, 6), bin, meta.settings.aoColumns[meta.col].sTitle.toLowerCase(), true);
-            return "<b>" + bin + "</b><br/>" + name;
+            return '<b><div class="binary">' + bin + "</div></b>" + name;
         }
         return bin;
     }
 
     function renderGroup23(data, type, row, meta) {
-        return data.slice(11,12);
+        let bin = data.slice(11,12);
+        if (type === 'display') {
+            return '<div class="binary">' + bin + '</div>';
+        }
+        return bin;
     }
 
     function renderGroup24(data, type, row, meta) {
-        //let name = getTraitName(data.slice(0, 6), data.slice(11,16), meta.settings.aoColumns[meta.col].sTitle.toLowerCase().slice(0, -1));
-        //return data.slice(11,16) + "<br/>" + name;
-        return data.slice(12,16) + "<br/>" + classGeneMap[data.slice(12,16)];
+        let bin = data.slice(12,16);
+        if (type === 'display') {
+            return '<div class="binary">' + bin + '</div>' + classGeneMap[data.slice(12,16)];
+        }
+        return bin;
     }
 
     function renderGroup25(data, type, row, meta) {
         let bin = data.slice(16,21);
-        //let name = getTraitName(data.slice(0, 6), data.slice(16,21), meta.settings.aoColumns[meta.col].sTitle.toLowerCase().slice(0, -1));
-        let name = getTraitName(row, data.slice(10,16), bin, meta.settings.aoColumns[meta.col].sTitle.toLowerCase().slice(0, -3));
-        return bin + "<br/>" + name;
+        if (type === 'display') {
+            //let name = getTraitName(data.slice(0, 6), data.slice(16,21), meta.settings.aoColumns[meta.col].sTitle.toLowerCase().slice(0, -1));
+            let name = getTraitName(row, data.slice(10,16), bin, meta.settings.aoColumns[meta.col].sTitle.toLowerCase().slice(0, -3));
+            return '<div class="binary">' + bin + "</div>" + name;
+        }
+        return bin;
     }
 
     function renderGroup26(data, type, row, meta) {
-        return data.slice(21,22);
+        let bin = data.slice(21,22);
+        if (type === 'display') {
+            return '<div class="binary">' + bin + '</div>';
+        }
+        return bin;
     }
 
     function renderGroup27(data, type, row, meta) {
-        //let name = getTraitName(data.slice(0, 6), data.slice(21,26), meta.settings.aoColumns[meta.col].sTitle.toLowerCase().slice(0, -1));
-        //return data.slice(21,26) + "<br/>" + name;
-        return data.slice(22,26) + "<br/>" + classGeneMap[data.slice(22,26)];
+        let bin = data.slice(22,26);
+        if (type === 'display') {
+            return '<div class="binary">' + bin + '</div>' + classGeneMap[data.slice(22,26)];
+        }
+        return bin;
     }
 
     function renderGroup28(data, type, row, meta) {
         let bin = data.slice(26,31);
-        //let name = getTraitName(data.slice(0, 6), data.slice(26,31), meta.settings.aoColumns[meta.col].sTitle.toLowerCase().slice(0, -1));
-        let name = getTraitName(row, data.slice(20,26), bin, meta.settings.aoColumns[meta.col].sTitle.toLowerCase().slice(0, -3));
-        return bin + "<br/>" + name;
+        if (type === 'display') {
+            //let name = getTraitName(data.slice(0, 6), data.slice(26,31), meta.settings.aoColumns[meta.col].sTitle.toLowerCase().slice(0, -1));
+            let name = getTraitName(row, data.slice(20,26), bin, meta.settings.aoColumns[meta.col].sTitle.toLowerCase().slice(0, -3));
+            return '<div class="binary">' + bin + "</div>" + name;
+        }
+        return bin;
     }
 
     function renderGroup29(data, type, row, meta) {
-        return data.slice(31, 32);
+        let bin = data.slice(31, 32);
+        if (type === 'display') {
+            return '<div class="binary">' + bin + '</div>';
+        }
+        return bin;
     }
 
 
@@ -345,7 +401,7 @@
         $.get(url, function(data, status, xhr) {
             for (let i in data.axies) {
                 if (data.axies[i].stage < 3) continue;
-                axies[data.axies[i].id] = {"genes": genesToBin(new BigNumber(data.axies[i].genes)), "owner": data.axies[i].owner, "class": data.class};
+                axies[data.axies[i].id] = {"genes": genesToBin(new BigNumber(data.axies[i].genes)), "owner": data.axies[i].owner, "class": data.class, "exp": data.axies[i].exp};
             }
             if (offset + 12 < data.totalAxies) {
                 getAxies(offset + 12, address, callback);
@@ -362,7 +418,7 @@
     function getAxie(id, callback) {
         $.get("https://axieinfinity.com/api/axies/" + parseInt(id), function(data, status, xhr) {
             if (data.stage < 3) return;
-            axies[data.id] = {"genes": genesToBin(new BigNumber(data.genes)), "owner": data.owner, "class": data.class};
+            axies[data.id] = {"genes": genesToBin(new BigNumber(data.genes)), "owner": data.owner, "class": data.class, "exp": data.exp};
             if (callback != null) {
                 callback();
             }
@@ -414,12 +470,13 @@
                 //row["group" + i].slice(22,26) //R1
             }
             row['mystics'] = numMystic;
-            let axie = axies[id]
+            let axie = axies[id];
             if (axie != null && 'owner' in axie) {
                 row['owner'] = axie['owner'];
             } else {
                 row['owner'] = "?";
             }
+            row['exp'] = axie['exp'];
             row["beasts"] = numBeast;
             row["bugs"] = numBug;
             row["birds"] = numBird;
@@ -438,9 +495,9 @@
                 {title: "Class", data: "group0", render: renderGroup0, searchable: false},
                 {title: "0.1", data: "group0", render: renderGroup01, searchable: false},
                 {title: "0.2", data: "group0", render: renderGroup02, searchable: false},
-                {title: "Region", data: "group0", render: renderGroup03, searchable: false, className: "text-center"},
+                {title: "Region", data: "group0", render: renderGroup03, searchable: false},
                 {title: "0.4", data: "group0", render: renderGroup04, searchable: false},
-                {title: "Origin", data: "group0", render: renderGroup05, searchable: false, className: "text-center"},
+                {title: "Origin", data: "group0", render: renderGroup05, searchable: false},
                 {title: "0.6", data: "group0", render: renderGroup06, searchable: false},
 
                 {title: "1.0", data: "group1", render: renderGroup1, searchable: false},
@@ -519,17 +576,21 @@
                 {title: "Tail R2", data: "group7", render: renderGroup28, searchable: false},
                 {title: "?", data: "group7", render: renderGroup29, searchable: false},
 
-                {title: "Num Mystics", data: "mystics", className: "text-center"},
-                {title: "Num Beast", data: "beasts", className: "text-center"},
-                {title: "Num Bug", data: "bugs", className: "text-center"},
-                {title: "Num Bird", data: "birds", className: "text-center"},
-                {title: "Num Plant", data: "plants", className: "text-center"},
-                {title: "Num Aquatic", data: "aquatics", className: "text-center"},
-                {title: "Num Reptile", data: "reptiles", className: "text-center"},
+                {title: "Exp", data: "exp"},
+                {title: "Num Mystics", data: "mystics"},
+                {title: "Num Beast", data: "beasts"},
+                {title: "Num Bug", data: "bugs"},
+                {title: "Num Bird", data: "birds"},
+                {title: "Num Plant", data: "plants"},
+                {title: "Num Aquatic", data: "aquatics"},
+                {title: "Num Reptile", data: "reptiles"},
                 {title: "owner", data: "owner", searchable: true}
                 ],
                 "language": {"search": "Filter (ID or owner):"},
-                pageLength: 100
+                pageLength: 100,
+                "columnDefs": [
+                    { className: "text-center", "targets": [ "_all" ] }
+                ]
             });
 
             $('.dataTables_filter input').on( 'keyup click', function () {
@@ -642,6 +703,15 @@
             search();
         }
     });
+
+    function toggleBinary() {
+        if ($('#binaryToggle').is(":checked")) {
+            $(".binary").css("display", "none");
+        } else {
+            $(".binary").css("display", "block");
+        }
+    }
+
 </script>
 
     <!-- header -->
@@ -659,12 +729,14 @@
     </div>
     <br/><br/><br/>
     <div id="mainDiv" class="container">
+
         <div class="text-right">
+            <input id="binaryToggle" type="checkbox" onclick="toggleBinary()"/> Hide binary
             <input id="search" size="55" placeholder="ID, address or comma seperated list of IDs and/or addresses" />
             <button type="submit" class="btn btn-dark" onclick="search();" id="searchButton0">Search</button>
 
         </div>
-        <table class="table display" id="axieTable">
+        <table class="table display nowrap" id="axieTable">
             <thead>
                 <tr>
                     <th rowspan="2">ID</th>
@@ -679,6 +751,7 @@
                     <th colspan="8">Additional Info</th>
                 </tr>
                 <tr>
+                    <th></th>
                     <th></th>
                     <th></th>
                     <th></th>
