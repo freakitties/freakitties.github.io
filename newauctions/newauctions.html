@@ -76,6 +76,30 @@
 
     });
 
+
+    function bidOnSale(kittyId) {
+        salesInstance.getCurrentPrice(kittyId, function(error, result) {
+            if (error) {
+                alert(error);
+                return;
+            }
+            let currentPrice = result;
+            if (currentPrice == 0) {
+                alert("Couldn't get the current auction price. Maybe it sold?");
+                return;
+            }
+            //currentPrice = currentPrice.div(1e18).round(4).mul(1e18);
+            salesInstance.bid(kittyId, {from: web3.eth.accounts[0], value: currentPrice, gas: 125815}, (error, result) => {
+                if (error) {
+                    alert("Error bidding: " + error);
+                    return;
+                }
+                console.log("Bid result: " + result);
+            });
+        });
+    }
+
+
     added = [];
     function addCat(kittyId, generation, startPrice, endPrice, duration, date) {
 
@@ -106,6 +130,7 @@
         let errImg = imgURL + ".png";
         pic.id = kittyId;
         pic.innerHTML = '<a href="https://www.cryptokitties.co/kitty/' + kittyId + '" target="_blank"><img src="' + srcImg + '" width="100"' + ' onerror="this.onerror=null;this.src=\'' + errImg + '\';" /><br/>#' + kittyId + '</a>';
+        pic.innerHTML += '<br/><button class="btn-primary" onclick="bidOnSale(' + kittyId + ');">Buy now</button>'
         pic.classList.add("text-center");
 
         let gen = row.insertCell(1);
