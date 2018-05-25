@@ -9,6 +9,7 @@
         gtag('config', 'UA-116189657-1');
         </script>
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
         <style>
             body {background-color: #efefef;}
@@ -42,6 +43,10 @@
             }
             .w-45 {
                 width: 45% !important;
+            }
+            .dropdown-menu>li>a, .dropdown-menu {
+                color: white;
+                background-color: #6c757d;
             }
         </style>
     </head>
@@ -93,6 +98,7 @@
     normal.sort(compare);
 
 $(document).ready(function(){
+    $("#headerDiv").load("../header.html");
     var mysticCounts = {};
     for (let t in mystics) {
         let axie = getAxie(mystics[t].ids[0]);
@@ -140,17 +146,8 @@ $(document).ready(function(){
 </script>
 
     <!-- header -->
-    <div class="fixed-top">
-        <div class="navbar navbar-light bg-secondary">
-            <div class="container-fluid">
-                <div class="navbar-header">
-                </div>
-                <a role="button" class="btn btn-primary" href="https://axieinfinity.com/adopt-axies?r=CHl5UkYrgttjndv97yqxcY_6dnY">Adopt an Axie!</a>
-                <div class="text-white">Donations: 0x209045cfe98445d6541d4fdf560d0d63fad77753 &nbsp;</div><br/>
-            </div>
-        </div>
-    </div>
-    <br/><br/><br/>
+    <div id="headerDiv"></div>
+
     <div id="mainDiv" class="container">
         <div class="form-check">
         <input class="form-check-input" type="checkbox" name="all" />

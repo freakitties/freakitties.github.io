@@ -11,6 +11,7 @@
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
         <script src="../bignumber.min.js"></script>
         <script src="traitmapping.js"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
         <style>
             body {background-color: #efefef;}
@@ -45,6 +46,10 @@
             }
             .changebg {
                 background-color: #D9D9D9;
+            }
+            .dropdown-menu>li>a, .dropdown-menu {
+                color: white;
+                background-color: #6c757d;
             }
         </style>
         <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.16/css/jquery.dataTables.min.css" integrity="sha384-1UXhfqyOyO+W+XsGhiIFwwD3hsaHRz2XDGMle3b8bXPH5+cMsXVShDoHA3AH/y/p" crossorigin="anonymous">
@@ -622,6 +627,7 @@
     var initID;
     var traitMapping = traits;
     $(document).ready(function(){
+        $("#headerDiv").load("../header.html");
         //delay until web3 can load
         initID = setInterval(init, 250);
     });
@@ -713,21 +719,8 @@
     }
 
 </script>
-
     <!-- header -->
-    <div class="fixed-top">
-        <div class="navbar navbar-light bg-secondary">
-            <div class="container-fluid">
-                <div class="navbar-header">
-                </div>
-                <!--<a role="button" class="btn btn-primary" href="https://axieinfinity.com/adopt-axies?r=CHl5UkYrgttjndv97yqxcY_6dnY">Adopt an Axie!</a>-->
-                <div class="text-white pt-2" id="account"></div>
-
-                <div class="text-white">Donations: 0x209045cfe98445d6541d4fdf560d0d63fad77753 &nbsp;</div><br/>
-            </div>
-        </div>
-    </div>
-    <br/><br/><br/>
+    <div id="headerDiv"></div>
     <div id="mainDiv" class="container">
 
         <div class="text-right">

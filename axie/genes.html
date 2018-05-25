@@ -9,6 +9,7 @@
         gtag('config', 'UA-116189657-1');
         </script>
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
         <style>
             body {background-color: #efefef;}
@@ -16,6 +17,12 @@
         <script type="text/javascript" src="data.js"></script>
         <script type="text/javascript" src="allaxie-small.js"></script>
         <script type="text/javascript" src="binarygenes.js"></script>
+        <style>
+            .dropdown-menu>li>a, .dropdown-menu {
+                color: white;
+                background-color: #6c757d;
+            }
+        </style>
     </head>
 <script>
     var hash = window.location.hash.substr(1);
@@ -218,6 +225,7 @@
     alltraits.sort(compare);
 
 $(document).ready(function(){
+    $("#headerDiv").load("../header.html");
     //Group by Traits
     for (let t in alltraits) {
         let mask = "1111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111";
@@ -303,6 +311,7 @@ $(document).ready(function(){
         if (a.mask.slice(64 - 12, 64 - 8) > b.mask.slice(64 - 12, 64 - 8)) return 1;
         return 0;
     });
+    console.log(JSON.stringify(colorMasks));
     for (let cm in colorMasks) {
         let mask = formatColorsMask(colorMasks[cm].mask, 0);
         $("#colorsTable").append('<tr><td><img width="25" src="colors/' + colorMasks[cm].code + '-body.png"/> ' + colorMasks[cm].code + "</td><td><pre>" + mask + '</pre></td></tr>');
@@ -312,17 +321,7 @@ $(document).ready(function(){
 </script>
 
     <!-- header -->
-    <div class="fixed-top">
-        <div class="navbar navbar-light bg-secondary">
-            <div class="container-fluid">
-                <div class="navbar-header">
-                </div>
-                <a role="button" class="btn btn-primary" href="https://axieinfinity.com/adopt-axies?r=CHl5UkYrgttjndv97yqxcY_6dnY">Adopt an Axie!</a>
-                <div class="text-white">Donations: 0x209045cfe98445d6541d4fdf560d0d63fad77753 &nbsp;</div><br/>
-            </div>
-        </div>
-    </div>
-    <br/><br/><br/>
+    <div id="headerDiv"></div>
     <div id="mainDiv" class="container">
         <h1>Classes</h1>
         <div id="classes">

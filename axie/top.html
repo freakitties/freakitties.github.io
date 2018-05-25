@@ -9,6 +9,7 @@
         gtag('config', 'UA-116189657-1');
         </script>
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
         <style>
             body {background-color: #efefef;}
@@ -40,7 +41,10 @@
                 background-color: rgb(255, 83, 65) !important;
                 border-color: rgb(255, 83, 65) !important;
             }
-
+            .dropdown-menu>li>a, .dropdown-menu {
+                color: white;
+                background-color: #6c757d;
+            }
         </style>
     </head>
 <script>
@@ -100,7 +104,7 @@
         let myObj = ids;
         let keysSorted = Object.keys(myObj).sort(function(a, b){return parseInt(b)-parseInt(a)});
         for (let num in keysSorted) {
-            if (parseInt(keysSorted[num]) > 1 && ids[keysSorted[num]].length < 175) {
+            if (parseInt(keysSorted[num]) > 1 && ids[keysSorted[num]].length < 275) {
                 $("#" + typ + "TableBinned").append('<tr><td>' + keysSorted[num] + '</td><td class="btn-toolbar">' + generateIDs(ids[keysSorted[num]]) + '</td></tr>')
             }
         }
@@ -142,6 +146,7 @@
     var binned = calcCounts();
 
     $(document).ready(function(){
+        $("#headerDiv").load("../header.html");
         createBinnedTable('mystics');
         populateBinnedTable('mystics', binned['mystics']);
         for (let typ in binned) {
@@ -154,18 +159,8 @@
 </script>
 
     <!-- header -->
-    <div class="fixed-top">
-        <div class="navbar navbar-light bg-secondary">
-            <div class="container-fluid">
-                <div class="navbar-header">
-                </div>
-                <a role="button" class="btn btn-primary" href="https://axieinfinity.com/adopt-axies?r=CHl5UkYrgttjndv97yqxcY_6dnY">Adopt an Axie!</a>
-                <div class="text-white">Donations: 0x209045cfe98445d6541d4fdf560d0d63fad77753 &nbsp;</div><br/>
-            </div>
-        </div>
-    </div>
-    <br/><br/>
-    * counts with over 175 Axie are omitted<br/><br/>
+    <div id="headerDiv"></div>
+    * counts with over 275 Axie are omitted<br/><br/>
 
     <div class="container">
         <div id="binnedDiv" class="row"></div>
