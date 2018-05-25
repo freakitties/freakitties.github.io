@@ -229,7 +229,14 @@
     var hash = window.location.hash.substr(1);
     var cleared = false;
     $(document).ready(function(){
-        $("#headerDiv").load("../header.html");
+        $("#headerDiv").load("../header.html", function() {
+            if (typeof web3.eth.accounts[0] == "undefined") {
+                $("#account").text("Can't detect your account. Unlock your wallet or try reloading the page and waiting a few seconds.");
+                return;
+            } else {
+                $("#account").text("Your Account: " + web3.eth.accounts[0]);
+            }
+        });
         if (typeof web3 !== 'undefined') {
             // Use the browser's ethereum provider
             var provider = web3.currentProvider;
@@ -237,13 +244,6 @@
 
         } else {
             document.write("web3 not detected. Are you using MetaMask?");
-        }
-
-        if (typeof web3.eth.accounts[0] == "undefined") {
-            $("#account").text("Can't detect your account. Unlock your wallet or try reloading the page and waiting a few seconds.");
-            return;
-        } else {
-            $("#account").text("Your Account: " + web3.eth.accounts[0]);
         }
 
         axieTable = $('#auctionTable').DataTable({

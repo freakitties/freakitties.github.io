@@ -443,6 +443,7 @@
             let numPlant = 0;
             let numAquatic = 0;
             let numReptile = 0;
+
             for (let i = 0; i < 8; i++) {
                 row["group" + i] = axies[id].genes.slice(i * 32, i * 32 + 32);
                 if (i > 1) {
@@ -611,23 +612,24 @@
 
     function init() {
         clearInterval(initID);
-        if (typeof web3 == 'undefined') {
-            $("#account").text("Web3 enabled browser not detected. Use Search box.");
-        }
-
-        if (typeof web3.eth.accounts[0] == "undefined") {
-            $("#account").text("Can't detect your account. Unlock your wallet or try reloading the page and waiting a few seconds.");
-            return;
-        } else {
-            $("#account").text("Your Account: " + web3.eth.accounts[0]);
-        }
         getAxies(0, web3.eth.accounts[0], initData);
     }
 
     var initID;
     var traitMapping = traits;
     $(document).ready(function(){
-        $("#headerDiv").load("../header.html");
+        $("#headerDiv").load("../header.html", function() {
+            if (typeof web3 == 'undefined') {
+                $("#account").text("Web3 enabled browser not detected. Use Search box.");
+                return;
+            }
+            if (typeof web3.eth.accounts[0] == "undefined") {
+                $("#account").text("Can't detect your account. Unlock your wallet or try reloading the page and waiting a few seconds.");
+                return;
+            } else {
+                $("#account").text("Your Account: " + web3.eth.accounts[0]);
+            }
+        });
         //delay until web3 can load
         initID = setInterval(init, 250);
     });
