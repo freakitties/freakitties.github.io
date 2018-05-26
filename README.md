@@ -5,23 +5,22 @@ Live site: [https://freakitties.github.io/](https://freakitties.github.io/)
 
 ## CryptoKitties Tools
 
-[Breeding pair bookmarking tool](/breeding.html)
+[Bookmark your breeding pairs! A MUST have for any CK player.](/breeding.html)
 
-[Basic utility page to help make playing Cryptokitties easier](/w3.html)
+[Basic utility page to help make playing CryptoKitties easier](/w3.html)
 
-[Real-time kitty sales](/auctions/auctions.html)
+[Real-time kitty Sales](/auctions/auctions.html)
 
-[Real-time kitty sires](/sires/sires.html)
+[Real-time kitty Sires](/sires/sires.html)
 
-[Real-time new kitty auctions](/newauctions/newauctions.html)
+[Real-time new kitty auction listings](/newauctions/newauctions.html)
 
 
 ---
 
+
 ## Axie Infinity Tools
-
-[Adopt an Axie!](https://axieinfinity.com/adopt-axies?r=CHl5UkYrgttjndv97yqxcY_6dnY)
-
+<!-- [Adopt an Axie!](https://axieinfinity.com/adopt-axies?r=CHl5UkYrgttjndv97yqxcY_6dnY) -->
 [Personal History of Axie Sales](/axie/myauctions.html)
 
 [Preliminary Gene Browser with search](/axie/jeans.html)
