@@ -612,12 +612,6 @@
 
     function init() {
         clearInterval(initID);
-        getAxies(0, web3.eth.accounts[0], initData);
-    }
-
-    var initID;
-    var traitMapping = traits;
-    $(document).ready(function(){
         $("#headerDiv").load("../header.html", function() {
             if (typeof web3 == 'undefined') {
                 $("#account").text("Web3 enabled browser not detected. Use Search box.");
@@ -630,6 +624,12 @@
                 $("#account").text("Your Account: " + web3.eth.accounts[0]);
             }
         });
+        getAxies(0, web3.eth.accounts[0], initData);
+    }
+
+    var initID;
+    var traitMapping = traits;
+    $(document).ready(function(){
         //delay until web3 can load
         initID = setInterval(init, 250);
     });

@@ -226,10 +226,14 @@
         }
     }
 
-    var hash = window.location.hash.substr(1);
-    var cleared = false;
-    $(document).ready(function(){
+
+    function init() {
+        clearInterval(initID);
         $("#headerDiv").load("../header.html", function() {
+            if (typeof web3 == 'undefined') {
+                $("#account").text("Web3 enabled browser not detected.");
+                return;
+            }
             if (typeof web3.eth.accounts[0] == "undefined") {
                 $("#account").text("Can't detect your account. Unlock your wallet or try reloading the page and waiting a few seconds.");
                 return;
@@ -237,14 +241,13 @@
                 $("#account").text("Your Account: " + web3.eth.accounts[0]);
             }
         });
-        if (typeof web3 !== 'undefined') {
-            // Use the browser's ethereum provider
-            var provider = web3.currentProvider;
-            //web3.currentProvider = new Web3(new Web3.providers.HttpProvider("http://localhost:8545"));
+    }
 
-        } else {
-            document.write("web3 not detected. Are you using MetaMask?");
-        }
+    var initID;
+    var hash = window.location.hash.substr(1);
+    var cleared = false;
+    $(document).ready(function(){
+        initID = setInterval(init, 250);
 
         axieTable = $('#auctionTable').DataTable({
             order: [[ 0, "desc" ]],
