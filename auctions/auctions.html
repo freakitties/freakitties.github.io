@@ -76,17 +76,27 @@
     }
 
     window.addEventListener('load', function () {
-        if (typeof web3 !== 'undefined') {
-            // Use the browser's ethereum provider
-            var provider = web3.currentProvider;
-            //web3.currentProvider = new Web3(new Web3.providers.HttpProvider("http://localhost:8545"));
+        $.ajax({
+            url: "../header.html",
+            cache: false,
+            dataType: "html",
+            success: function(data) {
+                $("#headerDiv").html(data);
 
-        } else {
-            document.write("web3 not detected. Are you using MetaMask?");
-        }
+                if (typeof web3 == 'undefined') {
+                    $("#account").text("Web3 enabled browser not detected.");
+                    return;
+                }
+                if (typeof web3.eth.accounts[0] == "undefined") {
+                    $("#account").text("Can't detect your account. Unlock your wallet or try reloading the page and waiting a few seconds.");
+                    return;
+                } else {
+                    $("#account").text("Your Account: " + web3.eth.accounts[0]);
+                }
+
+            }
+        });
         acctInt = setInterval(doStuff, 1000);
-
-
     });
 
     added = [];
@@ -200,7 +210,9 @@
     }
 
 </script>
-<div class="text-right">Donations: 0x209045cFE98445D6541D4FDf560d0d63fAd77753 &nbsp;</div>
+<!-- header -->
+<div id="headerDiv"></div>
+
 <table class="table table-striped" id="auctionTable">
     <thead>
       <tr>

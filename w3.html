@@ -13,6 +13,9 @@
         gtag('config', 'UA-116189657-1');
         </script>
         <script src="bignumber.min.js"></script>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
     </head>
 <script>
 
@@ -49,13 +52,26 @@
     }
 
     window.addEventListener('load', function () {
-        if (typeof web3 !== 'undefined') {
-            // Use the browser's ethereum provider
-            var provider = web3.currentProvider;
+        $.ajax({
+            url: "../header.html",
+            cache: false,
+            dataType: "html",
+            success: function(data) {
+                $("#headerDiv").html(data);
 
-        } else {
-            document.write("web3 not detected. Are you using MetaMask?");
-        }
+                if (typeof web3 == 'undefined') {
+                    $("#account").text("Web3 enabled browser not detected.");
+                    return;
+                }
+                if (typeof web3.eth.accounts[0] == "undefined") {
+                    $("#account").text("Can't detect your account. Unlock your wallet or try reloading the page and waiting a few seconds.");
+                    return;
+                } else {
+                    $("#account").text("Your Account: " + web3.eth.accounts[0]);
+                }
+
+            }
+        });
         acctInt = setInterval(doStuff, 1000);
     });
 
@@ -171,11 +187,11 @@
         } );
     }
 </script>
-
+<!-- header -->
+<div id="headerDiv"></div>
+<div class="container">
 <br/>
 Barebones utility functions to make playing Cryptokitties easier.<br/> You will get <b>no</b> support, guarantee, or warranty when using this page. There is very little to no error handling on this page. If you enter incorrect values, unexpected things will happen.<br/>
-<br/>
-<div id="account"></div>
 <br/>
 
 Test to make sure the page is working. Click here to get the total number of cats currently in Cryptokitties.
@@ -191,7 +207,7 @@ Test to make sure the page is working. Click here to get the total number of cat
 
 <label>Kitty ID to sire with: </label><input type="text" id="sireId" onfocusout="getSiringPrice()"/><br/>
 <label>Matron kitty id (your cat): </label><input type="text" id="matronId"/><br/>
-<label>Auction price (Will be auto-filled when you enter the sire ID. Auto-breed fee will be added to this price): </label><input id="siringPrice" readonly="true"></div><br/>
+<label>Auction price (Will be auto-filled when you enter the sire ID. Auto-breed fee will be added to this price): </label><input id="siringPrice" readonly="true"><br/>
 <button onclick="bidOnSiring()">Bid on siring contract</button><br/>
 <div id="sireResult"></div>
 <br/><br/>
@@ -202,5 +218,5 @@ Test to make sure the page is working. Click here to get the total number of cat
 <button onclick="selfBreed()">Breed your own cats</button><br/>
 <div id="selfSireResult"></div>
 <br/><br/>
-
+</div>
 </html>

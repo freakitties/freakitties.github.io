@@ -380,8 +380,18 @@
     </script>
     <!-- header -->
     <div class="fixed-top">
-        <div class="navbar  navbar-dark bg-dark">
+        <div class="navbar navbar-light bg-dark bg-secondary">
             <div class="container-fluid">
+                <div class="dropdown">
+                  <button class="btn btn-default" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                    <span class="navbar-toggler-icon"></span>
+                  </button>
+                  <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+                    <li><a class="dropdown-item" href="/axie/">Axie Infinity Tools</a></li>
+                    <li><a class="dropdown-item" href="/csc/">Crypto Space Commander</a></li>
+                    <li><a class="dropdown-item" href="/ck/">CryptoKitties Tools</a></li>
+                  </ul>
+                </div>
                 <div class="navbar-header row">
                     <button class="text-white btn btn-outline-secondary" onclick="createForm()"><i class="fas fa-plus-circle"></i> Add a breeding pair</button>&nbsp;
                     <button class="text-white btn btn-outline-secondary float-right" onclick="bookmark()"><i class="fas fa-bookmark"></i> Bookmark</button>&nbsp; &nbsp;
