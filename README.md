@@ -36,4 +36,20 @@ Live site: [https://freakitties.github.io/](https://freakitties.github.io/)
 [Gene breakdown of Axies by class and trait](/axie/genes.html)
 
 
+---
+
+
+## Crypto Space Commander
+
+Tools for [Crypto Space Commander](https://www.csc-game.com/enlist/q7NrOrEP7)
+
+[List of MEA stars and ship launching tool](/csc/stars.html)
+
+[List of your ships](/csc/ships.html)
+
+
+
+
 Donations: 0x209045cFE98445D6541D4FDf560d0d63fAd77753
+
+

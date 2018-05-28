@@ -1,0 +1,279 @@
+<!--
+    Copyright 2018 freakitties@gmail.com
+    You can copy and use this code if you agree to pay $1 per page load.
+-->
+<html>
+    <head>
+        <title>CSC Info</title>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+        <script async src="https://www.googletagmanager.com/gtag/js?id=UA-116189657-1"></script>
+        <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'UA-116189657-1');
+        </script>
+        <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.16/css/jquery.dataTables.min.css" integrity="sha384-1UXhfqyOyO+W+XsGhiIFwwD3hsaHRz2XDGMle3b8bXPH5+cMsXVShDoHA3AH/y/p" crossorigin="anonymous">
+        <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js" integrity="sha384-Z9D45cp3elqajO+xEyjRTIK1Gr3eYsXiyCPIKNog1sIQzpo2fqFDqFdADGiJjzOv" crossorigin="anonymous"></script>
+        <style>
+            .dropdown-menu>li>a, .dropdown-menu {
+                color: white;
+                background-color: #6c757d;
+            }
+        </style>
+    </head>
+
+<script>
+
+    //actual'0x65d08c27d696eb55170cb3346b423ad85e58de68'
+
+    //gameplay
+    var rarePreSaleAddr = '0xcc9a66acf8574141b0e025202dd57649765a4be7';
+    var rarePreSaleABI = [{"constant":true,"inputs":[{"name":"_interfaceID","type":"bytes4"}],"name":"supportsInterface","outputs":[{"name":"","type":"bool"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[{"name":"_to","type":"address"},{"name":"_tokenId","type":"uint256"}],"name":"approve","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[],"name":"implementsERC721","outputs":[{"name":"","type":"bool"}],"payable":false,"stateMutability":"pure","type":"function"},{"constant":true,"inputs":[],"name":"totalSupply","outputs":[{"name":"total","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[{"name":"_collectibleType","type":"uint256"},{"name":"_collectibleClass","type":"uint256"},{"name":"_toAddress","type":"address"}],"name":"createCollectible","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":false,"inputs":[{"name":"_from","type":"address"},{"name":"_to","type":"address"},{"name":"_tokenId","type":"uint256"}],"name":"transferFrom","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[{"name":"","type":"uint256"},{"name":"","type":"uint256"}],"name":"preSaleItemTypeToClassToVendingFee","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[{"name":"_collectibleType","type":"uint256"},{"name":"_collectibleClass","type":"uint256"},{"name":"_toAddress","type":"address"}],"name":"vendingCreateCollectible","outputs":[],"payable":true,"stateMutability":"payable","type":"function"},{"constant":true,"inputs":[{"name":"","type":"uint256"},{"name":"","type":"uint256"}],"name":"preSaleItemTypeToClassToMaxLimitSet","outputs":[{"name":"","type":"bool"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[{"name":"","type":"uint256"},{"name":"","type":"uint256"}],"name":"preSaleItemTypeToClassToMaxLimit","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[{"name":"_newAddr","type":"address"}],"name":"removeFromApprovedAddress","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":false,"inputs":[{"name":"_tokenId","type":"uint256"}],"name":"isRedeemed","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[{"name":"","type":"uint256"},{"name":"","type":"uint256"}],"name":"preSaleItemTypeToClassToName","outputs":[{"name":"","type":"bytes32"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[],"name":"unpause","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[{"name":"","type":"uint256"},{"name":"","type":"uint256"},{"name":"","type":"uint256"}],"name":"preSaleItemTypeToSequenceIdToCollectible","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[{"name":"_collectibleType","type":"uint256"},{"name":"_collectibleClass","type":"uint256"}],"name":"toggleVending","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[],"name":"STARTING_ASSET_BASE","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"paused","outputs":[{"name":"","type":"bool"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[],"name":"withdrawBalance","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[{"name":"_tokenId","type":"uint256"}],"name":"ownerOf","outputs":[{"name":"owner","type":"address"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[{"name":"_tokenId","type":"uint256"}],"name":"getCollectibleDetails","outputs":[{"name":"assetId","type":"uint256"},{"name":"sequenceId","type":"uint256"},{"name":"collectibleType","type":"uint256"},{"name":"collectibleClass","type":"uint256"},{"name":"collectibleName","type":"string"},{"name":"isRedeemed","type":"bool"},{"name":"owner","type":"address"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[{"name":"_owner","type":"address"}],"name":"balanceOf","outputs":[{"name":"balance","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[{"name":"_collectibleName","type":"string"},{"name":"_collectibleType","type":"uint256"},{"name":"_collectibleClass","type":"uint256"},{"name":"_maxLimit","type":"uint256"}],"name":"setMaxLimit","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":false,"inputs":[{"name":"_newGM","type":"address"}],"name":"setSecondaryManager","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":false,"inputs":[],"name":"pause","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[{"name":"_owner","type":"address"}],"name":"tokensOfOwner","outputs":[{"name":"ownerTokens","type":"uint256[]"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[{"name":"","type":"uint256"}],"name":"preSaleItemIndexToOwner","outputs":[{"name":"","type":"address"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[],"name":"noError","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[],"name":"symbol","outputs":[{"name":"","type":"string"}],"payable":false,"stateMutability":"pure","type":"function"},{"constant":true,"inputs":[],"name":"NAME","outputs":[{"name":"","type":"string"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[{"name":"","type":"uint256"}],"name":"preSaleItemIndexToApproved","outputs":[{"name":"","type":"address"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[],"name":"preSaleInit","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":false,"inputs":[{"name":"_to","type":"address"},{"name":"_tokenId","type":"uint256"}],"name":"transfer","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":false,"inputs":[],"name":"hasError","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":false,"inputs":[{"name":"_tokenId","type":"uint256"}],"name":"takeOwnership","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[],"name":"managerPrimary","outputs":[{"name":"","type":"address"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[{"name":"_newAddr","type":"address"}],"name":"addToApprovedAddress","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":false,"inputs":[{"name":"_collectibleType","type":"uint256"},{"name":"_collectibleClass","type":"uint256"},{"name":"fee","type":"uint256"}],"name":"setVendingFee","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[{"name":"","type":"address"}],"name":"addressToValue","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[{"name":"_ownerAddress","type":"address"}],"name":"claimRefund","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":false,"inputs":[{"name":"_newGM","type":"address"}],"name":"setPrimaryManager","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[],"name":"error","outputs":[{"name":"","type":"bool"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[{"name":"","type":"uint256"},{"name":"","type":"uint256"}],"name":"preSaleItemTypeToClassToCanBeVendingMachine","outputs":[{"name":"","type":"bool"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"bankManager","outputs":[{"name":"","type":"address"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"managerSecondary","outputs":[{"name":"","type":"address"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[{"name":"_newBK","type":"address"}],"name":"setBanker","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[],"name":"SYMBOL","outputs":[{"name":"","type":"string"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[{"name":"","type":"uint256"},{"name":"","type":"uint256"}],"name":"preSaleItemTypeToCollectibleCount","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"inputs":[],"payable":false,"stateMutability":"nonpayable","type":"constructor"},{"payable":true,"stateMutability":"payable","type":"fallback"},{"anonymous":false,"inputs":[{"indexed":false,"name":"owner","type":"address"},{"indexed":false,"name":"refundValue","type":"uint256"}],"name":"RefundClaimed","type":"event"},{"anonymous":false,"inputs":[{"indexed":false,"name":"owner","type":"address"},{"indexed":false,"name":"globalId","type":"uint256"},{"indexed":false,"name":"collectibleType","type":"uint256"},{"indexed":false,"name":"collectibleClass","type":"uint256"},{"indexed":false,"name":"sequenceId","type":"uint256"},{"indexed":false,"name":"collectibleName","type":"bytes32"}],"name":"CollectibleCreated","type":"event"},{"anonymous":false,"inputs":[{"indexed":false,"name":"newContract","type":"address"}],"name":"ContractUpgrade","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"name":"from","type":"address"},{"indexed":true,"name":"to","type":"address"},{"indexed":false,"name":"tokenId","type":"uint256"}],"name":"Transfer","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"name":"owner","type":"address"},{"indexed":true,"name":"approved","type":"address"},{"indexed":false,"name":"tokenId","type":"uint256"}],"name":"Approval","type":"event"}];
+
+    var preSaleAddr = '0xe4f5e0d5c033f517a943602df942e794a06bc123';
+    var preSaleAddrABI = [{"constant":true,"inputs":[{"name":"_interfaceID","type":"bytes4"}],"name":"supportsInterface","outputs":[{"name":"","type":"bool"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[{"name":"_to","type":"address"},{"name":"_assetId","type":"uint256"}],"name":"approve","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[],"name":"PROMETHEUS_VOUCHER_PRICE","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"intrepidSoldCount","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"implementsERC721","outputs":[{"name":"","type":"bool"}],"payable":false,"stateMutability":"pure","type":"function"},{"constant":true,"inputs":[{"name":"_sequenceId","type":"uint256"},{"name":"_shipClass","type":"uint256"}],"name":"getShipDetails","outputs":[{"name":"assetId","type":"uint256"},{"name":"sequenceId","type":"uint256"},{"name":"shipName","type":"string"},{"name":"collectibleClass","type":"uint256"},{"name":"boughtTimestamp","type":"uint256"},{"name":"owner","type":"address"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"intrepidVoucherSoldCount","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"gameManagerSecondary","outputs":[{"name":"","type":"address"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"prometheusSoldCount","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"totalSupply","outputs":[{"name":"total","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"PROMETHEUS_PRICE_THRESHOLD","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"PROMETHEUS_MAX_PRICE","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[{"name":"_from","type":"address"},{"name":"_to","type":"address"},{"name":"_assetId","type":"uint256"}],"name":"transferFrom","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[],"name":"INTREPID_SHIP_PRICE","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[{"name":"_sequenceId","type":"uint256"},{"name":"_voucherClass","type":"uint256"}],"name":"getVoucherDetails","outputs":[{"name":"assetId","type":"uint256"},{"name":"sequenceId","type":"uint256"},{"name":"boughtTimestamp","type":"uint256"},{"name":"voucherClass","type":"uint256"},{"name":"owner","type":"address"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"prometheusVouchersMinted","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"prometheusVoucherSoldCount","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[{"name":"_newAddr","type":"address"}],"name":"removeFromApprovedAddress","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":false,"inputs":[{"name":"_assetId","type":"uint256"}],"name":"isRedeemed","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[],"name":"crosairShipMinted","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"CROSAIR_VOUCHER_PRICE","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"CROSAIR_PRICE_THRESHOLD","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[],"name":"unpause","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[{"name":"","type":"uint256"},{"name":"","type":"uint256"},{"name":"","type":"uint256"}],"name":"preSaleItemTypeToSequenceIdToCollectible","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"INTREPID_PRICE_INCREMENT","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"INTREPID_PRICE_THRESHOLD","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"INTREPID_MAX_PRICE","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"CROSAIR_PRICE_INCREMENT","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"CROSAIR_SHIP_PRICE","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[{"name":"_collectibleType","type":"uint256"},{"name":"_collectibleClass","type":"uint256"}],"name":"bid","outputs":[],"payable":true,"stateMutability":"payable","type":"function"},{"constant":true,"inputs":[],"name":"paused","outputs":[{"name":"","type":"bool"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[],"name":"withdrawBalance","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[{"name":"_assetId","type":"uint256"}],"name":"ownerOf","outputs":[{"name":"owner","type":"address"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[{"name":"_collectibleType","type":"uint256"},{"name":"_collectibleClass","type":"uint256"}],"name":"getCollectiblePrice","outputs":[{"name":"_price","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[{"name":"_assetId","type":"uint256"}],"name":"getCollectibleDetails","outputs":[{"name":"assetId","type":"uint256"},{"name":"sequenceId","type":"uint256"},{"name":"collectibleType","type":"uint256"},{"name":"collectibleClass","type":"uint256"},{"name":"isRedeemed","type":"bool"},{"name":"owner","type":"address"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[{"name":"_owner","type":"address"}],"name":"balanceOf","outputs":[{"name":"balance","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"crosairSoldCount","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"gameManagerPrimary","outputs":[{"name":"","type":"address"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"INTREPID_VOUCHER_PRICE","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"crosairVoucherSoldCount","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[{"name":"_newGM","type":"address"}],"name":"setSecondaryGameManager","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":false,"inputs":[],"name":"pause","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[{"name":"_owner","type":"address"}],"name":"tokensOfOwner","outputs":[{"name":"ownerTokens","type":"uint256[]"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[{"name":"_collectibleType","type":"uint256"},{"name":"_collectibleClass","type":"uint256"},{"name":"_toAddress","type":"address"}],"name":"createReferralGiveAways","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[{"name":"","type":"uint256"}],"name":"preSaleItemIndexToOwner","outputs":[{"name":"","type":"address"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[],"name":"noError","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[],"name":"crosairVouchersMinted","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"PROMETHEUS_PRICE_INCREMENT","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"symbol","outputs":[{"name":"","type":"string"}],"payable":false,"stateMutability":"pure","type":"function"},{"constant":true,"inputs":[],"name":"PROMETHEUS_SHIP_LIMIT","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"NAME","outputs":[{"name":"","type":"string"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[{"name":"","type":"uint256"}],"name":"preSaleItemIndexToApproved","outputs":[{"name":"","type":"address"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[],"name":"preSaleInit","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":false,"inputs":[{"name":"_to","type":"address"},{"name":"_assetId","type":"uint256"}],"name":"transfer","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[],"name":"CROSAIR_SHIP_LIMIT","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[],"name":"hasError","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[],"name":"intrepidVouchersMinted","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[{"name":"_assetId","type":"uint256"}],"name":"takeOwnership","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":false,"inputs":[{"name":"_newGM","type":"address"}],"name":"setPrimaryGameManager","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[],"name":"PROMETHEUS_VOUCHER_LIMIT","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[{"name":"_newAddr","type":"address"}],"name":"addToApprovedAddress","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":false,"inputs":[{"name":"_ownerAddress","type":"address"}],"name":"claimRefund","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[],"name":"error","outputs":[{"name":"","type":"bool"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"CROSAIR_VOUCHER_LIMIT","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"prometheusShipMinted","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"CROSAIR_MAX_PRICE","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"INTREPID_VOUCHER_LIMIT","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"bankManager","outputs":[{"name":"","type":"address"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[{"name":"_newBK","type":"address"}],"name":"setBanker","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[{"name":"_owner","type":"address"},{"name":"_collectibleType","type":"uint256"},{"name":"_collectibleClass","type":"uint256"}],"name":"getCollectibleTypeBalance","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"SYMBOL","outputs":[{"name":"","type":"string"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"PROMETHEUS_SHIP_PRICE","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"intrepidShipMinted","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[{"name":"","type":"uint256"},{"name":"","type":"uint256"}],"name":"preSaleItemTypeToCollectibleCount","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"INTREPID_SHIP_LIMIT","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"inputs":[],"payable":false,"stateMutability":"nonpayable","type":"constructor"},{"payable":true,"stateMutability":"payable","type":"fallback"},{"anonymous":false,"inputs":[{"indexed":false,"name":"owner","type":"address"},{"indexed":false,"name":"refundValue","type":"uint256"}],"name":"RefundClaimed","type":"event"},{"anonymous":false,"inputs":[{"indexed":false,"name":"_assetId","type":"uint256"},{"indexed":false,"name":"owner","type":"address"}],"name":"CollectibleBought","type":"event"},{"anonymous":false,"inputs":[{"indexed":false,"name":"collectibleClass","type":"uint256"},{"indexed":false,"name":"newPrice","type":"uint256"},{"indexed":false,"name":"oldPrice","type":"uint256"}],"name":"PriceUpdated","type":"event"},{"anonymous":false,"inputs":[{"indexed":false,"name":"owner","type":"address"},{"indexed":false,"name":"globalId","type":"uint256"},{"indexed":false,"name":"collectibleType","type":"uint256"},{"indexed":false,"name":"collectibleClass","type":"uint256"},{"indexed":false,"name":"sequenceId","type":"uint256"},{"indexed":false,"name":"collectibleName","type":"bytes32"},{"indexed":false,"name":"isRedeemed","type":"bool"}],"name":"CollectibleCreated","type":"event"},{"anonymous":false,"inputs":[{"indexed":false,"name":"from","type":"address"},{"indexed":false,"name":"to","type":"address"},{"indexed":false,"name":"shipId","type":"uint256"}],"name":"Transfer","type":"event"},{"anonymous":false,"inputs":[{"indexed":false,"name":"newContract","type":"address"}],"name":"ContractUpgrade","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"name":"owner","type":"address"},{"indexed":true,"name":"approved","type":"address"},{"indexed":false,"name":"tokenId","type":"uint256"}],"name":"Approval","type":"event"}];
+
+    var meaAddr = '0x59de2a5c00c7ee1c9cc823146cd18580fc5ff7b5';
+    var meaABI = [{"constant":true,"inputs":[{"name":"","type":"uint16"}],"name":"resourceERC20Address","outputs":[{"name":"","type":"address"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"SIGMA_EXTRACTION_BASE","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[{"name":"_assetId","type":"uint256"}],"name":"claimOreOnlyFromAssetId","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[],"name":"VULCAN_POD","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"CPGPEREGRINE","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[{"name":"","type":"address"},{"name":"","type":"uint8"}],"name":"distributedOreBalanceMapping","outputs":[{"name":"","type":"uint32"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"DEVCLASS_EXTRACTION_BASE","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"HAYATO_MAX_CARGO","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[{"name":"_aime","type":"uint256"},{"name":"_miningTime","type":"uint256"}],"name":"setMEAAttributes","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[],"name":"totalMEATonsClaimed","outputs":[{"name":"total","type":"uint32"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[{"name":"_assetId","type":"uint32"}],"name":"getAssetIdCargo","outputs":[{"name":"iron","type":"uint256"},{"name":"quartz","type":"uint256"},{"name":"nickel","type":"uint256"},{"name":"cobalt","type":"uint256"},{"name":"silver","type":"uint256"},{"name":"titanium","type":"uint256"},{"name":"lucinite","type":"uint256"},{"name":"gold","type":"uint256"},{"name":"cosmethyst","type":"uint256"},{"name":"allurum","type":"uint256"},{"name":"platinum","type":"uint256"},{"name":"trilite","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[{"name":"","type":"address"}],"name":"otherManagers","outputs":[{"name":"","type":"uint8"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"PHOENIX_CORSAIR_EXTRACTION_BASE","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[{"name":"_assetId","type":"uint256"}],"name":"getAssetIdTripCompletedTime","outputs":[{"name":"time","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[{"name":"_starId","type":"uint8"},{"name":"_lightyearsInThousands","type":"uint16"}],"name":"setStarDistance","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[],"name":"DEVCLASS_FTL_SPEED","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"TACTICALCRUISER","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[{"name":"","type":"uint32"}],"name":"assetIdToStarVisitedMapping","outputs":[{"name":"","type":"uint8"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"miningTimePerTrip","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[{"name":"","type":"address"},{"name":"","type":"uint8"}],"name":"collectedOreBalanceMapping","outputs":[{"name":"","type":"uint32"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[],"name":"withdrawCollectedResources","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[],"name":"HAYATO","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[],"name":"unpause","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[{"name":"","type":"uint8"}],"name":"starLightyearDistanceMapping","outputs":[{"name":"","type":"uint16"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"VULCAN_POD_EXTRACTION_BASE","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"REAPER_INTREPID_MAX_CARGO","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[{"name":"_assetId","type":"uint32"}],"name":"getAssetIdCargoArray","outputs":[{"name":"","type":"uint256[12]"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[{"name":"_assetId","type":"uint256"},{"name":"starId","type":"uint8"}],"name":"launchShipOnMEA","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[],"name":"VULCAN_PROMETHEUS","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"PHOENIX_CORSAIR","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"OTHERCRUISER_FTL_SPEED","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"getMEATime","outputs":[{"name":"time","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"paused","outputs":[{"name":"","type":"bool"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"TACTICALCRUISER_EXTRACTION_BASE","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"VULCAN_POD_MAX_CARGO","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[{"name":"_starId","type":"uint8"}],"name":"totalStarSupplyRemaining","outputs":[{"name":"","type":"uint32"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"HAYATO_FTL_SPEED","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[{"name":"","type":"uint32"}],"name":"assetIdCurrentTripStartTimeMapping","outputs":[{"name":"","type":"uint32"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[{"name":"","type":"uint32"},{"name":"","type":"uint8"}],"name":"collectedOreAssetMapping","outputs":[{"name":"","type":"uint32"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"DEVCLASS_MAX_CARGO","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"DEVCLASS","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"PHOENIX_CORSAIR_FTL_SPEED","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"REAPER_INTREPID_FTL_SPEED","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"HAYATO_EXTRACTION_BASE","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"SIGMA_FTL_SPEED","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[{"name":"_newGM","type":"address"}],"name":"setSecondaryManager","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":false,"inputs":[],"name":"pause","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[],"name":"SIGMA","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[],"name":"noError","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[],"name":"PHOENIX_CORSAIR_MAX_CARGO","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"VULCAN_PROMETHEUS_EXTRACTION_BASE","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"VULCAN_POD_FTL_SPEED","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"OTHERCRUISER_EXTRACTION_BASE","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"TACTICALCRUISER_MAX_CARGO","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[{"name":"_owner","type":"address"}],"name":"getCollectedOreBalances","outputs":[{"name":"iron","type":"uint256"},{"name":"quartz","type":"uint256"},{"name":"nickel","type":"uint256"},{"name":"cobalt","type":"uint256"},{"name":"silver","type":"uint256"},{"name":"titanium","type":"uint256"},{"name":"lucinite","type":"uint256"},{"name":"gold","type":"uint256"},{"name":"cosmethyst","type":"uint256"},{"name":"allurum","type":"uint256"},{"name":"platinum","type":"uint256"},{"name":"trilite","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[{"name":"_hiddenLogicAddress","type":"address"}],"name":"setHiddenLogic","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":false,"inputs":[{"name":"_cscERC721Address","type":"address"}],"name":"setCSCERC721","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[],"name":"OTHERCRUISER_MAX_CARGO","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"REAPER_INTREPID_EXTRACTION_BASE","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"NAME","outputs":[{"name":"","type":"string"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"aimeIncreasePerTrip","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"VULCAN_PROMETHEUS_FTL_SPEED","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[],"name":"hasError","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[{"name":"_assetId","type":"uint256"}],"name":"getAssetIdTripStartTime","outputs":[{"name":"time","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"managerPrimary","outputs":[{"name":"","type":"address"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[{"name":"_newOp","type":"address"},{"name":"_state","type":"uint8"}],"name":"setOtherManager","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[],"name":"CPGPEREGRINE_FTL_SPEED","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[{"name":"_assetId","type":"uint32"}],"name":"getLastStarOfAssetId","outputs":[{"name":"starId","type":"uint8"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"CPGPEREGRINE_EXTRACTION_BASE","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[{"name":"_newGM","type":"address"}],"name":"setPrimaryManager","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[],"name":"error","outputs":[{"name":"","type":"bool"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[{"name":"_starId","type":"uint8"}],"name":"getStarDistanceInLyThousandths","outputs":[{"name":"total","type":"uint32"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"SIGMA_MAX_CARGO","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[{"name":"_owner","type":"address"}],"name":"getDistributedOreBalances","outputs":[{"name":"iron","type":"uint256"},{"name":"quartz","type":"uint256"},{"name":"nickel","type":"uint256"},{"name":"cobalt","type":"uint256"},{"name":"silver","type":"uint256"},{"name":"titanium","type":"uint256"},{"name":"lucinite","type":"uint256"},{"name":"gold","type":"uint256"},{"name":"cosmethyst","type":"uint256"},{"name":"allurum","type":"uint256"},{"name":"platinum","type":"uint256"},{"name":"trilite","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[{"name":"_withdrawAddress","type":"address"}],"name":"reclaimResourceDeposits","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[],"name":"CPGPEREGRINE_MAX_CARGO","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[{"name":"","type":"uint32"}],"name":"assetIdNumberOfTripsMapping","outputs":[{"name":"","type":"uint32"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"REAPER_INTREPID","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"bankManager","outputs":[{"name":"","type":"address"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"OTHERCRUISER","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[{"name":"_resId","type":"uint16"}],"name":"getResourceERC20Address","outputs":[{"name":"resourceContract","type":"address"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"managerSecondary","outputs":[{"name":"","type":"address"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[{"name":"_newBK","type":"address"}],"name":"setBanker","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[],"name":"VULCAN_PROMETHEUS_MAX_CARGO","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[{"name":"_master","type":"address"}],"name":"setAllResourceERC20Addresses","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":false,"inputs":[{"name":"_resId","type":"uint16"},{"name":"_reourceAddress","type":"address"}],"name":"setResourceERC20Address","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[],"name":"totalMEATonsSupply","outputs":[{"name":"total","type":"uint32"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[{"name":"_cscFactoryERC721Address","type":"address"}],"name":"setCSCFactoryERC721","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[],"name":"TACTICALCRUISER_FTL_SPEED","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"inputs":[],"payable":false,"stateMutability":"nonpayable","type":"constructor"},{"anonymous":false,"inputs":[{"indexed":false,"name":"newContract","type":"address"}],"name":"ContractUpgrade","type":"event"},{"anonymous":false,"inputs":[{"indexed":false,"name":"otherManager","type":"address"},{"indexed":false,"name":"state","type":"uint256"}],"name":"OtherManagerUpdated","type":"event"}];
+
+    /// @dev Collectible Types (Voucher/Ship)
+    /// can be 0 - Voucher, 1 - Ship
+    /// @dev Collectible Class (1 - Prometheus, 2 - Crosair, 3 - Intrepid)
+    const CTYPES = ["Voucher", "Ship"];
+    const CCLASSES = ["Unknown?", "Prometheus", "Corsair", "Intrepid"];
+    function querySaleContract(instance, address) {
+        instance.tokensOfOwner(address, (error, result) => {
+            if (error) {
+                console.log("Error getting owner: " + error);
+                return;
+            }
+
+            for (let i in result) {
+                let row = {};
+                let shipID = result[i];
+                row.shipID = shipID;
+                instance.getCollectibleDetails(shipID, (err, res) => {
+                    if (err) {
+                        console.log("Error getting collectible details: " + err);
+                        return;
+                    }
+                    let sequenceId = res[1];
+                    let type = res[2];
+                    let cls = res[3];
+                    let redeemed = res[4];
+                    row.type = (type in CTYPES) ? CTYPES[type] : "Unknown Type";
+                    row.class = (cls in CCLASSES) ? CCLASSES[cls] : "Unknown Class";
+                    instance.getShipDetails(sequenceId, cls, (e, r) => {
+                        if (e) {
+                            console.log("Error getting ship details: " + e);
+                            return;
+                        }
+                        let name = r[2];
+                        row.name = name;
+/*
+                        meaInstance.getMEATime()
+                        meaInstance.getAssetIdTripStartTime(shipID)
+                        meaInstance.getAssetIdTripCompletedTime(shipID)
+*/
+                        meaInstance.getAssetIdTripCompletedTime(shipID, (e,r) => {
+                            if (e) {
+                                console.log("Error getAssetIdTripCompletedTime: " + e);
+                                return;
+                            }
+                            if (r == 0) {
+                                row.status = "no missions?";
+                            } else {
+                                let now = new Date().getTime()/1000;
+                                let timeLeft = r - now;
+                                let hours = timeLeft/3600;
+                                if (timeLeft > 0) {
+                                    row.status = "Mission time remaining: " + hours.toFixed(2) + " hours";
+                                } else {
+                                    row.status = "Mission finished " + Math.abs(hours).toFixed(2) + " hours ago";
+                                }
+                            }
+                            shipTable.row.add( row );
+                            shipTable.columns.adjust().draw();
+
+                        });
+                    });
+                });
+            }
+        });
+    }
+
+    //                                                     sp?
+    const RARE_TYPES_CLASSES = [["00?", "Prometheus", "Crosair", "Intrepid"], ["10?", "11?", "12?", "13?", "Dreadnaught", "Corsair? Hayato Cruiser", "Corsair? CGP Peregrine Frigate"], ["20?", "Space Station"]];
+    function queryRareSaleContract(instance, address) {
+        instance.tokensOfOwner(address, (error, result) => {
+            if (error) {
+                console.log("Error getting owner: " + error);
+                return;
+            }
+
+            for (let i in result) {
+                let row = {};
+                let shipID = result[i];
+                row.shipID = shipID;
+                instance.getCollectibleDetails(shipID, (err, res) => {
+                    if (err) {
+                        console.log("Error getting collectible details: " + err);
+                        return;
+                    }
+                    let sequenceId = res[1];
+                    let type = res[2];
+                    let cls = res[3];
+                    let name = res[4];
+                    let redeemed = res[5];
+                    row.type = type;
+                    row.class = RARE_TYPES_CLASSES[type][cls];
+                    row.name = name;
+
+                    meaInstance.getAssetIdTripCompletedTime(shipID, (e,r) => {
+                        if (e) {
+                            console.log("Error getAssetIdTripCompletedTime: " + e);
+                            return;
+                        }
+                        if (r == 0) {
+                            row.status = "no missions?";
+                        } else {
+                            let now = new Date().getTime()/1000;
+                            let timeLeft = r - now;
+                            let hours = timeLeft/3600;
+                            if (timeLeft > 0) {
+                                row.status = "Mission time remaining: " + hours.toFixed(2) + " hours";
+                            } else {
+                                row.status = "Mission finished " + Math.abs(hours).toFixed(2) + " hours ago";
+                            }
+                        }
+                        shipTable.row.add( row );
+                        shipTable.columns.adjust().draw();
+
+                    });
+                });
+            }
+        });
+    }
+
+    function getShips(address=web3.eth.accounts[0]) {
+        if (web3.isAddress(address)) {
+            shipTable.clear().draw();
+            querySaleContract(preSaleInstance, address);
+            queryRareSaleContract(rarePreSaleInstance, address);
+        }
+    }
+
+    function init() {
+        clearInterval(initID);
+        $.ajax({
+            url: "../header.html",
+            cache: false,
+            dataType: "html",
+            success: function(data) {
+                $("#headerDiv").html(data);
+
+                if (typeof web3 == 'undefined') {
+                    $("#account").text("Web3 enabled browser not detected.");
+                    return;
+                }
+                if (typeof web3.eth.accounts[0] == "undefined") {
+                    $("#account").text("Can't detect your account. Unlock your wallet or try reloading the page and waiting a few seconds.");
+                    return;
+                } else {
+                    $("#account").text("Your Account: " + web3.eth.accounts[0]);
+                }
+
+            }
+        });
+       if (typeof web3 != 'undefined') {
+            preSaleContract = web3.eth.contract(preSaleAddrABI);
+            preSaleInstance = preSaleContract.at(preSaleAddr);
+            preSaleInstance.totalSupply(function(error, result) {console.log(result.toString())});
+
+            rarePreSaleContract = web3.eth.contract(rarePreSaleABI);
+            rarePreSaleInstance = rarePreSaleContract.at(rarePreSaleAddr);
+
+            meaContract = web3.eth.contract(meaABI);
+            meaInstance = meaContract.at(meaAddr);
+            getShips();
+        }
+    }
+
+    function renderStatus(data, type, row, meta) {
+        if (type == "display") {
+            return data;
+        }
+        return data;
+    }
+
+    var initID;
+    var hash = window.location.hash.substr(1);
+    var cleared = false;
+    var shipTable;
+    $(document).ready(function(){
+        initID = setInterval(init, 250);
+
+
+        shipTable = $('#shipTable').DataTable({
+            columns: [
+                {title: "Ship ID", data: "shipID"},
+                {title: "Name", data: "name"},
+                {title: "Type", data: "type"},
+                {title: "Class", data: "class"},
+                {title: "Mission Status", data: "status", render: renderStatus},
+            ],
+            pageLength: 50,
+            searching: false,
+            "columnDefs": [
+                { className: "text-center", "targets": [0, 1, 2] }
+            ]
+        });
+
+        shipTable.clear().draw();
+
+    });
+
+    function loadShips() {
+        getShips($("#address").val());
+    }
+
+</script>
+
+    <!-- header -->
+    <div id="headerDiv"></div>
+    <div id="ships"></div>
+    <div class="container">
+        <div class="form-group row form-inline" id="searchDiv">
+            <label class="sr-only" for="address">Address</label>
+            <input size="50" class="form-control mr-2" type="text" id="address" placeholder="Address" />
+            <buttonn class="btn btn-primary" onclick="loadShips()">Show ships</button>
+        </div>
+
+      <table class="table table-striped" id="shipTable">
+        <thead>
+          <tr>
+            <th scope="col">Ship ID</th>
+            <th scope="col">Name</th>
+            <th scope="col">Type</th>
+            <th scope="col">Class</th>
+            <th scope="col">Mission Status</th>
+          </tr>
+        </thead>
+        <tbody id="tableBody"></tbody>
+        <tfoot>
+            <tr>
+                <th></th>
+                <th>Total:</th>
+                <th></th>
+                <th></th>
+                <th></th>
+            </tr>
+        </tfoot>
+      </table>
+  </div>
+
+<br/>
+</html>

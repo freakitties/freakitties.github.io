@@ -418,7 +418,14 @@ function initData() {
 
 var traitMapping = {};
 $(document).ready(function(){
-    $("#headerDiv").load("../header.html");
+    $.ajax({
+        url: "../header.html",
+        cache: false,
+        dataType: "html",
+        success: function(data) {
+            $("#headerDiv").html(data);
+        }
+    });
     initData();
 
 });

@@ -612,16 +612,24 @@
 
     function init() {
         clearInterval(initID);
-        $("#headerDiv").load("../header.html", function() {
-            if (typeof web3 == 'undefined') {
-                $("#account").text("Web3 enabled browser not detected. Use Search box.");
-                return;
-            }
-            if (typeof web3.eth.accounts[0] == "undefined") {
-                $("#account").text("Can't detect your account. Unlock your wallet or try reloading the page and waiting a few seconds.");
-                return;
-            } else {
-                $("#account").text("Your Account: " + web3.eth.accounts[0]);
+        $.ajax({
+            url: "../header.html",
+            cache: false,
+            dataType: "html",
+            success: function(data) {
+                $("#headerDiv").html(data);
+
+                if (typeof web3 == 'undefined') {
+                    $("#account").text("Web3 enabled browser not detected.");
+                    return;
+                }
+                if (typeof web3.eth.accounts[0] == "undefined") {
+                    $("#account").text("Can't detect your account. Unlock your wallet or try reloading the page and waiting a few seconds.");
+                    return;
+                } else {
+                    $("#account").text("Your Account: " + web3.eth.accounts[0]);
+                }
+
             }
         });
         getAxies(0, web3.eth.accounts[0], initData);

@@ -98,7 +98,14 @@
     normal.sort(compare);
 
 $(document).ready(function(){
-    $("#headerDiv").load("../header.html");
+    $.ajax({
+        url: "../header.html",
+        cache: false,
+        dataType: "html",
+        success: function(data) {
+            $("#headerDiv").html(data);
+        }
+    });
     var mysticCounts = {};
     for (let t in mystics) {
         let axie = getAxie(mystics[t].ids[0]);
