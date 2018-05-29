@@ -4,7 +4,7 @@
 -->
 <html>
     <head>
-        <title>CryptoKitties Index</title>
+        <title>Main Index</title>
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
@@ -23,15 +23,17 @@
         </style>
     </head>
     <script>
+        $.ajaxSetup ({
+            // Disable caching of AJAX responses
+            cache: false
+        });
+
         $(document).ready(function(){
-            $.ajax({
-                url: "../header.html",
-                cache: false,
-                dataType: "html",
-                success: function(data) {
-                    $("#headerDiv").html(data);
-                }
-            });
+            $('#headerDiv').load("/header.html");
+            $('#ck').load("/ck/index.html #indexContent");
+            $('#axie').load("/axie/index.html #indexContent");
+            $('#csc').load("/csc/index.html #indexContent");
+
         });
     </script>
 
@@ -39,23 +41,9 @@
         <!-- header -->
         <div id="headerDiv"></div>
 
-        <div id="indexContent" class="container">
-            <h2 id="crypto-space-commander">CryptoKitties Tools</h2>
-            <hr/>
-
-            <p><a href="/breeding.html">Bookmark your breeding pairs! A MUST-have for any CK player</a></p>
-
-            <p><a href="/w3.html">Basic utility page to help make playing CryptoKitties easier</a></p>
-
-            <p><a href="/auctions/auctions.html">Real-time kitty Sales</a></p>
-
-            <p><a href="/sires/sires.html">Real-time kitty Sires</a></p>
-
-            <p><a href="/newauctions/newauctions.html">Real-time new kitty auction listings</a> - See listings before they hit the CryptoKitties website. Use this to compete with bots!</p>
-
-
-        </div>
-
+        <div id="ck"></div><br/>
+        <div id="axie"></div><br/>
+        <div id="csc"></div><br/>
         <br/>
     </body>
 </html>
