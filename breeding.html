@@ -45,29 +45,42 @@
 
         function initContract() {
             clearInterval(acctInt);
+            $.ajax({
+                url: "../header.html",
+                cache: false,
+                dataType: "html",
+                success: function(data) {
+                    $("#headerDiv").html(data);
 
-            if (typeof web3.eth.accounts[0] == "undefined") {
-                $("#account").text("Can't detect your account. Unlock your wallet or try reloading the page and waiting a few seconds.");
-            } else {
-                $("#account").text("Your Account: " + web3.eth.accounts[0]);
-            }
+                    if (typeof web3 == 'undefined') {
+                        $("#account").text("Web3 enabled browser not detected.");
+                        return;
+                    }
+                    if (typeof web3.eth.accounts[0] == "undefined") {
+                        $("#account").text("Can't detect your account. Unlock your wallet or try reloading the page and waiting a few seconds.");
+                        return;
+                    } else {
+                        $("#account").text("Your Account: " + web3.eth.accounts[0]);
+                    }
 
-            coreContract = web3.eth.contract(core_abi);
-            coreInstance = coreContract.at(core_addr);
+                    $("#account").before('<div class="navbar-header row">' +
+                    '<button class="text-white btn btn-outline-secondary" onclick="createForm()"><i class="fas fa-plus-circle"></i> Add a breeding pair</button>&nbsp;' +
+                    '<button class="text-white btn btn-outline-secondary float-right" onclick="bookmark()"><i class="fas fa-bookmark"></i> Bookmark</button>&nbsp; &nbsp;' +
+                    '<div class="text-white pt-2" id="account"></div>' +
+                    '</div>');
 
-            coreInstance.autoBirthFee(function(error, result) {autoBirthFee = result.toNumber(); } );
+                    $("#navBar").removeClass();
+                    $("#navBar").addClass("navbar navbar-light bg-dark bg-secondary");
 
+                    coreContract = web3.eth.contract(core_abi);
+                    coreInstance = coreContract.at(core_addr);
+                    coreInstance.autoBirthFee(function(error, result) {autoBirthFee = result.toNumber(); } );
+                }
+            });
         }
 
         window.addEventListener('load', function () {
-            if (typeof web3 !== 'undefined') {
-                // Use the browser's ethereum provider
-                web3js = new Web3(web3.currentProvider);
-            } else {
-                document.write("web3 not detected. Are you using MetaMask?");
-                return;
-            }
-            acctInt = setInterval(initContract, 1000);
+            acctInt = setInterval(initContract, 250);
 
             var hash = window.location.hash.substr(1);
             if (hash == "") {
@@ -379,31 +392,8 @@
 
     </script>
     <!-- header -->
-    <div class="fixed-top">
-        <div class="navbar navbar-light bg-dark bg-secondary">
-            <div class="container-fluid">
-                <div class="dropdown">
-                  <button class="btn btn-default" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-                    <span class="navbar-toggler-icon"></span>
-                  </button>
-                  <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
-                    <li><a class="dropdown-item" href="/axie/">Axie Infinity Tools</a></li>
-                    <li><a class="dropdown-item" href="/csc/">Crypto Space Commander</a></li>
-                    <li><a class="dropdown-item" href="/ck/">CryptoKitties Tools</a></li>
-                  </ul>
-                </div>
-                <div class="navbar-header row">
-                    <button class="text-white btn btn-outline-secondary" onclick="createForm()"><i class="fas fa-plus-circle"></i> Add a breeding pair</button>&nbsp;
-                    <button class="text-white btn btn-outline-secondary float-right" onclick="bookmark()"><i class="fas fa-bookmark"></i> Bookmark</button>&nbsp; &nbsp;
-                    <div class="text-white pt-2" id="account"></div>
-                </div>
-                <div class="text-white">Donations: 0x209045cfe98445d6541d4fdf560d0d63fad77753 &nbsp;</div>
-            </div>
-        </div>
-        <div class="alert" role="alert" id="bmMsg"></div>
-    </div>
+    <div id="headerDiv"></div>
 
-    <br/><br/>
     <div id="breedersDiv" class="container">
         <br/>
         <br/>

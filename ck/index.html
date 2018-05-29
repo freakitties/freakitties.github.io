@@ -1,0 +1,61 @@
+<!--
+    Copyright 2018 freakitties@gmail.com
+    You can copy and use this code if you agree to pay $1 per page load.
+-->
+<html>
+    <head>
+        <title>CryptoKitties Index</title>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+        <script async src="https://www.googletagmanager.com/gtag/js?id=UA-116189657-1"></script>
+        <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'UA-116189657-1');
+        </script>
+        <style>
+            .dropdown-menu>li>a, .dropdown-menu {
+                color: white;
+                background-color: #6c757d;
+            }
+        </style>
+    </head>
+    <script>
+        $(document).ready(function(){
+            $.ajax({
+                url: "../header.html",
+                cache: false,
+                dataType: "html",
+                success: function(data) {
+                    $("#headerDiv").html(data);
+                }
+            });
+        });
+    </script>
+
+    <body>
+        <!-- header -->
+        <div id="headerDiv"></div>
+
+        <div class="container">
+            <h2 id="crypto-space-commander">CryptoKitties Tools</h2>
+            <hr/>
+
+            <p><a href="/breeding.html">Bookmark your breeding pairs! A MUST-have for any CK player</a></p>
+
+            <p><a href="/w3.html">Basic utility page to help make playing CryptoKitties easier</a></p>
+
+            <p><a href="/auctions/auctions.html">Real-time kitty Sales</a></p>
+
+            <p><a href="/sires/sires.html">Real-time kitty Sires</a></p>
+
+            <p><a href="/newauctions/newauctions.html">Real-time new kitty auction listings</a> - See listings before they hit the CryptoKitties website. Use this to compete with bots!</p>
+
+
+        </div>
+
+        <br/>
+    </body>
+</html>

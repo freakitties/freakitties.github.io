@@ -1,0 +1,72 @@
+<!--
+    Copyright 2018 freakitties@gmail.com
+    You can copy and use this code if you agree to pay $1 per page load.
+-->
+<html>
+    <head>
+        <title>Axie Index</title>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+        <script async src="https://www.googletagmanager.com/gtag/js?id=UA-116189657-1"></script>
+        <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'UA-116189657-1');
+        </script>
+        <style>
+            .dropdown-menu>li>a, .dropdown-menu {
+                color: white;
+                background-color: #6c757d;
+            }
+        </style>
+    </head>
+    <script>
+        $(document).ready(function(){
+            $.ajax({
+                url: "../header.html",
+                cache: false,
+                dataType: "html",
+                success: function(data) {
+                    $("#headerDiv").html(data);
+                }
+            });
+        });
+    </script>
+
+    <body>
+        <!-- header -->
+        <div id="headerDiv"></div>
+
+        <div class="container">
+            <h2 id="crypto-space-commander">Axie Infinity Tools</h2>
+            <hr/>
+
+            <!-- Tools for [Axie Infinity](https://axieinfinity.com/adopt-axies?r=CHl5UkYrgttjndv97yqxcY_6dnY) -->
+
+            <p><a href="/axie/myauctions.html">Personal History of Axie Sales</a></p>
+
+            <p><a href="/axie/jeans.html">Preliminary Gene Browser with search</a></p>
+
+            <p><a href="/axie/traits.html">Parts glossary ordered by rarity</a></p>
+
+            <p><a href="/axie/traitstats.html">Part stats and moves</a></p>
+
+            <p><a href="/axie/top.html">Axies by purebredness</a></p>
+
+            <p><a href="/axie/stats.html">Table of all Axies and their stats</a></p>
+
+            <p><a href="/axie/genes.html">Gene breakdown of Axies by class and trait</a></p>
+
+            <br/>
+
+            <p><a href="https://medium.com/@freakitties/sequencing-the-axie-genome-572f147c45d9">Blog: Sequencing the Axie genome</a></p>
+
+            <p><a href="https://medium.com/@freakitties/more-on-the-axie-genome-60295f83a6a5">Blog: More on the Axie genome</a></p>
+
+        </div>
+
+        <br/>
+    </body>
+</html>
