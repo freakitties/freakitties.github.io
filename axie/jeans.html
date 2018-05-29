@@ -126,6 +126,7 @@
         return bin;
     }
 
+    //region
     function renderGroup03(data, type, row, meta) {
         let bin = data.slice(12, 13);
         if(type === 'display'){
@@ -134,18 +135,26 @@
         return bin;
     }
 
+
     function renderGroup04(data, type, row, meta) {
-        let bin = data.slice(13, 17);
+        let bin = data.slice(13, 16);
         if(type === 'display'){
             return '<div class="binary">'+ bin + '</div>';
         }
         return bin;
     }
 
+    //tag (Origin, AGAMOGENESIS). TODO: figure how many bits this is. for now just using 2bits.
     function renderGroup05(data, type, row, meta) {
-        let bin = data.slice(17, 18);
+        let bin = data.slice(16, 18);
         if(type === 'display'){
-            return '<div class="binary">' + bin + '</div>' + ((bin == "1") ? "Yes" : "No");;
+            let tag = "Normal";
+            if (bin == "01") {
+                tag = "Origin";
+            } else if (bin == "10") {
+                tag = "Agamogenesis"
+            }
+            return '<div class="binary">' + bin + '</div>' + tag;
         }
         return bin;
     }
@@ -503,7 +512,7 @@
                 {title: "0.2", data: "group0", render: renderGroup02, searchable: false},
                 {title: "Region", data: "group0", render: renderGroup03, searchable: false},
                 {title: "0.4", data: "group0", render: renderGroup04, searchable: false},
-                {title: "Origin", data: "group0", render: renderGroup05, searchable: false},
+                {title: "Tag", data: "group0", render: renderGroup05, searchable: false},
                 {title: "0.6", data: "group0", render: renderGroup06, searchable: false},
 
                 {title: "1.0", data: "group1", render: renderGroup1, searchable: false},
