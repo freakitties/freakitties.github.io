@@ -145,7 +145,7 @@
     function renderGroup05(data, type, row, meta) {
         let bin = data.slice(17, 18);
         if(type === 'display'){
-            return '<div class="binary">' + bin + '</div>';
+            return '<div class="binary">' + bin + '</div>' + ((bin == "1") ? "Yes" : "No");;
         }
         return bin;
     }
