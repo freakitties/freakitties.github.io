@@ -1,7 +1,7 @@
 
 ## Crypto Space Commander
 
-Tools for [Crypto Space Commander](https://www.csc-game.com/enlist/q7NrOrEP7)
+Sign-up to play [Crypto Space Commander](https://www.csc-game.com/enlist/q7NrOrEP7)
 
 [List of MEA stars and ship launching tool](stars.html)
 

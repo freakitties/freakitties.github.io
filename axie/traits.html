@@ -113,9 +113,9 @@ $(document).ready(function(){
         mysticCounts[mystics[t].name] = mystics[t].count;
         if (hash.indexOf("classPercent") != -1) {
             let classPercent = 100 * mystics[t].count / classCounts[mystics[t].class];
-            $("#mysticTable").append('<tr><td><img width=60 src="' + mystics[t].image + '"/></td><td>' + mystics[t].name + "</td><td>" + mystics[t].type + "</td><td>" + mystics[t].class + "</td><td>" + mystics[t].count + ' (' + classPercent.toFixed(1) + '% of class)</td><td class="example"><a target="_blank" class="btn btn-sm btn-info ' + color + '" href="https://axieinfinity.com/axie/' + mystics[t].ids[0] + '">#' + mystics[t].ids[0] + '</a></td><td class="all w-45">' + generateIDs(mystics[t].ids) + '</td></tr>');
+            $("#mysticTable").append('<tr><td><img width=60 src="' + mystics[t].image + '"/></td><td>' + mystics[t].name + "</td><td>" + mystics[t].type + "</td><td>" + mystics[t].class + "</td><td>" + mystics[t].region + "</td><td>" + mystics[t].count + ' (' + classPercent.toFixed(1) + '% of class)</td><td class="example"><a target="_blank" class="btn btn-sm btn-info ' + color + '" href="https://axieinfinity.com/axie/' + mystics[t].ids[0] + '">#' + mystics[t].ids[0] + '</a></td><td class="all w-45">' + generateIDs(mystics[t].ids) + '</td></tr>');
         } else {
-            $("#mysticTable").append('<tr><td><img width=60 src="' + mystics[t].image + '"/></td><td>' + mystics[t].name + "</td><td>" + mystics[t].type + "</td><td>" + mystics[t].class + "</td><td>" + mystics[t].count + '</td><td class="example"><a target="_blank" class="btn btn-sm btn-info ' + color + '" href="https://axieinfinity.com/axie/' + mystics[t].ids[0] + '">#' + mystics[t].ids[0] + '</a></td><td class="all w-45">' + generateIDs(mystics[t].ids) + '</td></tr>');
+            $("#mysticTable").append('<tr><td><img width=60 src="' + mystics[t].image + '"/></td><td>' + mystics[t].name + "</td><td>" + mystics[t].type + "</td><td>" + mystics[t].class + "</td><td>" + mystics[t].region + "</td><td>" + mystics[t].count + '</td><td class="example"><a target="_blank" class="btn btn-sm btn-info ' + color + '" href="https://axieinfinity.com/axie/' + mystics[t].ids[0] + '">#' + mystics[t].ids[0] + '</a></td><td class="all w-45">' + generateIDs(mystics[t].ids) + '</td></tr>');
         }
     }
     for (let t in normal) {
@@ -124,13 +124,13 @@ $(document).ready(function(){
 
         if (hash.indexOf("classPercent") != -1) {
             let classPercent = 100 * normal[t].count / classCounts[normal[t].class];
-            $("#normalTable").append('<tr><td><img width=60 src="' + normal[t].image + '"/></td><td>' + normal[t].name + "</td><td>" + normal[t].type + "</td>><td>" + normal[t].class + "</td><td>" + normal[t].count + ' (' + classPercent.toFixed(1) + '% of class)</td><td class="example"><a target="_blank" class="btn btn-sm btn-info ' + color + '" href="https://axieinfinity.com/axie/' + normal[t].ids[0] + '">#' + normal[t].ids[0] + '</a></td><td class="all w-45">' + generateIDs(normal[t].ids) + '</td></tr>');
+            $("#normalTable").append('<tr><td><img width=60 src="' + normal[t].image + '"/></td><td>' + normal[t].name + "</td><td>" + normal[t].type + "</td>><td>" + normal[t].class + "</td><td>" + normal[t].region + "</td><td>" + normal[t].count + ' (' + classPercent.toFixed(1) + '% of class)</td><td class="example"><a target="_blank" class="btn btn-sm btn-info ' + color + '" href="https://axieinfinity.com/axie/' + normal[t].ids[0] + '">#' + normal[t].ids[0] + '</a></td><td class="all w-45">' + generateIDs(normal[t].ids) + '</td></tr>');
         } else {
             if (normal[t].name in mysticMap) {
                 let mysticTrait = mysticMap[normal[t].name];
-                $("#normalTable").append('<tr><td><img width=60 src="' + normal[t].image + '"/></td><td>' + normal[t].name + "</td><td>" + normal[t].type + "</td>><td>" + normal[t].class + "</td><td>" + normal[t].count + ' (+' + mysticCounts[mysticTrait] + ' mystic)</td><td class="example"><a target="_blank" class="btn btn-sm btn-info ' + color + '" href="https://axieinfinity.com/axie/' + normal[t].ids[0] + '">#' + normal[t].ids[0] + '</a></td><td class="all w-45">' + generateIDs(normal[t].ids) + '</td></tr>');
+                $("#normalTable").append('<tr><td><img width=60 src="' + normal[t].image + '"/></td><td>' + normal[t].name + "</td><td>" + normal[t].type + "</td>><td>" + normal[t].class + "</td><td>" + normal[t].region + "</td><td>" + normal[t].count + ' (+' + mysticCounts[mysticTrait] + ' mystic)</td><td class="example"><a target="_blank" class="btn btn-sm btn-info ' + color + '" href="https://axieinfinity.com/axie/' + normal[t].ids[0] + '">#' + normal[t].ids[0] + '</a></td><td class="all w-45">' + generateIDs(normal[t].ids) + '</td></tr>');
             } else {
-                $("#normalTable").append('<tr><td><img width=60 src="' + normal[t].image + '"/></td><td>' + normal[t].name + "</td><td>" + normal[t].type + "</td>><td>" + normal[t].class + "</td><td>" + normal[t].count + '</td><td class="example"><a target="_blank" class="btn btn-sm btn-info ' + color + '" href="https://axieinfinity.com/axie/' + normal[t].ids[0] + '">#' + normal[t].ids[0] + '</a></td><td class="all w-45">' + generateIDs(normal[t].ids) + '</td></tr>');
+                $("#normalTable").append('<tr><td><img width=60 src="' + normal[t].image + '"/></td><td>' + normal[t].name + "</td><td>" + normal[t].type + "</td>><td>" + normal[t].class + "</td><td>" + normal[t].region + "</td><td>" + normal[t].count + '</td><td class="example"><a target="_blank" class="btn btn-sm btn-info ' + color + '" href="https://axieinfinity.com/axie/' + normal[t].ids[0] + '">#' + normal[t].ids[0] + '</a></td><td class="all w-45">' + generateIDs(normal[t].ids) + '</td></tr>');
             }
         }
     }
@@ -168,6 +168,7 @@ $(document).ready(function(){
                    <th>Name</th>
                    <th>Type</th>
                    <th>Class</th>
+                   <th>Region</th>
                    <th>Count</th>
                    <th class="example">Example</th>
                    <th class="all">All IDs</th>
@@ -182,6 +183,7 @@ $(document).ready(function(){
                    <th>Name</th>
                    <th>Type</th>
                    <th>Class</th>
+                   <th>Region</th>
                    <th>Count</th>
                    <th class="example">Example</th>
                    <th class="all">All IDs</th>
