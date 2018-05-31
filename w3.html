@@ -34,8 +34,6 @@
     */
     function doStuff() {
 
-        document.getElementById("account").innerHTML = "Account: " + web3.eth.accounts[0];
-
         coreContract = web3.eth.contract(core_abi);
         coreInstance = coreContract.at(core_addr);
 
@@ -190,33 +188,37 @@
 <!-- header -->
 <div id="headerDiv"></div>
 <div class="container">
-<br/>
-Barebones utility functions to make playing Cryptokitties easier.<br/> You will get <b>no</b> support, guarantee, or warranty when using this page. There is very little to no error handling on this page. If you enter incorrect values, unexpected things will happen.<br/>
-<br/>
+    <br/>
+    Barebones utility functions to make playing Cryptokitties easier.<br/> You will get <b>no</b> support, guarantee, or warranty when using this page. There is very little to no error handling on this page. If you enter incorrect values, unexpected things will happen.<br/>
+    <br/>
 
-Test to make sure the page is working. Click here to get the total number of cats currently in Cryptokitties.
-<div id="total"></div>
-<button onclick="getTotal()">getTotal</button><br/>
-<br/>
+    <br/>
+    <b><div id="account"></div></b>
+    <br/>
 
-<label>Kitty ID to bid on: </label><input type="text" id="saleId" onfocusout="getAuctionPrice()"/><br/>
-<label>Price you are paying: </label><input type="text" id="salePrice"/><br/>
-<button onclick="bidOnSale()">Bid on sale contract</button><br/>
-<div id="saleResult"></div>
-<br/><br/>
+    Test to make sure the page is working. Click here to get the total number of cats currently in Cryptokitties.
+    <div id="total"></div>
+    <button onclick="getTotal()">getTotal</button><br/>
+    <br/>
 
-<label>Kitty ID to sire with: </label><input type="text" id="sireId" onfocusout="getSiringPrice()"/><br/>
-<label>Matron kitty id (your cat): </label><input type="text" id="matronId"/><br/>
-<label>Auction price (Will be auto-filled when you enter the sire ID. Auto-breed fee will be added to this price): </label><input id="siringPrice" readonly="true"><br/>
-<button onclick="bidOnSiring()">Bid on siring contract</button><br/>
-<div id="sireResult"></div>
-<br/><br/>
+    <label>Kitty ID to bid on: </label><input type="text" id="saleId" onfocusout="getAuctionPrice()"/><br/>
+    <label>Price you are paying: </label><input type="text" id="salePrice"/><br/>
+    <button onclick="bidOnSale()">Bid on sale contract</button><br/>
+    <div id="saleResult"></div>
+    <br/><br/>
 
-<label>Notes: </label><input type="text" size="100" placeholder="Notes about this pair. Not used in TX." /><br>
-<label>Matron ID: </label><input type="text" id="selfMatronId"/><br/>
-<label>Sire ID: </label><input type="text" id="selfSireId"/><br/>
-<button onclick="selfBreed()">Breed your own cats</button><br/>
-<div id="selfSireResult"></div>
-<br/><br/>
+    <label>Kitty ID to sire with: </label><input type="text" id="sireId" onfocusout="getSiringPrice()"/><br/>
+    <label>Matron kitty id (your cat): </label><input type="text" id="matronId"/><br/>
+    <label>Auction price (Will be auto-filled when you enter the sire ID. Auto-breed fee will be added to this price): </label><input id="siringPrice" readonly="true"><br/>
+    <button onclick="bidOnSiring()">Bid on siring contract</button><br/>
+    <div id="sireResult"></div>
+    <br/><br/>
+
+    <label>Notes: </label><input type="text" size="100" placeholder="Notes about this pair. Not used in TX." /><br>
+    <label>Matron ID: </label><input type="text" id="selfMatronId"/><br/>
+    <label>Sire ID: </label><input type="text" id="selfSireId"/><br/>
+    <button onclick="selfBreed()">Breed your own cats</button><br/>
+    <div id="selfSireResult"></div>
+    <br/><br/>
 </div>
 </html>

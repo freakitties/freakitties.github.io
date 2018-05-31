@@ -11,20 +11,11 @@
                     <li><a class="dropdown-item" href="/ck/">CryptoKitties Tools</a></li>
                   </ul>
                 </div>
-
-                <div class="col-sm-6">
-                    <div id="account" class="text-white"></div>
-                </div>
-
-                <div id="donationDiv" class="text-center col-md-5">
-                  <!--
-                  <input id="donateValue" class="form-control-sm col-2 col-xl-1" type="text" value="0.01">
-                  <button class="btn btn-sm btn-light" onclick="donate()">Donate</button>
-                  -->
+                <div id="navContent" class="col-sm-5 row"></div>
+                <div id="donationDiv" class="text-right col-sm-5">
                 </div>
             </div>
         </nav>
-        <br/>
         <script>
           if (typeof web3 != 'undefined') {
               let html = '<input id="donateValue" class="form-control-sm col-2" type="text" value="0.002"> ' +

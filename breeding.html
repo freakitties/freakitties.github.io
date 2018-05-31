@@ -63,16 +63,6 @@
                         $("#account").text("Your Account: " + web3.eth.accounts[0]);
                     }
 
-                    $("#account").after('<div class="navbar-header row col-sm">' +
-                    '<button class="text-white btn btn-outline-secondary" onclick="createForm()"><i class="fas fa-plus-circle"></i> Add a breeding pair</button>&nbsp;' +
-                    '<button class="text-white btn btn-outline-secondary float-right" onclick="bookmark()"><i class="fas fa-bookmark"></i> Bookmark</button>&nbsp; &nbsp;' +
-                    '<div class="text-white pt-2" id="account"></div>' +
-                    '</div>');
-
-                    $("#account").addClass("mb-1");
-                    $("#navBar").removeClass();
-                    $("#navBar").addClass("navbar navbar-light bg-dark bg-secondary");
-
                     coreContract = web3.eth.contract(core_abi);
                     coreInstance = coreContract.at(core_addr);
                     coreInstance.autoBirthFee(function(error, result) {autoBirthFee = result.toNumber(); } );
@@ -257,7 +247,7 @@
                 '<a target="_blank" id="sireImgLink{ID}" href=""><img class="autoBig" height="38" src="" style="display: none;" id="sireImg{ID}"/></a>' +
                 '<div class="col-md-5 col-form-label-sm" id="sireReady{ID}"></div>' +
                 '</div>' +
-                '<button type="submit" class="btn btn-dark" onclick="selfBreed({ID});" id="breedButton{ID}">Breed Pair {ID}</button>&nbsp;' +
+                '<button type="submit" class="btn btn-secondary" onclick="selfBreed({ID});" id="breedButton{ID}">Breed Pair {ID}</button>&nbsp;' +
                 '<button type="submit" class="btn btn-light" onclick="openCalc({ID});" id="CalcButton{ID}">Check KittyCalc</button>' +
                 '<br/>' +
                 '<br/><div id="msg{ID}"></div>' +
@@ -282,12 +272,13 @@
                 $("#bmMsg").text(msg);
                 $("#bmMsg").alert();
             }
-            $("#bmMsg").show();
+            $("#bmMsg").fadeTo(0, 1);
             bmInterval = setInterval(clearBmMsg, 3500);
         }
 
         function clearBmMsg() {
-            $("#bmMsg").fadeOut(1000);
+            $("#bmMsg").fadeTo(1000, 0);
+
             clearInterval(bmInterval);
         }
 
@@ -394,9 +385,17 @@
     </script>
     <!-- header -->
     <div id="headerDiv"></div>
+    <div class="alert" role="alert" id="bmMsg"></div>
 
     <div id="breedersDiv" class="container">
+        <div id="account"></div>
         <br/>
+        <div class="row col-sm mb-1">
+            <button class="btn btn-secondary" onclick="createForm()"><i class="fas fa-plus-circle"></i> Add a breeding pair</button> &nbsp;
+            <button class="btn btn-secondary float-right" onclick="bookmark()"><i class="fas fa-bookmark"></i> Bookmark</button>
+
+        </div>
+
         <br/>
         <div id="pair0">
         <div class="col-md-9 border" onmouseover="$('#closeButton0').show()" onmouseout="$('#closeButton0').hide()" >
@@ -416,7 +415,7 @@
                 <label class="col-form-label col-md-3" for="sireId0">Sire ID</label>
                 <input class="form-control col-md-2" type="text" id="sireId0" onchange="handleChange(0, 'sire');"/><a target="_blank" id="sireImgLink0" href=""><img class="autoBig" height="38" src="" style="display: none;" id="sireImg0"/></a><div class="col-md-5 col-form-label-sm" id="sireReady0"></div>
             </div>
-            <button type="submit" class="btn btn-dark" onclick="selfBreed(0);" id="breedButton0">Breed Pair 0</button>&nbsp;
+            <button type="submit" class="btn btn-secondary" onclick="selfBreed(0);" id="breedButton0">Breed Pair 0</button>&nbsp;
             <button type="submit" class="btn btn-light" onclick="openCalc(0);" id="CalcButton0">Check KittyCalc</button>
             <br/>
             <br/>

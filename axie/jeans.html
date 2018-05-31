@@ -616,6 +616,8 @@
                     axieTable.column(0).search(searchVal).draw();
                 }
             });
+
+            $("#axieTable_length").after('&nbsp; <input id="binaryToggle" class="text-right ml-4" type="checkbox" onclick="toggleBinary()"/> Hide binary');
         }
     }
 
@@ -739,15 +741,16 @@
 
 </script>
     <!-- header -->
-    <div id="headerDiv"></div>
+    <div id="headerDiv"></div><br/>
     <div id="mainDiv" class="container">
 
-        <div class="text-right">
-            <input id="binaryToggle" type="checkbox" onclick="toggleBinary()"/> Hide binary
-            <input id="search" size="55" placeholder="ID, address or comma seperated list of IDs and/or addresses" />
-            <button type="submit" class="btn btn-dark" onclick="search();" id="searchButton0">Search</button>
 
+        <div class="row">
+            <div  class="text-left col-6" id="account"></div><br/>
+            <input class="text-right col-5" id="search" size="55" placeholder="ID, address or comma seperated list of IDs and/or addresses" />&nbsp;
+            <button type="submit" class="btn btn-dark" onclick="search();" id="searchButton0">Search</button>
         </div>
+        <br/>
         <table class="table display nowrap" id="axieTable">
             <thead>
                 <tr>
