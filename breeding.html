@@ -63,12 +63,13 @@
                         $("#account").text("Your Account: " + web3.eth.accounts[0]);
                     }
 
-                    $("#account").before('<div class="navbar-header row col-sm">' +
+                    $("#account").after('<div class="navbar-header row col-sm">' +
                     '<button class="text-white btn btn-outline-secondary" onclick="createForm()"><i class="fas fa-plus-circle"></i> Add a breeding pair</button>&nbsp;' +
                     '<button class="text-white btn btn-outline-secondary float-right" onclick="bookmark()"><i class="fas fa-bookmark"></i> Bookmark</button>&nbsp; &nbsp;' +
                     '<div class="text-white pt-2" id="account"></div>' +
                     '</div>');
 
+                    $("#account").addClass("mb-1");
                     $("#navBar").removeClass();
                     $("#navBar").addClass("navbar navbar-light bg-dark bg-secondary");
 
