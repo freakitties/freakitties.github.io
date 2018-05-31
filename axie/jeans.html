@@ -629,7 +629,7 @@
                 $("#headerDiv").html(data);
 
                 if (typeof web3 == 'undefined') {
-                    $("#account").text("Web3 enabled browser not detected.");
+                    $("#account").text("Web3 enabled browser not detected. Use the search box.");
                     return;
                 }
                 if (typeof web3.eth.accounts[0] == "undefined") {
