@@ -47,6 +47,10 @@
                 break;
             }
         }
+        if (!(id1 in genes) || !(id2 in genes)) {
+            //console.log(id1 + " " + genes[id1] + " " + id2 + " " + genes[id2]);
+            return null;
+        }
         if (genes[id1].slice(32 * typeOrder[a.type] + 2, 32 * typeOrder[a.type] + 6 + 5) < genes[id2].slice(32 * typeOrder[b.type] + 2, 32 * typeOrder[b.type] + 6 + 5)) return -1;
         if (genes[id1].slice(32 * typeOrder[a.type] + 2, 32 * typeOrder[a.type] + 6 + 5) > genes[id2].slice(32 * typeOrder[b.type] + 2, 32 * typeOrder[b.type] + 6 + 5)) return 1;
         return 0;
@@ -233,14 +237,16 @@ $(document).ready(function(){
             $("#headerDiv").html(data);
         }
     });
+    let allOnes = "1111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111";
     //Group by Traits
     for (let t in alltraits) {
-        let mask = "1111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111";
+        let mask = allOnes;
         for (let i in alltraits[t].ids) {
             let id = alltraits[t].ids[i].toString();
             if (!(id in genes)) continue;
             mask = maskString(mask, genes[id]);
         }
+        if (mask == allOnes) continue;
         mask = formatTraitMask(mask);
         $("#traitsTable").append('<tr><td>' + (alltraits[t].mystic ? '<b>' + alltraits[t].name + '</b>' : alltraits[t].name) + "</td><td>" + alltraits[t].type + "</td><td>" + alltraits[t].class + "</td><td><pre>" + mask + '</pre></td>');
     }
@@ -318,7 +324,7 @@ $(document).ready(function(){
         if (a.mask.slice(64 - 12, 64 - 8) > b.mask.slice(64 - 12, 64 - 8)) return 1;
         return 0;
     });
-    console.log(JSON.stringify(colorMasks));
+    //console.log(JSON.stringify(colorMasks));
     for (let cm in colorMasks) {
         let mask = formatColorsMask(colorMasks[cm].mask, 0);
         $("#colorsTable").append('<tr><td><img width="25" src="colors/' + colorMasks[cm].code + '-body.png"/> ' + colorMasks[cm].code + "</td><td><pre>" + mask + '</pre></td></tr>');

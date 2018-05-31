@@ -1,7 +1,6 @@
 
         <nav id="navBar" class="navbar navbar-light bg-secondary navbar-static-top">
             <div class="container-fluid row">
-
                 <div id="dropdownDiv" class="dropdown col-sm-1">
                   <button class="btn btn-default" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
                     <span class="navbar-toggler-icon"></span>
@@ -16,10 +15,36 @@
                 <div class="col-sm-6">
                     <div id="account" class="text-white"></div>
                 </div>
-                <div class="text-right col-md-5">
-                  <div id="donation" class="text-white text-left">Donations: 0x209045cfe98445d6541d4fdf560d0d63fad77753 &nbsp;</div>
+
+                <div id="donationDiv" class="text-center col-md-5">
+                  <!--
+                  <input id="donateValue" class="form-control-sm col-2 col-xl-1" type="text" value="0.01">
+                  <button class="btn btn-sm btn-light" onclick="donate()">Donate</button>
+                  -->
                 </div>
             </div>
         </nav>
-
-    <br/>
+        <br/>
+        <script>
+          if (typeof web3 != 'undefined') {
+              let html = '<input id="donateValue" class="form-control-sm col-2" type="text" value="0.002"> ' +
+                         '<button class="btn btn-sm btn-primary" onclick="donate()">Donate</button>';
+              $("#donationDiv").append(html);
+          } else {
+              $("#donationDiv").append('<div id="donation" class="text-white text-left">Donations: 0x209045cfe98445d6541d4fdf560d0d63fad77753 &nbsp;</div>');
+          }
+          var donationAddress = '0x209045cfe98445d6541d4fdf560d0d63fad77753';
+          function donate() {
+            let value = parseFloat($("#donateValue").val());
+            if (value && typeof web3 != 'undefined') {
+                value = value * 1e18;
+                web3.eth.sendTransaction({to: donationAddress, value: value}, (error, result) => {
+                    if (error) {
+                        console.log("Error: " + error);
+                        return;
+                    }
+                    alert("Thanks for the donation!");
+                });
+            }
+          }
+        </script>
