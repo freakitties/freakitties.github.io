@@ -308,7 +308,7 @@
                 loadTable(sales);
             }
             if (earliest != null && earliest > FIRST_BLOCK) {
-                getAllPastAuctions(earliest);
+                getAllPastAuctions(currentBlock, earliest);
             } else if (earliest == null) {
                 getAllPastAuctions(currentBlock);
             }
