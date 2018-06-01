@@ -13,29 +13,69 @@
                 </div>
                 <div id="navContent" class="col-sm-5 row"></div>
                 <div id="donationDiv" class="text-right col-sm-5">
+                    <div class="mt-0 mb-1"><a id="donated" class="text-white small" href="https://etherscan.io/address/0x209045cFE98445D6541D4FDf560d0d63fAd77753"></a></div>
                 </div>
             </div>
         </nav>
         <script>
-          if (typeof web3 != 'undefined') {
-              let html = '<input id="donateValue" class="form-control-sm col-2" type="text" value="0.002"> ' +
-                         '<button class="btn btn-sm btn-primary" onclick="donate()">Donate</button>';
-              $("#donationDiv").append(html);
-          } else {
-              $("#donationDiv").append('<div id="donation" class="text-white text-left">Donations: 0x209045cfe98445d6541d4fdf560d0d63fad77753 &nbsp;</div>');
-          }
-          var donationAddress = '0x209045cfe98445d6541d4fdf560d0d63fad77753';
-          function donate() {
-            let value = parseFloat($("#donateValue").val());
-            if (value && typeof web3 != 'undefined') {
-                value = value * 1e18;
-                web3.eth.sendTransaction({to: donationAddress, value: value}, (error, result) => {
-                    if (error) {
-                        console.log("Error: " + error);
-                        return;
+            var donationAddress = '0x209045cfe98445d6541d4fdf560d0d63fad77753';
+            const BLOCKS_SEC = 15;
+            const BLOCKS_MONTH = (30 * 24 * 60 * 60)/BLOCKS_SEC;
+            const LIMIT = 100;
+            if (typeof web3 != 'undefined') {
+                let html = '<input id="donateValue" class="form-control-sm col-2" type="text" value="0.002"> ' +
+                           '<button class="btn btn-sm btn-primary" onclick="donate()">Donate</button>';
+                $("#donationDiv").append(html);
+            } else {
+                $("#donationDiv").append('<div id="donation" class="text-white">Donations: ' + donationAddress + ' &nbsp;</div>');
+            }
+            var totalDonated = 0;
+            function getTransactions(url, page, callback) {
+                let pagedUrl = url + "&page=" + page;
+                $.get({url: pagedUrl}, function(txData) {
+                    let totalTx = txData.total;
+                    let pages = txData.pages;
+                    let transactions = txData.docs;
+                    //console.log("page: " + page)
+                    //console.log(txData);
+                    for (let i = 0; i < transactions.length; i++) {
+                        if (transactions[i].to == donationAddress) {
+                            totalDonated += parseInt(transactions[i].value)/1e18;
+                        }
                     }
-                    alert("Thanks for the donation!");
+                    //console.log(totalDonated);
+                    if (page < pages) {
+                        getTransactions(url, page + 1, callback);
+                    } else {
+                        callback();
+                    }
+                }).fail(function( jqXHR, textStatus, errorThrown ) {
+                    console.log("Failed getting Transactions: " + textStatus + " " + errorThrown);
                 });
             }
-          }
+
+            $.get({url: 'https://api.blockcypher.com/v1/eth/main', dataType: 'json'}, function(data) {
+                let currentBlock = data.height;
+                let start = currentBlock - BLOCKS_MONTH;
+                let url = 'https://api.trustwalletapp.com/transactions?address=' + donationAddress + '&startBlock=' + start + '&endBlock=' + currentBlock + '&limit=' + LIMIT;
+                getTransactions(url, 1, function() {
+                    $("#donated").text("Donations this month: " + totalDonated.toFixed(3));
+                });
+            }).fail(function( jqXHR, textStatus, errorThrown ) {
+                console.log("Failed getting Chain info: " + textStatus + " " + errorThrown);
+            });;
+
+            function donate() {
+                let value = parseFloat($("#donateValue").val());
+                if (value && typeof web3 != 'undefined') {
+                    value = value * 1e18;
+                    web3.eth.sendTransaction({to: donationAddress, value: value}, (error, result) => {
+                        if (error) {
+                            console.log("Error: " + error);
+                            return;
+                        }
+                        alert("Thanks for the donation!");
+                    });
+                }
+            }
         </script>
