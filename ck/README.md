@@ -11,4 +11,4 @@
 
 [Real-time new kitty auction listings](/newauctions/newauctions.html)
 
-
+[Beta: Recessive Search!!! (Your account only)](/ck/mysearch.html)
