@@ -1,0 +1,301 @@
+<html>
+    <head>
+        <title>CryptoKitties Personal Search</title>
+        <script async src="https://www.googletagmanager.com/gtag/js?id=UA-116189657-1"></script>
+        <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'UA-116189657-1');
+        </script>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+        <style>
+            .dropdown-menu>li>a, .dropdown-menu {
+                color: white;
+                background-color: #6c757d;
+            }
+            td {
+                padding: 5 !important;
+            }
+        </style>
+        <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.16/css/jquery.dataTables.min.css" integrity="sha384-1UXhfqyOyO+W+XsGhiIFwwD3hsaHRz2XDGMle3b8bXPH5+cMsXVShDoHA3AH/y/p" crossorigin="anonymous">
+        <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js" integrity="sha384-Z9D45cp3elqajO+xEyjRTIK1Gr3eYsXiyCPIKNog1sIQzpo2fqFDqFdADGiJjzOv" crossorigin="anonymous"></script>
+        <script src="dataTables.rowGroups.js"></script>
+    </head>
+<script>
+
+    const core_abi = [{"constant":true,"inputs":[{"name":"_interfaceID","type":"bytes4"}],"name":"supportsInterface","outputs":[{"name":"","type":"bool"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"cfoAddress","outputs":[{"name":"","type":"address"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[{"name":"_tokenId","type":"uint256"},{"name":"_preferredTransport","type":"string"}],"name":"tokenMetadata","outputs":[{"name":"infoUrl","type":"string"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"promoCreatedCount","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"name","outputs":[{"name":"","type":"string"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[{"name":"_to","type":"address"},{"name":"_tokenId","type":"uint256"}],"name":"approve","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[],"name":"ceoAddress","outputs":[{"name":"","type":"address"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"GEN0_STARTING_PRICE","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[{"name":"_address","type":"address"}],"name":"setSiringAuctionAddress","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[],"name":"totalSupply","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"pregnantKitties","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[{"name":"_kittyId","type":"uint256"}],"name":"isPregnant","outputs":[{"name":"","type":"bool"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"GEN0_AUCTION_DURATION","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"siringAuction","outputs":[{"name":"","type":"address"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[{"name":"_from","type":"address"},{"name":"_to","type":"address"},{"name":"_tokenId","type":"uint256"}],"name":"transferFrom","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":false,"inputs":[{"name":"_address","type":"address"}],"name":"setGeneScienceAddress","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":false,"inputs":[{"name":"_newCEO","type":"address"}],"name":"setCEO","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":false,"inputs":[{"name":"_newCOO","type":"address"}],"name":"setCOO","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":false,"inputs":[{"name":"_kittyId","type":"uint256"},{"name":"_startingPrice","type":"uint256"},{"name":"_endingPrice","type":"uint256"},{"name":"_duration","type":"uint256"}],"name":"createSaleAuction","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":false,"inputs":[],"name":"unpause","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[{"name":"","type":"uint256"}],"name":"sireAllowedToAddress","outputs":[{"name":"","type":"address"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[{"name":"_matronId","type":"uint256"},{"name":"_sireId","type":"uint256"}],"name":"canBreedWith","outputs":[{"name":"","type":"bool"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[{"name":"","type":"uint256"}],"name":"kittyIndexToApproved","outputs":[{"name":"","type":"address"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[{"name":"_kittyId","type":"uint256"},{"name":"_startingPrice","type":"uint256"},{"name":"_endingPrice","type":"uint256"},{"name":"_duration","type":"uint256"}],"name":"createSiringAuction","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":false,"inputs":[{"name":"val","type":"uint256"}],"name":"setAutoBirthFee","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":false,"inputs":[{"name":"_addr","type":"address"},{"name":"_sireId","type":"uint256"}],"name":"approveSiring","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":false,"inputs":[{"name":"_newCFO","type":"address"}],"name":"setCFO","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":false,"inputs":[{"name":"_genes","type":"uint256"},{"name":"_owner","type":"address"}],"name":"createPromoKitty","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":false,"inputs":[{"name":"secs","type":"uint256"}],"name":"setSecondsPerBlock","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[],"name":"paused","outputs":[{"name":"","type":"bool"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[],"name":"withdrawBalance","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[{"name":"_tokenId","type":"uint256"}],"name":"ownerOf","outputs":[{"name":"owner","type":"address"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"GEN0_CREATION_LIMIT","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"newContractAddress","outputs":[{"name":"","type":"address"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[{"name":"_address","type":"address"}],"name":"setSaleAuctionAddress","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[{"name":"_owner","type":"address"}],"name":"balanceOf","outputs":[{"name":"count","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[{"name":"_v2Address","type":"address"}],"name":"setNewAddress","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[],"name":"secondsPerBlock","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[],"name":"pause","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[{"name":"_owner","type":"address"}],"name":"tokensOfOwner","outputs":[{"name":"ownerTokens","type":"uint256[]"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[{"name":"_matronId","type":"uint256"}],"name":"giveBirth","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":false,"inputs":[],"name":"withdrawAuctionBalances","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[],"name":"symbol","outputs":[{"name":"","type":"string"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[{"name":"","type":"uint256"}],"name":"cooldowns","outputs":[{"name":"","type":"uint32"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[{"name":"","type":"uint256"}],"name":"kittyIndexToOwner","outputs":[{"name":"","type":"address"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[{"name":"_to","type":"address"},{"name":"_tokenId","type":"uint256"}],"name":"transfer","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[],"name":"cooAddress","outputs":[{"name":"","type":"address"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"autoBirthFee","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"erc721Metadata","outputs":[{"name":"","type":"address"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[{"name":"_genes","type":"uint256"}],"name":"createGen0Auction","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[{"name":"_kittyId","type":"uint256"}],"name":"isReadyToBreed","outputs":[{"name":"","type":"bool"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"PROMO_CREATION_LIMIT","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[{"name":"_contractAddress","type":"address"}],"name":"setMetadataAddress","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[],"name":"saleAuction","outputs":[{"name":"","type":"address"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[{"name":"_id","type":"uint256"}],"name":"getKitty","outputs":[{"name":"isGestating","type":"bool"},{"name":"isReady","type":"bool"},{"name":"cooldownIndex","type":"uint256"},{"name":"nextActionAt","type":"uint256"},{"name":"siringWithId","type":"uint256"},{"name":"birthTime","type":"uint256"},{"name":"matronId","type":"uint256"},{"name":"sireId","type":"uint256"},{"name":"generation","type":"uint256"},{"name":"genes","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[{"name":"_sireId","type":"uint256"},{"name":"_matronId","type":"uint256"}],"name":"bidOnSiringAuction","outputs":[],"payable":true,"stateMutability":"payable","type":"function"},{"constant":true,"inputs":[],"name":"gen0CreatedCount","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"geneScience","outputs":[{"name":"","type":"address"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[{"name":"_matronId","type":"uint256"},{"name":"_sireId","type":"uint256"}],"name":"breedWithAuto","outputs":[],"payable":true,"stateMutability":"payable","type":"function"},{"inputs":[],"payable":false,"stateMutability":"nonpayable","type":"constructor"},{"payable":true,"stateMutability":"payable","type":"fallback"},{"anonymous":false,"inputs":[{"indexed":false,"name":"owner","type":"address"},{"indexed":false,"name":"matronId","type":"uint256"},{"indexed":false,"name":"sireId","type":"uint256"},{"indexed":false,"name":"cooldownEndBlock","type":"uint256"}],"name":"Pregnant","type":"event"},{"anonymous":false,"inputs":[{"indexed":false,"name":"from","type":"address"},{"indexed":false,"name":"to","type":"address"},{"indexed":false,"name":"tokenId","type":"uint256"}],"name":"Transfer","type":"event"},{"anonymous":false,"inputs":[{"indexed":false,"name":"owner","type":"address"},{"indexed":false,"name":"approved","type":"address"},{"indexed":false,"name":"tokenId","type":"uint256"}],"name":"Approval","type":"event"},{"anonymous":false,"inputs":[{"indexed":false,"name":"owner","type":"address"},{"indexed":false,"name":"kittyId","type":"uint256"},{"indexed":false,"name":"matronId","type":"uint256"},{"indexed":false,"name":"sireId","type":"uint256"},{"indexed":false,"name":"genes","type":"uint256"}],"name":"Birth","type":"event"},{"anonymous":false,"inputs":[{"indexed":false,"name":"newContract","type":"address"}],"name":"ContractUpgrade","type":"event"}];
+    const core_addr = '0x06012c8cf97bead5deae237070f9587f8e7a266d';  //main net
+
+    var kittyTable;
+    var data;
+    var filterVal = "";
+    function initData() {
+
+        kittyTable = $('#kittyTable').DataTable({
+            order: [[ 0, "desc" ], [1, "asc" ]],
+            columns: [
+                {title: "Kitty", render: render0, searchable: false},
+                {title: "Trait", render: render1, searchable: false},
+                {title: "D"},
+                {title: "R1"},
+                {title: "R2"},
+                {title: "R3"},
+                {title: "kittyData", visible: false}
+            ],
+            //"language": { search: "Filter (attribute or d:&lt;attr> or r1:&lt;attr> or r2:&lt;attr> or r3:&lt;attr>):"},
+            "language": { search: "Filter (attribute or d|r1|r2|r3:&lt;attr> ):"},
+            pageLength: 120,
+            lengthChange: false,
+            "columnDefs": [
+                { className: "text-center align-middle", "targets": [ 0 ] },
+                { "orderable": false, "targets": [1, 2, 3, 4, 5, 6] }
+            ],
+            rowsGroup: [0],
+            drawCallback: function(settings) {
+                if (kittyTable) {
+                    let info = kittyTable.page.info();
+                    let kitties = new Set();
+                    kittyTable.rows({filter: 'applied'}).data().each(function(val, idx) {
+                        kitties.add(val[0])
+                    });
+                    console.log("total cats in resuls:" + kitties.size);
+                    if (filterVal != "" || settings.bFiltered) {
+                        $("#kittyTable_info").text("There are " + kitties.size + " out of " + (info.recordsTotal/12)+ " kitties included in this filter");
+                    } else {
+                        $("#kittyTable_info").text("Showing " + (info.start/12 + 1) + " to " + (info.end/12) + " of " + (info.recordsTotal/12)+ " entries");
+                    }
+                }
+            }
+        });
+        $('.dataTables_filter input').attr('placeholder', 'd:totesbasic14');
+        $('.dataTables_filter input').attr('size', '40');
+        $('.dataTables_filter input').addClass('form-control-inline');
+        $('.dataTables_filter input').unbind();
+        $('.dataTables_filter input').keyup( function (e) {
+            if (e.keyCode != 13) return;
+            let s = kittyTable.columns().search('');
+            filterVal = $('.dataTables_filter input').val().trim();
+            if (filterVal == "") {
+                kittyTable.search('').order([0, "asc"], [1, "asc"]).columns().search('').draw();
+                return;
+            }
+            if (filterVal.startsWith("d:")) {
+                let s = filterVal.slice(2, filterVal.length);
+                kittyTable.column(2).search(s).order([2, "asc"]).draw();
+            } else if (filterVal.startsWith("r1:")) {
+                kittyTable.column(3).search(filterVal.slice(3, filterVal.length)).order([3, "asc"]).draw();
+            } else if (filterVal.startsWith("r2:")) {
+                kittyTable.column(4).search(filterVal.slice(3, filterVal.length)).order([4, "asc"]).draw();
+            } else if (filterVal.startsWith("r3:")) {
+                kittyTable.column(5).search(filterVal.slice(3, filterVal.length)).order([5, "asc"]).draw();
+            } else {
+                kittyTable.search(filterVal).order([2, "asc"], [3, "asc"], [4, "asc"], [5, "asc"]).draw();
+            }
+        });
+
+    }
+
+    function render0(data, type, row, meta) {
+        if (type == "display") {
+            let id = parseInt(data);
+            return '<a href="https://www.cryptokitties.co/kitty/' + id + '"><img width="100" src="' + row[6].image_url + '"/><br/>' + id + '</a><br/>Gen: ' + parseInt(row[6].generation);
+        }
+        return data;
+
+    }
+
+    function render1(data, type, row, meta) {
+        if (type == "sort") {
+            //hack to order by numeric value
+            return "ABCDEFGHIJKLMNOP"[name_ordering[data]];
+        }
+        return data;
+
+    }
+    const name_ordering = {"Fur": 0, "Pattern": 1, "Eye Color": 2, "Eyes": 3, "Body Color": 4, "Highlight Color": 5, "Accent Color": 6, "Wild Element": 7, "Mouth": 8, "Environment": 9, "Secret": 10, "Unknown": 11 };
+    const block_locations = ["body", "pattern", "coloreyes", "eyes", "colorbody", "pattern_color", "secondary_color", "wild", "mouth", "environment", "future2", "future3" ];
+    const name_mapping = {"body": "Fur", "pattern": "Pattern", "coloreyes": "Eye Color", "eyes": "Eyes", "colorbody": "Body Color", "pattern_color": "Highlight Color", "secondary_color": "Accent Color", "wild": "Wild Element", "mouth": "Mouth", "environment": "Environment", "future2": "Secret", "future3": "Unknown"};
+    const traits_map = {'body': {'01011': 'himalayan', '01110': 'ragamuffin', '01100': 'munchkin', '01101': 'sphynx', '10110': 'laperm', '01001': 'cymric', '01111': 'ragdoll', '01010': 'chartreux', '10101': 'mainecoon', '10111': 'persian', '11011': 'manx', '00001': 'selkirk', '00000': 'savannah', '10000': 'norwegianforest', '00011': 'birman', '00101': 'bobtail', '00111': 'pixiebob', '00100': 'koladiviya', '10010': 'highlander'}, 'pattern': {'01111': 'totesbasic15', '01001': 'luckystripe', '01100': 'spock', '01000': 'calicool', '10100': 'tigerpunk', '01011': 'jaguar', '01010': 'amur', '10101': 'henna', '11010': 'hotrod', '00111': 'spangled', '00101': 'camo', '00011': 'ganado', '00001': 'tiger', '00100': 'leopard', '10010': 'dippedcone', '00010': 'rascal', '10001': 'thunderstruck', '10011': 'highsociety', '00110': 'rorschach', '11001': 'razzledazzle', '01110': 'totesbasic14', '10111': 'totesbasic23'}, 'coloreyes': {'00111': 'strawberry', '00101': 'sizzurp', '00010': 'topaz', '00110': 'chestnut', '10001': 'limegreen', '10011': 'bubblegum', '00011': 'mintgreen', '00001': 'gold', '00000': 'thundergrey', '10000': 'pumpkin', '11000': 'babypuke', '01000': 'sapphire', '10100': 'twilightsparkle', '01001': 'forgetmenot', '01011': 'coralsunrise', '01111': 'cyan', '01101': 'doridnudibranch', '01110': 'parakeet', '10111': 'eclipse', '01010': 'dahlia', '10101': 'palejade', '11010': 'autumnmoon'}, 'eyes': {'11001': 'wingtips', '10010': 'fabulous', '00011': 'googly', '10011': 'raisedbrow', '00111': 'thicccbrowz', '00110': 'crazy', '00101': 'simple', '00100': 'otaku', '00010': 'serpent', '10001': 'alien', '00001': 'wonky', '01111': 'stunned', '01101': 'slyboots', '01100': 'chronic', '10110': 'sass', '01010': 'baddate', '01110': 'wiley', '10111': 'sweetmeloncakes', '11011': 'buzzed', '01000': 'caffeine', '10000': 'chameleon', '00000': 'swarley', '11000': 'oceanid', '11100': 'bornwithit'}, 'colorbody': {'00110': 'aquamarine', '00011': 'orangesoda', '10000': 'cloudwhite', '00100': 'cottoncandy', '01010': 'greymatter', '00001': 'salmon', '00000': 'shadowgrey', '00101': 'mauveover', '10010': 'oldlace', '01110': 'hintomint', '01111': 'bananacream', '10111': 'verdigris', '00111': 'nachocheez', '10011': 'koala', '11001': 'onyx', '01000': 'harbourfog', '01101': 'dragonfruit', '01001': 'cinderella', '10100': 'lavender'}, 'pattern_color': {'01000': 'swampgreen', '01110': 'chocolate', '00110': 'royalpurple', '01011': 'barkbrown', '01010': 'scarlet', '10110': 'skyblue', '01101': 'lemonade', '01100': 'coffee', '01001': 'violet', '10101': 'cerulian', '10100': 'wolfgrey', '11010': 'royalblue', '00101': 'apricot', '10010': 'turtleback', '00100': 'lilac', '00010': 'egyptiankohl', '00011': 'poisonberry', '10001': 'safetyvest', '00001': 'springcrocus', '11011': 'mertail', '10111': 'garnet', '01111': 'butterscotch', '11101': 'pearl'}, 'secondary_color': {'00100': 'granitegrey', '00110': 'kittencream', '00111': 'emeraldgreen', '10011': 'bloodred', '00010': 'peach', '00000': 'belleblue', '10000': 'daffodil', '00001': 'sandalwood', '00011': 'icy', '10001': 'flamingo', '11000': 'seafoam', '01100': 'azaleablush', '01110': 'morningglory', '01010': 'purplehaze', '01101': 'missmuffett', '10110': 'periwinkle', '10111': 'patrickstarfish', '01111': 'frosting', '11011': 'mintmacaron', '01001': 'shale'}, 'wild': {'10001': 'elk', '10011': 'trioculus', '10100': 'daemonwings', '10111': 'daemonhorns', '10110': 'flapflap', '11011': 'unicorn', '00000': 'wild_dracula_0', '01101': 'wild_flappy_13', '01100': 'wild_flappy_santaclaws_12', '01000': 'wild_daemonwings_8', '01110': 'wild_daemonhorns_14', '01111': 'wild_daemonhorns_15', '01001': 'wild_daemonwings_9', '00011': 'wild_elk_3', '00101': 'wild_5', '00111': 'wild_trioculus_7', '00010': 'wild_elk_2', '00110': 'wild_trioculus_6'}, 'mouth': {'01001': 'pouty', '01110': 'happygokitty', '01111': 'soserious', '01010': 'saycheese', '10111': 'tongue', '01000': 'beard', '00000': 'whixtensions', '00011': 'gerbil', '10100': 'dali', '01011': 'grim', '10101': 'grimace', '11010': 'neckbeard', '10000': 'cheeky', '00001': 'wasntme', '00010': 'wuvme', '10001': 'starstruck', '11000': 'yokel', '00110': 'belch', '00111': 'rollercoaster', '10011': 'ruhroh'}, 'environment': {'10000': 'salty', '10011': 'tinybox', '00111': 'environment_tinybox_7', '00101': 'environment_5', '00000': 'environment_salty_0', '00001': 'environment_salty_1', '00011': 'environment_3', '01110': 'environment_4', '00110': 'environment_tinybox_6', '01001': 'environment_9', '01010': 'environment_10'}, 'future2': {'10000': 'future2_16', '10100': 'future2_20', '01000': 'future2_8', '01011': 'future2_11', '00000': 'future2_0', '01110': 'future2_14', '00001': 'future2_1', '00100': 'future2_4', '00101': 'future2_5', '00110': 'future2_6', '00111': 'future2_7', '01001': 'future2_9', '01101': 'future2_13', '10010': 'future2_18', '10011': 'future2_19', '11001': 'future2_25'}, 'future3': {'00110': 'future3_6', '01000': 'future3_8', '01001': 'future3_9', '01011': 'future3_11', '01100': 'future3_12', '01111': 'future3_15', '10100': 'future3_20'}};
+    function getTraitFromBin(trait, blockLocation) {
+        var block = block_locations[blockLocation];
+        if (!(block in traits_map) || !(trait in traits_map[block]) ) {
+            console.log("bad trait: " + block + " " + trait);
+            return "UNKNOWN";
+        }
+        let name = traits_map[block][trait];
+        //use more common syntax
+        name = name.replace("future2", "secret");
+        name = name.replace("future3", "unknown");
+        name = name.replace(/(?<=wild|secret|unknown|environment)_\w+_(?=\d)/, "_");
+        return name;
+    }
+
+    function strMul(str, num) {
+        var s = "";
+        for (var i = 0; i < num; i++) {
+            s += str;
+        }
+        return s;
+    }
+
+    function formatGenes(gene, isString=false) {
+        var s = gene.toString(2);
+        if (isString){
+            s = gene;
+        }
+        var padding = strMul('0', 240 - s.length);
+        s = padding + s
+        //console.log(s);
+        var out = ""
+        var count = 240
+        var groups = []
+        var group = []
+        var part = ""
+
+        for (var j = 0, len = s.length; j < len; j++) {
+            i = s.charAt(j)
+            count -= 1
+            out += i
+            part += i
+            if (count % 20 == 0) {
+                group.push(part)
+                part = ""
+                group.reverse()
+                groups.push(group)
+                out += ">"
+                group = []
+            } else if (count % 5 == 0) {
+                out += "|"
+                group.push(part)
+                part = ""
+            }
+        }
+        //console.log(out);
+        groups.reverse();
+        return groups;
+        //return out;
+    }
+
+    var kittiesData = [];
+    function getKitties(offset, address, query, max=99999) {
+        let url = "https://api.cryptokitties.co/v2/kitties?owner_wallet_address=" + address + "&parents=false&authenticated=true&include=sale,sire,other&orderBy=id&orderDirection=desc&offset=" + offset + "&search=" + query;
+        $.get(url, function(data, status, xhr) {
+            //inefficient hack to work with DataTables + rowgroups
+            for (let i in data.kitties) {
+                coreInstance.getKitty(data.kitties[i].id, (err, result) => {
+                    if (err) {
+                        console.log("Error getting kitty: " + err);
+                        return;
+                    }
+                    var groupedGenes = formatGenes(result[9]);
+                    for (let j = 0; j < groupedGenes.length; j++) {
+                        let group = groupedGenes[j];
+                        let d = group[0];
+                        let r1 = group[1];
+                        let r2 = group[2];
+                        let r3 = group[3];
+                        let dTrait = getTraitFromBin(d, j);
+                        let r1Trait = getTraitFromBin(r1, j);
+                        let r2Trait = getTraitFromBin(r2, j);
+                        let r3Trait = getTraitFromBin(r3, j);
+                        kittyTable.row.add([data.kitties[i].id, name_mapping[block_locations[j]], dTrait, r1Trait, r2Trait, r3Trait, data.kitties[i]]);
+                    }
+                    kittyTable.columns.adjust().draw();
+                });
+            }
+            if (offset + 12 < data.total && offset + 12 < max) {
+                //Account for API rate-limiting. TODO: report data loading in UI
+                if (offset + 12 > 400) {
+                    var delayID = setInterval(function() {
+                        clearInterval(delayID);
+                        getKitties(offset + 12, address, query, max);
+                    }, 5000);
+                } else {
+                    getKitties(offset + 12, address, query, max);
+                }
+            }
+        });
+    }
+
+
+    function init() {
+        clearInterval(initID);
+        $.ajax({
+            url: "../header.html",
+            cache: false,
+            dataType: "html",
+            success: function(data) {
+                $("#headerDiv").html(data);
+
+                if (typeof web3 == 'undefined') {
+                    $("#account").text("Web3 enabled browser not detected. Use the search box.");
+                    return;
+                }
+                if (typeof web3.eth.accounts[0] == "undefined") {
+                    $("#account").text("Can't detect your account. Unlock your wallet or try reloading the page and waiting a few seconds.");
+                    return;
+                } else {
+                    $("#account").text("Your Account: " + web3.eth.accounts[0]);
+                    coreContract = web3.eth.contract(core_abi);
+                    coreInstance = coreContract.at(core_addr);
+
+                    initData();
+                    //default to showing 100 cats.
+                    getKitties(0, web3.eth.accounts[0], "", 100);
+                }
+            }
+        });
+    }
+
+    var initID;
+    $(document).ready(function(){
+        //delay until web3 can load
+        initID = setInterval(init, 250);
+    });
+
+    function search() {
+        let query = $("#search").val().trim();
+        if (kittyTable) {
+            kittyTable.clear();
+            kittyTable.search('').order([0, "asc"], [1, "asc"]).columns().search('').draw();
+        }
+        getKitties(0, web3.eth.accounts[0], query);
+    }
+    $(document).keyup(function(event) {
+        if ($("#search").is(":focus") && event.key == "Enter") {
+            search();
+        }
+    });
+
+</script>
+    <!-- header -->
+    <div id="headerDiv"></div><br/>
+    <div id="mainDiv" class="container">
+        <div class="row">
+            <div class="text-left col-6" id="account"></div>
+            <div class="col-6 text-right">
+                <input class="col-12 col-sm-12 col-md-12 col-lg-10 col-xl-8" id="search" placeholder="CryptoKitties search syntax (e.g. gen:0)" />&nbsp;
+                <button type="submit" class="btn btn-dark" onclick="search();" id="searchButton0">Search</button>
+            </div>
+        </div>
+        <br/>
+        <table class="table display nowrap" id="kittyTable">
+            <thead>
+                <tr>
+                    <th>Kitty</th>
+                    <th>Trait</th>
+                    <th>D</th>
+                    <th>R1</th>
+                    <th>R2</th>
+                    <th>R3</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody id="tableBody">
+            </tbody>
+        </table>
+    </div>
+</html>
