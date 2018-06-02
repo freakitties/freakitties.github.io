@@ -15,6 +15,7 @@ Live site: [https://freakitties.github.io/](https://freakitties.github.io/)
 
 [Real-time new kitty auction listings](/newauctions/newauctions.html)
 
+[Beta: Recessive Search!!! (Your account only)](/ck/mysearch.html)
 
 ---
 
