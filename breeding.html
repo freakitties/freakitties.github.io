@@ -36,6 +36,17 @@
                 height:120;
                 width: 120;
             }
+            .btn-outline-light:hover, .btn-outline-light:focus, .btn-outline-light:active, .btn-outline-light.active, .open>.dropdown-toggle.btn-outline-light {
+                color: #fff;
+                background-color: #5a6268;
+                border-color: #545b62;
+            }
+            .fixed-top-2 {
+                margin-top: 82px;
+            }
+            body {
+                padding-top: 110px;
+            }
         </style>
     </head>
     <script>
@@ -51,6 +62,13 @@
                 dataType: "html",
                 success: function(data) {
                     $("#headerDiv").html(data);
+                    let buttons = '<div class="text-white" id="account"></div>' +
+                    '<br/>' +
+                    '<div class="row col-sm mb-1">' +
+                    '<button class="btn btn-outline-light text-white" onclick="createForm()"><i class="fas fa-plus-circle"></i> Add a breeding pair</button> &nbsp;' +
+                    '<button class="btn btn-outline-light text-white float-right" onclick="bookmark()"><i class="fas fa-bookmark"></i> Bookmark</button>' +
+                    '</div>';
+                    $("#navContent").append(buttons);
 
                     if (typeof web3 == 'undefined') {
                         $("#account").text("Web3 enabled browser not detected.");
@@ -384,17 +402,12 @@
 
     </script>
     <!-- header -->
-    <div id="headerDiv"></div>
-    <div class="alert" role="alert" id="bmMsg"></div>
+    <div class="fixed-top" id="headerDiv"></div>
+    <div class="fixed-top fixed-top-2">
+        <div class="alert" role="alert" id="bmMsg"></div>
+    </div>
 
     <div id="breedersDiv" class="container">
-        <div id="account"></div>
-        <br/>
-        <div class="row col-sm mb-1">
-            <button class="btn btn-secondary" onclick="createForm()"><i class="fas fa-plus-circle"></i> Add a breeding pair</button> &nbsp;
-            <button class="btn btn-secondary float-right" onclick="bookmark()"><i class="fas fa-bookmark"></i> Bookmark</button>
-
-        </div>
 
         <br/>
         <div id="pair0">
