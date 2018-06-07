@@ -106,7 +106,8 @@
     }
 
     //                                                     sp?
-    const RARE_TYPES_CLASSES = [["00?", "Prometheus", "Crosair", "Intrepid"], ["10?", "11?", "12?", "13?", "Dreadnaught", "Corsair? Hayato Cruiser", "Corsair? CGP Peregrine Frigate"], ["20?", "Space Station"]];
+    const RARE_TYPES_CLASSES = [["00?", "Prometheus", "Crosair", "Intrepid"], ["10?", "Prometheus", "Corsair", "Intrepid", "Dreadnaught", "Corsair? Hayato Cruiser", "Corsair? CGP Peregrine Frigate"], ["20?", "Space Station"]];
+    const RARE_TYPES = ["Unknown", "Ship", "Outpost?"];
     function queryRareSaleContract(instance, address) {
         instance.tokensOfOwner(address, (error, result) => {
             if (error) {
@@ -128,7 +129,7 @@
                     let cls = res[3];
                     let name = res[4];
                     let redeemed = res[5];
-                    row.type = type;
+                    row.type = RARE_TYPES[type];
                     row.class = RARE_TYPES_CLASSES[type][cls];
                     row.name = name;
 
