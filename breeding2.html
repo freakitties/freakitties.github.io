@@ -101,7 +101,7 @@
 
         window.addEventListener('load', function () {
             acctInt = setInterval(initContract, 250);
-
+            $('[data-toggle="tooltip"]').tooltip();
             var hash = window.location.hash.substr(1);
             if (hash == "") {
                 return;
@@ -403,11 +403,28 @@
 
         function swapPair(id1, id2) {
             let notes1 = $("#notes" + id1).val();
-            let matronId1 = $("#matronId" + id1).val();
-            let sireId1 = $("#sireId" + id1).val();
+            let matronId1 = parseInt($("#matronId" + id1).val());
+            let sireId1 = parseInt($("#sireId" + id1).val());
             let notes2 = $("#notes" + id2).val();
-            let matronId2 = $("#matronId" + id2).val();
-            let sireId2 = $("#sireId" + id2).val();
+            let matronId2 = parseInt($("#matronId" + id2).val());
+            let sireId2 = parseInt($("#sireId" + id2).val());
+
+            if (isNaN(matronId1)) {
+                setMsg(id1, "Invalid matron ID");
+                return;
+            }
+            if (isNaN(sireId1)) {
+                setMsg(id1, "Invalid sire ID");
+                return;
+            }
+            if (isNaN(matronId2)) {
+                setMsg(id2, "Invalid matron ID");
+                return;
+            }
+            if (isNaN(sireId2)) {
+                setMsg(id2, "Invalid sire ID");
+                return;
+            }
 
             setFormValues(id1, matronId2, sireId2, notes2);
             setFormValues(id2, matronId1, sireId1, notes1);
