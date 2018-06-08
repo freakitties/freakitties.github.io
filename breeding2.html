@@ -66,6 +66,11 @@
             body {
                 padding-top: 110px;
             }
+            .boxshadow {
+                transition: box-shadow 400ms;
+                box-shadow: 0 0 0  1px rgba(  0,  0,  0, 0.1),
+                            4px 4px 10px rgba(12, 167, 12, 0.5);
+            }
         </style>
     </head>
     <script>
@@ -83,7 +88,7 @@
                     $("#headerDiv").html(data);
                     let buttons = '<div class="text-white" id="account"></div>' +
                     '<br/>' +
-                    '<div class="row col-sm mb-1">' +
+                    '<div class="row col-12 mb-1">' +
                     '<button class="btn btn-outline-light text-white" onclick="createForm()"><i class="fas fa-plus-circle"></i> Add a breeding pair</button> &nbsp;' +
                     '<button class="btn btn-outline-light text-white float-right" onclick="bookmark()"><i class="fas fa-bookmark"></i> Bookmark</button>' +
                     '</div>';
@@ -439,6 +444,8 @@
 
             setFormValues(id1, matronId2, sireId2, notes2);
             setFormValues(id2, matronId1, sireId1, notes1);
+            setMsg(id1, "");
+            setMsg(id2, "");
         }
 
         function movePairDown(id) {
@@ -456,7 +463,13 @@
                 swapPair(id, bottomID);
 
                 let margin = $("#bmTop").css("margin-top");
-                $('html, body').animate({scrollTop: $("#pair" + bottomID).offset().top - parseInt(margin.slice(0, margin.length - 2))}, 500);
+                $("#pair" + bottomID).children().addClass("boxshadow");
+                $('html, body').animate({scrollTop: $("#pair" + bottomID).offset().top - parseInt(margin.slice(0, margin.length - 2))}, 400, function() {
+                    let intID = setInterval(function() {
+                        clearInterval(intID);
+                        $("#pair" + bottomID).children().removeClass("boxshadow");
+                    }, 2000);
+                });
             }
         }
 
@@ -475,7 +488,13 @@
                 swapPair(id, topID);
 
                let margin = $("#bmTop").css("margin-top");
-                $('html, body').animate({scrollTop: $("#pair" + topID).offset().top - parseInt(margin.slice(0, margin.length - 2))}, 500);
+               $("#pair" + topID).children().addClass("boxshadow");
+                $('html, body').animate({scrollTop: $("#pair" + topID).offset().top - parseInt(margin.slice(0, margin.length - 2))}, 400, function() {
+                    let intID = setInterval(function() {
+                        clearInterval(intID);
+                        $("#pair" + topID).children().removeClass("boxshadow");
+                    }, 2000);
+                });
             }
         }
 
