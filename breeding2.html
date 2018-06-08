@@ -41,14 +41,22 @@
                 background-color: #5a6268;
                 border-color: #545b62;
             }
-            .fixed-top-2 {
+            .fixed-top-2-front {
                 margin-top: 82px;
                 z-index: 2;
             }
+            .fixed-top-2-back {
+                margin-top: 82px;
+                z-index: -1;
+            }
             @media (max-width: 1024px) {
-                .fixed-top-2 {
+                .fixed-top-2-front {
                     margin-top: 102px;
                     z-index: 2;
+                }
+                .fixed-top-2-back {
+                    margin-top: 102px;
+                    z-index: -1;
                 }
             }
             .back {
@@ -294,6 +302,8 @@
         }
         var bmInterval;
         function setBookmarkMsg(msg, type) {
+            $("#bmTop").removeClass();
+            $("#bmTop").addClass("fixed-top fixed-top-2-front");
             $("#bmMsg").removeClass();
             $("#bmMsg").text("");
             if (type == "warning") {
@@ -311,7 +321,8 @@
 
         function clearBmMsg() {
             $("#bmMsg").fadeTo(1000, 0);
-
+            $("#bmTop").removeClass();
+            $("#bmTop").addClass("fixed-top fixed-top-2-back");
             clearInterval(bmInterval);
         }
 
@@ -443,6 +454,9 @@
                 }
                 if (divBottom.length == 0) return;
                 swapPair(id, bottomID);
+
+                let margin = $("#bmTop").css("margin-top");
+                $('html, body').animate({scrollTop: $("#pair" + bottomID).offset().top - parseInt(margin.slice(0, margin.length - 2))}, 500);
             }
         }
 
@@ -459,6 +473,9 @@
                 }
                 if (divTop.length == 0) return;
                 swapPair(id, topID);
+
+               let margin = $("#bmTop").css("margin-top");
+                $('html, body').animate({scrollTop: $("#pair" + topID).offset().top - parseInt(margin.slice(0, margin.length - 2))}, 500);
             }
         }
 
@@ -477,9 +494,10 @@
         }
 
     </script>
+    <body>
     <!-- header -->
     <div class="fixed-top" id="headerDiv"></div>
-    <div class="fixed-top fixed-top-2">
+    <div class="fixed-top fixed-top-2-back" id="bmTop">
         <div class="alert" role="alert" id="bmMsg"></div>
     </div>
 
@@ -518,6 +536,6 @@
         <br/>
         </div>
     </div>
-
-
+    <br/><br/><br/><br/><br/><br/><br/><br/><br/><br/>
+    </body>
 </html>
