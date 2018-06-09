@@ -431,7 +431,10 @@
     var checkedAxies = 0;
     function getAxie(id, callback) {
         $.get("https://axieinfinity.com/api/axies/" + parseInt(id), function(data, status, xhr) {
-            if (data.stage < 3) return;
+            if (data.stage < 3) {
+                callback();
+                return;
+            }
             axies[data.id] = {"genes": genesToBin(new BigNumber(data.genes)), "owner": data.owner, "class": data.class, "exp": data.exp};
             if (callback != null) {
                 callback();
