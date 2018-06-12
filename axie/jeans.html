@@ -326,7 +326,8 @@
             name = traitMapping[classGeneMap[classBinary]][type][traitBinary][region];
         }
         if (typeof name == "undefined") {
-            name = traitMapping[classGeneMap[classBinary]][type][traitBinary]["global"];
+            return "UNKNOWN";
+            //name = traitMapping[classGeneMap[classBinary]][type][traitBinary]["global"];
         }
         return name;
     }
@@ -515,6 +516,7 @@
         if (initTable) {
             axieTable = $('#axieTable').DataTable({
                 data: data,
+                order: [[ 0, "desc" ]],
                 columns: [
                 {title: "ID", data: "id", "render": render},
 
