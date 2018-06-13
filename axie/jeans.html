@@ -326,8 +326,11 @@
             name = traitMapping[classGeneMap[classBinary]][type][traitBinary][region];
         }
         if (typeof name == "undefined") {
-            return "UNKNOWN";
-            //name = traitMapping[classGeneMap[classBinary]][type][traitBinary]["global"];
+            name = traitMapping[classGeneMap[classBinary]][type][traitBinary]["global"];
+            if (typeof name == "undefined") {
+                return "UNKNOWN";
+            }
+
         }
         return name;
     }
