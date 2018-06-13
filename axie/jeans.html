@@ -326,9 +326,14 @@
             name = traitMapping[classGeneMap[classBinary]][type][traitBinary][region];
         }
         if (typeof name == "undefined") {
+            //unknown region?
             name = traitMapping[classGeneMap[classBinary]][type][traitBinary]["global"];
             if (typeof name == "undefined") {
-                return "UNKNOWN";
+                let keys = Object.keys(traitMapping[classGeneMap[classBinary]][type][traitBinary]);
+                if (keys.length > 0) {
+                    return "Undiscovered regional?: " + traitMapping[classGeneMap[classBinary]][type][traitBinary][keys[0]];
+                }
+                return "UNKNOWN region?";
             }
 
         }
