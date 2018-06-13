@@ -41,35 +41,19 @@
                 background-color: #5a6268;
                 border-color: #545b62;
             }
-            .fixed-top-2-front {
-                margin-top: 82px;
-                z-index: 2;
-            }
-            .fixed-top-2-back {
+            .fixed-top-2 {
                 margin-top: 82px;
                 z-index: -1;
             }
             @media (max-width: 1024px) {
-                .fixed-top-2-front {
-                    margin-top: 102px;
-                    z-index: 2;
-                }
-                .fixed-top-2-back {
+                .fixed-top-2 {
                     margin-top: 102px;
                     z-index: -1;
                 }
             }
-            .back {
-                position: relative;
-                z-index: 1;
-            }
+
             body {
                 padding-top: 110px;
-            }
-            .boxshadow {
-                transition: box-shadow 400ms;
-                box-shadow: 0 0 0  1px rgba(  0,  0,  0, 0.1),
-                            4px 4px 10px rgba(12, 167, 12, 0.5);
             }
         </style>
     </head>
@@ -88,7 +72,7 @@
                     $("#headerDiv").html(data);
                     let buttons = '<div class="text-white" id="account"></div>' +
                     '<br/>' +
-                    '<div class="row col-12 mb-1">' +
+                    '<div class="row col-sm mb-1">' +
                     '<button class="btn btn-outline-light text-white" onclick="createForm()"><i class="fas fa-plus-circle"></i> Add a breeding pair</button> &nbsp;' +
                     '<button class="btn btn-outline-light text-white float-right" onclick="bookmark()"><i class="fas fa-bookmark"></i> Bookmark</button>' +
                     '</div>';
@@ -114,7 +98,7 @@
 
         window.addEventListener('load', function () {
             acctInt = setInterval(initContract, 250);
-            $('[data-toggle="tooltip"]').tooltip();
+
             var hash = window.location.hash.substr(1);
             if (hash == "") {
                 return;
@@ -270,16 +254,12 @@
             numPairs++;
             var template =
                 '<div id="pair{ID}">' +
-                '<div class="col-md-9 border" onmouseover="$(\'#upButton{ID}\').show();$(\'#downButton{ID}\').show();$(\'#closeButton{ID}\').show();" onmouseout="$(\'#upButton{ID}\').hide();$(\'#downButton{ID}\').hide();$(\'#closeButton{ID}\').hide();" >' +
-                '<div class="d-flex" id="buttons{ID}">' +
-                '<div data-toggle="tooltip" data-placement="left" title="Move pair up" class="p-1"><i class="default-hide mt-1 float-left fas fa-arrow-circle-up" id="upButton{ID}" onclick="movePairUp({ID});"></i></div>' +
-                '<div data-toggle="tooltip" data-placement="left" title="Move pair down" class="mr-auto p-1"><i class="default-hide mt-1 float-left fas fa-arrow-circle-down" id="downButton{ID}" onclick="movePairDown({ID});"></i></div>' +
-                '<div data-toggle="tooltip" data-placement="right" title="Remove pair" class="p-2"><i class="default-hide mt-1 float-right fas fa-times-circle" id="closeButton{ID}" onclick="removePair({ID});"></i></div>' +
-                '</div>' +
+                '<div class="col-md-9 border" onmouseover="$(\'#closeButton{ID}\').show()" onmouseout="$(\'#closeButton{ID}\').hide()">' +
+                '<div data-toggle="tooltip" data-placement="right" title="Remove pair"><i class="default-hide mt-1 float-right fas fa-times-circle" id="closeButton{ID}" onclick="removePair({ID});"></i></div>' +
                 '<br/>' +
                 '<div class="form-group row mb-1 mr-1">' +
                 '<label class="col-form-label col-md-3" for="notes{ID}">Notes for pair {ID}</label>' +
-                '<textarea class="form-control col-md-9" type="text" placeholder="Notes about this pair. Not used in TX." id="notes{ID}"></textarea>' +
+                '<input class="form-control col-md-9" type="text" placeholder="Notes about this pair. Not used in TX." id="notes{ID}"/>' +
                 '</div>' +
                 '<div class="form-group row mb-1 mr-1">' +
                 '<label class="col-form-label col-md-3" for="matronId{ID}">Matron ID</label>' +
@@ -307,8 +287,6 @@
         }
         var bmInterval;
         function setBookmarkMsg(msg, type) {
-            $("#bmTop").removeClass();
-            $("#bmTop").addClass("fixed-top fixed-top-2-front");
             $("#bmMsg").removeClass();
             $("#bmMsg").text("");
             if (type == "warning") {
@@ -326,8 +304,7 @@
 
         function clearBmMsg() {
             $("#bmMsg").fadeTo(1000, 0);
-            $("#bmTop").removeClass();
-            $("#bmTop").addClass("fixed-top fixed-top-2-back");
+
             clearInterval(bmInterval);
         }
 
@@ -417,87 +394,6 @@
             }
         }
 
-        function swapPair(id1, id2) {
-            let notes1 = $("#notes" + id1).val();
-            let matronId1 = parseInt($("#matronId" + id1).val());
-            let sireId1 = parseInt($("#sireId" + id1).val());
-            let notes2 = $("#notes" + id2).val();
-            let matronId2 = parseInt($("#matronId" + id2).val());
-            let sireId2 = parseInt($("#sireId" + id2).val());
-
-            if (isNaN(matronId1)) {
-                setMsg(id1, "Invalid matron ID");
-                return;
-            }
-            if (isNaN(sireId1)) {
-                setMsg(id1, "Invalid sire ID");
-                return;
-            }
-            if (isNaN(matronId2)) {
-                setMsg(id2, "Invalid matron ID");
-                return;
-            }
-            if (isNaN(sireId2)) {
-                setMsg(id2, "Invalid sire ID");
-                return;
-            }
-
-            setFormValues(id1, matronId2, sireId2, notes2);
-            setFormValues(id2, matronId1, sireId1, notes1);
-            setMsg(id1, "");
-            setMsg(id2, "");
-        }
-
-        function movePairDown(id) {
-            if (id < numPairs) {
-                let divTop = $("#pair" + id);
-                if (divTop.length == 0) return;
-                let bottomID = id + 1;
-                let divBottom = $("#pair" + bottomID);
-
-                while (divBottom.length == 0 && bottomID < numPairs) {
-                    bottomID++;
-                    divBottom = $("#pair" + bottomID);
-                }
-                if (divBottom.length == 0) return;
-                swapPair(id, bottomID);
-
-                let margin = $("#bmTop").css("margin-top");
-                $("#pair" + bottomID).children().addClass("boxshadow");
-                $('html, body').animate({scrollTop: $("#pair" + bottomID).offset().top - parseInt(margin.slice(0, margin.length - 2))}, 400, function() {
-                    let intID = setInterval(function() {
-                        clearInterval(intID);
-                        $("#pair" + bottomID).children().removeClass("boxshadow");
-                    }, 2000);
-                });
-            }
-        }
-
-        function movePairUp(id) {
-            if (id > 0) {
-                let divBottom = $("#pair" + id);
-                if (divBottom.length == 0) return;
-                let topID = id - 1;
-                let divTop = $("#pair" + topID);
-
-                while (divTop.length == 0 && topID > 0) {
-                    topID--;
-                    divTop = $("#pair" + topID);
-                }
-                if (divTop.length == 0) return;
-                swapPair(id, topID);
-
-               let margin = $("#bmTop").css("margin-top");
-               $("#pair" + topID).children().addClass("boxshadow");
-                $('html, body').animate({scrollTop: $("#pair" + topID).offset().top - parseInt(margin.slice(0, margin.length - 2))}, 400, function() {
-                    let intID = setInterval(function() {
-                        clearInterval(intID);
-                        $("#pair" + topID).children().removeClass("boxshadow");
-                    }, 2000);
-                });
-            }
-        }
-
         function openCalc(id) {
             let matronId = $("#matronId" + id).val().trim();
             if (!isNumber(matronId)) {
@@ -513,28 +409,22 @@
         }
 
     </script>
-    <body>
     <!-- header -->
     <div class="fixed-top" id="headerDiv"></div>
-    <div class="fixed-top fixed-top-2-back" id="bmTop">
+    <div class="fixed-top fixed-top-2">
         <div class="alert" role="alert" id="bmMsg"></div>
     </div>
 
-    <div id="breedersDiv" class="container back">
+    <div id="breedersDiv" class="container">
 
         <br/>
         <div id="pair0">
-
-        <div class="col-md-9 border" onmouseover="$('#upButton0').show();$('#downButton0').show();$('#closeButton0').show();" onmouseout="$('#upButton0').hide();$('#downButton0').hide();$('#closeButton0').hide();" >
-            <div class="d-flex" id="buttons0">
-                <div data-toggle="tooltip" data-placement="left" title="Move pair up" class="p-1"><i class="default-hide mt-1 float-left fas fa-arrow-circle-up" id="upButton0" onclick="movePairUp(0);"></i></div>
-                <div data-toggle="tooltip" data-placement="left" title="Move pair down" class="mr-auto p-1"><i class="default-hide mt-1 float-left fas fa-arrow-circle-down" id="downButton0" onclick="movePairDown(0);"></i></div>
-                <div data-toggle="tooltip" data-placement="right" title="Remove pair" class="p-2"><i class="default-hide mt-1 float-right fas fa-times-circle" id="closeButton0" onclick="removePair(0);"></i></div>
-            </div>
+        <div class="col-md-9 border" onmouseover="$('#closeButton0').show()" onmouseout="$('#closeButton0').hide()" >
+            <div data-toggle="tooltip" data-placement="right" title="Remove pair"><i  class="default-hide mt-1 float-right fas fa-times-circle" id="closeButton0" onclick="removePair(0);"></i></div>
             <br/>
             <div class="form-group row mb-1 mr-1">
                 <label class="col-form-label col-md-3" for="notes0">Notes for pair 0</label>
-                <textarea class="form-control col-md-9" type="text" placeholder="Notes about this pair. Not used in TX." id="notes0"></textarea>
+                <input class="form-control col-md-9" type="text" placeholder="Notes about this pair. Not used in TX." id="notes0"/>
             </div>
 
             <div class="form-group row mb-1 mr-1">
@@ -555,6 +445,6 @@
         <br/>
         </div>
     </div>
-    <br/><br/><br/><br/><br/><br/><br/><br/><br/><br/>
-    </body>
+
+
 </html>
