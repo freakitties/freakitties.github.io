@@ -29,7 +29,7 @@
 
     function render(data, type, row, meta) {
         if(type === 'display'){
-            data = '<img width=60 src="' + data + '" onerror="this.src=\'unknown.png\'"/><br/>' + row.name;
+            data = '<img width=60 src="' + encodeURIComponent(data) + '" onerror="this.src=\'unknown.png\'"/><br/>' + row.name;
         }
         return data;
     }
