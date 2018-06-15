@@ -483,7 +483,7 @@
                 addAxie(id, startPrice, endPrice, duration/60/60, seller, new Date(result.timestamp * 1000), blockNumber);
             }
             let hash = window.location.hash.substr(1);
-            if (hash.indexOf("noDrops") != -1 || sound == false) {
+            if (hash.indexOf("noAudio") != -1 || sound == false) {
                 return;
             }
             //let audio = new Audio('sounds/droplet.mp3');
@@ -536,10 +536,8 @@
 <footer class="page-footer font-small">
     <div class="container">
         <div class="row col-md-10">
-                <div class="col-md text-center"><a href="#noDrops" onclick="window.location.reload(true);">No audio</a></div>
-                <div class="col-md text-center"><a href="#noHistory" onclick="window.location.reload(true);">Don't load old auctions when starting</a></div>
-                <div class="col-md text-center"><a href="#noHistorynoDrops" onclick="window.location.reload(true);">Neither</a></div>
-                <div class="col-md text-center"><a href="" onclick="window.location.reload(true);">Both</a></div>
+                <div class="col-md text-center"><a href="#noAudio" onclick="window.location.reload(true);">No audio</a></div>
+                <div class="col-md text-center"><a href="" onclick="window.location.reload(true);">Enable audio</a></div>
         </div>
     </div>
 </footer>
