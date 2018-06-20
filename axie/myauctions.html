@@ -260,11 +260,11 @@
             order: [[ 0, "desc" ]],
             columns: [
                 {title: "Date Time", render: renderDate, type: "date" },
-                {title: "Axie", render: function(data, type, row, meta) {if (type == "display") return '<a href="https://axieinfinity.com/axie/' + data + '" target="_blank">' + data + '</a>'; else return data;}},
+                {title: "Axie", render: function(data, type, row, meta) {if (type == "display") return '<a href="https://axieinfinity.com/axie/' + data + '?r=freak" target="_blank">' + data + '</a>'; else return data;}},
                 {title: "Sale Price"},
                 {title: "Winner", render: function(data, type, row, meta) {
                     if (type == "display") {
-                        return '<a href="https://axieinfinity.com/profile/' + data + '">' + data.slice(0, 10) + "..." + data.slice(30, 40) +  '</a>';
+                        return '<a href="https://axieinfinity.com/profile/' + data + '?r=freak">' + data.slice(0, 10) + "..." + data.slice(30, 40) +  '</a>';
                     }
                     return data;
                 }},
