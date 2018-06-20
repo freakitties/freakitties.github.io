@@ -211,7 +211,7 @@
             let axieID = parseInt(data);
             if (!axieID) {
                 console.log("bad data?? " + data);
-                return '<a href="https://axieinfinity.com/axie/' + data + '" target="_blank">' + data + '</a><br/>';
+                return '<a href="https://axieinfinity.com/axie/' + data + '?r=freak" target="_blank">' + data + '</a><br/>';
             }
             let color = "btn-";
             if (["plant","reptile","beast","aquatic","bird","bug"].includes(row[row.length - 1].class)) {
@@ -220,7 +220,7 @@
                 color += "primary";
             }
 
-            return '<a href="https://axieinfinity.com/axie/' + axieID + '" target="_blank">' + axieID + '</a><br/><button class="mt-1 text-white btn btn-sm ' + color + '" +  onclick="bidOnSale(' + axieID + ')">Buy now</button>';
+            return '<a href="https://axieinfinity.com/axie/' + axieID + '?r=freak" target="_blank">' + axieID + '</a><br/><button class="mt-1 text-white btn btn-sm ' + color + '" +  onclick="bidOnSale(' + axieID + ')">Buy now</button>';
         }
         return data;
     }
@@ -301,7 +301,7 @@
 
     function renderSeller(data, type, row, meta) {
         let trunc = data.slice(0, 12);
-        return '<a href="https://axieinfinity.com/profile/' + data + '" target="_blank">' + trunc + '...</a>';
+        return '<a href="https://axieinfinity.com/profile/' + data + '?r=freak" target="_blank">' + trunc + '...</a>';
     }
 
     var startingBlock;
