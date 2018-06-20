@@ -87,12 +87,12 @@
                 success: function(data) {
                     $("#headerDiv").html(data);
                     let buttons = '<div class="text-white" id="account"></div>' +
-                    '<br/>' +
+                    //'<br/>' +
                     '<div class="row col-12 mb-1">' +
                     '<button class="btn btn-outline-light text-white" onclick="createForm()"><i class="fas fa-plus-circle"></i> Add a breeding pair</button> &nbsp;' +
                     '<button class="btn btn-outline-light text-white float-right" onclick="bookmark()"><i class="fas fa-bookmark"></i> Bookmark</button>' +
                     '</div>';
-                    $("#navContent").append(buttons);
+                    $("#navContentLeft").append(buttons);
 
                     if (typeof web3 == 'undefined') {
                         $("#account").text("Web3 enabled browser not detected.");

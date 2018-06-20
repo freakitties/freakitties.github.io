@@ -11,8 +11,13 @@
                     <li><a class="dropdown-item" href="/ck/">CryptoKitties Tools</a></li>
                   </ul>
                 </div>
-                <div id="navContent" class="col-sm-5 row"></div>
-                <div id="donationDiv" class="text-right col-sm-5">
+                <div id="navContent" class="col-sm-8 row">
+                    <div id="navContentLeft" class="text-left text-white col-8"></div>
+                    <div id="navContentRight" class="text-right text-white col-4">
+                        Support the tools: <a class="text-white" href="https://axieinfinity.com/axie-lab?r=freak"><u>Buy Axies</u></a><br/>
+                    </div>
+                </div>
+                <div id="donationDiv" class="text-right col-3">
                     <div class="mt-0 mb-1"><a id="donated" class="text-white small" target="_blank" href="https://etherscan.io/address/0x209045cFE98445D6541D4FDf560d0d63fAd77753"></a></div>
                 </div>
             </div>
@@ -23,12 +28,17 @@
             const BLOCKS_MONTH = (30 * 24 * 60 * 60)/BLOCKS_SEC;
             const LIMIT = 100;
             if (typeof web3 != 'undefined') {
-                let html = '<input id="donateValue" class="form-control-sm col-2" type="text" value="0.002"> ' +
+                let html = '<input id="donateValue" class="form-control-sm col-md-4 col-lg-4 col-xl-2" type="text" value="0.002"> ' +
                            '<button class="btn btn-sm btn-primary" onclick="donate()">Donate</button>';
                 $("#donationDiv").append(html);
             } else {
                 $("#donationDiv").append('<div id="donation" class="text-white">Donations: ' + donationAddress + ' &nbsp;</div>');
             }
+            if (window.location.pathname.match(/^\/(?:ck|auctions|sires|newauctions)\/|(?:breeding|w3)\.html/)) {
+                let profileLink = '<a class="text-white" href="https://www.cryptokitties.co/profile/0x08797952462b82db639ddbfdef2ab1718ffa7676?include=sale,sire"><u>Buy Kitties</u></a>';
+                $("#navContentRight").append(profileLink);
+            }
+
             var totalDonated = 0;
             function getTransactions(url, page, callback) {
                 let pagedUrl = url + "&page=" + page;
