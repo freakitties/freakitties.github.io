@@ -8,11 +8,18 @@
         gtag('js', new Date());
         gtag('config', 'UA-116189657-1');
         </script>
-        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js" integrity="sha384-tsQFqpEReu7ZLhBV2VZlAu7zcOV+rXbYlF2cqB8txI/8aZajjp4Bqd+V6D5IgvKT" crossorigin="anonymous"></script>
         <script src="../bignumber.min.js"></script>
         <script src="traitmapping.js"></script>
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+
+        <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.10.18/js/jquery.dataTables.min.js" integrity="sha384-r3v0/sXe5ocDydKBFcxP390rex2dEm9qN3Yv68S6uNX/F3b/RtMdGMUADZ8tabkz" crossorigin="anonymous"></script>
+        <script src="https://cdn.datatables.net/buttons/1.5.2/js/dataTables.buttons.min.js" integrity="sha384-zOjU8Lmrn7aY/0op2Zr4DRXhg0el3XJ4SEMVakZ7bni+KP5F9geHOJ0cWYSvj0HN" crossorigin="anonymous"></script>
+        <script src="https://cdn.datatables.net/buttons/1.5.2/js/buttons.html5.min.js" integrity="sha384-EzXZHFRG/n4Omd1nQTNbrErjupvcy1TetvtLCAR9wX6U7/CnXYYe8Ea6l6n1KtM5" crossorigin="anonymous"></script>
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+
+        <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.16/css/jquery.dataTables.min.css" integrity="sha384-1UXhfqyOyO+W+XsGhiIFwwD3hsaHRz2XDGMle3b8bXPH5+cMsXVShDoHA3AH/y/p" crossorigin="anonymous">
+        <link rel="stylesheet" href="https://cdn.datatables.net/buttons/1.5.2/css/buttons.dataTables.min.css" integrity="sha384-4zgE69bwrfaNYUZPA2TaKwT/mjqMcBEvQmjHf1qkjg3c2JSWfEGflXXz6xXBLGGN" crossorigin="anonymous">
         <style>
             body {background-color: #efefef;}
         </style>
@@ -56,8 +63,6 @@
             }
 
         </style>
-        <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.16/css/jquery.dataTables.min.css" integrity="sha384-1UXhfqyOyO+W+XsGhiIFwwD3hsaHRz2XDGMle3b8bXPH5+cMsXVShDoHA3AH/y/p" crossorigin="anonymous">
-        <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js" integrity="sha384-Z9D45cp3elqajO+xEyjRTIK1Gr3eYsXiyCPIKNog1sIQzpo2fqFDqFdADGiJjzOv" crossorigin="anonymous"></script>
     </head>
 <script>
 
@@ -188,7 +193,7 @@
         let bin = data.slice(4, 8);
         if(type === 'display'){
             let pattern = patternMap[bin];
-            return '<b><div class="binary">' + bin +  "(" + parseInt(bin, 2) + ')</div><img height="25" class="changebg autoBig" src="colors/' + pattern + '-pattern.png"></b>';
+            return '<b><div class="text-primary binary">' + bin +  "(" + parseInt(bin, 2) + ')</div><img height="25" class="changebg autoBig" src="colors/' + pattern + '-pattern.png"></b>';
         }
         return bin;
     }
@@ -245,7 +250,7 @@
                 let cls = row.group0.slice(0, 4);
                 color = geneColorMap[cls][bin];
             }
-            return '<b><div class="binary">' + bin + "(" + parseInt(bin, 2) + ')</div><img width="25" src="colors/' + color + '-body.png">' + "</b>";
+            return '<b><div class=text-primary binary">' + bin + "(" + parseInt(bin, 2) + ')</div><img width="25" src="colors/' + color + '-body.png">' + "</b>";
         }
         return bin;
     }
@@ -294,10 +299,11 @@
         return bin;
     }
 
+    //class
     function renderGroup21(data, type, row, meta) {
         let bin = data.slice(2, 6);
         if(type === 'display'){
-            return '<b><div class="binary">' + bin + '</div>' + classGeneMap[bin] + "</b>";
+            return '<div class="text-primary"><b><div class="binary">' + bin + '</div>' + classGeneMap[bin] + "</b></div>";
         }
         return bin;
     }
@@ -344,7 +350,7 @@
         let bin = data.slice(6, 11);
         if(type === 'display'){
             name = getTraitName(row, data.slice(0, 6), bin, meta.settings.aoColumns[meta.col].sTitle.toLowerCase(), true);
-            return '<b><div class="binary">' + bin + "</div>" + name + "</b>";
+            return '<div class="text-primary"><b><div class="binary">' + bin + "</div>" + name + "</b></div>";
         }
         return bin;
     }
@@ -523,6 +529,11 @@
 
         if (initTable) {
             axieTable = $('#axieTable').DataTable({
+//                dom: 'lfrBtip',
+                buttons: [{
+                    extend: 'copy',
+                    text: 'Copy table to clipboard'
+                }],
                 data: data,
                 order: [[ 0, "desc" ]],
                 columns: [
@@ -639,6 +650,9 @@
             });
 
             $("#axieTable_length").after('&nbsp; <input id="binaryToggle" class="text-right ml-4" type="checkbox" onclick="toggleBinary()"/> Hide binary');
+
+            //doesn't copy nicely yet. don't show for now
+            //axieTable.buttons().container().appendTo( $('#copyDiv') );
         }
     }
 
@@ -771,6 +785,7 @@
             <input class="text-right col-5" id="search" size="55" placeholder="ID, address or comma separated list of IDs and/or addresses" />&nbsp;
             <button type="submit" class="btn btn-dark" onclick="search();" id="searchButton0">Search</button>
         </div>
+        <div id="copyDiv"></div>
         <br/>
         <table class="table display nowrap" id="axieTable">
             <thead>
