@@ -17,6 +17,8 @@ Live site: [https://freakitties.github.io/](https://freakitties.github.io/)
 
 [Beta: Recessive Search!!! (Your account only)](/ck/mysearch.html)
 
+[Check if 2 cats are breed-able](/ck/breedable.html)
+
 ---
 
 
