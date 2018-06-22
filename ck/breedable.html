@@ -1,0 +1,215 @@
+<!--
+    Copyright 2018 freakitties@gmail.com
+    You can copy and use this code if you agree to pay $1 per page load.
+-->
+<html>
+    <head>
+        <title>Cryptokitties Breeder</title>
+        <script async src="https://www.googletagmanager.com/gtag/js?id=UA-116189657-1"></script>
+        <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'UA-116189657-1');
+        </script>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+        <!--<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script> -->
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.bundle.min.js" integrity="sha384-feJI7QwhOS+hwpX2zkaeJQjeiwlhOP+SdQDqhgvvo1DsjtiSQByFdThsxO669S2D" crossorigin="anonymous"></script>
+        <script defer src="https://use.fontawesome.com/releases/v5.0.8/js/solid.js" integrity="sha384-+Ga2s7YBbhOD6nie0DzrZpJes+b2K1xkpKxTFFcx59QmVPaSA8c7pycsNaFwUK6l" crossorigin="anonymous"></script>
+        <script defer src="https://use.fontawesome.com/releases/v5.0.8/js/fontawesome.js" integrity="sha384-7ox8Q2yzO/uWircfojVuCQOZl+ZZBg2D2J5nkpLqzH1HY0C1dHlTKIbpRz/LG23c" crossorigin="anonymous"></script>
+        <style type="text/css">
+            .bg-dark {
+               background-color: #5a5a5a!important;
+            }
+            .btn-dark {
+                background-color: #5a5a5a!important;
+                border-color: #5a5a5a!important;
+            }
+            .default-hide {
+                display: none;
+            }
+            .autoBig:hover {
+                width: 38;
+            }
+            .autoBig:hover {
+                height:120;
+                width: 120;
+            }
+            .btn-outline-light:hover, .btn-outline-light:focus, .btn-outline-light:active, .btn-outline-light.active, .open>.dropdown-toggle.btn-outline-light {
+                color: #fff;
+                background-color: #5a6268;
+                border-color: #545b62;
+            }
+            .fixed-top-2-front {
+                margin-top: 82px;
+                z-index: 2;
+            }
+            .fixed-top-2-back {
+                margin-top: 82px;
+                z-index: -1;
+            }
+            @media (max-width: 1024px) {
+                .fixed-top-2-front {
+                    margin-top: 102px;
+                    z-index: 2;
+                }
+                .fixed-top-2-back {
+                    margin-top: 102px;
+                    z-index: -1;
+                }
+            }
+            .back {
+                position: relative;
+                z-index: 1;
+            }
+            body {
+                padding-top: 110px;
+            }
+            .boxshadow {
+                transition: box-shadow 400ms;
+                box-shadow: 0 0 0  1px rgba(  0,  0,  0, 0.1),
+                            4px 4px 10px rgba(12, 167, 12, 0.5);
+            }
+        </style>
+    </head>
+    <script>
+        function setMsg(msg, type = "error") {
+            var box = $("#msg");
+
+            box.text(msg);
+            box.removeClass();
+
+            if (msg == "") return;
+
+            if (type == "error") {
+                box.addClass("alert alert-danger");
+            } else {
+                box.addClass("alert alert-success");
+            }
+        }
+
+        var numErrors = 0;
+        function handleChange(type) {
+            setMsg('');
+            var img = null;
+            var kittyId = null;
+            var imgLink = null;
+            if (type == "matron") {
+                img = $("#matronImg");
+                imgLink = $("#matronImgLink");
+                kittyId = $("#matronId").val().trim();
+            } else if (type == "sire") {
+                img = $("#sireImg");
+                imgLink = $("#sireImgLink");
+                kittyId = $("#sireId").val().trim();
+            }
+
+            if (img == null || kittyId == null || !isNumber(kittyId)) {
+                if (img != null) {
+                    img.attr("src", "");
+                    img.hide();
+                    imgLink.attr("href", "");
+                }
+                return;
+            }
+
+            let imgURL = "https://storage.googleapis.com/ck-kitty-image/0x06012c8cf97bead5deae237070f9587f8e7a266d/" + kittyId;
+            img.attr("src", imgURL + ".svg");
+            img.on("error", function() {
+                if (numErrors < 5) {
+                    this.src =  imgURL + ".png";
+                }
+                numErrors++;
+            });
+            imgLink.attr("href", "https://www.cryptokitties.co/kitty/" + kittyId);
+            img.show();
+        }
+
+        function isNumber(str) {
+            if (str.match("^[0-9]+$")) return true;
+            return false;
+        }
+
+        function checkBreedability() {
+            let matronId = parseInt($("#matronId").val().trim());
+            let sireId = parseInt($("#sireId").val().trim());
+            $.get("https://api.cryptokitties.co/kitties/" + matronId, function(matron) {
+                $.get("https://api.cryptokitties.co/kitties/" + sireId, function(sire) {
+                    let able = breedable(matron, sire);
+                    console.log("Breedable: " + able);
+                    if (able) {
+                        setMsg("Breedable", "");
+                    } else {
+                        setMsg("NOT Breedable", "error");
+                    }
+                }).fail(function() {
+                    setMsg("Bad sire?", "error");
+                });;
+            }).fail(function() {
+                setMsg("Bad matron?", "error");
+            });
+        }
+
+        function breedable(cat1, cat2) {
+            if (cat1.id == cat2.id) {
+                return false;
+            }
+            if (('id' in cat2.matron && cat2.matron.id == cat1.id) || ('id' in cat2.sire && cat2.sire.id == cat1.id)) {
+                return false;
+            }
+            if (('id' in cat1.matron && cat1.matron.id == cat2.id) || ('id' in cat1.sire && cat1.sire.id == cat2.id)) {
+                return false;
+            }
+            if (!('id' in cat1.matron) || !('id' in cat2.matron)) {
+                return true;
+            }
+            if (cat1.matron.id == cat2.matron.id || cat1.matron.id == cat2.sire.id) {
+                return false;
+            }
+            if (cat1.sire.id == cat2.matron.id || cat1.sire.id == cat2.sire.id) {
+                return false;
+            }
+            return true;
+        }
+
+        $(document).ready(function(){
+
+            $.ajax({
+                url: "../header.html",
+                cache: false,
+                dataType: "html",
+                success: function(data) {
+                    $("#headerDiv").html(data);
+                }
+            });
+        });
+
+    </script>
+    <body>
+        <!-- header -->
+        <div class="fixed-top" id="headerDiv"></div>
+
+        <div class="container back">
+
+            <br/>
+            <div class="form-group row mb-1 mr-1">
+                <label class="col-form-label col-md-3" for="matronId">Matron ID</label>
+                <input class="form-control col-md-2" type="text" id="matronId" onchange="handleChange('matron');"/><a target="_blank" id="matronImgLink" href=""><img class="autoBig" height="38" src="" style="display: none;" id="matronImg"/></a>
+            </div>
+
+            <div class="form-group row mb-1 mr-1">
+                <label class="col-form-label col-md-3" for="sireId">Sire ID</label>
+                <input class="form-control col-md-2" type="text" id="sireId" onchange="handleChange('sire');"/><a target="_blank" id="sireImgLink" href=""><img class="autoBig" height="38" src="" style="display: none;" id="sireImg"/></a>
+            </div>
+            <button type="submit" class="btn btn-secondary" onclick="checkBreedability();" id="breedButton">Check breedability</button>&nbsp;
+            <br/>
+            <br/>
+            <div id="msg"></div>
+        </div>
+        <br/>
+        </div>
+    </div>
+    <br/><br/><br/><br/><br/><br/><br/><br/><br/><br/>
+    </body>
+</html>
