@@ -417,6 +417,7 @@
     }
 
     var regionMap = {"0": "global", "1": "japan"};
+    //TODO: fix firstSix. should just pass in mystic and trait class
     function getTraitName(row, firstSix, traitBinary, type, checkMystic = false) {
 
         let region = getRegion(row);
@@ -604,11 +605,11 @@
                 html += "<td>" + cls + "</td><td class=\"text-" + cls + "\">" + name + "</td>";
                 cls = classGeneMap[row[group].slice(12, 16)];
                 bin = row[group].slice(16,21);
-                name = getTraitName(row, firstSix, bin, type, false);
+                name = getTraitName(row, row[group].slice(10, 16), bin, type, false);
                 html += "<td>" + cls + "</td><td class=\"text-" + cls + "\">" + name + "</td>";
                 cls = classGeneMap[row[group].slice(22, 26)];
                 bin = row[group].slice(26,31);
-                name = getTraitName(row, firstSix, bin, type, false);
+                name = getTraitName(row, row[group].slice(20, 26), bin, type, false);
                 html += "<td>" + cls + "</td><td class=\"text-" + cls + "\">" + name + "</td></tr>";
                 tbl += html;
             }
