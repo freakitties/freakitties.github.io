@@ -175,7 +175,7 @@
             }
             matronId = parseInt(matronId);
             sireId = parseInt(sireId);
-            if (autoBirthFee != 0.008*1e18) {alert("new autoBirthFee?" + autoBirthFee); return;}
+            if (autoBirthFee != 0.015*1e18) {alert("new autoBirthFee?" + autoBirthFee); /*return;*/}
             coreInstance.canBreedWith(matronId, sireId, (err, result) => {
                 if (err) {
                     setMsg(id, "Error checking breedability: " + err);
