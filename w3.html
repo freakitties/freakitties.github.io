@@ -118,7 +118,7 @@
         var sireId = parseInt(document.getElementById("sireId").value);
         var matronId = parseFloat(document.getElementById("matronId").value);
         var sirePrice = parseFloat(document.getElementById("siringPrice").value);
-        if (!autoBirthFee.equals(new BigNumber(0.015).mul(1e18)) ) {alert("new autoBirthFee?" + autoBirthFee); /*return;*/}
+        if (!autoBirthFee.equals(new BigNumber(0.008).mul(1e18)) ) {alert("Birthing fee has changed to: " + autoBirthFee); /*return;*/}
         siringInstance.getCurrentPrice(sireId, function(error, result) {
             if (error) {
                 alert(error);
@@ -175,7 +175,7 @@
     function selfBreed() {
         var matronId = parseFloat(document.getElementById("selfMatronId").value);
         var sireId = parseInt(document.getElementById("selfSireId").value);
-        if (!autoBirthFee.equals(new BigNumber(0.015).mul(1e18)) ) {alert("new autoBirthFee?" + autoBirthFee); /*return;*/}
+        if (!autoBirthFee.equals(new BigNumber(0.008).mul(1e18)) ) {alert("Birthing fee has changed to: " + autoBirthFee); /*return;*/}
         coreInstance.breedWithAuto(matronId, sireId, {from: web3.eth.accounts[0], value: autoBirthFee}, (err, result) => {
             if (err) {
                 alert(err);
