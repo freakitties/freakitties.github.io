@@ -88,11 +88,12 @@
                             } else {
                                 let now = new Date().getTime()/1000;
                                 let timeLeft = r - now;
-                                let hours = timeLeft/3600;
+                                let hours = Math.abs(timeLeft/3600);
+                                let minutes = hours % 1 * 60;
                                 if (timeLeft > 0) {
-                                    row.status = "Mission time remaining: " + hours.toFixed(2) + " hours";
+                                    row.status = "Mission time remaining: " + parseInt(hours) + " h " + parseInt(minutes) + " m";
                                 } else {
-                                    row.status = "Mission finished " + Math.abs(hours).toFixed(2) + " hours ago";
+                                    row.status = "Mission finished " + parseInt(hours) + " h "  + parseInt(minutes) + " m ago";
                                 }
                             }
                             shipTable.row.add( row );
@@ -143,11 +144,12 @@
                         } else {
                             let now = new Date().getTime()/1000;
                             let timeLeft = r - now;
-                            let hours = timeLeft/3600;
+                            let hours = Math.abs(timeLeft/3600);
+                            let minutes = hours % 1 * 60;
                             if (timeLeft > 0) {
-                                row.status = "Mission time remaining: " + hours.toFixed(2) + " hours";
+                                row.status = "Mission time remaining: " + parseInt(hours) + " h " + parseInt(minutes) + " m";
                             } else {
-                                row.status = "Mission finished " + Math.abs(hours).toFixed(2) + " hours ago";
+                                row.status = "Mission finished " + parseInt(hours) + " h "  + parseInt(minutes) + " m ago";
                             }
                         }
                         shipTable.row.add( row );
