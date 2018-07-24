@@ -14,8 +14,9 @@
                 <div id="navContent" class="col-sm-8 row">
                     <div id="navContentLeft" class="text-left text-white col-8"></div>
                     <div id="navContentRight" class="text-right text-white col-4">
-                        Support the tools<br/><a class="text-white" href="https://axieinfinity.com/axie-lab?r=freak"><u>Buy Axies</u></a><br/>
-                        <a class="text-white" href="https://godsunchained.com/?refcode=0x08797952462b82dB639DDBFdeF2ab1718ffa7676"><u>Buy GU Packs</u></a>
+                        Support the tools<br/><a class="text-white" href="https://axieinfinity.com/axie-lab?r=freak"><u>Buy Axies</u></a>&nbsp;
+                        <a class="text-white" href="https://godsunchained.com/?refcode=0x08797952462b82dB639DDBFdeF2ab1718ffa7676"><u>Buy GU Packs</u></a><br/>
+                        <a class="text-white" href="https://www.cryptokitties.co/profile/0x08797952462b82db639ddbfdef2ab1718ffa7676?include=sale,sire"><u>Buy Kitties</u></a>
                     </div>
                 </div>
                 <div id="donationDiv" class="text-right col-3">
@@ -35,11 +36,6 @@
             } else {
                 $("#donationDiv").append('<div id="donation" class="text-white">Donations: ' + donationAddress + ' &nbsp;</div>');
             }
-            if (window.location.pathname.match(/^\/(?:ck|auctions|sires|newauctions)\/|(?:breeding|w3)\.html/)) {
-                let profileLink = '<a class="text-white" href="https://www.cryptokitties.co/profile/0x08797952462b82db639ddbfdef2ab1718ffa7676?include=sale,sire"><u>Buy Kitties</u></a>';
-                $("#navContentRight").append(profileLink);
-            }
-
             var totalDonated = 0;
             function getTransactions(url, page, callback) {
                 let pagedUrl = url + "&page=" + page;
