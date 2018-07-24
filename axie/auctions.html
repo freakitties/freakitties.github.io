@@ -126,8 +126,10 @@
 
     if (window.speechSynthesis) {
         var synth = window.speechSynthesis;
-        var utterThis = new SpeechSynthesisUtterance("Axi sold");
-        utterThis.voice = synth.getVoices()[17];
+        utterThis = new SpeechSynthesisUtterance("Axi sold");
+        synth.onvoiceschanged = function() {
+            utterThis.voice = synth.getVoices()[17];
+        };
     }
 
     var axieTable;
