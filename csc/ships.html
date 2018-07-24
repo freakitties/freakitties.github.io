@@ -55,6 +55,7 @@
                 let row = {};
                 let shipID = result[i];
                 row.shipID = shipID;
+                console.log("Querying " + shipID);
                 instance.getCollectibleDetails(shipID, (err, res) => {
                     if (err) {
                         console.log("Error getting collectible details: " + err);
@@ -78,11 +79,13 @@
                         meaInstance.getAssetIdTripStartTime(shipID)
                         meaInstance.getAssetIdTripCompletedTime(shipID)
 */
+                        console.log("Getting deets for: " + shipID);
                         meaInstance.getAssetIdTripCompletedTime(shipID, (e,r) => {
                             if (e) {
                                 console.log("Error getAssetIdTripCompletedTime: " + e);
                                 return;
                             }
+                            console.log(shipID + ": " + r);
                             if (r == 0) {
                                 row.status = "no missions?";
                             } else {
@@ -93,9 +96,10 @@
                                 if (timeLeft > 0) {
                                     row.status = "Mission time remaining: " + parseInt(hours) + " h " + parseInt(minutes) + " m";
                                 } else {
-                                    row.status = "Mission finished " + parseInt(hours) + " h "  + parseInt(minutes) + " m ago";
+                                    row.status = "Mission finished " + parseInt(hours) + " h "  + Math.round(minutes) + " m ago";
                                 }
                             }
+                            //console.log("adding row: " + JSON.stringify(row));
                             shipTable.row.add( row );
                             shipTable.columns.adjust().draw();
 
@@ -120,6 +124,7 @@
                 let row = {};
                 let shipID = result[i];
                 row.shipID = shipID;
+                console.log("Querying " + shipID);
                 instance.getCollectibleDetails(shipID, (err, res) => {
                     if (err) {
                         console.log("Error getting collectible details: " + err);
@@ -134,6 +139,7 @@
                     row.class = RARE_TYPES_CLASSES[type][cls];
                     row.name = name;
 
+                    console.log("Getting deets for: " + shipID);
                     meaInstance.getAssetIdTripCompletedTime(shipID, (e,r) => {
                         if (e) {
                             console.log("Error getAssetIdTripCompletedTime: " + e);
@@ -149,9 +155,10 @@
                             if (timeLeft > 0) {
                                 row.status = "Mission time remaining: " + parseInt(hours) + " h " + parseInt(minutes) + " m";
                             } else {
-                                row.status = "Mission finished " + parseInt(hours) + " h "  + parseInt(minutes) + " m ago";
+                                row.status = "Mission finished " + parseInt(hours) + " h "  + Math.round(minutes) + " m ago";
                             }
                         }
+                        //console.log("adding row: " + JSON.stringify(row));
                         shipTable.row.add( row );
                         shipTable.columns.adjust().draw();
 
