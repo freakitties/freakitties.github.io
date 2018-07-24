@@ -42,20 +42,20 @@
                 border-color: #545b62;
             }
             .fixed-top-2-front {
-                margin-top: 82px;
+                margin-top: 76px;
                 z-index: 2;
             }
             .fixed-top-2-back {
-                margin-top: 82px;
+                margin-top: 76px;
                 z-index: -1;
             }
             @media (max-width: 1024px) {
                 .fixed-top-2-front {
-                    margin-top: 102px;
+                    margin-top: 96px;
                     z-index: 2;
                 }
                 .fixed-top-2-back {
-                    margin-top: 102px;
+                    margin-top: 96px;
                     z-index: -1;
                 }
             }
@@ -86,10 +86,10 @@
                 dataType: "html",
                 success: function(data) {
                     $("#headerDiv").html(data);
-                    let buttons = '<div class="text-white" id="account"></div>' +
+                    let buttons = '<div class="text-white small" id="account"></div>' +
                     //'<br/>' +
                     '<div class="row col-12 mb-1">' +
-                    '<button class="btn btn-outline-light text-white" onclick="createForm()"><i class="fas fa-plus-circle"></i> Add a breeding pair</button> &nbsp;' +
+                    '<button class="btn btn-outline-light text-white" onclick="createForm()"><i class="fas fa-plus-circle"></i> Add a pair</button> &nbsp;' +
                     '<button class="btn btn-outline-light text-white float-right" onclick="bookmark()"><i class="fas fa-bookmark"></i> Bookmark</button>' +
                     '</div>';
                     $("#navContentLeft").append(buttons);
