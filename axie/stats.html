@@ -91,8 +91,16 @@
                 axieStats[id] = {};
                 Object.assign(axieStats[id], classStats[axie.class]);
                 axieStats[id].parts = [];
+                axieStats[id].attack = 0;
+                axieStats[id].defense = 0;
             }
             axieStats[id].parts.push({"name": traits[t].name, "type": traits[t].type});
+            if (traits[t].moves.length > 0) {
+                for (let move in traits[t].moves) {
+                    axieStats[id].attack += traits[t].moves[move].attack;
+                    axieStats[id].defense += traits[t].moves[move].defense;
+                }
+            }
 
             for (let b in bonus[c]) {
                 axieStats[id][b] += bonus[c][b];
@@ -205,17 +213,19 @@ $(document).ready(function(){
             columns: [
             {title: "ID", data: "id", "render": render},
             {title: "HP", data: "hp", "searchable": false},
-            {title: "Speed", data: "speed", "searchable": false},
-            {title: "Skill", data: "skill", "searchable": false},
-            {title: "Morale", data: "morale", "searchable": false},
-            {title: "HP+Speed", data: null, "searchable": false, "render": function (data, type, full) {return (full.hp + full.speed)}},
-            {title: "HP+Morale", data: null, "searchable": false, "render": function (data, type, full) {return full.hp + full.morale}},
-            {title: "Speed+Morale", data: null, "searchable": false, "render": function (data, type, full) {return full.speed + full.morale}},
+            {title: "Spd", data: "speed", "searchable": false},
+            {title: "Skl", data: "skill", "searchable": false},
+            {title: "Mor", data: "morale", "searchable": false},
+            {title: "HP+Spd", data: null, "searchable": false, "render": function (data, type, full) {return (full.hp + full.speed)}},
+            {title: "HP+Mor", data: null, "searchable": false, "render": function (data, type, full) {return full.hp + full.morale}},
+            {title: "Spd+Mor", data: null, "searchable": false, "render": function (data, type, full) {return full.speed + full.morale}},
+            {title: "Atk", data: "attack", "searchable": false},
+            {title: "Spd+Atk", data: null, "searchable": false, "render": function (data, type, full) {return full.speed + full.attack}},
+            {title: "Def", data: "defense", "searchable": false},
+            {title: "HP+Def", data: null, "searchable": false, "render": function (data, type, full) {return full.hp + full.defense}},
             {title: "Parts", data: "parts", "render": renderParts, "searchable": true},
-            {title: "Owner", data: "owner", "visible": false, "searchable": true},
+            {title: "Owner", data: "owner", "visible": true, "searchable": true},
             /*
-            {title: "Attack", data: "attack", "searchable": false},
-            {title: "Defense", data: "defense", "searchable": false},
             {title: "Accuracy", data: "accuracy", "searchable": false},
             */
             //{title: "Total", data: "total"}
