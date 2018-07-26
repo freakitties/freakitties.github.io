@@ -1,0 +1,996 @@
+<html>
+    <head>
+        <title>Axie Gene Explorer</title>
+        <script async src="https://www.googletagmanager.com/gtag/js?id=UA-116189657-1"></script>
+        <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'UA-116189657-1');
+        </script>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js" integrity="sha384-tsQFqpEReu7ZLhBV2VZlAu7zcOV+rXbYlF2cqB8txI/8aZajjp4Bqd+V6D5IgvKT" crossorigin="anonymous"></script>
+        <script src="../bignumber.min.js"></script>
+        <script src="traitmapping.js"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+
+        <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.10.18/js/jquery.dataTables.min.js" integrity="sha384-r3v0/sXe5ocDydKBFcxP390rex2dEm9qN3Yv68S6uNX/F3b/RtMdGMUADZ8tabkz" crossorigin="anonymous"></script>
+        <script src="https://cdn.datatables.net/buttons/1.5.2/js/dataTables.buttons.min.js" integrity="sha384-zOjU8Lmrn7aY/0op2Zr4DRXhg0el3XJ4SEMVakZ7bni+KP5F9geHOJ0cWYSvj0HN" crossorigin="anonymous"></script>
+        <script src="https://cdn.datatables.net/buttons/1.5.2/js/buttons.html5.min.js" integrity="sha384-EzXZHFRG/n4Omd1nQTNbrErjupvcy1TetvtLCAR9wX6U7/CnXYYe8Ea6l6n1KtM5" crossorigin="anonymous"></script>
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+
+        <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.16/css/jquery.dataTables.min.css" integrity="sha384-1UXhfqyOyO+W+XsGhiIFwwD3hsaHRz2XDGMle3b8bXPH5+cMsXVShDoHA3AH/y/p" crossorigin="anonymous">
+        <link rel="stylesheet" href="https://cdn.datatables.net/buttons/1.5.2/css/buttons.dataTables.min.css" integrity="sha384-4zgE69bwrfaNYUZPA2TaKwT/mjqMcBEvQmjHf1qkjg3c2JSWfEGflXXz6xXBLGGN" crossorigin="anonymous">
+        <style>
+            body {background-color: #efefef;}
+        </style>
+        <style>
+            .btn-plant, .btn-plant:hover, .btn-plant:active, .btn-plant:visited {
+                background-color: rgb(108, 192, 0) !important;
+                border-color: rgb(108, 192, 0) !important;
+            }
+            .btn-reptile, .btn-reptile:hover, .btn-reptile:active, .btn-reptile:visited {
+                background-color: rgb(200, 138, 224) !important;
+                border-color: rgb(200, 138, 224) !important;
+            }
+            .btn-beast, .btn-beast:hover, .btn-beast:active, .btn-beast:visited {
+                background-color: rgb(255, 184, 18) !important;
+                border-color: rgb(255, 184, 18) !important;
+            }
+            .btn-aquatic, .btn-aquatic:hover, .btn-aquatic:active, .btn-aquatic:visited {
+                background-color: rgb(0, 184, 206) !important;
+                border-color: rgb(0, 184, 206) !important;
+            }
+            .btn-bird, .btn-bird:hover, .btn-bird:active, .btn-bird:visited {
+                background-color: rgb(255, 139, 189) !important;
+                border-color: rgb(255, 139, 189) !important;
+            }
+            .btn-bug, .btn-bug:hover, .btn-bug:active, .btn-bug:visited {
+                background-color: rgb(255, 83, 65) !important;
+                border-color: rgb(255, 83, 65) !important;
+            }
+
+
+            .text-plant {
+                color: rgb(108, 192, 0) !important;
+            }
+            .text-reptile {
+                color: rgb(200, 138, 224) !important;
+            }
+            .text-beast {
+                color: rgb(255, 184, 18) !important;
+            }
+            .text-aquatic {
+                color: rgb(0, 184, 206) !important;
+            }
+            .text-bird {
+                color: rgb(255, 139, 189) !important;
+            }
+            .text-bug {
+                color: rgb(255, 83, 65) !important;
+            }
+
+            .w-45 {
+                width: 45% !important;
+            }
+            .changebg {
+                background-color: #D9D9D9;
+            }
+            .dropdown-menu>li>a, .dropdown-menu {
+                color: white;
+                background-color: #6c757d;
+            }
+            .autoBig:hover {
+                height: 100;
+            }
+            .circle-eyes {
+                background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAwCAYAAABT9ym6AAAAAXNSR0IArs4c6QAABNZJREFUaAXtmVuIVWUUx89xxsuo6IOmozSTF8IYNUUzE1F7yCukoQ9C2IMEwoQQhUKKgVmUWg8KofOkRNBLRQ+KgpcB8xKNoAw2GZYSOmDZTD1MXvI2/f7D2ae999mX7/v22eJDC36zv72+tf5r7XP25Xx7CoUcrbe3tx98DdtyLJO/NAfwBsgewpz8K+ZQgcaHQxd49l0OZfKXpPst3hH4tovyr1zFCjReBzd8B+ANj1WxTP5SdN3sdR6xnZZ/B74KNNAflsEQn9toSE473IXz8A0cgougi36PkYgviJzRsNDnMh+SOA9kumB1vg8zySZuMLwCQ8Px+NTQy2F/3D6xjbAH7oBsUFxsrJ+kl/pS//vzG8M1sQlVnKDOQHgXboHfjD7MQCtkP+dX8I1bGY8LBFdxB+25cMlXzxveZ9AvrlQxboKkeuaux8x34J9dLBZvRs2XCk5nTg/BRrgHv8Bpcn5mG2nkPc3EWRgeEXCV3Kci/OkuhHvAb/+w8yFE3gDwN8FHcBXiTDeCDTAmqgP8Y+ELCNvxqHgjH0rnfGo6pfSJBQxfEVZCG9iYTpUD8EJAsLSDfwH4T7GWqDgjH0L7QXeMtyBwGrKvH4Sr4QJktSMIzAs3hU93wL0l8ebwvPE+AotgcjgB30L4EaptRxFsiqi3DP8zYb/zPmJPwpeQp91FfCdUPIecG/cSEa2BjfA3PCq7RqFVXg+Zt4g1wLeO3T8g7zp0O+YrbR9E3iWNDw6B5WDbRAc570AT1HjFGOtpPQe2g34l2NhFgp/1tIy3JNXCbptKxP4BayH26es1QMxQ2Aq6HkztNoHrPI3ULcEqcthUvRSnW/D4VPFQADkLQB+AjX1CcOBREJItFAjQ8rTNRpXYKzCiQszQQe4MuAk29hnB0d88E/omvrdRI1Y/WaYY9hwbhsYay7oK31chiFM/M7QAsrVdFWKODgqfsS1O/OZAORxvO4jcI+eJgFCGHbQWO/TwkJz5fWUZ6Dlhe46qZmuGvitS0dPS+i8JW9pPxNfqglkPgyuU0x1H00PMI1hraM1ywjyjHDmJ0QodyIqyy25wzS7cKNpVs+9AtIJzsW6XpJScrpT5uOlGfSOdcbMpfudnR4LuyIS5pKlOHcjBpIiEOddvMkGy0JA0mTB3UE/ziaAHm609LnetX2l8QN9BMvjA9iiI13NkVMKnZDWF1hKHHpSyvFyIHd3DT8lrabvLIhkH1HV5sn9aURahetAPQBvTKTm1QszSgcZrNkVLsVrf948sxcR40BLTxnTwrncbXaMzIfxqNK2+zp7kVSMB40CPfRv7geAJkZ9OgpOcF6HLphCxWislH4RXk8CR0Ao2poZeh/Ly1tMLb4nRkuE9sFkhEt7bAtGnU7iIt09CDbwPeoFgY3rftQkmQ61PbxD7c0Gven4HG+sh+FVPy2mLgF7S3bCp6ovVz2w1/afPZzvUMlo/DLMbQmPhK9sOMsbrOfUx1GU/gpACokvhMuRtJymQeQkdaj+4SwGd69vAZTFGWqLpfddaSH5LEmwp2x7FRsEO0IWY1ToReBOqfxqZHibFR4Dubi43hEvkNcNA03q5x9FMLega+hySviW9C94Fz1ezqVzORZrUKTILZoD+xab1uBZwbdDO+vwB2/8t6hP4F4Z6eP6aCM5jAAAAAElFTkSuQmCC);
+                background-repeat: no-repeat;
+                background-size: 60%;
+                background-position: center;
+                overflow:hidden;
+                -webkit-border-radius:50%;
+                -moz-border-radius:50%;
+                border-radius: 50%;
+                width: 30px;
+                height: 30px;
+            }
+            .circle-mouth {
+                background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAD4AAAAYCAYAAACiNE5vAAAAAXNSR0IArs4c6QAAA/1JREFUWAndmEtsTUEYx90qUW0ioR4lFq14NPGK0hBFSFQRJZqoaMQCkViIx8oCy9o0LLoQVmJRRKOrtolHQkUQKQ2tncY7glbRhnrU/zuZOfnfMXPOnNudSb5833zf/zdz77kzc865I0bEtKGhoQewpG2XHhbgtaQw9AeIf50BX655l89yFSjfS7Fv2E/C4fI9NJZv+C1O6PPFb8UNYtSH0L9DuaS8oG3D4AfAthOfWYhlVpxwqd3lmcBOg/1JMEanwa9JwIq0kXlXHPuLp1KpZ4C7XANY8mkTg38DzT2LzpVK4yG6DfvoElvyVyy5zFK4ikc8r/ogdJPMWZDb48nLyii08HWefA90Y0w+4z4Gy4f98Jj8km0ScHmwLx58q4Of48GK5LSNH1YOg17wmHylaxKw9R78pgj+Rgz/G/VZLt4rjwFyYadgCzWAeD4sqoWHGkQp2DHYRuKL0P8Fc7WnKKRED58Dk+VdQvw69KNaeDZANBp2ElameS8PoBEm7R1ssoYQt0jS0SpJd0JpZHsspvxFByvpnaRrULoP8FMp/1jlbW4J6c4oQR/8DJ2P9BDuMEYN9y3ypUZNd+/rQZFYAPupC/DyS2ZLHV5ujbZfvRP5kUpThZjbVRq7kgsUN5FmLeUlvKlrTg+RLLGXojbaMg0hf9moSXcF1a9b6vuofs5SD7YE8rJEn1vqq4hvM+pykWdLHT4L9sSoS9d5dgTjQnDUAkkqfJJCXAjrl6RqDfShNuik4WXL5KoPNwVxL9WbiT9MeQ55RZWgwKumjvjdDFEcriitDT1EcqB9IrEZrtZiFPaqYjf8BMpHvdAcJF01OLlnywUJ9jC8rLb3MFerIP64Ej2Cz5E8fDasG+Zq1ZpP81AfchEq38IAcrLfpusc4rhHyxfQBHtdGMQVsCLi96Mf1dL2KoTbYHzRa6Jg1B7quUKPpFytVzGglOeGkBGg1urB1xhY0AUne9O2t80hF9l4yUHYYYot/XDV6om3WES2VL1tYgiLYLJ041p4VvA4gNbHgap+ljkdo7bckw/vUAELqNkTlEMp2FN6UvHI1XryIitmVvFNnvxX6PIs/HlPXp4rJgY8ggKYPO75tu08MSB5SnvrC0NXa/DyHsCndNxQ4b87Mg7EcigPxEFUD/7dkdfSzbDY11OZRLUqHSi/FL7AyEV1TV6e+IKHlyiIalspllBO+39WoaHhbsDrL86FuFj24ygSyYVL0maC5+UePup6DlIOnr9oUr4M/Hj54qWeE2qZPIjM0x34pLygskp0S8rL+3b48oQ4KS+rq1Tuq3J/GwfzbfKf2iCJuxCPpb5P+JlE7Yjzqe8TfidRB+I+6vuE/Geoj/7/0fwFUrguAczbYpoAAAAASUVORK5CYII=);
+                background-repeat: no-repeat;
+                background-size: 70%;
+                background-position: center;
+                overflow:hidden;
+                -webkit-border-radius:50%;
+                -moz-border-radius:50%;
+                border-radius: 50%;
+                width: 30px;
+                height: 30px;
+
+            }
+            .circle-ears {
+                background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACYAAAA0CAYAAADmI0o+AAAAAXNSR0IArs4c6QAABCZJREFUWAnNmEtIFlEUx/1ME5+BUmZoRYuCyKJaFBRIRRQVBYVFFAZBBEGPRS3aJLao6IEugqA2QREhEW0koYUVga4qKugdilGSC40eaGb2O0PzOY97Z+7MNx924P/N3HPP+Z//NzP3MZOT85/Y2NhYDbgOPoPqCZeFiCLQBH4C2+onTBgKUmA3+GircRz35k2EMgQsp24LWKapP6TxZ8eNoGogz9EfEGRbsqPAw4oCeY4awQ9gYms8FMk3UbEJ9JioccTIrc6OUaQKtDqKRTldkLgqqsto2w8GoyjxxM5OVBjk88EjT5E4zamJCKNyATgJhuOoUORMzlgYpHXgtYI8rmswI1FULQaX41YPyHsrwmLN/JAuJvcmmCskCdsX4cuNQoogGXFHyOkC2RAlcixhxlcMQTJSroINIJvWL+RGwhAlS8Q1UCVJWbbwW4mgPHAaIfdAEqIew3MANAOd9eo6LD+C5oAukIT1QrIDpIScY0MA6TqtMJLqwdeAZNOuEQLPgmJnMdo7AwjmOWOtc4IngXMBSVG6nhJc6yuCA/++AKJCVw6BsmdqD0gw7RolUK6Sdlmhr0lD1meLskYlQWU42sBKuyPmUR7cPalUqiMkv0bT32377Qm2FUemomQlWGggSmrPlB+Fdad9XK2Nmstq6pZ91640ocEJ8X0a8iY7XW7ldrsR4/iQnAauUo9pLoJkPqzUxL+y/XIrV9iNCMcRYo+DVVFE/eOXDYDO0sJk6Eadr16Ss0TH7PQTNwO4ZnnajUBl8kpXlM6nMaSK0vguuZLTLP4T4nJBB0hPARJF+z5QWbeLhYj3qiiPr5/2ZldiSIP4RgeHNWnSLgS67Xe7i5LA2w4C1alMutNdSSEN4uvAb2BbhaTQWGs7FMdTLloCZHFVmdziw8BaeF1JAQ3iZcvtfcG1/hj+80Bn7sWbKFkf33iin9FWrnMBmqwu8lTFy/FLnU9AZbLYl/i4cS4F8l1BRkYLKPAFGTjIWwSkiNdKcGzzOh3tTi09QfIlxr/l0Ga4O8iVUajbv5XS9w7o7IybLcEWFQ/qquK/E9AnXesTlDJOBfEs8A3EMRlkvufL3l2MV4l4BukUUm4BH7khVRvL2nfDWLMwRJWBTpCJbTWr5oiimnIOwy8D5RjQbV/oMrIBopQzQNh7pSzw+WgdAMNgFEwDpSAJu8JtFN5ohqg2o/8dL0jmO90WO1goibVAt+jGkzOedSO4ekgvPEfHuRI7+wVTZh9lIJAvPGE7kKiKL4RcD7Nuqspa9yJqdU28LOQy9yVjkFWC55pipm65hZm+Jvr/EKQVIJMJ9ZCfNSEPwvJBM4hqFxOSEEyDqtVAPpyEmXzLOBHMlnAvBWUPJp+U7gLVBvEB/jjvrTnKtTCOfgSUkycbTdnfy67lCcvNB46x7C9bGJguLHIwBQAAAABJRU5ErkJggg==);
+                background-repeat: no-repeat;
+                background-size: 50%;
+                background-position: center;
+                overflow:hidden;
+                -webkit-border-radius:50%;
+                -moz-border-radius:50%;
+                border-radius: 50%;
+                width: 30px;
+                height: 30px;
+
+            }
+            .circle-horn {
+                background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAD4AAAAsCAYAAAA93wvUAAAAAXNSR0IArs4c6QAABRFJREFUaAXFmluoFVUcxvc+amqakkWWFgfJPJEV3UMDs5MEQZZmF6kXJQjxQV+ikhLqoXqI6KEeyiIjeigIsyCIgshI6CU0E6HyWtlFKirFQs3d7zvO6H+vPTNrrdl7Zv/hc9Za/8v3rX1m1syssdHokbVarQk9KpVZhvrjwUCms8Rg14UQMwY8DvezJfhjUi4geBNcl8UkVRKLiPPAFvATmFIJiSkKx1pwBKw0w/U2IR8EO4Hs9jrY4RkNvhQh9mgdnG0ckJ4OvhY7trnNWXEHvltHWE/8c1/FdO3l4VxvyO9o91bfg3tbwn+Q41D1jDBAtCAh1UHX9uhaiA0JnKtEntinxlVNEyKt4DtSRo7PVMNUXBXeKeBfo2NpcUaXXoiWGTI1L+qyZOl0uN8yWr6l3fWtOVcMxdMFTZxbcwNrcMC/RCKMLa6EFgK7mopvbSVEgUXhnwAOS0hi8XcXEq/28RHzScqQHC/15VTtR8dGR9PcIk5ip4NzR2Jo6Jd7z5NwFTHW/qbTLMqpw4eGR6wo2huKePHPB3q8bmhBWARO/AoaybblzvD2ZrPZcsb60d3mkC5kYmc7Y7Y7kc79GtDEF4Kp6mQZhRRzt+P7yun3q+tOXM8USwrEaJ4XM6eZmtQsMEhnRk7CfMbdH2ZvTmytw5x1+yE86pDe6/RtdzjpDGniM5POahth2lmFDht/v5uulhv5I3ZcuoxNR2h6NlyoiR9LlK/EeYudBf28U8cls2l1t10tmtNdVgTzGEv/DaCj7D8FHRhpNhpjOG4gyN4SrmDsrMRvD0dsp8/tLC0LUk3M5zTab4LhdIzjr5r4TjOg7aPPCH4J6LrOe8/uOJVMjdqaaNQt1V1/xD8Pn57n76S9A7SdAfR36W1rOYi1F0juuyF6aqxw4ndJuP7i74Ks00X+PBvMc9Q8XkbH29I4wC3hT46vRAq+ll+u709uaL4uUvc/xL94ModJnAO0mxFj15ws0KcGYj+MEUxs5/4Bg09EFnmyT/MdoUXrGcBuRvjk/07A5A7NDE4Ee33Zxv8z7fEdhWoagPshoyWkuSJXGtk3h1QwMatyi1XogF9fVX4xOnxNvVIXr0kEvOyrYvz7aZ9Z4RwzS8P5mNHgax4iYEZmITtIkK6db3zVjL/wXd7W7kUb3rngqOH3NR8I5qXSJSBmlX84uHgXgWjSA8v3INTWRdNR2d3M85E9RUDxdRSt4lQCtWeDPSDUviBQz+nxRqI+0sXYOwSfH8+Un0G9AbAU/AVCbQ+B0/KrBngo8HwoWxKnr5mvAV2L08CoAJq2EHImgVngQRCz3hDe0m023WNoqxvVoUgTrAdlTavqPSGkxOlj5Odlicj7A1wewhUUQzGdbq+CsqbT1Hu9ERNzm3K1HGDgyqAJxQRRVH/551y2iP4NPj5q6UGjjP1A0pCvfld+CNaA4yXUuTu1HTqoGXs9S8Z2EP16qvfxKOM1Vm84i8GhqMRT+11FaemeWFGM9b1PZw6a9tnBkHb0xFUUIj2tzQG71Q+0kA8QxyNqPU3sIrQcDMzpXRinmB5v14EQ0/5XoVHEfnvPq7kPx3BhobqcCNGXVL2wFNlNPj0kby4qgE/PB5N8dWr1I0gfH7Xw6V6aZfp/aoVG0utZiYx9BGK3mQq5eu5E4GSg3ZzfQGo/hhARvCJNSI4fc5wXkhsbU+VLhVbo28D14AMWoU0+cUxyHDFrgO4YG8n5zpdT1v8/xuG+RTisxxcAAAAASUVORK5CYII=);
+                background-repeat: no-repeat;
+                background-size: 70%;
+                background-position: center;
+                overflow:hidden;
+                -webkit-border-radius:50%;
+                -moz-border-radius:50%;
+                border-radius: 50%;
+                width: 30px;
+                height: 30px;
+
+            }
+            .circle-back {
+                background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADoAAAAeCAYAAAB9hg0IAAAAAXNSR0IArs4c6QAAA0pJREFUWAndmNtvDHEUx3erxLXiHqEtQloPWpcIL40XxAsRqiKe3OLd5UW0El544R9AvShxqWc0IRJBItLWrYlbteJFo9G6hGrX57tm2umYmf3N7qxt9iSf/Z35/c75/s7Zmd2d2VgsAkskEqXQAbsjkEtKoLUL2qE0Ks2MdSjmEsj6YF2mgmistbQYEg2Z6kWSTyHl0K+KLOtmLE9XnNwykIZt0i5LVy+yPIqotytyjK/xp4XdhJyp8MqhY7vnw2pFGk8VxfDLrsY13uV4tOmGioU74GXao9hUK/I4Nj/jVZVj7pzppuScdeR5uadNtSKNo5Ii6PGqyDV3ONXGxB9y5XgdfmGyKJVW5OtsetCrGo85fZls8iuAtY2gGBM74KeTlXkqKoT3JpVZMV8ZK93FMFcBvVaMyaDf1VFunawds9l2k6pcMZ0cz7WLwp8DmgtrNbZGqJFdNsA2GGeaSOwjSMdaSNJnexLIT8cehqhzLBtUw/oYL7qsZF1wCgJvuVhfDZnYbZJFJrYqqFmES+AkqCdZrxptS7pDL79xb8AaLzHmG4ZCc+Zd9KmtiooaQT04rU2N1jtnXL4anm+L4s8CvxsEV2pWD3+qFkdd8zi+HrDjhQKCg675zay/QOAEjMffC8Z3O8Rmy8YgvEc1wXH8l7AlYLMHcQIrCGgJCLKXPuDoq322PZHj8SP794PJrWGlGtVZ7YIpkI/WTVPTC+Lx+ABOUz52aPXUpB51NmU3/w55+XpLXcX1wuWr67xDfh5aCWe0M9momqPZZoZ/7kfTaLyPnCfwHN7AW9Cb2AO9FvpSmwATYTLoJmUB6KdsCSyDQsjUWmky2ZNT7Cqq6TaqxhrhHjxG/AdjKvvkCLjv8PWm66dsJVTBVlgK6Zh6Gm6I67+aMPaO4COwcLhS9EfssQiOQjuEMe//mlBoNVBpJmYH/L/HJeu9Y089Hu4EkweCVt+3HIFa8LPPLOyDwc+1r1CWF1QD7AfV5Ge1vmWQob8uvewakzN8E3O0QE0zwe8ed3FgWSQ+BdsGcOoCE3K8SH06u8dAtdr2LGVZRNZZ0d8Yq1MmjJAAaq2B71btqU8OgbocLsPyEdKDcRnUvAKuwOAjnHFyvgT+ARdTaRFf71NJAAAAAElFTkSuQmCC);
+                background-repeat: no-repeat;
+                background-size: 70%;
+                background-position: center;
+                overflow:hidden;
+                -webkit-border-radius:50%;
+                -moz-border-radius:50%;
+                border-radius: 50%;
+                width: 30px;
+                height: 30px;
+
+            }
+            .circle-tail {
+                background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAmCAYAAACGeMg8AAAAAXNSR0IArs4c6QAABA1JREFUWAndmUloVEEQhh2jxl1I3EVRDAhBVIy4K6KXKIqKEFQQPHrQowieBAWPggYSVCIENG5404tLIBIXREUQFZdDIgkaDAhZTUji90/s4c2b12+ZN+LEgj/dXfVXdVX6Ld1vEqN8ZGhoaCLm7WAVGAB94CW4n0gk1I8tzDGJILtABVgNpoIE+AJegOugnvkGaaMJwYtADegCXtKEcne0qJlsYhwGP70mcOmaGR/IjOCjwaEctLgCeQ0HUR7xCWU14TcW3PEKGqB7gL3IGtgYIO0HSjCs9EEsM/5hW3yqwk7gwXuHboF1LoybQK+HY5DqnjWoh4FgBywBO9DfBQ3gu4Vj1G/p6P5NF5QTQKthRWwH4M9Jj2gfwdV/1ClKugIUGi/648BJ0ANsUmv4qRbmcRs7pP5QKphPh1gLXfE6GZfaXLAddPHdww0pXyyq/oebEXF8IRXQp0PMLa64l3zoSRP8WpePc9hg/EfT2QiKjSLLVs//MKJ3kVM+OQeWfrVFL7Xu6+SKqpByH2JY00oCTgtBfgWn18Fb5+h7dnkRPsHQ42kcVu5Xo0LWDI9j/R2D97agCCTVBeeig7eHf8AZsAhsAI/ATIfddLtNx6MdXggcP4JcyC2PSTJUTDQRvLZMWJ/hgAKu3z3cjb1AJD2/cyF6DC/2SsStgzcZVIJ2IOkHl0DGaqBbAYKkRIVk8xK0Bb7iTtpvTJACMF2tjYftNAiSMhXSFsSKaN9pSyqqnnlLgG3j6kxrs272jqgTBPAvM8OiAE6gmRjagtSCzK1IpnenCvmcqY+lmYX3ExJZnm0UfLXDfQgCH89/5mhSIW/+DHLZzCbYYxI6AcZHCQx/L3wd3taG9Ovisd6ueyRoPwMlluhQpIJKbIlh06Z1H9B5I6q8VdwEXjNovwGtzt+WD0zwETQDvRx1Gc4F2vzpyJuNVLIix3Q21qo00GzKJkoe+GylkHqzCnV5kFA2KbTjpEVIXU419FulGGFym9VI7qiTK8LgFwWcHWFF6HNUKmdzaakGHXJa1BkhUs0CNJlckze7GXDTV9C/YcZ53HaS22IKaTM5OldkFIabGM4bYx63R51FeObJqujjmbYY+SpVXomnXVqGQAXz6D8F840uT9rn5LGZ1dCNniZpl5axQNRNvx68N7o8aBvJYadXEYG5sTLF4FkeXGPXyaEwMGE/AgEmgbp/VEwf854CnreAX95WG8G0Ow36JgslZ6LvwEusCcUxEFjn62sgyhd76JGkEfaOOHmG9mWiZeAq0KeYXIg+95wDpaGTcBFjXXtMPIV4+tlMTzj9PKfjbZgTYT88PUofAB1pn/M0ki5riVWIe1YK0xfHpUDvn8lAhyW1Y4F2119BM2iJmzgx/k/5Df9wbDjzje2YAAAAAElFTkSuQmCC);
+                background-repeat: no-repeat;
+                background-size: 60%;
+                background-position: center;
+                overflow:hidden;
+                -webkit-border-radius:50%;
+                -moz-border-radius:50%;
+                border-radius: 50%;
+                width: 30px;
+                height: 30px;
+
+            }
+        </style>
+    </head>
+<script>
+
+    var classGeneMap = {"0000": "beast", "0001": "bug", "0010": "bird", "0011": "plant", "0100": "aquatic", "0101": "reptile"};
+    var typeOrder = {"eyes": 2, "mouth": 3, "ears": 4, "horn": 5, "back": 6, "tail": 7};
+    var hash = window.location.hash.substr(1);
+
+    function getClassFromGenes(id) {
+        let bin = axies[id].genes.slice(0, 4);
+        if (!(bin in classGeneMap)) {
+            console.log(bin + " is not in the gene map. unknown class.");
+            return "unknown";
+        }
+        return classGeneMap[bin];
+    }
+
+    function generateIDs(ids) {
+        var list = "";
+        for (let i in ids) {
+            let axie = axies[ids[i]];
+            let color = "";
+            if (axie == null || axie['class'] == null || typeof axie == "undefined") {
+                color = "btn-" + getClassFromGenes(ids[i]);
+            } else {
+                color = "btn-" + axie['class'];
+            }
+            if (typeof axie != "undefined" && axie['auction'] && hash.indexOf("auction") != -1) {
+                //like everything else, auction data is not real-time
+                list += '<a target="_blank" role="button" class="mb-1 btn btn-sm btn-info ' + color + '" href="https://axieinfinity.com/axie/' + ids[i] + '?r=CHl5UkYrgttjndv97yqxcY_6dnY">#' + ids[i] + '*</a> ';
+            } else {
+                list += '<a target="_blank" role="button" class="mb-1 btn btn-sm btn-info ' + color + '" href="https://axieinfinity.com/axie/' + ids[i] + '?r=CHl5UkYrgttjndv97yqxcY_6dnY">#' + ids[i] + '</a> ';
+            }
+        }
+        return list;
+    }
+
+    function render(data, type, row, meta) {
+        if(type === 'display'){
+            data = generateIDs([data]);
+        }
+        return data;
+    }
+
+    function renderGroup0(data, type, row, meta) {
+        let bin = data.slice(0, 4);
+        if(type === 'display') {
+            if (bin in classGeneMap) {
+                return '<div class="binary">' + bin + "(" + parseInt(bin, 2) + ")</div>" + classGeneMap[bin];
+            } else{
+                return '<div class="binary">' + bin + "(" + parseInt(bin, 2) + ")</div>???";
+            }
+
+        }
+        return bin;
+    }
+
+    function renderGroup01(data, type, row, meta) {
+        let bin = data.slice(4, 8);
+        if(type === 'display'){
+            return '<div class="binary">' + bin + '</div>';
+        }
+        return bin;
+    }
+
+    function renderGroup02(data, type, row, meta) {
+        let bin = data.slice(8, 12);
+        if(type === 'display'){
+            return '<div class="binary">' + bin + '</div>';
+        }
+        return bin;
+    }
+
+    //region
+    function renderGroup03(data, type, row, meta) {
+        let bin = data.slice(12, 13);
+        if(type === 'display'){
+            return '<div class="binary">' + bin + "</div>" + regionMap[bin];
+        }
+        return bin;
+    }
+
+
+    function renderGroup04(data, type, row, meta) {
+        let bin = data.slice(13, 16);
+        if(type === 'display'){
+            return '<div class="binary">'+ bin + '</div>';
+        }
+        return bin;
+    }
+
+    //tag (Origin, AGAMOGENESIS). TODO: figure how many bits this is. for now just using 2bits.
+    function renderGroup05(data, type, row, meta) {
+        let bin = data.slice(16, 18);
+        if(type === 'display'){
+            let tag = "?";
+            if (bin == "00") {
+                tag = "Normal";
+            } else if (bin == "01") {
+                tag = "Origin";
+            } else if (bin == "10") {
+                tag = "Agamogenesis";
+            } else if (bin == "11") {
+                tag = "Meo Corp";
+            }
+            return '<div class="binary">' + bin + '</div>' + tag;
+        }
+        return bin;
+    }
+
+    function renderGroup06(data, type, row, meta) {
+        let bin = data.slice(18, 32);
+        if(type === 'display'){
+            return '<div class="binary">' + bin + '</div>';
+        }
+        return bin;
+    }
+
+    function renderGroup1(data, type, row, meta) {
+        let bin = data.slice(0, 4);
+        if(type === 'display'){
+            return '<div class="binary">' + bin + '</div>';
+        }
+        return bin;
+    }
+
+    var patternMap = {"0001": "greyfuzzy","0010": "(0, 0, 64, 130)", "0011": "(0, 0, 61, 107)", "0100": "(0, 0, 82, 74)", "0101": "(0, 0, 66, 101)", "0110": "(0, 0, 51, 134)", "0111": "(0, 0, 57, 117)", "1000": "(0, 0, 59, 67)", "1001": "(0, 0, 51, 104)", "1010": "(0, 0, 63, 131)", "1011": "(0, 0, 73, 153)", "1100": "(0, 0, 78, 127)", "1101": "(0, 0, 63, 99)", "1110": "(0, 0, 65, 55)"};
+    function renderGroup11(data, type, row, meta) {
+        let bin = data.slice(4, 8);
+        if(type === 'display'){
+            let pattern = patternMap[bin];
+            return '<b><div class="text-primary binary">' + bin +  "(" + parseInt(bin, 2) + ')</div><img height="25" class="changebg autoBig" src="colors/' + pattern + '-pattern.png"></b>';
+        }
+        return bin;
+    }
+
+    function renderGroup12(data, type, row, meta) {
+        let bin = data.slice(8, 10);
+        if (type === 'display') {
+            return '<div class="binary">' + bin + '</div>';
+        }
+        return bin;
+    }
+
+    function renderGroup13(data, type, row, meta) {
+        let bin = data.slice(10, 14);
+        if(type === 'display'){
+            let pattern = patternMap[bin];
+            return '<div class="binary">' + bin +  "(" + parseInt(bin, 2) + ')</div><img height="25" class="changebg autoBig" src="colors/' + pattern + '-pattern.png">';
+        }
+        return bin;
+    }
+
+    function renderGroup14(data, type, row, meta) {
+        let bin = data.slice(14, 16);
+        if (type === 'display') {
+            return '<div class="binary">' + bin + '</div>';
+        }
+        return bin;
+    }
+
+    function renderGroup15(data, type, row, meta) {
+        let bin = data.slice(16, 20);
+        if(type === 'display'){
+            let pattern = patternMap[bin];
+            return '<div class="binary">' + bin +  "(" + parseInt(bin, 2) + ')</div><img height="25" class="changebg autoBig" src="colors/' + pattern + '-pattern.png">';
+        }
+        return bin;
+    }
+
+    var geneColorMap = {"0000": {"0010": "ffec51","0011": "ffa12a","0100": "f0c66e", "0110": "60afce"},
+    "0001": {"0010": "ff7183", "0011": "ff6d61", "0100": "f74e4e",},
+    "0010": {"0010": "ff9ab8", "0011": "ffb4bb","0100": "ff778e"},
+    "0011": {"0010": "ccef5e", "0011": "efd636","0100": "c5ffd9"},
+    "0100": {"0010": "4cffdf", "0011": "2de8f2","0100": "759edb", "0110": "ff5a71"},
+    "0101": {"0010": "fdbcff", "0011": "ef93ff","0100": "f5e1ff", "0110": "43e27d"}};
+    function renderGroup16(data, type, row, meta) {
+        let bin = data.slice(20, 24);
+        let color = "";
+        if(type === 'display'){
+            if (bin == "0000") {
+                color = "ffffff";
+            } else if (bin == "0001") {
+                color = "7a6767";
+            } else {
+                let cls = row.group0.slice(0, 4);
+                color = geneColorMap[cls][bin];
+            }
+            return '<b><div class="text-primary binary">' + bin + "(" + parseInt(bin, 2) + ')</div><img width="25" src="colors/' + color + '-body.png">' + "</b>";
+        }
+        return bin;
+    }
+
+    function renderGroup17(data, type, row, meta) {
+        let bin = data.slice(24, 28);
+        let color = "";
+        if(type === 'display'){
+            if (bin == "0000") {
+                color = "ffffff";
+            } else if (bin == "0001") {
+                color = "7a6767";
+            } else {
+                let cls = row.group0.slice(0, 4);
+                color = geneColorMap[cls][bin];
+            }
+            return '<div class="binary">' + bin + "(" + parseInt(bin, 2) + ')</div><img width="25" src="colors/' + color + '-body.png">';
+        }
+
+        return bin;
+    }
+
+    function renderGroup18(data, type, row, meta) {
+        let bin = data.slice(28, 32);
+        let color = "";
+        if(type === 'display'){
+            if (bin == "0000") {
+                color = "ffffff";
+            } else if (bin == "0001") {
+                color = "7a6767";
+            } else {
+                let cls = row.group0.slice(0, 4);
+                color = geneColorMap[cls][bin];
+            }
+            return '<div class="binary">' + bin + "(" + parseInt(bin, 2) + ')</div><img width="25" src="colors/' + color + '-body.png">';
+        }
+        return bin
+    }
+
+    //Mystic
+    function renderGroup2(data, type, row, meta) {
+        let bin = data.slice(0, 2);
+        if (type === 'display') {
+            return '<div class="binary">' + bin + '</div>' + ((bin == "11") ? "Yes" : "No");
+        }
+        return bin;
+    }
+
+    //class
+    function renderGroup21(data, type, row, meta) {
+        let bin = data.slice(2, 6);
+        if(type === 'display'){
+            return '<div class="text-primary"><b><div class="binary">' + bin + '</div>' + classGeneMap[bin] + "</b></div>";
+        }
+        return bin;
+    }
+
+    function getRegion(row) {
+        let rBit = row.group0.slice(12,13);
+        if (rBit in regionMap) {
+            return regionMap[rBit];
+        } else {
+            console.log("unknown region");
+            return null;
+        }
+
+    }
+
+    var regionMap = {"0": "global", "1": "japan"};
+    //TODO: fix firstSix. should just pass in mystic and trait class
+    function getTraitName(row, firstSix, traitBinary, type, checkMystic = false) {
+
+        let region = getRegion(row);
+        if (region == null) {
+            console.log("unknown region");
+            return "Unknown regional trait";
+        }
+
+        let classBinary = firstSix.slice(2, 6);
+        if (traitMapping[classGeneMap[classBinary]][type] == null) {
+            console.log("classBinary: " + classBinary + "classGeneMap[classBinary]" + classGeneMap[classBinary] + " type: " + type + " traitMapping[classGeneMap[classBinary]][type] " + traitMapping[classGeneMap[classBinary]][type]);
+        }
+        if (!(traitBinary in traitMapping[classGeneMap[classBinary]][type])) return "UNKNOWN";
+        let name = "";
+        if (checkMystic) {
+            let isMystic = firstSix.slice(0, 2) == "11";
+            name = traitMapping[classGeneMap[classBinary]][type][traitBinary][isMystic ? "mystic" : region];
+        } else {
+            name = traitMapping[classGeneMap[classBinary]][type][traitBinary][region];
+        }
+        if (typeof name == "undefined") {
+            //unknown region?
+            name = traitMapping[classGeneMap[classBinary]][type][traitBinary]["global"];
+            if (typeof name == "undefined") {
+                let keys = Object.keys(traitMapping[classGeneMap[classBinary]][type][traitBinary]);
+                if (keys.length > 0) {
+                    return "Undiscovered regional?: " + traitMapping[classGeneMap[classBinary]][type][traitBinary][keys[0]];
+                }
+                return "UNKNOWN region?";
+            }
+
+        }
+        return name;
+    }
+
+    function renderGroup22(data, type, row, meta) {
+        let bin = data.slice(6, 11);
+        if(type === 'display'){
+            name = getTraitName(row, data.slice(0, 6), bin, meta.settings.aoColumns[meta.col].sTitle.toLowerCase(), true);
+            return '<div class="text-primary"><b><div class="binary">' + bin + "</div>" + name + "</b></div>";
+        }
+        return bin;
+    }
+
+    function renderGroup23(data, type, row, meta) {
+        let bin = data.slice(11,12);
+        if (type === 'display') {
+            return '<div class="binary">' + bin + '</div>';
+        }
+        return bin;
+    }
+
+    function renderGroup24(data, type, row, meta) {
+        let bin = data.slice(12,16);
+        if (type === 'display') {
+            return '<div class="binary">' + bin + '</div>' + classGeneMap[data.slice(12,16)];
+        }
+        return bin;
+    }
+
+    function renderGroup25(data, type, row, meta) {
+        let bin = data.slice(16,21);
+        if (type === 'display') {
+            //let name = getTraitName(data.slice(0, 6), data.slice(16,21), meta.settings.aoColumns[meta.col].sTitle.toLowerCase().slice(0, -1));
+            let name = getTraitName(row, data.slice(10,16), bin, meta.settings.aoColumns[meta.col].sTitle.toLowerCase().slice(0, -3));
+            return '<div class="binary">' + bin + "</div>" + name;
+        }
+        return bin;
+    }
+
+    function renderGroup26(data, type, row, meta) {
+        let bin = data.slice(21,22);
+        if (type === 'display') {
+            return '<div class="binary">' + bin + '</div>';
+        }
+        return bin;
+    }
+
+    function renderGroup27(data, type, row, meta) {
+        let bin = data.slice(22,26);
+        if (type === 'display') {
+            return '<div class="binary">' + bin + '</div>' + classGeneMap[data.slice(22,26)];
+        }
+        return bin;
+    }
+
+    function renderGroup28(data, type, row, meta) {
+        let bin = data.slice(26,31);
+        if (type === 'display') {
+            //let name = getTraitName(data.slice(0, 6), data.slice(26,31), meta.settings.aoColumns[meta.col].sTitle.toLowerCase().slice(0, -1));
+            let name = getTraitName(row, data.slice(20,26), bin, meta.settings.aoColumns[meta.col].sTitle.toLowerCase().slice(0, -3));
+            return '<div class="binary">' + bin + "</div>" + name;
+        }
+        return bin;
+    }
+
+    function renderGroup29(data, type, row, meta) {
+        let bin = data.slice(31, 32);
+        if (type === 'display') {
+            return '<div class="binary">' + bin + '</div>';
+        }
+        return bin;
+    }
+
+    function strMul(str, num) {
+        var s = "";
+        for (var i = 0; i < num; i++) {
+            s += str;
+        }
+        return s;
+    }
+
+    function genesToBin(genes) {
+        var genesString = genes.toString(2);
+        genesString = strMul("0", 256 - genesString.length) + genesString
+        return genesString;
+    }
+
+    function getTypeImage(cls, type) {
+        return '<div class ="btn-' + cls + ' circle-' + type + '"></div>';
+    }
+
+    function formatCompact(row) {
+        let tbl = '<table class="table" colspan="10">' +
+            '<thead>' +
+                '<tr>' +
+                    '<th>Part</th>' +
+                    '<th>D Class</th>' +
+                    '<th>D Name</th>' +
+                    '<th>R1 Class</th>' +
+                    '<th>R1 Name</th>' +
+                    '<th>R2 Class</th>' +
+                    '<th>R2 Name</th>' +
+                '</tr>' +
+            '</thead>' +
+            '<tbody>';
+
+
+            for (let type in typeOrder) {
+                let group = "group" + typeOrder[type];
+                let firstSix = row[group].slice(0, 6);
+                let cls = classGeneMap[row[group].slice(2, 6)];
+                let bin = row[group].slice(6, 11);
+                let html = "<tr><td>" + getTypeImage(cls, type) + "</td>";
+                name = getTraitName(row, firstSix, bin, type, true);
+                if (firstSix.startsWith("11")) {
+                    name += "*";
+                }
+                html += "<td>" + cls + "</td><td class=\"text-" + cls + "\">" + name + "</td>";
+                cls = classGeneMap[row[group].slice(12, 16)];
+                bin = row[group].slice(16,21);
+                name = getTraitName(row, row[group].slice(10, 16), bin, type, false);
+                html += "<td>" + cls + "</td><td class=\"text-" + cls + "\">" + name + "</td>";
+                cls = classGeneMap[row[group].slice(22, 26)];
+                bin = row[group].slice(26,31);
+                name = getTraitName(row, row[group].slice(20, 26), bin, type, false);
+                html += "<td>" + cls + "</td><td class=\"text-" + cls + "\">" + name + "</td></tr>";
+                tbl += html;
+            }
+            tbl += '</tbody></table>' + "<div>Price: " + row.price.toFixed(4) + ", Exp: " + row.exp + "</div>";
+            return tbl;
+    }
+
+    var axieTable;
+    var data;
+    function initData(initTable=false) {
+        data = [];
+        for (let id in axies) {
+            let row = {id: id};
+            let numMystic = 0;
+            let numBeast = 0;
+            let numBug = 0;
+            let numBird = 0;
+            let numPlant = 0;
+            let numAquatic = 0;
+            let numReptile = 0;
+
+            for (let i = 0; i < 8; i++) {
+                row["group" + i] = axies[id].genes.slice(i * 32, i * 32 + 32);
+                if (i > 1) {
+                    if (row["group" + i].slice(0, 2) == "11") {
+                        numMystic++;
+                    }
+                    let cls = row["group" + i].slice(2, 6);
+                    switch(classGeneMap[cls]) {
+                        case "beast":
+                            numBeast++;
+                            break;
+                        case "bug":
+                            numBug++;
+                            break;
+                        case "bird":
+                            numBird++;
+                            break;
+                        case "plant":
+                            numPlant++;
+                            break;
+                        case "aquatic":
+                            numAquatic++;
+                            break;
+                        case "reptile":
+                            numReptile++;
+                            break;
+                    }
+                }
+                //row["group" + i].slice(12,16) //R2
+                //row["group" + i].slice(22,26) //R1
+            }
+            row['mystics'] = numMystic;
+            let axie = axies[id];
+            if (axie != null && 'owner' in axie) {
+                row['owner'] = axie['owner'];
+            } else {
+                row['owner'] = "?";
+            }
+            row['exp'] = axie['exp'];
+            row["beasts"] = numBeast;
+            row["bugs"] = numBug;
+            row["birds"] = numBird;
+            row["plants"] = numPlant;
+            row["aquatics"] = numAquatic;
+            row["reptiles"] = numReptile;
+            row["price"] = axie["price"];
+            data.push(row);
+        }
+
+        if (initTable) {
+            axieTable = $('#axieTable').DataTable({
+//                dom: 'lfrBtip',
+                buttons: [{
+                    extend: 'copy',
+                    text: 'Copy table to clipboard'
+                }],
+                data: data,
+                order: [[ 85, "asc" ]],
+                columns: [
+                {title: "ID", data: "id", "render": render},
+
+                {title: "Class", data: "group0", render: renderGroup0, searchable: false},
+                {title: "0.1", data: "group0", render: renderGroup01, searchable: false},
+                {title: "0.2", data: "group0", render: renderGroup02, searchable: false},
+                {title: "Region", data: "group0", render: renderGroup03, searchable: false},
+                {title: "0.4", data: "group0", render: renderGroup04, searchable: false},
+                {title: "Tag", data: "group0", render: renderGroup05, searchable: false},
+                {title: "0.6", data: "group0", render: renderGroup06, searchable: false},
+
+                {title: "1.0", data: "group1", render: renderGroup1, searchable: false},
+                {title: "Pattern", data: "group1", render: renderGroup11, searchable: false},
+                {title: "??", data: "group1", render: renderGroup12, searchable: false},
+                {title: "Pattern R1", data: "group1", render: renderGroup13, searchable: false},
+                {title: "??", data: "group1", render: renderGroup14, searchable: false},
+                {title: "Pattern R2", data: "group1", render: renderGroup15, searchable: false},
+                {title: "Color", data: "group1", render: renderGroup16, searchable: false},
+                {title: "Color R1", data: "group1", render: renderGroup17, searchable: false},
+                {title: "Color R2", data: "group1", render: renderGroup18, searchable: false},
+
+                {title: "Mystic", data: "group2", render: renderGroup2, searchable: false},
+                {title: "Eyes Class", data: "group2", render: renderGroup21, searchable: false},
+                {title: "Eyes", data: "group2", render: renderGroup22, searchable: false},
+                {title: "?", data: "group2", render: renderGroup23, searchable: false},
+                {title: "Eyes Class R1", data: "group2", render: renderGroup24, searchable: false},
+                {title: "Eyes R1", data: "group2", render: renderGroup25, searchable: false},
+                {title: "?", data: "group2", render: renderGroup26, searchable: false},
+                {title: "Eyes Class R2", data: "group2", render: renderGroup27, searchable: false},
+                {title: "Eyes R2", data: "group2", render: renderGroup28, searchable: false},
+                {title: "?", data: "group2", render: renderGroup29, searchable: false},
+
+                {title: "Mystic", data: "group3", render: renderGroup2, searchable: false},
+                {title: "Mouth Class", data: "group3", render: renderGroup21, searchable: false},
+                {title: "Mouth", data: "group3", render: renderGroup22, searchable: false},
+                {title: "?", data: "group2", render: renderGroup23, searchable: false},
+                {title: "Mouth Class R1", data: "group3", render: renderGroup24, searchable: false},
+                {title: "Mouth R1", data: "group3", render: renderGroup25, searchable: false},
+                {title: "?", data: "group2", render: renderGroup26, searchable: false},
+                {title: "Mouth Class R2", data: "group3", render: renderGroup27, searchable: false},
+                {title: "Mouth R2", data: "group3", render: renderGroup28, searchable: false},
+                {title: "?", data: "group3", render: renderGroup29, searchable: false},
+
+                {title: "Mystic", data: "group4", render: renderGroup2, searchable: false},
+                {title: "Ears Class", data: "group4", render: renderGroup21, searchable: false},
+                {title: "Ears", data: "group4", render: renderGroup22, searchable: false},
+                {title: "?", data: "group2", render: renderGroup23, searchable: false},
+                {title: "Ears Class R1", data: "group4", render: renderGroup24, searchable: false},
+                {title: "Ears R1", data: "group4", render: renderGroup25, searchable: false},
+                {title: "?", data: "group2", render: renderGroup26, searchable: false},
+                {title: "Ears Class R2", data: "group4", render: renderGroup27, searchable: false},
+                {title: "Ears R2", data: "group4", render: renderGroup28, searchable: false},
+                {title: "?", data: "group4", render: renderGroup29, searchable: false},
+
+                {title: "Mystic", data: "group5", render: renderGroup2, searchable: false},
+                {title: "Horn Class", data: "group5", render: renderGroup21, searchable: false},
+                {title: "Horn", data: "group5", render: renderGroup22, searchable: false},
+                {title: "?", data: "group2", render: renderGroup23, searchable: false},
+                {title: "Horn Class R1", data: "group5", render: renderGroup24, searchable: false},
+                {title: "Horn R1", data: "group5", render: renderGroup25, searchable: false},
+                {title: "?", data: "group2", render: renderGroup26, searchable: false},
+                {title: "Horn Class R2", data: "group5", render: renderGroup27, searchable: false},
+                {title: "Horn R2", data: "group5", render: renderGroup28, searchable: false},
+                {title: "?", data: "group5", render: renderGroup29, searchable: false},
+
+                {title: "Mystic", data: "group6", render: renderGroup2, searchable: false},
+                {title: "Back Class", data: "group6", render: renderGroup21, searchable: false},
+                {title: "Back", data: "group6", render: renderGroup22, searchable: false},
+                {title: "?", data: "group2", render: renderGroup23, searchable: false},
+                {title: "Back Class R1", data: "group6", render: renderGroup24, searchable: false},
+                {title: "Back R1", data: "group6", render: renderGroup25, searchable: false},
+                {title: "?", data: "group2", render: renderGroup26, searchable: false},
+                {title: "Back Class R2", data: "group6", render: renderGroup27, searchable: false},
+                {title: "Back R2", data: "group6", render: renderGroup28, searchable: false},
+                {title: "?", data: "group6", render: renderGroup29, searchable: false},
+
+                {title: "Mystic", data: "group7", render: renderGroup2, searchable: false},
+                {title: "Tail Class", data: "group7", render: renderGroup21, searchable: false},
+                {title: "Tail", data: "group7", render: renderGroup22, searchable: false},
+                {title: "?", data: "group2", render: renderGroup23, searchable: false},
+                {title: "Tail Class R1", data: "group7", render: renderGroup24, searchable: false},
+                {title: "Tail R1", data: "group7", render: renderGroup25, searchable: false},
+                {title: "?", data: "group2", render: renderGroup26, searchable: false},
+                {title: "Tail Class R2", data: "group7", render: renderGroup27, searchable: false},
+                {title: "Tail R2", data: "group7", render: renderGroup28, searchable: false},
+                {title: "?", data: "group7", render: renderGroup29, searchable: false},
+
+                {title: "Exp", data: "exp"},
+                {title: "Num Mystics", data: "mystics"},
+                {title: "Num Beast", data: "beasts"},
+                {title: "Num Bug", data: "bugs"},
+                {title: "Num Bird", data: "birds"},
+                {title: "Num Plant", data: "plants"},
+                {title: "Num Aquatic", data: "aquatics"},
+                {title: "Num Reptile", data: "reptiles"},
+                {title: "Price", data: "price"},
+                {title: "owner", data: "owner", searchable: true}
+                ],
+                "language": {"search": "Filter (ID or owner):"},
+                pageLength: MAX_AXIES,
+                "columnDefs": [
+                    { className: "text-center", "targets": [ "_all" ] }
+                ]
+            });
+
+            $('.dataTables_filter input').on( 'keyup click', function () {
+                var searchVal = $('.dataTables_filter input').val().trim();
+                if (searchVal.startsWith("0x")) {
+                    axieTable.column("owner").search(searchVal).draw();
+                } else {
+                    axieTable.column(0).search(searchVal).draw();
+                }
+            });
+
+            $("#axieTable_length").after('&nbsp; <input id="binaryToggle" class="text-right ml-4" type="checkbox" onclick="toggleBinary()"/> Hide binary');
+
+            //doesn't copy nicely yet. don't show for now
+            //axieTable.buttons().container().appendTo( $('#copyDiv') );
+
+            $('#axieTable tbody').on('click', 'tr', function () {
+                    var tr = $(this).closest('tr');
+                    var row = axieTable.row( tr );
+
+                    if ( row.child.isShown() ) {
+                        // This row is already open - close it
+                        row.child.hide();
+                        //tr.removeClass('shown');
+                    }
+                    else {
+                        // Open this row
+                        let html = formatCompact(row.data());
+                        row.child(html).show();
+                        row.child()[0].firstChild.colSpan = 8;
+                        //tr.addClass('shown');
+                    }
+                } );
+        }
+    }
+
+    var axies = {};
+    const MAX_AXIES = 100;
+    var marketURL = "https://axieinfinity.com/api/axies?sale=1&sorting=lowest_price&offset=";
+    function getMarketAxies(offset, callback) {
+        let url = marketURL + offset;
+        $.get(url, function(data, status, xhr) {
+            for (let i in data.axies) {
+                if (data.axies[i].stage < 3) continue;
+                axies[data.axies[i].id] = {"genes": genesToBin(new BigNumber(data.axies[i].genes)), "owner": data.axies[i].owner, "class": data.class, "exp": data.axies[i].exp, "price": data.axies[i].auction.buyNowPrice/1e18};
+            }
+            if (offset + 12 < MAX_AXIES) {
+                getMarketAxies(offset + 12, callback);
+            } else {
+                if (callback != null) {
+                    callback(true);
+                }
+            }
+        });
+    }
+
+    function init() {
+        clearInterval(initID);
+        $.ajax({
+            url: "../header.html",
+            cache: false,
+            dataType: "html",
+            success: function(data) {
+                $("#headerDiv").html(data);
+
+                if (typeof web3 == 'undefined') {
+                    $("#account").text("Web3 enabled browser not detected. Use the search box.");
+                    return;
+                }
+                if (typeof web3.eth.accounts[0] == "undefined") {
+                    $("#account").text("Can't detect your account. Unlock your wallet or try reloading the page and waiting a few seconds.");
+                    return;
+                } else {
+                    $("#account").text("Your Account: " + web3.eth.accounts[0]);
+                }
+
+            }
+        });
+        //getAxies(0, web3.eth.accounts[0], initData);
+        getMarketAxies(0, initData);
+    }
+
+    var initID;
+    var traitMapping = binarytraits;
+    $(document).ready(function(){
+        //delay until web3 can load
+        initID = setInterval(init, 250);
+    });
+
+    function refreshData() {
+        let refresh = false;
+        if (!axieTable) {
+            initData(true);
+        } else {
+            initData(false);
+            axieTable.rows.add(data);
+            axieTable.columns.adjust().draw();
+        }
+    }
+
+    function toggleBinary() {
+        if ($('#binaryToggle').is(":checked")) {
+            $(".binary").css("display", "none");
+        } else {
+            $(".binary").css("display", "block");
+        }
+    }
+
+    function toggleBreedable() {
+        if ($('#breedableToggle').is(":checked")) {
+            marketURL = "https://axieinfinity.com/api/axies?breedable=yes&sale=1&sorting=lowest_price&offset=";
+        } else {
+            marketURL = "https://axieinfinity.com/api/axies?sale=1&sorting=lowest_price&offset=";
+        }
+        if (axieTable) {
+            axieTable.clear();
+            axieTable.draw();
+        }
+        axies = {};
+        getMarketAxies(0, refreshData);
+    }
+</script>
+    <!-- header -->
+    <div id="headerDiv"></div><br/>
+    <div id="mainDiv" class="container">
+
+        <div class="text-left"><input id="breedableToggle" class="ml-4" type="checkbox" onclick="toggleBreedable()"/> Breedable only</div>
+        <div id="copyDiv"></div>
+        <br/>
+        <table class="table display nowrap" id="axieTable">
+            <thead>
+                <tr>
+                    <th rowspan="2">ID</th>
+                    <th colspan="7">Group 0 (Class, Region, Origin, Misc)</th>
+                    <th colspan="9">Group 1 (Pattern and Color)</th>
+                    <th colspan="10">Group 2 (Eyes)</th>
+                    <th colspan="10">Group 3 (Mouth)</th>
+                    <th colspan="10">Group 4 (Ears)</th>
+                    <th colspan="10">Group 5 (Horn)</th>
+                    <th colspan="10">Group 6 (Back)</th>
+                    <th colspan="10">Group 7 (Tail)</th>
+                    <th colspan="8">Additional Info</th>
+                </tr>
+                <tr>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+            </tbody>
+        </table>
+    </div>
+</html>
