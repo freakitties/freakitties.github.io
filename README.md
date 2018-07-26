@@ -24,9 +24,9 @@ Live site: [https://freakitties.github.io/](https://freakitties.github.io/)
 
 ## Axie Infinity Tools
 <!-- [Adopt an Axie!](https://axieinfinity.com/adopt-axies?r=CHl5UkYrgttjndv97yqxcY_6dnY) -->
-[Personal History of Axie Sales](/axie/myauctions.html)
-
 [Preliminary Gene Browser with search](/axie/jeans.html)
+
+[View the genes of Axies currently on the market (1st 100 cheapest only)](/axie/geneMarket.html)
 
 [Parts glossary ordered by rarity](/axie/traits.html)
 
@@ -34,9 +34,15 @@ Live site: [https://freakitties.github.io/](https://freakitties.github.io/)
 
 [Axies by purebredness](/axie/top.html)
 
+[Real-time new axie auction listings](/axie/newaxieauctions.html)
+
+[Personal History of Axie Sales](/axie/myauctions.html)
+
 [Table of all Axies and their stats](/axie/stats.html)
 
 [Gene breakdown of Axies by class and trait](/axie/genes.html)
+
+[Blog about the gene breakdown](/axie/blog/2018-04-05_Sequencing-the-Axie-Genome-572f147c45d9.html)
 
 
 ---
