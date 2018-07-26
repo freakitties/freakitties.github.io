@@ -5,6 +5,8 @@
 
 [Preliminary Gene Browser with search](jeans.html)
 
+[View the genes of Axies currently on the market](geneMarket.html)
+
 [Parts glossary ordered by rarity](traits.html)
 
 [Part stats and moves](traitstats.html)
