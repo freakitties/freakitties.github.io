@@ -20,11 +20,12 @@
         <meta content="utf-8" http-equiv="encoding">
     </head>
     <body>
+        <div id="headerDiv"></div><br/>
         <div class="container">
             <div class="row">
                 <input id="axieID" class="form-inline form-control-sm col-1" placeholder="Axie ID" value="2595"/>
                 <button type="button" class="btn btn-secondary btn-sm" onclick="getAxie()">Get Axie Image</button>&nbsp;
-                <span class="pt-2">Animation:&nbsp;</span><select id="animationList"></select>&nbsp;
+                <span class="pt-2">Animation:&nbsp;</span><select class="" id="animationList"></select>&nbsp;
                 <i class="material-icons btn" style="font-size:24px" onclick="togglePause();">pause_circle_outline</i>&nbsp;
                 <a href="#" class="btn btn-secondary" id="IDButton" onclick="downloadImage()">Download</a>
             <div><br/>
@@ -97,7 +98,8 @@
                     .add('axie_atlas', atlasURL)
                     .add('axie_png', imageURL)
                     .load(function (loader, resources) {
-                        $.get({url: modelURL, dataType: "json"}, function(rawSkeletonData) {
+                        $.get({url: modelURL, dataType: "text"}, function(rawSkeletonData) {
+                            rawSkeletonData = JSON.parse(rawSkeletonData)
                             const rawAtlasData = resources['axie_atlas'].data; //your atlas file
                             const spineAtlas = new PIXI.spine.core.TextureAtlas(rawAtlasData, function (line, callback) {
                                 baseTexture = PIXI.BaseTexture.from('axie_png');
@@ -209,6 +211,16 @@
     init();
     getAxie();
 
+    $(document).ready(function(){
+        $.ajax({
+            url: "/header.html",
+            cache: false,
+            dataType: "html",
+            success: function(data) {
+                $("#headerDiv").html(data);
+            }
+        });
+    });
     </script>
 
 </html>
