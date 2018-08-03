@@ -98,8 +98,7 @@
                     .add('axie_atlas', atlasURL)
                     .add('axie_png', imageURL)
                     .load(function (loader, resources) {
-                        $.get({url: modelURL, dataType: "text"}, function(rawSkeletonData) {
-                            rawSkeletonData = JSON.parse(rawSkeletonData)
+                        $.get({url: modelURL, dataType: "json"}, function(rawSkeletonData) {
                             const rawAtlasData = resources['axie_atlas'].data; //your atlas file
                             const spineAtlas = new PIXI.spine.core.TextureAtlas(rawAtlasData, function (line, callback) {
                                 baseTexture = PIXI.BaseTexture.from('axie_png');
