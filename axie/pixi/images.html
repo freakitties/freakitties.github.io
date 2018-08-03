@@ -1,0 +1,214 @@
+<html>
+    <head>
+        <title>Axie Image Frame Grabber</title>
+        <script async src="https://www.googletagmanager.com/gtag/js?id=UA-116189657-1"></script>
+        <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'UA-116189657-1');
+        </script>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js" integrity="sha384-tsQFqpEReu7ZLhBV2VZlAu7zcOV+rXbYlF2cqB8txI/8aZajjp4Bqd+V6D5IgvKT" crossorigin="anonymous"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/pixi.js/4.7.1/pixi.min.js" integrity="sha384-xdEN7ies9cZm/l8HslPhg0lGG/uQuIW2KQ/EVt71QFjarfJWY95fAMqbqw/1C2rX" crossorigin="anonymous"></script>
+        <script src="pixi-spine.js"></script>
+
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+        <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+
+        <meta content="text/html;charset=utf-8" http-equiv="Content-Type">
+        <meta content="utf-8" http-equiv="encoding">
+    </head>
+    <body>
+        <div class="container">
+            <div class="row">
+                <input id="axieID" class="form-inline form-control-sm col-1" placeholder="Axie ID" value="2595"/>
+                <button type="button" class="btn btn-secondary btn-sm" onclick="getAxie()">Get Axie Image</button>&nbsp;
+                <span class="pt-2">Animation:&nbsp;</span><select id="animationList"></select>&nbsp;
+                <i class="material-icons btn" style="font-size:24px" onclick="togglePause();">pause_circle_outline</i>&nbsp;
+                <a href="#" class="btn btn-secondary" id="IDButton" onclick="downloadImage()">Download</a>
+            <div><br/>
+        </div>
+
+    </body>
+    <script>
+        var spine;
+        var axieID = -1;
+        var oldID;
+
+        function togglePause() {
+            PIXI.spine.Spine.globalAutoUpdate = !PIXI.spine.Spine.globalAutoUpdate;
+        }
+
+        function downloadImage() {
+            var button = document.getElementById('IDButton');
+            let canvas = document.getElementById("canvas");
+            let dataURL = app.renderer.extract.canvas(app.stage).toDataURL();
+            button.href = dataURL;
+            button.download = axieID + ".png";
+        }
+
+        function init() {
+            app = new PIXI.Application(2048 * 1.25, 1024 * 1.25, {backgroundColor : 0xffffff,  transparent: true });
+            app.view.id = "canvas";
+            app.view.style.height = 480;
+            document.body.appendChild(app.view);
+        }
+
+        function getAxie() {
+            oldID = axieID;
+            axieID = parseInt($("#axieID").val());
+            if (!axieID) {
+                alert("bad axie ID");
+                return;
+            }
+            if (oldID == axieID) return;
+            console.log(axieID);
+
+
+            //Test site
+            //$.get({url: "http://axie.axieinfinity.co/api/v1/figure/" + axieID}, function(data, status, xhr) {
+            $.get({url: "https://axieinfinity.com/api/axies/" + axieID}, function(data, status, xhr) {
+                if (data.stage < 3) {
+                    alert("This axie is either a larva or an egg.")
+                    return;
+                }
+                let imageName = axieID + ".png";
+                atlasURL = data["figure"]["atlas"];
+                imageURL =  data["figure"]["images"][imageName];
+                modelURL = data["figure"]["model"];
+
+//atlasURL = "https://axieinfinity.com/assets/models/ab19de2b119e811ae576b581ebb8d60d.atlas"
+//imageURL = "https://axieinfinity.com/assets/models/fe8e753a148b171a91580dc5ac45e4a1.png"
+//modelURL = "https://axieinfinity.com/assets/models/473c8a72f4c0747b7851eba14118307b.json"
+//imageName = "kotaro.png"
+//CORS errors loading above. like axie #13
+
+                /*
+                //Test site
+                let imageName = "axie.png";
+                atlasURL = data["axie"]["atlas"];
+                imageURL =  data["axie"]["image"];
+                modelURL = data["axie"]["spineModel"];
+                */
+                let realImageName = imageURL.slice(imageURL.lastIndexOf("/") + 1, imageURL.length);
+                PIXI.loader.reset();
+                PIXI.loader
+                    .add('axie_atlas', atlasURL)
+                    .add('axie_png', imageURL)
+                    .load(function (loader, resources) {
+                        $.get({url: modelURL, dataType: "json"}, function(rawSkeletonData) {
+                            const rawAtlasData = resources['axie_atlas'].data; //your atlas file
+                            const spineAtlas = new PIXI.spine.core.TextureAtlas(rawAtlasData, function (line, callback) {
+                                baseTexture = PIXI.BaseTexture.from('axie_png');
+
+                                callback(baseTexture);
+                            });
+
+                            const spineAtlasLoader = new PIXI.spine.core.AtlasAttachmentLoader(spineAtlas);
+                            const spineJsonParser = new PIXI.spine.core.SkeletonJson(spineAtlasLoader);
+
+                            spineJsonParser.scale = 1;
+
+                            spineData = spineJsonParser.readSkeletonData(rawSkeletonData);
+
+                            const animation = new PIXI.spine.Spine(spineData);
+
+                            animation.position.set(app.view.width/2 , app.view.height * 0.8);
+                            //animation.scale.set(0.3, 0.3);
+
+                            if (animation.state.hasAnimation('idle')) {
+                                animation.state.setAnimation(0, 'idle', true);
+                            } else if (animation.state.hasAnimation('walking')) {
+                                animation.state.setAnimation(0, 'walking', true);
+                            }
+
+                            app.stage.removeChildren();
+                            app.stage.addChild(animation);
+                            PIXI.spine.Spine.globalAutoUpdate = true;
+                            app.start();
+                            setupUI();
+                        }).fail(function() {
+                            alert("Failed to get Axie info. Bad Server Config?");
+                            $("#axieID").val(oldID);
+                            axieID = oldID;
+                        });
+                    });
+
+    /*
+                $.get({url: modelURL, dataType: "json"}, function(rawSkeletonData) {
+                    $.get({url: atlasURL, dataType: "text"}, function(data) {
+                        //var rawAtlasData = data.replace(imageName, realImageName);
+                        var rawAtlasData = data.replace(imageName, imageURL);
+
+
+                        //assetManager.loadText(modelURL);
+                        //assetManager.loadTextureAtlas(atlas);
+                        //assetManager.loadTextureData(imageURL);
+
+                        //var rawSkeletonData = JSON.parse("$jsondata"); //your skeleton.json file here
+                        //var rawAtlasData = "$atlasdata"; //your atlas file
+
+                        var spineAtlas = new PIXI.spine.core.TextureAtlas(rawAtlasData, function(line, callback) {
+                            // pass the image here.
+                            callback(PIXI.BaseTexture.fromImage(line));
+                        }); // specify path, image.png will be added automatically
+
+                        var spineAtlasLoader = new PIXI.spine.core.AtlasAttachmentLoader(spineAtlas)
+                        var spineJsonParser = new PIXI.spine.core.SkeletonJson(spineAtlasLoader);
+
+                        // in case if you want everything scaled up two times
+                        //spineJsonParser.scale = 2.0;
+
+                        var spineData = spineJsonParser.readSkeletonData(rawSkeletonData);
+
+                        // now we can create spine instance
+                        spine = new PIXI.spine.Spine(spineData);
+
+
+                        var app = new PIXI.Application();
+
+                        document.body.appendChild(app.view);
+
+                        PIXI.loader.load(function (loader, resources) {
+                            app.stage.addChild(spine);
+                            spine.state.setAnimation(0, 'walking', true);
+                            app.start();
+                        });
+
+                    });
+                });
+                */
+            });
+        }
+
+    function setupUI () {
+        var setupAnimationUI = function() {
+            var animationList = $("#animationList");
+            animationList.empty();
+            var activeAnimation = app.stage.children[0].state.tracks[0].animation.name;
+            for (var i = 0; i < spineData.animations.length; i++) {
+                var name = spineData.animations[i].name;
+                var option = $("<option></option>");
+                option.attr("value", name).text(name);
+                if (name === activeAnimation) option.attr("selected", "selected");
+                animationList.append(option);
+            }
+
+            animationList.change(function() {
+                var animationName = $("#animationList option:selected").text();
+                //skeleton.setToSetupPose();
+                PIXI.spine.Spine.globalAutoUpdate = true;
+                app.stage.children[0].state.setAnimation(0, animationName, true);
+                //animation.state.setAnimation(0, 'idle', true);
+            })
+        }
+        setupAnimationUI();
+    }
+
+    init();
+    getAxie();
+
+    </script>
+
+</html>
