@@ -15,6 +15,8 @@
 
 [Real-time new axie auction listings](newaxieauctions.html)
 
+[Download images of your axie in your favorite pose](pixi/images.html)
+
 [Personal History of Axie Sales](myauctions.html)
 
 [Table of all Axies and their stats](stats.html)
