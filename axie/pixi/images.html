@@ -50,9 +50,10 @@
         }
 
         function init() {
-            app = new PIXI.Application(2048 * 1.25, 1024 * 1.25, {backgroundColor : 0xffffff,  transparent: true });
+            app = new PIXI.Application(2048, 1024, {backgroundColor : 0xffffff /*,  transparent: true*/ });
             app.view.id = "canvas";
             app.view.style.height = 480;
+            //app.view.style.border = "1px solid #000000";
             document.body.appendChild(app.view);
         }
 
@@ -75,6 +76,7 @@
                     return;
                 }
                 let imageName = axieID + ".png";
+                //prevent using cache...AI servers have wonky CORS config.
                 atlasURL = data["figure"]["atlas"];
                 imageURL =  data["figure"]["images"][imageName];
                 modelURL = data["figure"]["model"];
@@ -83,7 +85,13 @@
 //imageURL = "https://axieinfinity.com/assets/models/fe8e753a148b171a91580dc5ac45e4a1.png"
 //modelURL = "https://axieinfinity.com/assets/models/473c8a72f4c0747b7851eba14118307b.json"
 //imageName = "kotaro.png"
-//CORS errors loading above. like axie #13
+//no CORS headers
+
+                //more data intensive, but fixes CORS problems (mainly in testing)
+                let breakCache = "?" + escape(new Date());
+                atlasURL +=  breakCache;
+                imageURL +=  breakCache;
+                modelURL +=  breakCache;
 
                 /*
                 //Test site
@@ -98,12 +106,12 @@
                     .add('axie_atlas', atlasURL)
                     .add('axie_png', imageURL)
                     .load(function (loader, resources) {
+                        //cache false to circumvent server's CORS caching. Server should use Vary: Origin ? or Access-Control-Allow-Origin: *
                         $.get({url: modelURL, dataType: "json"}, function(rawSkeletonData) {
                             const rawAtlasData = resources['axie_atlas'].data; //your atlas file
                             const spineAtlas = new PIXI.spine.core.TextureAtlas(rawAtlasData, function (line, callback) {
-                                baseTexture = PIXI.BaseTexture.from('axie_png');
-
-                                callback(baseTexture);
+                                //use hash name instead of name from file
+                                callback(PIXI.BaseTexture.from('axie_png'));
                             });
 
                             const spineAtlasLoader = new PIXI.spine.core.AtlasAttachmentLoader(spineAtlas);
