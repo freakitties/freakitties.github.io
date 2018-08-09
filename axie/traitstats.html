@@ -78,11 +78,16 @@ $(document).ready(function(){
                 row.adMultiple = row.effectiveAttack * row.defense;
                 row.effects = "";
                 if (part.moves[0].effects.length > 0) {
-                    row.effects = part.moves[0].effects[0].name.replace(/"/g, "&quot;").replace(/</g, '&lt;');
-                    if (part.moves[0].effects[0].type == "passive") {
-                        row.effects += " (passive)";
+
+                    let text = "";
+                    for (let i in part.moves[0].effects) {
+                        text += part.moves[0].effects[i].name.replace(/"/g, "&quot;").replace(/</g, '&lt;');
+                        if (part.moves[0].effects[i].type == "passive") {
+                            text += " (passive)";
+                        }
+                        text += ": " + part.moves[0].effects[i].description.replace(/"/g, "&quot;").replace(/</g, '&lt;') + "<br/>\n";
                     }
-                    row.effects += ": " + part.moves[0].effects[0].description.replace(/"/g, "&quot;").replace(/</g, '&lt;');
+                    row.effects = text;
                 }
             } else {
                 row.moveType = row.moveName = row.attack = row.defense = row.accuracy = row.effects = row.effectiveAttack = row.adRatio = row.adMultiple = "-";
