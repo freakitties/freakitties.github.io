@@ -22,14 +22,21 @@
     <body>
         <div id="headerDiv"></div><br/>
         <div class="container">
-            <div class="row">
+            <div class="row ml-0">
                 <input id="axieID" class="form-inline form-control-sm col-1" placeholder="Axie ID" value="2595"/>
                 <button type="button" class="btn btn-secondary btn-sm" onclick="getAxie()">Get Axie Image</button>&nbsp;
                 <span class="pt-2">Animation:&nbsp;</span><select class="" id="animationList"></select>&nbsp;
                 <i class="material-icons btn" style="font-size:24px" onclick="togglePause();">pause_circle_outline</i>&nbsp;
                 <a href="#" class="btn btn-secondary" id="IDButton" onclick="downloadImage()">Download</a>
-            <div><br/>
+            </div>
+            <br/>
+            <div id="imageLoc">
+            </div>
+            <div>
+            Fun stuff: Use arrows keys to move the axie around. 'x' to bite. spacebar to "jump".
+            </div>
         </div>
+
 
     </body>
     <script>
@@ -53,8 +60,8 @@
             app = new PIXI.Application(2048, 1024, {backgroundColor : 0xffffff /*,  transparent: true*/ });
             app.view.id = "canvas";
             app.view.style.height = 480;
-            //app.view.style.border = "1px solid #000000";
-            document.body.appendChild(app.view);
+            app.view.style.border = "1px solid #d9d9d9";
+            document.getElementById("imageLoc").appendChild(app.view);
         }
 
         function getAxie() {
@@ -121,10 +128,15 @@
 
                             spineData = spineJsonParser.readSkeletonData(rawSkeletonData);
 
-                            const animation = new PIXI.spine.Spine(spineData);
+                            animation = new PIXI.spine.Spine(spineData);
 
                             animation.position.set(app.view.width/2 , app.view.height * 0.8);
                             //animation.scale.set(0.3, 0.3);
+                            animation.stateData.setMix("walking", "appearing", 0.2);
+                            animation.stateData.setMix("appearing", "walking", 0.2);
+
+                            animation.stateData.setMix("bite", "walking", 0.2);
+                            animation.stateData.setMix("walking", "bite", 0.2);
 
                             if (animation.state.hasAnimation('idle')) {
                                 animation.state.setAnimation(0, 'idle', true);
@@ -137,6 +149,18 @@
                             PIXI.spine.Spine.globalAutoUpdate = true;
                             app.start();
                             setupUI();
+                            /*
+                                animation.state.addListener({
+                                    event: function(entry, event) { console.log('event fired '+event.data+' at track' + entry.trackIndex) },
+                                    complete: function(entry) { console.log('track '+entry.trackIndex+' completed '+entry.loopsCount()+' times') },
+                                    start: function(entry) { console.log('animation is set at '+entry.trackIndex) },
+                                    end: function(entry) { console.log('animation was ended at '+entry.trackIndex) },
+
+
+                                    dispose: function(entry) { console.log('animation was disposed at '+entry.trackIndex) },
+                                    interrupted: function(entry) { console.log('animation was interrupted at '+entry.trackIndex) }
+                                });
+                            */
                         }).fail(function() {
                             alert("Failed to get Axie info. Bad Server Config?");
                             $("#axieID").val(oldID);
@@ -228,6 +252,107 @@
             }
         });
     });
+
+    document.onkeydown = function (event) {
+        const keyName = event.key;
+        let incrementX = Math.round(app.view.width * 0.05);
+        let incrementY = Math.round(app.view.height * 0.05);
+        switch (event.keyCode) {
+            case 37:
+            case 65:
+                //alert('left');
+                let startingPositionLeft = animation.position.x;
+                //animation.position.x -= incrementX;
+                //if (animation.position.x < 0) animation.position.x = 0;
+                let tickerLeft  =  new PIXI.ticker.Ticker();
+                tickerLeft.add(function () {
+                    //console.log("loopL");
+                    animation.position.x -= 5;
+                    if (animation.position.x < 0) {
+                        animation.position.x = 0;
+                        tickerLeft.destroy();
+                    } else if(animation.position.x <= startingPositionLeft - incrementX) {
+                        tickerLeft.destroy();
+                    }
+                });
+                tickerLeft.start();
+
+                break;
+            case 38:
+            case 87:
+                //alert('up');
+                let startingPositionUp = animation.position.y;
+                let tickerUp  =  new PIXI.ticker.Ticker();
+                tickerUp.add(function () {
+                    //console.log("loopU");
+                    animation.position.y -= 5;
+                    if (animation.position.y <= 0) {
+                        animation.position.y = 0;
+                        tickerUp.destroy();
+                    } else if(animation.position.y <= startingPositionUp - incrementY) {
+                        tickerUp.destroy();
+                    }
+                });
+                tickerUp.start();
+                break;
+            case 39:
+            case 68:
+                //alert('right');
+                let startingPositionRight = animation.position.x;
+                let tickerRight  =  new PIXI.ticker.Ticker();
+                tickerRight.add(function () {
+                    //console.log("loopR");
+                    animation.position.x += 5;
+                    if (animation.position.x > app.view.width) {
+                        animation.position.x = app.view.width;
+                        tickerRight.destroy();
+                    } else if(animation.position.x >= startingPositionRight + incrementX) {
+                        tickerRight.destroy();
+                    }
+                });
+                tickerRight.start();
+                break;
+            case 40:
+            case 83:
+                //alert('down');
+                let startingPositionDown = animation.position.y;
+                let tickerDown  =  new PIXI.ticker.Ticker();
+                tickerDown.add(function () {
+                    //console.log("loopD");
+                    animation.position.y += 5;
+                    if (animation.position.y > app.view.height) {
+                        animation.position.y = app.view.height;
+                        tickerDown.destroy();
+                    } else if(animation.position.y >= startingPositionDown + incrementY) {
+                        tickerDown.destroy();
+                    }
+                });
+                tickerDown.start();
+                break;
+            case 32:
+                animation.state.setAnimation(0, 'appearing', false);
+                animation.state.addAnimation(0, 'walking', true, 0);
+                let startingPositionSpace = animation.position.y;
+                let tickerSpace  =  new PIXI.ticker.Ticker();
+                tickerSpace.add(function () {
+                    //console.log("loopR");
+                    animation.position.y -= 5;
+                    if (animation.position.y < 0) {
+                        animation.position.y = 0;
+                        tickerSpace.destroy();
+                    } else if(animation.position.y <= startingPositionSpace - incrementY) {
+                        tickerSpace.destroy();
+                    }
+                });
+                tickerSpace.start();
+                break;
+            case 88:
+                animation.state.setAnimation(0, 'bite', false);
+                animation.state.addAnimation(0, 'walking', true, 0);
+                break;
+        }
+    };
+
     </script>
 
 </html>
