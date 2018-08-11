@@ -1,0 +1,461 @@
+<html>
+    <head>
+        <title>Axie Kunai Attack!</title>
+        <script async src="https://www.googletagmanager.com/gtag/js?id=UA-116189657-1"></script>
+        <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'UA-116189657-1');
+        </script>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js" integrity="sha384-tsQFqpEReu7ZLhBV2VZlAu7zcOV+rXbYlF2cqB8txI/8aZajjp4Bqd+V6D5IgvKT" crossorigin="anonymous"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/pixi.js/4.7.1/pixi.min.js" integrity="sha384-xdEN7ies9cZm/l8HslPhg0lGG/uQuIW2KQ/EVt71QFjarfJWY95fAMqbqw/1C2rX" crossorigin="anonymous"></script>
+        <script src="pixi-spine.js"></script>
+
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+        <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+
+        <meta content="text/html;charset=utf-8" http-equiv="Content-Type">
+        <meta content="utf-8" http-equiv="encoding">
+    </head>
+    <body>
+        <div id="headerDiv"></div><br/>
+        <div class="container">
+            <div class="row ml-0">
+                <input id="axieID" class="form-inline form-control-sm col-1" placeholder="Axie ID" value="2595"/>
+                <button type="button" class="btn btn-secondary btn-sm" onclick="getAxie()">Load Axie</button>&nbsp;
+            </div>
+            <br/>
+            <div id="scoreDiv">
+                Score: <span id="scoreText">0</span>
+            </div>
+            <div id="imageLoc">
+            </div>
+            <div>
+            Use the arrows keys to move (wasd works too).
+            </div>
+        </div>
+
+
+    </body>
+    <script>
+        const debug = false;
+        var spine;
+        var axieID = -1;
+        var oldID;
+        var app;
+        var axie;
+        const SCALING_FACTOR = 0.4;
+        const KUNAI_SPEED = 12;
+        const AXIE_SPEED = 6;
+        var kunais = {};
+        var kunaisPerSecond = 0.9;
+        var score = 0;
+        const scoreIncrement = 10;
+
+        function togglePause() {
+            PIXI.spine.Spine.globalAutoUpdate = !PIXI.spine.Spine.globalAutoUpdate;
+        }
+
+        function downloadImage() {
+            var button = document.getElementById('IDButton');
+            let canvas = document.getElementById("canvas");
+            let dataURL = app.renderer.extract.canvas(app.stage).toDataURL();
+            button.href = dataURL;
+            button.download = axieID + ".png";
+        }
+
+        function init() {
+            app = new PIXI.Application(2048, 1024, {backgroundColor : 0xffffff /*,  transparent: true*/ });
+            app.view.id = "canvas";
+            app.view.style.height = 480;
+            app.view.style.border = "1px solid #d9d9d9";
+            document.getElementById("imageLoc").appendChild(app.view);
+        }
+
+        function getAxie() {
+            oldID = axieID;
+            axieID = parseInt($("#axieID").val());
+            if (!axieID) {
+                alert("bad axie ID");
+                return;
+            }
+            //if (oldID == axieID) return;
+            console.log(axieID);
+
+
+            //Test site
+            //$.get({url: "http://axie.axieinfinity.co/api/v1/figure/" + axieID}, function(data, status, xhr) {
+            $.get({url: "https://axieinfinity.com/api/axies/" + axieID}, function(data, status, xhr) {
+                if (data.stage < 3) {
+                    alert("This axie is either a larva or an egg.")
+                    return;
+                }
+                let imageName = axieID + ".png";
+                //prevent using cache...AI servers have wonky CORS config.
+                atlasURL = data["figure"]["atlas"];
+                imageURL =  data["figure"]["images"][imageName];
+                modelURL = data["figure"]["model"];
+
+//atlasURL = "https://axieinfinity.com/assets/models/ab19de2b119e811ae576b581ebb8d60d.atlas"
+//imageURL = "https://axieinfinity.com/assets/models/fe8e753a148b171a91580dc5ac45e4a1.png"
+//modelURL = "https://axieinfinity.com/assets/models/473c8a72f4c0747b7851eba14118307b.json"
+//imageName = "kotaro.png"
+//no CORS headers
+
+
+                //more data intensive, but fixes CORS problems (mainly in testing)
+                let breakCache = "?" + escape(new Date());
+                atlasURL +=  breakCache;
+                imageURL +=  breakCache;
+                modelURL +=  breakCache;
+
+                /*
+                //Test site
+                let imageName = "axie.png";
+                atlasURL = data["axie"]["atlas"];
+                imageURL =  data["axie"]["image"];
+                modelURL = data["axie"]["spineModel"];
+                */
+                let realImageName = imageURL.slice(imageURL.lastIndexOf("/") + 1, imageURL.length);
+                PIXI.loader.reset();
+                PIXI.loader
+                    .add('axie_atlas', atlasURL)
+                    .add('axie_png', imageURL)
+                    .add('kunai', 'assets/kunai.png')
+                    .load(function (loader, resources) {
+                        //cache false to circumvent server's CORS caching. Server should use Vary: Origin ? or Access-Control-Allow-Origin: *
+                        $.get({url: modelURL, dataType: "json"}, function(rawSkeletonData) {
+                            const rawAtlasData = resources['axie_atlas'].data; //your atlas file
+                            const spineAtlas = new PIXI.spine.core.TextureAtlas(rawAtlasData, function (line, callback) {
+                                //use hash name instead of name from file
+                                callback(PIXI.BaseTexture.from('axie_png'));
+                            });
+
+                            const spineAtlasLoader = new PIXI.spine.core.AtlasAttachmentLoader(spineAtlas);
+                            const spineJsonParser = new PIXI.spine.core.SkeletonJson(spineAtlasLoader);
+
+                            spineData = spineJsonParser.readSkeletonData(rawSkeletonData);
+
+                            axie = new PIXI.spine.Spine(spineData);
+
+                            //mirror image axie
+                            //axie.scale.x = -1;
+                            axie.scale.set(-SCALING_FACTOR, SCALING_FACTOR);
+
+                            axie.position.set(app.view.width/8 , app.view.height * 0.6);
+
+                            axie.stateData.setMix("walking", "appearing", 0.2);
+                            axie.stateData.setMix("appearing", "walking", 0.2);
+
+                            axie.stateData.setMix("bite", "walking", 0.2);
+                            axie.stateData.setMix("walking", "bite", 0.2);
+
+                            if (axie.state.hasAnimation('idle')) {
+                                axie.state.setAnimation(0, 'idle', true);
+                            } else if (axie.state.hasAnimation('walking')) {
+                                axie.state.setAnimation(0, 'walking', true);
+                            }
+//axie.alpha = 0.3;
+                            app.stage.removeChildren();
+                            app.stage.addChild(axie);
+                            PIXI.spine.Spine.globalAutoUpdate = true;
+                            app.start();
+                            startGameStates();
+                        }).fail(function() {
+                            alert("Failed to get Axie info. Bad Server Config?");
+                            $("#axieID").val(oldID);
+                            axieID = oldID;
+                        });
+                    });
+            });
+        }
+
+
+    init();
+    getAxie();
+
+    $(document).ready(function(){
+        $.ajax({
+            url: "/header.html",
+            cache: false,
+            dataType: "html",
+            success: function(data) {
+                $("#headerDiv").html(data);
+            }
+        });
+    });
+
+    const incrementX = Math.round(app.view.width * 0.05);
+    const incrementY = Math.round(app.view.height * 0.05);
+    document.onkeydown = function (event) {
+        const keyName = event.key;
+        switch (event.keyCode) {
+            case 37:
+            case 65:
+                //alert('left');
+                //moveLeft(axie, AXIE_SPEED);
+
+                let startingPositionLeft = axie.position.x;
+                //axie.position.x -= incrementX;
+                //if (axie.position.x < 0) axie.position.x = 0;
+                let tickerLeft  =  new PIXI.ticker.Ticker();
+                tickerLeft.add(function () {
+                    //console.log("loopL");
+                    axie.position.x -= AXIE_SPEED;
+                    if (axie.position.x < 120) {
+                        axie.position.x = 120;
+                        tickerLeft.destroy();
+                    } else if(axie.position.x <= startingPositionLeft - incrementX) {
+                        tickerLeft.destroy();
+                    }
+                });
+                tickerLeft.start();
+
+                break;
+            case 38:
+            case 87:
+                //alert('up');
+                let startingPositionUp = axie.position.y;
+                let tickerUp  =  new PIXI.ticker.Ticker();
+                tickerUp.add(function () {
+                    //console.log("loopU");
+                    let upBounds = axie.getBounds();
+                    axie.position.y -= AXIE_SPEED;
+                    if (axie.position.y <= upBounds.height) {
+                        axie.position.y = upBounds.height;
+                        tickerUp.destroy();
+                    } else if(axie.position.y <= startingPositionUp - incrementY) {
+                        tickerUp.destroy();
+                    }
+                });
+                tickerUp.start();
+                break;
+            case 39:
+            case 68:
+                //alert('right');
+                let startingPositionRight = axie.position.x;
+                let tickerRight  =  new PIXI.ticker.Ticker();
+                tickerRight.add(function () {
+                    //console.log("loopR");
+                    let rightBounds = axie.getBounds();
+                    axie.position.x += AXIE_SPEED;
+                    if (axie.position.x > app.view.width - rightBounds.width/2 - 20) {
+                        axie.position.x = app.view.width - rightBounds.width/2 - 20;
+                        tickerRight.destroy();
+                    } else if(axie.position.x >= startingPositionRight + incrementX) {
+                        tickerRight.destroy();
+                    }
+                });
+                tickerRight.start();
+                break;
+            case 40:
+            case 83:
+                //alert('down');
+                let startingPositionDown = axie.position.y;
+                let tickerDown  =  new PIXI.ticker.Ticker();
+                tickerDown.add(function () {
+                    //console.log("loopD");
+                    axie.position.y += AXIE_SPEED;
+                    if (axie.position.y > app.view.height) {
+                        axie.position.y = app.view.height;
+                        tickerDown.destroy();
+                    } else if(axie.position.y >= startingPositionDown + incrementY) {
+                        tickerDown.destroy();
+                    }
+                });
+                tickerDown.start();
+                break;
+            case 32:
+                axie.state.setAnimation(0, 'appearing', false);
+                entry = axie.state.addAnimation(0, 'walking', true, 0);
+                /*
+                let startingPositionSpace = axie.position.y;
+                let tickerSpace  =  new PIXI.ticker.Ticker();
+                tickerSpace.add(function () {
+                    //console.log("loopR");
+                    axie.position.y -= 5;
+                    if (axie.position.y < 0) {
+                        axie.position.y = 0;
+                        tickerSpace.destroy();
+                    } else if(axie.position.y <= startingPositionSpace - incrementY) {
+                        tickerSpace.destroy();
+                    }
+                });
+                tickerSpace.start();
+                */
+                break;
+            case 88:
+                axie.state.setAnimation(0, 'bite', false);
+                axie.state.addAnimation(0, 'walking', true, 0);
+                break;
+        }
+    };
+
+    var kunaiTickers = [];
+    function moveLeft(sprite, speed, destination, id) {
+        if (gameOver) return;
+        let startingPositionLeft = sprite.position.x;
+        if (destination == null) {
+            destination = startingPositionLeft - incrementX;
+        }
+        let tickerLeft  =  new PIXI.ticker.Ticker();
+        kunaiTickers.push(tickerLeft);
+        tickerLeft.add(function () {
+            //console.log("moveL");
+            sprite.position.x -= speed;
+            let bounds = sprite.getBounds();
+            if (sprite.position.x < 0 && bounds.x + Math.abs(bounds.width) < 0) {
+                tickerLeft.destroy();
+                if (id != null) {
+                    app.stage.removeChild(kunais[id].sprite)
+                    delete kunais[id];
+                    score += scoreIncrement;
+                    $("#scoreText").text(score);
+                }
+            } else if(sprite.position.x <= destination) {
+                if (id != null) {
+                    app.stage.removeChild(kunais[id].sprite)
+                    delete kunais[id];
+                    score += scoreIncrement;
+                    $("#scoreText").text(score);
+                }
+                tickerLeft.destroy();
+            } else if (gameOver) {
+                tickerLeft.destroy();
+            }
+        });
+        tickerLeft.start();
+    }
+
+    var kunaiID = 0;
+    function addKunai() {
+        var kunai = new PIXI.Sprite(PIXI.loader.resources.kunai.texture)
+        kunai.position.set(app.view.width , Math.random() * app.view.height);
+        kunai.scale.set(SCALING_FACTOR, SCALING_FACTOR);
+        app.stage.addChild(kunai);
+        app.stage.removeChild(axie);
+        app.stage.addChild(axie);
+        moveLeft(kunai, KUNAI_SPEED, 0 - kunai.width, kunaiID);
+        kunais[kunaiID.toString()] = {sprite: kunai};
+        kunaiID++;
+    }
+
+    var kunaiTimeID;
+    var gameOver = false;
+    function kunaiSpawner() {
+        kunaiTimeID = setInterval(function() {
+            clearInterval(kunaiTimeID);
+            if (gameOver) return;
+            addKunai();
+            kunaiSpawner();
+        }, Math.random() * 1/kunaisPerSecond * 1000);
+
+        //max kunais
+        //time between
+    }
+
+    const fuzzX = 40;
+    function intersects(ab, bb)
+    {
+        abx = ab.x + ab.width * AXIEBB_X_REDUCTION / 2 + fuzzX;
+        aby = ab.y + ab.height * AXIEBB_Y_REDUCTION / 2;
+        abw = ab.width * (1 - AXIEBB_X_REDUCTION) - fuzzX;
+        abh = ab.height * (1 - AXIEBB_Y_REDUCTION);
+
+        bbx = bb.x + bb.width/4;
+        bby = bb.y;
+        bbw = bb.width/4;
+        bbh = bb.height;
+        return abx + abw > bbx && abx < bbx + bbw/2 && aby + abh > bb.y && aby < bby + bbh;
+    }
+
+    const AXIEBB_X_REDUCTION = 0.1;
+    const AXIEBB_Y_REDUCTION = 0.2;
+    var g;
+    var g2;
+    function detectCollision() {
+        for (let k in kunais) {
+            let axieBounds = axie.getBounds();
+            let kunaiBounds = kunais[k].sprite.getBounds();
+            if (intersects(axieBounds, kunaiBounds)) {
+                console.log("game over");
+                gameOver = true;
+                collisionTicker.destroy();
+                let GOText = new PIXI.Text("GAME OVER!", {fontFamily : 'Comic Sans MS', fontSize: 100, fill : 0xff1010, align : 'center'});
+                GOText.position.x = app.view.width/2 - GOText.width/2;
+                GOText.position.y = app.view.height/2 - GOText.height/2;
+                app.stage.addChild(GOText);
+
+                axie.state.setAnimation(0, 'appearing', false);
+                entry = axie.state.addAnimation(0, 'walking', true, 0);
+                axie.state.addListener({complete: function(entry) {
+                    console.log('track '+entry.trackIndex+' completed '+entry.loopsCount()+' times');
+                    app.stop();
+                    togglePause();
+
+                }});
+            }
+
+            if (debug) {
+                if (!kunais[k].bb) {
+                    gk = new PIXI.Graphics();
+                } else {
+                    app.stage.removeChild(kunais[k].bb)
+                }
+                let b = kunaiBounds;
+                gk = new PIXI.Graphics();
+                gk.drawRect(b.x - KUNAI_SPEED + b.width/4, b.y, b.width/4, b.height);
+                gk.alpha = 0.3;
+                app.stage.addChild(gk);
+                kunais[k].bb = gk;
+            }
+
+        }
+        if (debug) {
+            b=axie.getBounds();
+            if (g) {
+                app.stage.removeChild(g);
+            }
+            g = new PIXI.Graphics();
+            g.drawRect(b.x + (b.width * AXIEBB_X_REDUCTION / 2) + fuzzX, b.y + (b.height * AXIEBB_Y_REDUCTION / 2), b.width * (1 - AXIEBB_X_REDUCTION) - fuzzX, b.height * (1 - AXIEBB_Y_REDUCTION));
+            g.alpha = 0.3;
+            app.stage.addChild(g);
+        }
+    }
+
+    var collisionTicker;
+    function startGameStates() {
+        score = 0;
+        $("#scoreText").text(score);
+        gameOver = false;
+        if (kunaiTickers.length > 0) {
+            for (let t in kunaiTickers) {
+                if (!(t in kunaiTickers)) console.log("t not in kunaiTickers");
+                if (kunaiTickers[t] == null ) console.log("kunaiTickers[t] is null");
+                console.log("destroying kunai");
+                if (kunaiTickers[t].started) {
+                    kunaiTickers[t].destroy();
+                }
+            }
+            kunaiTickers = [];
+        }
+        if (Object.keys(kunais).length > 0) {
+            for (let k in kunais) {
+                delete kunais[k];
+            }
+        }
+        if (!PIXI.spine.Spine.globalAutoUpdate) togglePause();
+        if (collisionTicker && collisionTicker.started) collisionTicker.destroy();
+        collisionTicker = new PIXI.ticker.Ticker();
+        collisionTicker.add(detectCollision);
+        collisionTicker.start();
+        if (kunaiTimeID) {
+            clearInterval(kunaiTimeID);
+        }
+        kunaiSpawner();
+    }
+    </script>
+
+</html>

@@ -1,0 +1,13 @@
+
+kunai.png
+size: 512,128
+format: RGBA8888
+filter: Linear,Linear
+repeat: none
+Vector Smart Object
+  rotate: false
+  xy: 2, 2
+  size: 296, 116
+  orig: 296, 116
+  offset: 0, 0
+  index: -1
