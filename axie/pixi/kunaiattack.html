@@ -27,13 +27,17 @@
                 <button type="button" class="btn btn-secondary btn-sm" onclick="getAxie()">Load Axie</button>&nbsp;
             </div>
             <br/>
-            <div id="scoreDiv">
-                Score: <span id="scoreText">0</span>
+            <div id="scoreDiv" class="row">
+                <div class="col-6 text-left">Score: <span id="scoreText">0</span></div>
+                <div class="col-6 text-left">Difficulty: <span id="difficultyText">5</span></div>
             </div>
             <div id="imageLoc">
             </div>
             <div>
-            Use the arrows keys to move (wasd works too).
+            Use the arrows keys to move (wasd works too).<br/>
+            'r' to restart.<br/>
+            ']' to increase difficulty<br/>
+            '[' to decrease difficulty<br/>
             </div>
         </div>
 
@@ -50,8 +54,14 @@
         const KUNAI_SPEED = 12;
         const AXIE_SPEED = 6;
         var kunais = {};
-        var kunaisPerSecond = 0.75;
+        const BASE_KUNAIS_PER_SECOND = 0.8;
+        var kunaisPerSecond = BASE_KUNAIS_PER_SECOND;
         var score = 0;
+        const BASE_DIFFICULTY = 5;
+        const MAX_DIFFICULTY = 5;
+        const MIN_DIFFICULTY = -5;
+        var difficulty = 0;
+
         const scoreIncrement = 10;
 
         function togglePause() {
@@ -289,6 +299,21 @@
             case 88:
                 axie.state.setAnimation(0, 'bite', false);
                 axie.state.addAnimation(0, 'walking', true, 0);
+                break;
+            case 221:
+                difficulty++;
+                if (difficulty > MAX_DIFFICULTY) difficulty = MAX_DIFFICULTY;
+                kunaisPerSecond = BASE_KUNAIS_PER_SECOND + difficulty * 0.12;
+                $("#difficultyText").text(difficulty + BASE_DIFFICULTY);
+                break;
+            case 219:
+                difficulty--;
+                if (difficulty < MIN_DIFFICULTY) difficulty = MIN_DIFFICULTY;
+                kunaisPerSecond = BASE_KUNAIS_PER_SECOND + difficulty * 0.12;
+                $("#difficultyText").text(difficulty + BASE_DIFFICULTY);
+                break;
+            case 82:
+                getAxie();
                 break;
         }
     };
