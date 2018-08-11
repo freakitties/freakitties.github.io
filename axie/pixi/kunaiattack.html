@@ -134,6 +134,7 @@
                     .add('axie_atlas', atlasURL)
                     .add('axie_png', imageURL)
                     .add('kunai', 'assets/kunai.png')
+                    .add('arena', 'assets/arena.png')
                     .load(function (loader, resources) {
                         //cache false to circumvent server's CORS caching. Server should use Vary: Origin ? or Access-Control-Allow-Origin: *
                         $.get({url: modelURL, dataType: "json"}, function(rawSkeletonData) {
@@ -169,6 +170,14 @@
                             }
 //axie.alpha = 0.3;
                             app.stage.removeChildren();
+
+                            var arena = new PIXI.Sprite(PIXI.loader.resources.arena.texture)
+                            arena.alpha=0.75;
+                            let bgScale = app.view.width/arena.width;
+                            arena.scale.set(bgScale, bgScale);
+                            arena.position.y = - app.view.height/arena.height * app.view.height;
+                            app.stage.addChild(arena);
+
                             app.stage.addChild(axie);
                             PIXI.spine.Spine.globalAutoUpdate = true;
                             app.start();
