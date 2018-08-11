@@ -1,3 +1,4 @@
+
 <html>
     <head>
         <title>Axie Kunai Attack!</title>
@@ -217,6 +218,8 @@
         });
     });
 
+    var movingRight = false;
+    var movingUp = false;
     const incrementX = Math.round(app.view.width * 0.05);
     const incrementY = Math.round(app.view.height * 0.05);
     document.onkeydown = function (event) {
@@ -226,19 +229,25 @@
             case 65:
                 //alert('left');
                 //moveLeft(axie, AXIE_SPEED);
-
+                movingRight = false;
                 let startingPositionLeft = axie.position.x;
                 //axie.position.x -= incrementX;
                 //if (axie.position.x < 0) axie.position.x = 0;
-                let tickerLeft  =  new PIXI.ticker.Ticker();
+                let tickerLeft = new PIXI.ticker.Ticker();
                 tickerLeft.add(function () {
                     //console.log("loopL");
+                    if (movingRight) {
+                        if (tickerLeft.started) tickerLeft.destroy();
+                        delete tickerLeft;
+                    }
                     axie.position.x -= AXIE_SPEED;
                     if (axie.position.x < 120) {
                         axie.position.x = 120;
-                        tickerLeft.destroy();
+                        if (tickerLeft.started) tickerLeft.destroy();
+                        delete tickerLeft;
                     } else if(axie.position.x <= startingPositionLeft - incrementX) {
-                        tickerLeft.destroy();
+                        if (tickerLeft.started) tickerLeft.destroy();
+                        delete tickerLeft;
                     }
                 });
                 tickerLeft.start();
@@ -247,17 +256,24 @@
             case 38:
             case 87:
                 //alert('up');
+                var movingUp = true;
                 let startingPositionUp = axie.position.y;
                 let tickerUp  =  new PIXI.ticker.Ticker();
                 tickerUp.add(function () {
                     //console.log("loopU");
+                    if (!movingUp) {
+                        if (tickerUp.started) tickerUp.destroy();
+                        delete tickerUp;
+                    }
                     let upBounds = axie.getBounds();
                     axie.position.y -= AXIE_SPEED;
                     if (axie.position.y <= upBounds.height) {
                         axie.position.y = upBounds.height;
-                        tickerUp.destroy();
+                        if (tickerUp.started) tickerUp.destroy();
+                        delete tickerUp;
                     } else if(axie.position.y <= startingPositionUp - incrementY) {
-                        tickerUp.destroy();
+                        if (tickerUp.started) tickerUp.destroy();
+                        delete tickerUp;
                     }
                 });
                 tickerUp.start();
@@ -265,17 +281,24 @@
             case 39:
             case 68:
                 //alert('right');
+                movingRight = true;
                 let startingPositionRight = axie.position.x;
                 let tickerRight  =  new PIXI.ticker.Ticker();
                 tickerRight.add(function () {
                     //console.log("loopR");
+                    if (!movingRight) {
+                        if (tickerRight.started) tickerRight.destroy();
+                        delete tickerRight;
+                    }
                     let rightBounds = axie.getBounds();
                     axie.position.x += AXIE_SPEED;
                     if (axie.position.x > app.view.width - rightBounds.width/2 - 20) {
                         axie.position.x = app.view.width - rightBounds.width/2 - 20;
-                        tickerRight.destroy();
+                        if (tickerRight.started) tickerRight.destroy();
+                        delete tickerRight;
                     } else if(axie.position.x >= startingPositionRight + incrementX) {
-                        tickerRight.destroy();
+                        if (tickerRight.started) tickerRight.destroy();
+                        delete tickerRight;
                     }
                 });
                 tickerRight.start();
@@ -283,16 +306,23 @@
             case 40:
             case 83:
                 //alert('down');
+                movingUp = false;
                 let startingPositionDown = axie.position.y;
                 let tickerDown  =  new PIXI.ticker.Ticker();
                 tickerDown.add(function () {
                     //console.log("loopD");
+                    if (movingUp) {
+                        if (tickerDown.started) tickerDown.destroy();
+                        delete tickerDown;
+                    }
                     axie.position.y += AXIE_SPEED;
                     if (axie.position.y > app.view.height) {
                         axie.position.y = app.view.height;
-                        tickerDown.destroy();
+                        if (tickerDown.started) tickerDown.destroy();
+                        delete tickerDown;
                     } else if(axie.position.y >= startingPositionDown + incrementY) {
-                        tickerDown.destroy();
+                        if (tickerDown.started) tickerDown.destroy();
+                        delete tickerDown;
                     }
                 });
                 tickerDown.start();
