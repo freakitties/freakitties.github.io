@@ -24,7 +24,9 @@
         <div class="container">
             <div class="row ml-0">
                 <input id="axieID" class="form-inline form-control-sm col-1" placeholder="Axie ID" value="2595"/>
-                <button type="button" class="btn btn-secondary btn-sm" onclick="getAxie()">Load Axie</button>&nbsp;
+                <button type="button" class="btn btn-primary btn-sm" onclick="getAxie()">Load Axie</button>&nbsp;
+                &nbsp;
+                <a class="mt-2" href="https://axieinfinity.com/encyclopedia?stage=4&r=freak">Find an Axie in the encyclopedia</a>
             </div>
             <br/>
             <div id="scoreDiv" class="row">
@@ -61,8 +63,9 @@
         const MAX_DIFFICULTY = 5;
         const MIN_DIFFICULTY = -5;
         var difficulty = 0;
-
         const scoreIncrement = 10;
+        var startText;
+        var started = false;
 
         function togglePause() {
             PIXI.spine.Spine.globalAutoUpdate = !PIXI.spine.Spine.globalAutoUpdate;
@@ -180,6 +183,14 @@
 
                             app.stage.addChild(axie);
                             PIXI.spine.Spine.globalAutoUpdate = true;
+
+                            if (!started) {
+                                startText = new PIXI.Text("Press Enter to start", {fontFamily : 'Comic Sans MS', fontSize: 75, fill : 0x7A81FF, align : 'center'});
+                                startText.position.x = app.view.width/2 - startText.width/2;
+                                startText.position.y = 50;
+                                app.stage.addChild(startText);
+                            }
+
                             app.start();
                             startGameStates();
                         }).fail(function() {
@@ -323,6 +334,13 @@
                 break;
             case 82:
                 getAxie();
+                break;
+            case 13:
+                if (!started) {
+                    kunaiSpawner();
+                    started = true;
+                    app.stage.removeChild(startText);
+                }
                 break;
         }
     };
@@ -488,7 +506,9 @@
         if (kunaiTimeID) {
             clearInterval(kunaiTimeID);
         }
-        kunaiSpawner();
+        if (started) {
+            kunaiSpawner();
+        }
     }
     </script>
 
