@@ -24,12 +24,14 @@
         <div id="headerDiv"></div><br/>
         <div class="container">
             <div class="row ml-0">
-                <input id="axieID" class="form-inline form-control-sm col-1" placeholder="Axie ID" value="2595"/>
-                <button type="button" class="btn btn-primary btn-sm" onclick="getAxie()">Load Axie</button>&nbsp;
-                &nbsp;
+                <form class="form row ml-0" onsubmit="getAxie(); $('#axieID').blur(); return false; ">
+                    <input id="axieID" class="form-inline form-control-sm col-5" placeholder="Axie ID" value="2595"/>
+                    <button type="button" class="btn btn-primary btn-sm" onclick="getAxie()">Load Axie</button>
+                </form>
+
                 <a class="mt-2" href="https://axieinfinity.com/encyclopedia?stage=4&r=freak" target="_blank">Find an Axie in the encyclopedia</a>
             </div>
-            <br/>
+
             <div id="scoreDiv" class="row">
                 <div class="col-6 text-left">Score: <span id="scoreText">0</span></div>
                 <div class="col-6 text-left">Difficulty: <span id="difficultyText">5</span></div>
@@ -86,6 +88,11 @@
             app.view.style.height = 480;
             app.view.style.border = "1px solid #d9d9d9";
             document.getElementById("imageLoc").appendChild(app.view);
+            var storedAxieID = localStorage.getItem("storedAxieID");
+            if (storedAxieID != null) {
+                $("#axieID").val(parseInt(storedAxieID));
+            }
+
         }
 
         function getAxie() {
@@ -95,9 +102,9 @@
                 alert("bad axie ID");
                 return;
             }
-            //if (oldID == axieID) return;
+            if (oldID == axieID) return;
+            localStorage.setItem("storedAxieID", axieID);
             console.log(axieID);
-
 
             //Test site
             //$.get({url: "http://axie.axieinfinity.co/api/v1/figure/" + axieID}, function(data, status, xhr) {
