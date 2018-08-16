@@ -3,6 +3,8 @@
 
 <!-- Tools for [Axie Infinity](https://axieinfinity.com/adopt-axies?r=CHl5UkYrgttjndv97yqxcY_6dnY) -->
 
+[Kunai Attack! (minigame)](pixi/kunaiattack.html)
+
 [Preliminary Gene Browser with search](jeans.html)
 
 [View the genes of Axies currently on the market (1st 100 cheapest only)](geneMarket.html)
