@@ -242,10 +242,10 @@ $(document).ready(function(){
             searchParams.textContent = searchVal;
             if (searchVal.startsWith("0x")) {
                 axieTable.search( '' ).columns().search( '' ).draw();
-                axieTable.column(9).search(searchVal).draw();
+                axieTable.column(13).search(searchVal).draw();
             } else if (isNaN(searchVal)) {
                 axieTable.search( '' ).columns().search( '' ).draw();
-                axieTable.column(8).search(searchVal).draw();
+                axieTable.column(12).search(searchVal).draw();
             } else {
                 axieTable.search( '' ).columns().search( '' ).draw();
                 axieTable.column(0).search(searchVal).draw();
