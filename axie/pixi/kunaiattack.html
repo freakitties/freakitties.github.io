@@ -33,7 +33,7 @@
             </div>
 
             <div id="scoreDiv" class="row">
-                <div class="col-6 text-left">Score: <span id="scoreText">0</span></div>
+                <div class="col-6 text-left">Score: <span class="col-6" id="scoreText">0</span>&nbsp;&nbsp;&nbsp;<span class="col-6" id="highScore"></span></div>
                 <div class="col-6 text-left">Difficulty: <span id="difficultyText">5</span></div>
             </div>
             <div id="imageLoc">
@@ -470,6 +470,10 @@
             let kunaiBounds = kunais[k].sprite.getBounds();
             if (intersects(axieBounds, kunaiBounds)) {
                 console.log("game over");
+                let highScore = localStorage.getItem("highScore");
+                if (score > highScore) {
+                    localStorage.setItem("highScore", score);
+                }
                 gameOver = true;
                 collisionTicker.destroy();
                 let GOText = new PIXI.Text("GAME OVER!", {fontFamily : 'Comic Sans MS', fontSize: 100, fill : 0xff1010, align : 'center'});
@@ -518,6 +522,10 @@
     function startGameStates() {
         score = 0;
         $("#scoreText").text(score);
+        let highScore = localStorage.getItem("highScore");
+        if (highScore) {
+            $("#highScore").text("High Score: " + highScore);
+        }
         gameOver = false;
         if (kunaiTickers.length > 0) {
             for (let t in kunaiTickers) {
