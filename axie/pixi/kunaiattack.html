@@ -69,6 +69,7 @@
         const scoreIncrement = 10;
         var startText;
         var started = false;
+        var hit = new Audio('assets/hit.mp3');
 
         function togglePause() {
             PIXI.spine.Spine.globalAutoUpdate = !PIXI.spine.Spine.globalAutoUpdate;
@@ -424,6 +425,7 @@
         kunai.position.set(app.view.width , Math.random() * app.view.height);
         kunai.scale.set(SCALING_FACTOR, SCALING_FACTOR);
         app.stage.addChild(kunai);
+        new Audio('assets/swing1.mp3').play();
         app.stage.removeChild(axie);
         app.stage.addChild(axie);
         moveLeft(kunai, KUNAI_SPEED, 0 - kunai.width, kunaiID);
@@ -470,6 +472,7 @@
             let kunaiBounds = kunais[k].sprite.getBounds();
             if (intersects(axieBounds, kunaiBounds)) {
                 console.log("game over");
+                hit.play();
                 let highScore = localStorage.getItem("highScore");
                 if (score > highScore) {
                     localStorage.setItem("highScore", score);
