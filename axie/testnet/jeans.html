@@ -187,9 +187,9 @@
             }
             if (typeof axie != "undefined" && axie['auction'] && hash.indexOf("auction") != -1) {
                 //like everything else, auction data is not real-time
-                list += '<a target="_blank" role="button" class="mb-1 btn btn-sm btn-info ' + color + '" href="https://beta.axieinfinity.com/axie/' + ids[i] + '?r=CHl5UkYrgttjndv97yqxcY_6dnY">#' + ids[i] + '*</a> ';
+                list += '<a target="_blank" role="button" class="mb-1 btn btn-sm btn-info ' + color + '" href="http://beta.axieinfinity.com/axie/' + ids[i] + '?r=CHl5UkYrgttjndv97yqxcY_6dnY">#' + ids[i] + '*</a> ';
             } else {
-                list += '<a target="_blank" role="button" class="mb-1 btn btn-sm btn-info ' + color + '" href="https://beta.axieinfinity.com/axie/' + ids[i] + '?r=CHl5UkYrgttjndv97yqxcY_6dnY">#' + ids[i] + '</a> ';
+                list += '<a target="_blank" role="button" class="mb-1 btn btn-sm btn-info ' + color + '" href="http://beta.axieinfinity.com/axie/' + ids[i] + '?r=CHl5UkYrgttjndv97yqxcY_6dnY">#' + ids[i] + '</a> ';
             }
         }
         return list;
@@ -545,7 +545,7 @@
     var axies = {};
     var checkedAddresses = [];
     function getAxies(offset, address, callback) {
-        let url = "https://beta.axieinfinity.com/api/addresses/" + address + "/axies?offset=" + offset;
+        let url = "http://beta.axieinfinity.com/api/addresses/" + address + "/axies?offset=" + offset;
 
         $.get({url: url}, function(data, status, xhr) {
             for (let i in data.axies) {
@@ -565,7 +565,7 @@
 
     var checkedAxies = 0;
     function getAxie(id, callback) {
-        $.get({url: "https://beta.axieinfinity.com/api/axies/" + parseInt(id)}, function(data, status, xhr) {
+        $.get({url: "http://beta.axieinfinity.com/api/axies/" + parseInt(id)}, function(data, status, xhr) {
             if (data.stage < 3) {
                 callback();
                 return;
