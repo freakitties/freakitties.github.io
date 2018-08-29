@@ -49,6 +49,7 @@
                 border-color: rgb(255, 83, 65) !important;
             }
 
+
             .text-plant {
                 color: rgb(108, 192, 0) !important;
             }
@@ -157,9 +158,6 @@
                 width: 30px;
                 height: 30px;
 
-            }
-            .binary {
-                display: none;
             }
         </style>
     </head>
@@ -524,13 +522,6 @@
         return bin;
     }
 
-    function renderPrice(data, type, row, meta) {
-        if (type === 'display') {
-            return data.toFixed(4);
-        }
-        return data;
-    }
-
     function strMul(str, num) {
         var s = "";
         for (var i = 0; i < num; i++) {
@@ -661,99 +652,103 @@
                     text: 'Copy table to clipboard'
                 }],
                 data: data,
-                order: [[ 1, "asc" ]],
+                order: [[ 85, "asc" ]],
                 columns: [
                 {title: "ID", data: "id", "render": render},
-                {title: "Price", data: "price", render: renderPrice},
-                {title: "Exp", data: "exp"},
-                {title: "# Mystics", data: "mystics"},
-                {title: "# Beast", data: "beasts"},
-                {title: "# Bug", data: "bugs"},
-                {title: "# Bird", data: "birds"},
-                {title: "# Plant", data: "plants"},
-                {title: "# Aquatic", data: "aquatics"},
-                {title: "# Reptile", data: "reptiles"},
-
 
                 {title: "Class", data: "group0", render: renderGroup0, searchable: false},
-                {title: "0.1", data: "group0", render: renderGroup01, searchable: false, visible: false},
-                {title: "0.2", data: "group0", render: renderGroup02, searchable: false, visible: false},
+                {title: "0.1", data: "group0", render: renderGroup01, searchable: false},
+                {title: "0.2", data: "group0", render: renderGroup02, searchable: false},
                 {title: "Region", data: "group0", render: renderGroup03, searchable: false},
-                {title: "0.4", data: "group0", render: renderGroup04, searchable: false, visible: false},
+                {title: "0.4", data: "group0", render: renderGroup04, searchable: false},
                 {title: "Tag", data: "group0", render: renderGroup05, searchable: false},
-                {title: "0.6", data: "group0", render: renderGroup06, searchable: false, visible: false},
+                {title: "0.6", data: "group0", render: renderGroup06, searchable: false},
 
-                {title: "1.0", data: "group1", render: renderGroup1, searchable: false, visible: false},
+                {title: "1.0", data: "group1", render: renderGroup1, searchable: false},
                 {title: "Pattern", data: "group1", render: renderGroup11, searchable: false},
-                {title: "??", data: "group1", render: renderGroup12, searchable: false, visible: false},
+                {title: "??", data: "group1", render: renderGroup12, searchable: false},
                 {title: "Pattern R1", data: "group1", render: renderGroup13, searchable: false},
-                {title: "??", data: "group1", render: renderGroup14, searchable: false, visible: false},
+                {title: "??", data: "group1", render: renderGroup14, searchable: false},
                 {title: "Pattern R2", data: "group1", render: renderGroup15, searchable: false},
                 {title: "Color", data: "group1", render: renderGroup16, searchable: false},
                 {title: "Color R1", data: "group1", render: renderGroup17, searchable: false},
                 {title: "Color R2", data: "group1", render: renderGroup18, searchable: false},
 
-                {title: "Mystic", data: "group2", render: renderGroup2, searchable: false, visible: false},
-                {title: "Eyes Class", data: "group2", render: renderGroup21, searchable: false, visible: false},
-                {title: "Eyes", data: "group2", render: renderGroup22, searchable: false, visible: false},
-                {title: "?", data: "group2", render: renderGroup23, searchable: false, visible: false},
-                {title: "Eyes Class R1", data: "group2", render: renderGroup24, searchable: false, visible: false},
-                {title: "Eyes R1", data: "group2", render: renderGroup25, searchable: false, visible: false},
-                {title: "?", data: "group2", render: renderGroup26, searchable: false, visible: false},
-                {title: "Eyes Class R2", data: "group2", render: renderGroup27, searchable: false, visible: false},
-                {title: "Eyes R2", data: "group2", render: renderGroup28, searchable: false, visible: false},
-                {title: "?", data: "group2", render: renderGroup29, searchable: false, visible: false},
-                {title: "Mystic", data: "group3", render: renderGroup2, searchable: false, visible: false},
-                {title: "Mouth Class", data: "group3", render: renderGroup21, searchable: false, visible: false},
-                {title: "Mouth", data: "group3", render: renderGroup22, searchable: false, visible: false},
-                {title: "?", data: "group2", render: renderGroup23, searchable: false, visible: false},
-                {title: "Mouth Class R1", data: "group3", render: renderGroup24, searchable: false, visible: false},
-                {title: "Mouth R1", data: "group3", render: renderGroup25, searchable: false, visible: false},
-                {title: "?", data: "group2", render: renderGroup26, searchable: false, visible: false},
-                {title: "Mouth Class R2", data: "group3", render: renderGroup27, searchable: false, visible: false},
-                {title: "Mouth R2", data: "group3", render: renderGroup28, searchable: false, visible: false},
-                {title: "?", data: "group3", render: renderGroup29, searchable: false, visible: false},
-                {title: "Mystic", data: "group4", render: renderGroup2, searchable: false, visible: false},
-                {title: "Ears Class", data: "group4", render: renderGroup21, searchable: false, visible: false},
-                {title: "Ears", data: "group4", render: renderGroup22, searchable: false, visible: false},
-                {title: "?", data: "group2", render: renderGroup23, searchable: false, visible: false},
-                {title: "Ears Class R1", data: "group4", render: renderGroup24, searchable: false, visible: false},
-                {title: "Ears R1", data: "group4", render: renderGroup25, searchable: false, visible: false},
-                {title: "?", data: "group2", render: renderGroup26, searchable: false, visible: false},
-                {title: "Ears Class R2", data: "group4", render: renderGroup27, searchable: false, visible: false},
-                {title: "Ears R2", data: "group4", render: renderGroup28, searchable: false, visible: false},
-                {title: "?", data: "group4", render: renderGroup29, searchable: false, visible: false},
-                {title: "Mystic", data: "group5", render: renderGroup2, searchable: false, visible: false},
-                {title: "Horn Class", data: "group5", render: renderGroup21, searchable: false, visible: false},
-                {title: "Horn", data: "group5", render: renderGroup22, searchable: false, visible: false},
-                {title: "?", data: "group2", render: renderGroup23, searchable: false, visible: false},
-                {title: "Horn Class R1", data: "group5", render: renderGroup24, searchable: false, visible: false},
-                {title: "Horn R1", data: "group5", render: renderGroup25, searchable: false, visible: false},
-                {title: "?", data: "group2", render: renderGroup26, searchable: false, visible: false},
-                {title: "Horn Class R2", data: "group5", render: renderGroup27, searchable: false, visible: false},
-                {title: "Horn R2", data: "group5", render: renderGroup28, searchable: false, visible: false},
-                {title: "?", data: "group5", render: renderGroup29, searchable: false, visible: false},
-                {title: "Mystic", data: "group6", render: renderGroup2, searchable: false, visible: false},
-                {title: "Back Class", data: "group6", render: renderGroup21, searchable: false, visible: false},
-                {title: "Back", data: "group6", render: renderGroup22, searchable: false, visible: false},
-                {title: "?", data: "group2", render: renderGroup23, searchable: false, visible: false},
-                {title: "Back Class R1", data: "group6", render: renderGroup24, searchable: false, visible: false},
-                {title: "Back R1", data: "group6", render: renderGroup25, searchable: false, visible: false},
-                {title: "?", data: "group2", render: renderGroup26, searchable: false, visible: false},
-                {title: "Back Class R2", data: "group6", render: renderGroup27, searchable: false, visible: false},
-                {title: "Back R2", data: "group6", render: renderGroup28, searchable: false, visible: false},
-                {title: "?", data: "group6", render: renderGroup29, searchable: false, visible: false},
-                {title: "Mystic", data: "group7", render: renderGroup2, searchable: false, visible: false},
-                {title: "Tail Class", data: "group7", render: renderGroup21, searchable: false, visible: false},
-                {title: "Tail", data: "group7", render: renderGroup22, searchable: false, visible: false},
-                {title: "?", data: "group2", render: renderGroup23, searchable: false, visible: false},
-                {title: "Tail Class R1", data: "group7", render: renderGroup24, searchable: false, visible: false},
-                {title: "Tail R1", data: "group7", render: renderGroup25, searchable: false, visible: false},
-                {title: "?", data: "group2", render: renderGroup26, searchable: false, visible: false},
-                {title: "Tail Class R2", data: "group7", render: renderGroup27, searchable: false, visible: false},
-                {title: "Tail R2", data: "group7", render: renderGroup28, searchable: false, visible: false},
-                {title: "?", data: "group7", render: renderGroup29, searchable: false, visible: false},
+                {title: "Mystic", data: "group2", render: renderGroup2, searchable: false},
+                {title: "Eyes Class", data: "group2", render: renderGroup21, searchable: false},
+                {title: "Eyes", data: "group2", render: renderGroup22, searchable: false},
+                {title: "?", data: "group2", render: renderGroup23, searchable: false},
+                {title: "Eyes Class R1", data: "group2", render: renderGroup24, searchable: false},
+                {title: "Eyes R1", data: "group2", render: renderGroup25, searchable: false},
+                {title: "?", data: "group2", render: renderGroup26, searchable: false},
+                {title: "Eyes Class R2", data: "group2", render: renderGroup27, searchable: false},
+                {title: "Eyes R2", data: "group2", render: renderGroup28, searchable: false},
+                {title: "?", data: "group2", render: renderGroup29, searchable: false},
 
+                {title: "Mystic", data: "group3", render: renderGroup2, searchable: false},
+                {title: "Mouth Class", data: "group3", render: renderGroup21, searchable: false},
+                {title: "Mouth", data: "group3", render: renderGroup22, searchable: false},
+                {title: "?", data: "group2", render: renderGroup23, searchable: false},
+                {title: "Mouth Class R1", data: "group3", render: renderGroup24, searchable: false},
+                {title: "Mouth R1", data: "group3", render: renderGroup25, searchable: false},
+                {title: "?", data: "group2", render: renderGroup26, searchable: false},
+                {title: "Mouth Class R2", data: "group3", render: renderGroup27, searchable: false},
+                {title: "Mouth R2", data: "group3", render: renderGroup28, searchable: false},
+                {title: "?", data: "group3", render: renderGroup29, searchable: false},
+
+                {title: "Mystic", data: "group4", render: renderGroup2, searchable: false},
+                {title: "Ears Class", data: "group4", render: renderGroup21, searchable: false},
+                {title: "Ears", data: "group4", render: renderGroup22, searchable: false},
+                {title: "?", data: "group2", render: renderGroup23, searchable: false},
+                {title: "Ears Class R1", data: "group4", render: renderGroup24, searchable: false},
+                {title: "Ears R1", data: "group4", render: renderGroup25, searchable: false},
+                {title: "?", data: "group2", render: renderGroup26, searchable: false},
+                {title: "Ears Class R2", data: "group4", render: renderGroup27, searchable: false},
+                {title: "Ears R2", data: "group4", render: renderGroup28, searchable: false},
+                {title: "?", data: "group4", render: renderGroup29, searchable: false},
+
+                {title: "Mystic", data: "group5", render: renderGroup2, searchable: false},
+                {title: "Horn Class", data: "group5", render: renderGroup21, searchable: false},
+                {title: "Horn", data: "group5", render: renderGroup22, searchable: false},
+                {title: "?", data: "group2", render: renderGroup23, searchable: false},
+                {title: "Horn Class R1", data: "group5", render: renderGroup24, searchable: false},
+                {title: "Horn R1", data: "group5", render: renderGroup25, searchable: false},
+                {title: "?", data: "group2", render: renderGroup26, searchable: false},
+                {title: "Horn Class R2", data: "group5", render: renderGroup27, searchable: false},
+                {title: "Horn R2", data: "group5", render: renderGroup28, searchable: false},
+                {title: "?", data: "group5", render: renderGroup29, searchable: false},
+
+                {title: "Mystic", data: "group6", render: renderGroup2, searchable: false},
+                {title: "Back Class", data: "group6", render: renderGroup21, searchable: false},
+                {title: "Back", data: "group6", render: renderGroup22, searchable: false},
+                {title: "?", data: "group2", render: renderGroup23, searchable: false},
+                {title: "Back Class R1", data: "group6", render: renderGroup24, searchable: false},
+                {title: "Back R1", data: "group6", render: renderGroup25, searchable: false},
+                {title: "?", data: "group2", render: renderGroup26, searchable: false},
+                {title: "Back Class R2", data: "group6", render: renderGroup27, searchable: false},
+                {title: "Back R2", data: "group6", render: renderGroup28, searchable: false},
+                {title: "?", data: "group6", render: renderGroup29, searchable: false},
+
+                {title: "Mystic", data: "group7", render: renderGroup2, searchable: false},
+                {title: "Tail Class", data: "group7", render: renderGroup21, searchable: false},
+                {title: "Tail", data: "group7", render: renderGroup22, searchable: false},
+                {title: "?", data: "group2", render: renderGroup23, searchable: false},
+                {title: "Tail Class R1", data: "group7", render: renderGroup24, searchable: false},
+                {title: "Tail R1", data: "group7", render: renderGroup25, searchable: false},
+                {title: "?", data: "group2", render: renderGroup26, searchable: false},
+                {title: "Tail Class R2", data: "group7", render: renderGroup27, searchable: false},
+                {title: "Tail R2", data: "group7", render: renderGroup28, searchable: false},
+                {title: "?", data: "group7", render: renderGroup29, searchable: false},
+
+                {title: "Exp", data: "exp"},
+                {title: "Num Mystics", data: "mystics"},
+                {title: "Num Beast", data: "beasts"},
+                {title: "Num Bug", data: "bugs"},
+                {title: "Num Bird", data: "birds"},
+                {title: "Num Plant", data: "plants"},
+                {title: "Num Aquatic", data: "aquatics"},
+                {title: "Num Reptile", data: "reptiles"},
+                {title: "Price", data: "price"},
                 {title: "owner", data: "owner", searchable: true}
                 ],
                 "language": {"search": "Filter (ID or owner):"},
@@ -772,7 +767,7 @@
                 }
             });
 
-            $("#axieTable_length").after('&nbsp; <input id="binaryToggle" class="text-right ml-4" type="checkbox" checked onclick="toggleBinary()"/> Hide binary');
+            $("#axieTable_length").after('&nbsp; <input id="binaryToggle" class="text-right ml-4" type="checkbox" onclick="toggleBinary()"/> Hide binary');
 
             //doesn't copy nicely yet. don't show for now
             //axieTable.buttons().container().appendTo( $('#copyDiv') );
@@ -894,8 +889,6 @@
             <thead>
                 <tr>
                     <th rowspan="2">ID</th>
-                    <th rowspan="2">Price</th>
-                    <th colspan="8">Parts Info</th>
                     <th colspan="7">Group 0 (Class, Region, Origin, Misc)</th>
                     <th colspan="9">Group 1 (Pattern and Color)</th>
                     <th colspan="10">Group 2 (Eyes)</th>
@@ -904,7 +897,7 @@
                     <th colspan="10">Group 5 (Horn)</th>
                     <th colspan="10">Group 6 (Back)</th>
                     <th colspan="10">Group 7 (Tail)</th>
-                    <th colspan="2">Owner</th>
+                    <th colspan="8">Additional Info</th>
                 </tr>
                 <tr>
                     <th></th>
