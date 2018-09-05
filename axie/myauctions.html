@@ -303,7 +303,7 @@
             }
             let currentBlock = result['number'];
             let earliest = getLocal(web3.eth.accounts[0], "earliestBlock");
-            let latest = getLocal(web3.eth.accounts[0], "latestBlock");
+            let latest = getLocal(web3.eth.accounts[0], "lastBlock");
 
             let sales = getLocal(web3.eth.accounts[0], "sales");
             if (sales) {
@@ -320,7 +320,7 @@
                 $("#loading").fadeOut(2000);
             }
             if (latest != null && latest < currentBlock) {
-                getAllPastAuctions(latest, currentBlock);
+                getAllPastAuctions(currentBlock, latest);
             }
 
             console.log("Starting to watch Auction contract");
