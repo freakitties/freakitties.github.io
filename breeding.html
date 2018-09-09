@@ -107,19 +107,23 @@
 
                     coreContract = web3.eth.contract(core_abi);
                     coreInstance = coreContract.at(core_addr);
-                    coreInstance.autoBirthFee(function(error, result) {autoBirthFee = result.toNumber(); } );
+                    coreInstance.autoBirthFee(function(error, result) {
+                        if (error) {
+                            alert(error);
+                        }
+                        autoBirthFee = result.toNumber();
+                    } );
                 }
             });
         }
 
         window.addEventListener('load', function () {
-            acctInt = setInterval(initContract, 250);
-            $('[data-toggle="tooltip"]').tooltip();
             var hash = window.location.hash.substr(1);
             if (hash == "") {
                 return;
             }
             reconstructBookmark(hash);
+            acctInt = setInterval(initContract, 250);
             $('[data-toggle="tooltip"]').tooltip();
         });
 
