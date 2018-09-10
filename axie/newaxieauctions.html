@@ -117,7 +117,8 @@
 
 <script>
     const MAX_ROWS = 1000;
-    const NUM_HISTORIC_BLOCKS = 60/15 * 60 * 24 * 2;    //2 Days
+    const BLOCKS_PER_DAY = 60/15 * 60 * 24;
+    const NUM_HISTORIC_BLOCKS = BLOCKS_PER_DAY * 2;    //2 Days
 
     var coreAddress = '0xf5b0a3efb8e8e4c201e2a935f110eaaf3ffecb8d';
     var auctionAddress = '0xf4985070ce32b6b1994329df787d1acc9a2dd9e2';
@@ -309,6 +310,7 @@
     var startingBlock;
     var blocksBack = NUM_HISTORIC_BLOCKS;
     var cleared = false;
+    var eventsInitialized = false;
     $(document).ready(function(){
         $.ajax({
             url: "../header.html",
@@ -361,35 +363,49 @@
                 return;
             }
             startingBlock = result;
-            console.log("Starting to watch Auction Contract - AuctionCreated at block " + result);
-            auctionInstance.AuctionCreated({}, {fromBlock: result - blocksBack}, function(error, result) {
+            var fromBlock = startingBlock - blocksBack;
+            console.log("Starting to watch Auction Contract - AuctionCreated at block :" + fromBlock);
+            auctionInstance.AuctionCreated({}, {fromBlock: fromBlock}, function(error, result) {
                 if (error) {
                     console.log("ERROR in AuctionCreated " + JSON.stringify(error));
                 }
-                //console.log("New Auction " + JSON.stringify(result));
+                console.log("New Auction " + JSON.stringify(result));
                 if (result.blockNumber <= startingBlock) {
                     processEvents(error, result, false);
+                    //hacky way to start watching these events only after AuctionCreated have been checked
+                    if (result.blockNumber > startingBlock - BLOCKS_PER_DAY && !eventsInitialized) {
+                        eventsInitialized = true;
+                        var intID = setInterval(function() {
+                            clearInterval(intID);
+                            console.log("Starting to watch Auction Contract - AuctionCancelled at block :" + fromBlock);
+                            auctionInstance.AuctionCancelled({}, {fromBlock: fromBlock}, function(error, result) {
+                                if (error) {
+                                    console.log("ERROR in AuctionCancelled " + JSON.stringify(error));
+                                }
+                                console.log("Auction cancelled: " + result['args']['_tokenId'] + " " + result.blockNumber);
+                                cancelAuction(result['args']['_tokenId'], result.blockNumber);
+                            });
+
+                            console.log("Starting to watch Auction Contract - AuctionSuccessful at block :" + fromBlock);
+                            auctionInstance.AuctionSuccessful({}, {fromBlock: fromBlock}, function(error, result) {
+                                if (error) {
+                                    console.log("ERROR in AuctionSuccessful " + JSON.stringify(error));
+                                }
+                                console.log("Auction AuctionSuccessful: " + result['args']['_tokenId'] + " " + result.blockNumber);
+                                sucessfulAuction(result['args']['_tokenId'], result.blockNumber);
+                            });
+                        }, 3000);
+                    }
                 } else {
                     processEvents(error, result, true);
                 }
             });
+
+
+
         });
 
-        auctionInstance.AuctionCancelled({}, {fromBlock: startingBlock - blocksBack}, function(error, result) {
-            if (error) {
-                console.log("ERROR in AuctionCancelled " + JSON.stringify(error));
-            }
-            console.log("Auction cancelled: " + result['args']['_tokenId'] + " " + result.blockNumber);
-            cancelAuction(result['args']['_tokenId'], result.blockNumber);
-        });
 
-        auctionInstance.AuctionSuccessful({}, {fromBlock: startingBlock - blocksBack}, function(error, result) {
-            if (error) {
-                console.log("ERROR in AuctionSuccessful " + JSON.stringify(error));
-            }
-            console.log("Auction AuctionSuccessful: " + result['args']['_tokenId'] + " " + result.blockNumber);
-            sucessfulAuction(result['args']['_tokenId'], result.blockNumber);
-        });
           /*
   event AuctionSuccessful(
     address indexed _nftAddress,
