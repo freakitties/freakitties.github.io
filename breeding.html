@@ -6,11 +6,24 @@
     <head>
         <title>Cryptokitties Breeder</title>
         <script async src="https://www.googletagmanager.com/gtag/js?id=UA-116189657-1"></script>
+        <script src="https://www.gstatic.com/firebasejs/5.4.2/firebase.js"></script>
         <script>
         window.dataLayer = window.dataLayer || [];
         function gtag(){dataLayer.push(arguments);}
         gtag('js', new Date());
         gtag('config', 'UA-116189657-1');
+
+        // Initialize Firebase
+        //Supposedly this is ok to expose...
+        var config = {
+            apiKey: "AIzaSyArHJaCBMR2_I0CvBz_9yOj043P23VTQcY",
+            authDomain: "breeder-93a3f.firebaseapp.com",
+            databaseURL: "https://breeder-93a3f.firebaseio.com",
+            projectId: "breeder-93a3f",
+            storageBucket: "breeder-93a3f.appspot.com",
+            messagingSenderId: "137307226712"
+        };
+        firebase.initializeApp(config);
         </script>
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
@@ -311,7 +324,7 @@
 
         }
         var bmInterval;
-        function setBookmarkMsg(msg, type) {
+        function setBookmarkMsg(msg, type, timeout) {
             $("#bmTop").removeClass();
             $("#bmTop").addClass("fixed-top fixed-top-2-front");
             $("#bmMsg").removeClass();
@@ -326,7 +339,12 @@
                 $("#bmMsg").alert();
             }
             $("#bmMsg").fadeTo(0, 1);
-            bmInterval = setInterval(clearBmMsg, 3500);
+            if (timeout) {
+                bmInterval = setInterval(clearBmMsg, timeout);
+            } else {
+                bmInterval = setInterval(clearBmMsg, 3500);
+            }
+
         }
 
         function clearBmMsg() {
@@ -334,6 +352,15 @@
             $("#bmTop").removeClass();
             $("#bmTop").addClass("fixed-top fixed-top-2-back");
             clearInterval(bmInterval);
+        }
+
+        function updateClipboard(newClip) {
+            navigator.clipboard.writeText(newClip).then(function() {
+            /* clipboard successfully set */
+            }, function() {
+            /* clipboard write failed */
+            alert("failed to copy url to clipboard");
+            });
         }
 
         function bookmark() {
@@ -364,7 +391,24 @@
             else {
                 location.hash = bmHash;
             }
-            setBookmarkMsg("The URL has been updated. You can use your browser to bookmark this page and the breeding pairs will be saved.", "success");
+            $.ajax({
+                method: "POST",
+                url: "https://firebasedynamiclinks.googleapis.com/v1/shortLinks?key=" + config.apiKey,
+                data: JSON.stringify({"dynamicLinkInfo": {"dynamicLinkDomain": "cryptokitties.page.link","link": location.href}}),
+                contentType: 'application/json'
+            }).done(function( data ) {
+                console.log(data);
+                navigator.permissions.query({name: "clipboard-write"}).then(result => {
+                    if (result.state == "granted" || result.state == "prompt") {
+                        updateClipboard(data.shortLink);
+                        setBookmarkMsg("The URL has been updated. Bookmark this URL to access your saved breeding pairs. Here's a short link: " + data.shortLink + " It's also been saved to your clipboard.", "success", 7000);
+                    } else {
+                        setBookmarkMsg("The URL has been updated. Bookmark this URL to access your saved breeding pairs. Here's a short link: " + data.shortLink, "success", 10000);
+                    }
+                });
+            }).fail(function (xhr, textStatus, errorThrown) {
+                alert("Failed to generate a short URL. " + textStatus + " " + xhr.responseText);
+            });
         }
 
         function clearMsgs(id) {
