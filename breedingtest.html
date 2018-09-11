@@ -437,7 +437,8 @@
                     }
                 });
             }).fail(function (xhr, textStatus, errorThrown) {
-                alert("Failed to generate a short URL. " + textStatus + " " + xhr.responseText);
+                //alert("Failed to generate a short URL. " + textStatus + " " + xhr.responseText);
+                console.log("Failed to generate a short URL. " + textStatus + " " + xhr.responseText);
                 setBookmarkMsg("The URL has been updated. Bookmark this URL to access your saved breeding pairs. However, a short URL could not be created due to too many breeding pairs.", "success");
             });
         }
