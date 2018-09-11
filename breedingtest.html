@@ -6,12 +6,26 @@
     <head>
         <title>Cryptokitties Breeder</title>
         <script async src="https://www.googletagmanager.com/gtag/js?id=UA-116189657-1"></script>
+        <script src="https://www.gstatic.com/firebasejs/5.4.2/firebase-app.js"></script>
         <script>
         window.dataLayer = window.dataLayer || [];
         function gtag(){dataLayer.push(arguments);}
         gtag('js', new Date());
         gtag('config', 'UA-116189657-1');
+
+        // Initialize Firebase
+        //Supposedly this is ok to expose...
+        var config = {
+            apiKey: "AIzaSyArHJaCBMR2_I0CvBz_9yOj043P23VTQcY",
+            authDomain: "breeder-93a3f.firebaseapp.com",
+            databaseURL: "https://breeder-93a3f.firebaseio.com",
+            projectId: "breeder-93a3f",
+            storageBucket: "breeder-93a3f.appspot.com",
+            messagingSenderId: "137307226712"
+        };
+        firebase.initializeApp(config);
         </script>
+        <script src="https://cdn.rawgit.com/dcodeIO/protobuf.js/6.8.8/dist/protobuf.min.js" integrity="sha384-5dStEkuAXC5qJwZ7qXJyPslZhTKvpzs3my5U4jIjrbl/PYn3w8kilaCpCOHBSAmq" crossorigin="anonymous"></script>
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
         <!--<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script> -->
@@ -33,8 +47,43 @@
                 width: 38;
             }
             .autoBig:hover {
-                height:100;
-                width: 100;
+                height:120;
+                width: 120;
+            }
+            .btn-outline-light:hover, .btn-outline-light:focus, .btn-outline-light:active, .btn-outline-light.active, .open>.dropdown-toggle.btn-outline-light {
+                color: #fff;
+                background-color: #5a6268;
+                border-color: #545b62;
+            }
+            .fixed-top-2-front {
+                margin-top: 76px;
+                z-index: 2;
+            }
+            .fixed-top-2-back {
+                margin-top: 76px;
+                z-index: -1;
+            }
+            @media (max-width: 1024px) {
+                .fixed-top-2-front {
+                    margin-top: 96px;
+                    z-index: 2;
+                }
+                .fixed-top-2-back {
+                    margin-top: 96px;
+                    z-index: -1;
+                }
+            }
+            .back {
+                position: relative;
+                z-index: 1;
+            }
+            body {
+                padding-top: 110px;
+            }
+            .boxshadow {
+                transition: box-shadow 400ms;
+                box-shadow: 0 0 0  1px rgba(  0,  0,  0, 0.1),
+                            4px 4px 10px rgba(12, 167, 12, 0.5);
             }
         </style>
     </head>
@@ -42,33 +91,60 @@
         numPairs = 0;
         core_abi = [{"constant":true,"inputs":[{"name":"_interfaceID","type":"bytes4"}],"name":"supportsInterface","outputs":[{"name":"","type":"bool"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"cfoAddress","outputs":[{"name":"","type":"address"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[{"name":"_tokenId","type":"uint256"},{"name":"_preferredTransport","type":"string"}],"name":"tokenMetadata","outputs":[{"name":"infoUrl","type":"string"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"promoCreatedCount","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"name","outputs":[{"name":"","type":"string"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[{"name":"_to","type":"address"},{"name":"_tokenId","type":"uint256"}],"name":"approve","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[],"name":"ceoAddress","outputs":[{"name":"","type":"address"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"GEN0_STARTING_PRICE","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[{"name":"_address","type":"address"}],"name":"setSiringAuctionAddress","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[],"name":"totalSupply","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"pregnantKitties","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[{"name":"_kittyId","type":"uint256"}],"name":"isPregnant","outputs":[{"name":"","type":"bool"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"GEN0_AUCTION_DURATION","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"siringAuction","outputs":[{"name":"","type":"address"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[{"name":"_from","type":"address"},{"name":"_to","type":"address"},{"name":"_tokenId","type":"uint256"}],"name":"transferFrom","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":false,"inputs":[{"name":"_address","type":"address"}],"name":"setGeneScienceAddress","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":false,"inputs":[{"name":"_newCEO","type":"address"}],"name":"setCEO","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":false,"inputs":[{"name":"_newCOO","type":"address"}],"name":"setCOO","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":false,"inputs":[{"name":"_kittyId","type":"uint256"},{"name":"_startingPrice","type":"uint256"},{"name":"_endingPrice","type":"uint256"},{"name":"_duration","type":"uint256"}],"name":"createSaleAuction","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":false,"inputs":[],"name":"unpause","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[{"name":"","type":"uint256"}],"name":"sireAllowedToAddress","outputs":[{"name":"","type":"address"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[{"name":"_matronId","type":"uint256"},{"name":"_sireId","type":"uint256"}],"name":"canBreedWith","outputs":[{"name":"","type":"bool"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[{"name":"","type":"uint256"}],"name":"kittyIndexToApproved","outputs":[{"name":"","type":"address"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[{"name":"_kittyId","type":"uint256"},{"name":"_startingPrice","type":"uint256"},{"name":"_endingPrice","type":"uint256"},{"name":"_duration","type":"uint256"}],"name":"createSiringAuction","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":false,"inputs":[{"name":"val","type":"uint256"}],"name":"setAutoBirthFee","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":false,"inputs":[{"name":"_addr","type":"address"},{"name":"_sireId","type":"uint256"}],"name":"approveSiring","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":false,"inputs":[{"name":"_newCFO","type":"address"}],"name":"setCFO","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":false,"inputs":[{"name":"_genes","type":"uint256"},{"name":"_owner","type":"address"}],"name":"createPromoKitty","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":false,"inputs":[{"name":"secs","type":"uint256"}],"name":"setSecondsPerBlock","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[],"name":"paused","outputs":[{"name":"","type":"bool"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[],"name":"withdrawBalance","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[{"name":"_tokenId","type":"uint256"}],"name":"ownerOf","outputs":[{"name":"owner","type":"address"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"GEN0_CREATION_LIMIT","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"newContractAddress","outputs":[{"name":"","type":"address"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[{"name":"_address","type":"address"}],"name":"setSaleAuctionAddress","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[{"name":"_owner","type":"address"}],"name":"balanceOf","outputs":[{"name":"count","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[{"name":"_v2Address","type":"address"}],"name":"setNewAddress","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[],"name":"secondsPerBlock","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[],"name":"pause","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[{"name":"_owner","type":"address"}],"name":"tokensOfOwner","outputs":[{"name":"ownerTokens","type":"uint256[]"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[{"name":"_matronId","type":"uint256"}],"name":"giveBirth","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":false,"inputs":[],"name":"withdrawAuctionBalances","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[],"name":"symbol","outputs":[{"name":"","type":"string"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[{"name":"","type":"uint256"}],"name":"cooldowns","outputs":[{"name":"","type":"uint32"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[{"name":"","type":"uint256"}],"name":"kittyIndexToOwner","outputs":[{"name":"","type":"address"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[{"name":"_to","type":"address"},{"name":"_tokenId","type":"uint256"}],"name":"transfer","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[],"name":"cooAddress","outputs":[{"name":"","type":"address"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"autoBirthFee","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"erc721Metadata","outputs":[{"name":"","type":"address"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[{"name":"_genes","type":"uint256"}],"name":"createGen0Auction","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[{"name":"_kittyId","type":"uint256"}],"name":"isReadyToBreed","outputs":[{"name":"","type":"bool"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"PROMO_CREATION_LIMIT","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[{"name":"_contractAddress","type":"address"}],"name":"setMetadataAddress","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[],"name":"saleAuction","outputs":[{"name":"","type":"address"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[{"name":"_id","type":"uint256"}],"name":"getKitty","outputs":[{"name":"isGestating","type":"bool"},{"name":"isReady","type":"bool"},{"name":"cooldownIndex","type":"uint256"},{"name":"nextActionAt","type":"uint256"},{"name":"siringWithId","type":"uint256"},{"name":"birthTime","type":"uint256"},{"name":"matronId","type":"uint256"},{"name":"sireId","type":"uint256"},{"name":"generation","type":"uint256"},{"name":"genes","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[{"name":"_sireId","type":"uint256"},{"name":"_matronId","type":"uint256"}],"name":"bidOnSiringAuction","outputs":[],"payable":true,"stateMutability":"payable","type":"function"},{"constant":true,"inputs":[],"name":"gen0CreatedCount","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"geneScience","outputs":[{"name":"","type":"address"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[{"name":"_matronId","type":"uint256"},{"name":"_sireId","type":"uint256"}],"name":"breedWithAuto","outputs":[],"payable":true,"stateMutability":"payable","type":"function"},{"inputs":[],"payable":false,"stateMutability":"nonpayable","type":"constructor"},{"payable":true,"stateMutability":"payable","type":"fallback"},{"anonymous":false,"inputs":[{"indexed":false,"name":"owner","type":"address"},{"indexed":false,"name":"matronId","type":"uint256"},{"indexed":false,"name":"sireId","type":"uint256"},{"indexed":false,"name":"cooldownEndBlock","type":"uint256"}],"name":"Pregnant","type":"event"},{"anonymous":false,"inputs":[{"indexed":false,"name":"from","type":"address"},{"indexed":false,"name":"to","type":"address"},{"indexed":false,"name":"tokenId","type":"uint256"}],"name":"Transfer","type":"event"},{"anonymous":false,"inputs":[{"indexed":false,"name":"owner","type":"address"},{"indexed":false,"name":"approved","type":"address"},{"indexed":false,"name":"tokenId","type":"uint256"}],"name":"Approval","type":"event"},{"anonymous":false,"inputs":[{"indexed":false,"name":"owner","type":"address"},{"indexed":false,"name":"kittyId","type":"uint256"},{"indexed":false,"name":"matronId","type":"uint256"},{"indexed":false,"name":"sireId","type":"uint256"},{"indexed":false,"name":"genes","type":"uint256"}],"name":"Birth","type":"event"},{"anonymous":false,"inputs":[{"indexed":false,"name":"newContract","type":"address"}],"name":"ContractUpgrade","type":"event"}];
         core_addr = '0x06012c8cf97bead5deae237070f9587f8e7a266d';  //main net
+        const proto = "message Pairs {\
+            repeated Pair pairs = 0;\
+        }\
+        \
+        message Pair {\
+            required int32 matronId = 0;\
+            required int32 sireId = 1;\
+            optional string notes = 2;\
+        }";
+        var source = protobuf.parse(proto);
+
 
         function initContract() {
             clearInterval(acctInt);
+            $.ajax({
+                url: "../header.html",
+                cache: false,
+                dataType: "html",
+                success: function(data) {
+                    $("#headerDiv").html(data);
+                    let buttons = '<div class="text-white small" id="account"></div>' +
+                    //'<br/>' +
+                    '<div class="row col-12 mb-1">' +
+                    '<button class="btn btn-outline-light text-white" onclick="createForm()"><i class="fas fa-plus-circle"></i> Add a pair</button> &nbsp;' +
+                    '<button class="btn btn-outline-light text-white float-right" onclick="bookmark()"><i class="fas fa-bookmark"></i> Bookmark</button>' +
+                    '</div>';
+                    $("#navContentLeft").append(buttons);
 
-            if (typeof web3.eth.accounts[0] == "undefined") {
-                $("#account").text("Can't detect your account. Unlock your wallet or try reloading the page and waiting a few seconds.");
-            } else {
-                $("#account").text("Your Account: " + web3.eth.accounts[0]);
-            }
+                    if (typeof web3 == 'undefined') {
+                        $("#account").text("Web3 enabled browser not detected.");
+                        return;
+                    }
+                    if (typeof web3.eth.accounts[0] == "undefined") {
+                        $("#account").text("Can't detect your account. Unlock your wallet or try reloading the page and waiting a few seconds.");
+                        return;
+                    } else {
+                        $("#account").text("Your Account: " + web3.eth.accounts[0]);
+                    }
 
-            coreContract = web3.eth.contract(core_abi);
-            coreInstance = coreContract.at(core_addr);
-
-            coreInstance.autoBirthFee(function(error, result) {autoBirthFee = result.toNumber(); } );
-
+                    coreContract = web3.eth.contract(core_abi);
+                    coreInstance = coreContract.at(core_addr);
+                    coreInstance.autoBirthFee(function(error, result) {
+                        if (error) {
+                            alert(error);
+                        }
+                        autoBirthFee = result.toNumber();
+                    } );
+                }
+            });
         }
 
         window.addEventListener('load', function () {
-            if (typeof web3 !== 'undefined') {
-                // Use the browser's ethereum provider
-                web3js = new Web3(web3.currentProvider);
-            } else {
-                document.write("web3 not detected. Are you using MetaMask?");
-                return;
-            }
-            acctInt = setInterval(initContract, 1000);
-
+            acctInt = setInterval(initContract, 250);
+            $('[data-toggle="tooltip"]').tooltip();
             var hash = window.location.hash.substr(1);
             if (hash == "") {
                 return;
@@ -78,8 +154,13 @@
         });
 
         function reconstructBookmark(hash) {
+            var pairs;
             try {
-                let pairs = JSON.parse(atob(hash));
+                pairs = JSON.parse(atob(hash));
+            } catch (err) {
+                pairs = source.root.Pairs.decode(b64ToArr(hash)).pairs;
+            }
+            try {
                 for (let i = 0; i < pairs.length; i++) {
                     let matronId = pairs[i].matronId;
                     let sireId = pairs[i].sireId;
@@ -129,7 +210,7 @@
             }
             matronId = parseInt(matronId);
             sireId = parseInt(sireId);
-            if (autoBirthFee != 0.008*1e18) {alert("new autoBirthFee?" + autoBirthFee); return;}
+            if (autoBirthFee != 0.008*1e18) {alert("Birthing fee has changed to: " + autoBirthFee); /*return;*/}
             coreInstance.canBreedWith(matronId, sireId, (err, result) => {
                 if (err) {
                     setMsg(id, "Error checking breedability: " + err);
@@ -149,6 +230,8 @@
                     if (typeof result == "number") {
                         checkCooldowns(id, result, function(ready) {
                             if (ready) {
+                                $("#sireReady" + id).text("");
+                                $("#matronReady" + id).text("");
                                 coreInstance.breedWithAuto(matronId, sireId, {from: web3.eth.accounts[0], value: autoBirthFee}, (err, result) => {
                                     if (err) {
                                         alert(err);
@@ -222,26 +305,30 @@
             numPairs++;
             var template =
                 '<div id="pair{ID}">' +
-                '<div class="col-md-9 border" onmouseover="$(\'#closeButton{ID}\').show()" onmouseout="$(\'#closeButton{ID}\').hide()">' +
-                '<div data-toggle="tooltip" data-placement="right" title="Remove pair"><i class="default-hide mt-1 float-right fas fa-times-circle" id="closeButton{ID}" onclick="removePair({ID});"></i></div>' +
+                '<div class="col-md-9 border" onmouseover="$(\'#upButton{ID}\').show();$(\'#downButton{ID}\').show();$(\'#closeButton{ID}\').show();" onmouseout="$(\'#upButton{ID}\').hide();$(\'#downButton{ID}\').hide();$(\'#closeButton{ID}\').hide();" >' +
+                '<div class="d-flex" id="buttons{ID}">' +
+                '<div data-toggle="tooltip" data-placement="left" title="Move pair up" class="p-1"><i class="default-hide mt-1 float-left fas fa-arrow-circle-up" id="upButton{ID}" onclick="movePairUp({ID});"></i></div>' +
+                '<div data-toggle="tooltip" data-placement="left" title="Move pair down" class="mr-auto p-1"><i class="default-hide mt-1 float-left fas fa-arrow-circle-down" id="downButton{ID}" onclick="movePairDown({ID});"></i></div>' +
+                '<div data-toggle="tooltip" data-placement="right" title="Remove pair" class="p-2"><i class="default-hide mt-1 float-right fas fa-times-circle" id="closeButton{ID}" onclick="removePair({ID});"></i></div>' +
+                '</div>' +
                 '<br/>' +
                 '<div class="form-group row mb-1 mr-1">' +
                 '<label class="col-form-label col-md-3" for="notes{ID}">Notes for pair {ID}</label>' +
-                '<input class="form-control col-md-9" type="text" placeholder="Notes about this pair. Not used in TX." id="notes{ID}"/>' +
+                '<textarea class="form-control col-md-9" type="text" placeholder="Notes about this pair. Not used in TX." id="notes{ID}"></textarea>' +
                 '</div>' +
                 '<div class="form-group row mb-1 mr-1">' +
                 '<label class="col-form-label col-md-3" for="matronId{ID}">Matron ID</label>' +
                 '<input class="form-control col-md-2" type="text" id="matronId{ID}" onchange="handleChange({ID}, \'matron\');"/>' +
                 '<a target="_blank" id="matronImgLink{ID}" href=""><img class="autoBig" height="38" src="" style="display: none;" id="matronImg{ID}"/></a>' +
-                '<div class="col-md-6 col-form-label-sm" id="matronReady{ID}"></div>' +
+                '<div class="col-md-5 col-form-label-sm" id="matronReady{ID}"></div>' +
                 '</div>' +
                 '<div class="form-group row mb-1 mr-1">' +
                 '<label class="col-form-label col-md-3" for="sireId{ID}">Sire ID</label>' +
                 '<input class="form-control col-md-2" type="text" id="sireId{ID}" onchange="handleChange({ID}, \'sire\');"/>' +
                 '<a target="_blank" id="sireImgLink{ID}" href=""><img class="autoBig" height="38" src="" style="display: none;" id="sireImg{ID}"/></a>' +
-                '<div class="col-md-6 col-form-label-sm" id="sireReady{ID}"></div>' +
+                '<div class="col-md-5 col-form-label-sm" id="sireReady{ID}"></div>' +
                 '</div>' +
-                '<button type="submit" class="btn btn-dark" onclick="selfBreed({ID});" id="breedButton{ID}">Breed Pair {ID}</button>&nbsp;' +
+                '<button type="submit" class="btn btn-secondary" onclick="selfBreed({ID});" id="breedButton{ID}">Breed Pair {ID}</button>&nbsp;' +
                 '<button type="submit" class="btn btn-light" onclick="openCalc({ID});" id="CalcButton{ID}">Check KittyCalc</button>' +
                 '<br/>' +
                 '<br/><div id="msg{ID}"></div>' +
@@ -254,7 +341,9 @@
 
         }
         var bmInterval;
-        function setBookmarkMsg(msg, type) {
+        function setBookmarkMsg(msg, type, timeout) {
+            $("#bmTop").removeClass();
+            $("#bmTop").addClass("fixed-top fixed-top-2-front");
             $("#bmMsg").removeClass();
             $("#bmMsg").text("");
             if (type == "warning") {
@@ -266,13 +355,37 @@
                 $("#bmMsg").text(msg);
                 $("#bmMsg").alert();
             }
-            $("#bmMsg").show();
-            bmInterval = setInterval(clearBmMsg, 3500);
+            $("#bmMsg").fadeTo(0, 1);
+            if (timeout) {
+                bmInterval = setInterval(clearBmMsg, timeout);
+            } else {
+                bmInterval = setInterval(clearBmMsg, 3500);
+            }
+
         }
 
         function clearBmMsg() {
-            $("#bmMsg").fadeOut(1000);
+            $("#bmMsg").fadeTo(1000, 0);
+            $("#bmTop").removeClass();
+            $("#bmTop").addClass("fixed-top fixed-top-2-back");
             clearInterval(bmInterval);
+        }
+
+        function updateClipboard(newClip) {
+            navigator.clipboard.writeText(newClip).then(function() {
+            /* clipboard successfully set */
+            }, function() {
+            /* clipboard write failed */
+            alert("failed to copy url to clipboard");
+            });
+        }
+
+        function arrToB64 (arrayBuffer) {
+            return btoa(new Uint8Array(arrayBuffer).reduce((data, byte) => data + String.fromCharCode(byte), ''));
+        }
+
+        function b64ToArr (str) {
+            return atob(str).split('').map(function (c) { return c.charCodeAt(0); });
         }
 
         function bookmark() {
@@ -293,17 +406,40 @@
                 }
                 let notes = $("#notes" + i).val();
                 console.log(matronId + ", " + sireId + " : " + notes);
-                let json = {"matronId": matronId, "sireId": sireId, "notes": notes};
+                let json = {"matronId": parseInt(matronId), "sireId": parseInt(sireId), "notes": notes};
                 pairs.push(json);
             }
-            let bmHash = "#"+btoa(JSON.stringify(pairs));
+
+            //let bmHash = "#"+btoa(JSON.stringify(pairs));
+
+            let buf = source.root.Pairs.fromObject({pairs: pairs});
+            let bin = source.root.Pairs.encode(buf).finish();
+            let bmHash = "#" + arrToB64(bin);
+
             if(history.pushState) {
                 history.pushState(null, null, bmHash);
             }
             else {
                 location.hash = bmHash;
             }
-            setBookmarkMsg("The URL has been updated. You can use your browser to bookmark this page and the breeding pairs will be saved.", "success");
+            $.ajax({
+                method: "POST",
+                url: "https://firebasedynamiclinks.googleapis.com/v1/shortLinks?key=" + config.apiKey,
+                data: JSON.stringify({"dynamicLinkInfo": {"dynamicLinkDomain": "cryptokitties.page.link","link": location.href}}),
+                contentType: 'application/json'
+            }).done(function( data ) {
+                navigator.permissions.query({name: "clipboard-write"}).then(result => {
+                    if (result.state == "granted" || result.state == "prompt") {
+                        updateClipboard(data.shortLink);
+                        setBookmarkMsg("The URL has been updated. Bookmark this URL to access your saved breeding pairs. Here's a short link: " + data.shortLink + " It's also been saved to your clipboard.", "success", 7000);
+                    } else {
+                        setBookmarkMsg("The URL has been updated. Bookmark this URL to access your saved breeding pairs. Here's a short link: " + data.shortLink, "success", 10000);
+                    }
+                });
+            }).fail(function (xhr, textStatus, errorThrown) {
+                alert("Failed to generate a short URL. " + textStatus + " " + xhr.responseText);
+                setBookmarkMsg("The URL has been updated. Bookmark this URL to access your saved breeding pairs. However, a short URL could not be created due to too many breeding pairs.", "success");
+            });
         }
 
         function clearMsgs(id) {
@@ -361,6 +497,87 @@
             }
         }
 
+        function swapPair(id1, id2) {
+            let notes1 = $("#notes" + id1).val();
+            let matronId1 = parseInt($("#matronId" + id1).val());
+            let sireId1 = parseInt($("#sireId" + id1).val());
+            let notes2 = $("#notes" + id2).val();
+            let matronId2 = parseInt($("#matronId" + id2).val());
+            let sireId2 = parseInt($("#sireId" + id2).val());
+
+            if (isNaN(matronId1)) {
+                setMsg(id1, "Invalid matron ID");
+                return;
+            }
+            if (isNaN(sireId1)) {
+                setMsg(id1, "Invalid sire ID");
+                return;
+            }
+            if (isNaN(matronId2)) {
+                setMsg(id2, "Invalid matron ID");
+                return;
+            }
+            if (isNaN(sireId2)) {
+                setMsg(id2, "Invalid sire ID");
+                return;
+            }
+
+            setFormValues(id1, matronId2, sireId2, notes2);
+            setFormValues(id2, matronId1, sireId1, notes1);
+            setMsg(id1, "");
+            setMsg(id2, "");
+        }
+
+        function movePairDown(id) {
+            if (id < numPairs) {
+                let divTop = $("#pair" + id);
+                if (divTop.length == 0) return;
+                let bottomID = id + 1;
+                let divBottom = $("#pair" + bottomID);
+
+                while (divBottom.length == 0 && bottomID < numPairs) {
+                    bottomID++;
+                    divBottom = $("#pair" + bottomID);
+                }
+                if (divBottom.length == 0) return;
+                swapPair(id, bottomID);
+
+                let margin = $("#bmTop").css("margin-top");
+                $("#pair" + bottomID).children().addClass("boxshadow");
+                $('html, body').animate({scrollTop: $("#pair" + bottomID).offset().top - parseInt(margin.slice(0, margin.length - 2))}, 400, function() {
+                    let intID = setInterval(function() {
+                        clearInterval(intID);
+                        $("#pair" + bottomID).children().removeClass("boxshadow");
+                    }, 2000);
+                });
+            }
+        }
+
+        function movePairUp(id) {
+            if (id > 0) {
+                let divBottom = $("#pair" + id);
+                if (divBottom.length == 0) return;
+                let topID = id - 1;
+                let divTop = $("#pair" + topID);
+
+                while (divTop.length == 0 && topID > 0) {
+                    topID--;
+                    divTop = $("#pair" + topID);
+                }
+                if (divTop.length == 0) return;
+                swapPair(id, topID);
+
+               let margin = $("#bmTop").css("margin-top");
+               $("#pair" + topID).children().addClass("boxshadow");
+                $('html, body').animate({scrollTop: $("#pair" + topID).offset().top - parseInt(margin.slice(0, margin.length - 2))}, 400, function() {
+                    let intID = setInterval(function() {
+                        clearInterval(intID);
+                        $("#pair" + topID).children().removeClass("boxshadow");
+                    }, 2000);
+                });
+            }
+        }
+
         function openCalc(id) {
             let matronId = $("#matronId" + id).val().trim();
             if (!isNumber(matronId)) {
@@ -376,44 +593,40 @@
         }
 
     </script>
+    <body>
     <!-- header -->
-    <div class="fixed-top">
-        <div class="navbar  navbar-dark bg-dark">
-            <div class="container-fluid">
-                <div class="navbar-header row">
-                    <button class="text-white btn btn-outline-secondary" onclick="createForm()"><i class="fas fa-plus-circle"></i> Add a breeding pair</button>&nbsp;
-                    <button class="text-white btn btn-outline-secondary float-right" onclick="bookmark()"><i class="fas fa-bookmark"></i> Bookmark</button>&nbsp; &nbsp;
-                    <div class="text-white pt-2" id="account"></div>
-                </div>
-                <div class="text-white">Donations: 0x209045cfe98445d6541d4fdf560d0d63fad77753 &nbsp;</div>
-            </div>
-        </div>
+    <div class="fixed-top" id="headerDiv"></div>
+    <div class="fixed-top fixed-top-2-back" id="bmTop">
         <div class="alert" role="alert" id="bmMsg"></div>
     </div>
 
-    <br/><br/>
-    <div id="breedersDiv" class="container">
-        <br/>
+    <div id="breedersDiv" class="container back">
+
         <br/>
         <div id="pair0">
-        <div class="col-md-9 border" onmouseover="$('#closeButton0').show()" onmouseout="$('#closeButton0').hide()" >
-            <div data-toggle="tooltip" data-placement="right" title="Remove pair"><i  class="default-hide mt-1 float-right fas fa-times-circle" id="closeButton0" onclick="removePair(0);"></i></div>
+
+        <div class="col-md-9 border" onmouseover="$('#upButton0').show();$('#downButton0').show();$('#closeButton0').show();" onmouseout="$('#upButton0').hide();$('#downButton0').hide();$('#closeButton0').hide();" >
+            <div class="d-flex" id="buttons0">
+                <div data-toggle="tooltip" data-placement="left" title="Move pair up" class="p-1"><i class="default-hide mt-1 float-left fas fa-arrow-circle-up" id="upButton0" onclick="movePairUp(0);"></i></div>
+                <div data-toggle="tooltip" data-placement="left" title="Move pair down" class="mr-auto p-1"><i class="default-hide mt-1 float-left fas fa-arrow-circle-down" id="downButton0" onclick="movePairDown(0);"></i></div>
+                <div data-toggle="tooltip" data-placement="right" title="Remove pair" class="p-2"><i class="default-hide mt-1 float-right fas fa-times-circle" id="closeButton0" onclick="removePair(0);"></i></div>
+            </div>
             <br/>
             <div class="form-group row mb-1 mr-1">
                 <label class="col-form-label col-md-3" for="notes0">Notes for pair 0</label>
-                <input class="form-control col-md-9" type="text" placeholder="Notes about this pair. Not used in TX." id="notes0"/>
+                <textarea class="form-control col-md-9" type="text" placeholder="Notes about this pair. Not used in TX." id="notes0"></textarea>
             </div>
 
             <div class="form-group row mb-1 mr-1">
                 <label class="col-form-label col-md-3" for="matronId0">Matron ID</label>
-                <input class="form-control col-md-2" type="text" id="matronId0" onchange="handleChange(0, 'matron');"/><a target="_blank" id="matronImgLink0" href=""><img class="autoBig" height="38" src="" style="display: none;" id="matronImg0"/></a><div class="col-md-6 col-form-label-sm" id="matronReady0"></div>
+                <input class="form-control col-md-2" type="text" id="matronId0" onchange="handleChange(0, 'matron');"/><a target="_blank" id="matronImgLink0" href=""><img class="autoBig" height="38" src="" style="display: none;" id="matronImg0"/></a><div class="col-md-5 col-form-label-sm" id="matronReady0"></div>
             </div>
 
             <div class="form-group row mb-1 mr-1">
                 <label class="col-form-label col-md-3" for="sireId0">Sire ID</label>
-                <input class="form-control col-md-2" type="text" id="sireId0" onchange="handleChange(0, 'sire');"/><a target="_blank" id="sireImgLink0" href=""><img class="autoBig" height="38" src="" style="display: none;" id="sireImg0"/></a><div class="col-md-6 col-form-label-sm" id="sireReady0"></div>
+                <input class="form-control col-md-2" type="text" id="sireId0" onchange="handleChange(0, 'sire');"/><a target="_blank" id="sireImgLink0" href=""><img class="autoBig" height="38" src="" style="display: none;" id="sireImg0"/></a><div class="col-md-5 col-form-label-sm" id="sireReady0"></div>
             </div>
-            <button type="submit" class="btn btn-dark" onclick="selfBreed(0);" id="breedButton0">Breed Pair 0</button>&nbsp;
+            <button type="submit" class="btn btn-secondary" onclick="selfBreed(0);" id="breedButton0">Breed Pair 0</button>&nbsp;
             <button type="submit" class="btn btn-light" onclick="openCalc(0);" id="CalcButton0">Check KittyCalc</button>
             <br/>
             <br/>
@@ -422,6 +635,6 @@
         <br/>
         </div>
     </div>
-
-
+    <br/><br/><br/><br/><br/><br/><br/><br/><br/><br/>
+    </body>
 </html>
