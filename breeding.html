@@ -296,6 +296,9 @@
                                             return;
                                         }
                                         setMsg(id, "breedWithAuto Transaction ID: " + result, 'black');
+                                        $("#sireReady" + id).text("Just bred");
+                                        $("#matronReady" + id).text("Just bred");
+                                        setBreedStatus(id, "red");
                                     });
                                 }
                             }
