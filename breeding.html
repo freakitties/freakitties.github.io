@@ -115,7 +115,8 @@
                     //'<br/>' +
                     '<div class="row col-12 mb-1">' +
                     '<button class="btn btn-outline-light text-white" onclick="createForm()"><i class="fas fa-plus-circle"></i> Add a pair</button> &nbsp;' +
-                    '<button class="btn btn-outline-light text-white float-right" onclick="bookmark()"><i class="fas fa-bookmark"></i> Bookmark</button>' +
+                    '<button class="btn btn-outline-light text-white float-right" onclick="bookmark()"><i class="fas fa-bookmark"></i> Bookmark</button> &nbsp;' +
+                    '<button class="btn btn-light float-right" onclick="breedAll()"><i class="fas fa-globe"></i> Breed All</button>' +
                     '</div>';
                     $("#navContentLeft").append(buttons);
 
@@ -152,6 +153,12 @@
             reconstructBookmark(hash);
             $('[data-toggle="tooltip"]').tooltip();
         });
+
+        function breedAll() {
+            for (let i = 0; i < numPairs; i++) {
+                selfBreed(i);
+            }
+        }
 
         function reconstructBookmark(hash) {
             var pairs;
@@ -232,13 +239,13 @@
                             if (ready) {
                                 $("#sireReady" + id).text("");
                                 $("#matronReady" + id).text("");
-                                coreInstance.breedWithAuto(matronId, sireId, {from: web3.eth.accounts[0], value: autoBirthFee}, (err, result) => {
-                                    if (err) {
-                                        alert(err);
-                                        return;
-                                    }
-                                    setMsg(id, "breedWithAuto Transaction ID: " + result, 'black');
-                                });
+//                                coreInstance.breedWithAuto(matronId, sireId, {from: web3.eth.accounts[0], value: autoBirthFee}, (err, result) => {
+//                                    if (err) {
+//                                        alert(err);
+//                                        return;
+//                                    }
+//                                    setMsg(id, "breedWithAuto Transaction ID: " + result, 'black');
+//                                });
                             }
                         });
                     } else {
@@ -450,6 +457,32 @@
             $("#matronReady" + id).text("");
         }
 
+
+        function blocksToTime(numBlocks) {
+            let timeLeft = numBlocks * 15;
+            let out = "";
+            if (Math.floor(timeLeft / 86400) > 0) {
+                let days = Math.floor(timeLeft / 86400);
+                out += days + "d";
+                let hours = Math.floor(timeLeft % 86400 / 3600);
+                if (hours > 1) {
+                    out += " " + hours + "h";
+                }
+            } else if (Math.floor(timeLeft / 3600) > 0) {
+                let hours = Math.floor(timeLeft / 3600);
+                out += hours + "h";
+                let minutes = Math.floor(timeLeft % 3600 / 60);
+                if (minutes > 1) {
+                    out += " " + minutes + "m";
+                }
+            } else if (Math.floor(timeLeft / 60) > 0) {
+                out += minutes + "m";
+            } else {
+                out = "less than a minute";
+            }
+            return out;
+        }
+
         function checkCatCooldown(id, catId, type, currentBlock, callback) {
             if (type != "sire" && type != "matron") return;
             coreInstance.getKitty(catId, (err, result) => {
@@ -465,7 +498,8 @@
                     callback(true);
                 } else {
                     let diff = nextActionAt - currentBlock;
-                    $("#" + type + "Ready" + id).text("Ready to breed in " + diff + " blocks.");
+                    let timeLeft = blocksToTime(diff);
+                    $("#" + type + "Ready" + id).text("Ready to breed in " + diff + " blocks. (~" + timeLeft + ")");
                     callback(false);
                 }
             });
