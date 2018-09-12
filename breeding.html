@@ -321,12 +321,26 @@
 
             //This doesn't work right for early exclusives and fancies...both svg and png exist for those early cats.
             $("#matronImg" + index).attr("src", imgURL + matronId + ".svg");
-            $("#matronImg" + index).on("error", function() { this.src =  imgURL + matronId + ".png"; });
+            $("#matronImg" + index).on("error", function() {
+                var url = imgURL + matronId + ".png";
+                $.get(url).done(function() {
+                    this.src =  url;
+                }).fail(function() {
+                    return;
+                });
+            });
             $("#matronImg" + index).show();
             $("#matronImgLink" + index).attr("href", "https://www.cryptokitties.co/kitty/" + matronId);
 
             $("#sireImg" + index).attr("src", imgURL + sireId + ".svg");
-            $("#sireImg" + index).on("error", function() { this.src =  imgURL + sireId + ".png"; });
+            $("#sireImg" + index).on("error", function() {
+                var url = imgURL + sireId + ".png";
+                $.get(url).done(function() {
+                    this.src =  url;
+                }).fail(function() {
+                    return;
+                });
+            });
             $("#sireImg" + index).show();
             $("#sireImgLink" + index).attr("href", "https://www.cryptokitties.co/kitty/" + sireId);
 
@@ -358,7 +372,14 @@
 
             let imgURL = "https://storage.googleapis.com/ck-kitty-image/0x06012c8cf97bead5deae237070f9587f8e7a266d/" + kittyId;
             img.attr("src", imgURL + ".svg");
-            img.on("error", function() { this.src =  imgURL + ".png"; });
+            img.on("error", function() {
+                var url = imgURL + ".png";
+                $.get(url).done(function() {
+                    this.src = url;
+                }).fail(function() {
+                    return;
+                });
+            });
             imgLink.attr("href", "https://www.cryptokitties.co/kitty/" + kittyId);
             img.show();
         }
@@ -534,6 +555,7 @@
                     out += " " + minutes + "m";
                 }
             } else if (Math.floor(timeLeft / 60) > 0) {
+                let minutes = Math.floor(timeLeft / 60);
                 out += minutes + "m";
             } else {
                 out = "less than a minute";
