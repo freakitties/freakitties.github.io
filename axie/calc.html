@@ -199,7 +199,7 @@
         return {d: getColor(group.slice(20, 24), cls), r1: getColor(group.slice(24, 28), cls), r2: getColor(group.slice(28, 32), cls)};
     }
 
-    //hack
+    //hack. key: part name + " " + part type
     var partsClassMap = {};
     function getPartName(cls, part, region, binary) {
         let trait;
@@ -209,14 +209,13 @@
             } else if ("global" in binarytraits[cls][part][binary]) {
                 trait = binarytraits[cls][part][binary]["global"];
             } else {
-                setError("Unknown region for " + part + ": " + binary);
-                return;
+                trait = "UNKNOWN Regional " + cls + " " + part;
             }
         } else {
-            setError("Unknown trait: " + part + ", " + binary);
-            return;
+            trait = "UNKNOWN " + cls + " " + part;
         }
-        partsClassMap[trait] = cls;
+        //return part + "-" + trait.toLowerCase().replace(/\s/g, "-");
+        partsClassMap[trait + " " + part] = cls;
         return trait;
     }
 
@@ -351,7 +350,7 @@
                 out += '<div class="col-7 col-lg-6 mt-1 mb-1"><img width="35" src="colors/' + color + '-body.png"></div><div class="col-5 col-lg-6">' + percentage + "%</div>";
             } else {
 
-                out += '<div class="col-7 col-lg-6 mt-1 mb-1"><img width="18" src="' + images[partsClassMap[partName]] + '"> &nbsp;' + partName + '</div><div class="col-5 col-lg-6">' + percentage + "%</div>";
+                out += '<div class="col-7 col-lg-6 mt-1 mb-1"><img width="18" src="' + images[partsClassMap[partName + " " + trait]] + '"> &nbsp;' + partName + '</div><div class="col-5 col-lg-6">' + percentage + "%</div>";
             }
             out += '</div>';
         }
