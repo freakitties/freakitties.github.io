@@ -25,9 +25,11 @@ Live site: [https://freakitties.github.io/](https://freakitties.github.io/)
 ## Axie Infinity Tools
 <!-- [Adopt an Axie!](https://axieinfinity.com/adopt-axies?r=CHl5UkYrgttjndv97yqxcY_6dnY) -->
 
-[Kunai Attack! (minigame)](pixi/kunaiattack.html)
+[Kunai Attack! (minigame)](/axie/pixi/kunaiattack.html)
 
 [Preliminary Gene Browser with search](/axie/jeans.html)
+
+[Preliminary Axie Trait Calculator ](/axie/calc.html)
 
 [View the genes of Axies currently on the market (1st 100 cheapest only)](/axie/geneMarket.html)
 
