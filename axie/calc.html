@@ -278,10 +278,16 @@
         });
         let sireId = parseInt(getQueryParameter("sireId"));
         let matronId = parseInt(getQueryParameter("matronId"));
-        if (sireId && matronId) {
-            $("#sireId").val(sireId);
-            $("#matronId").val(matronId);
-            calc(sireId, matronId);
+        if (sireId) {
+            if (matronId) {
+                $("#sireId").val(sireId);
+                $("#matronId").val(matronId);
+                calc(sireId, matronId);
+            } else {
+                //act as gene reader
+                $("#sireId").val(sireId);
+                calc(sireId, sireId);
+            }
         }
     }
 
@@ -328,7 +334,11 @@
             sorted.push([p, probs[p]]);
         }
         sorted.sort(function(a, b) {
-            return b[1] - a[1];
+            if (parseInt(a[1])) {
+                return b[1] - a[1];
+            } else {
+                return a[1].localeCompare(b[1]);
+            }
         });
 
         let capitalized = trait[0].toUpperCase() + weakEscape(trait.substr(1));
@@ -344,17 +354,34 @@
             let percentage = sorted[i][1];
             if (trait == "pattern") {
                 let pattern = patternMap[sorted[i][0]];
-                out += '<div class="col-7 col-lg-6 mt-1 mb-2"><img height="40" class="changebg" src="colors/' + pattern + '-pattern.png"></div><div class="col-5 col-lg-6">' + percentage + "%</div>";
+                out += '<div class="col-7 col-lg-6 mt-1 mb-2"><img height="40" class="changebg" src="colors/' + pattern + '-pattern.png"></div><div class="col-5 col-lg-6">' + percentage + (parseInt(percentage) ? "%" : "") + "</div>";
             } else if (trait == "color") {
                 let color = sorted[i][0];
-                out += '<div class="col-7 col-lg-6 mt-1 mb-1"><img width="35" src="colors/' + color + '-body.png"></div><div class="col-5 col-lg-6">' + percentage + "%</div>";
+                out += '<div class="col-7 col-lg-6 mt-1 mb-1"><img width="35" src="colors/' + color + '-body.png"></div><div class="col-5 col-lg-6">' + percentage + (parseInt(percentage) ? "%" : "") + "</div>";
             } else {
 
-                out += '<div class="col-7 col-lg-6 mt-1 mb-1"><img width="18" src="' + images[partsClassMap[partName + " " + trait]] + '"> &nbsp;' + partName + '</div><div class="col-5 col-lg-6">' + percentage + "%</div>";
+                out += '<div class="col-7 col-lg-6 mt-1 mb-1"><img width="18" src="' + images[partsClassMap[partName + " " + trait]] + '"> &nbsp;' + partName + '</div><div class="col-5 col-lg-6">' + percentage + (parseInt(percentage) ? "%" : "") + "</div>";
             }
             out += '</div>';
         }
         $("#" + parent).append(out + "</div><br>");
+    }
+
+    function traitsToProb(traits) {
+        let temp = {};
+        temp[traits.d] = "D";
+        if (traits.r1 in temp) {
+            temp[traits.d] = "D, R1";
+        } else {
+            temp[traits.r1] = "R1";
+        }
+        if (traits.r2 in temp) {
+            temp[traits.r2] += ", R2";
+        } else {
+            temp[traits.r2] = "R2";
+        }
+
+        return temp;
     }
 
     function calc(sireId, matronId) {
@@ -371,15 +398,25 @@
                 let sireTraits = getTraits(sire.genes);
                 let matronTraits = getTraits(matron.genes);
 
-                let patternProbs = sumProbs(sireTraits.pattern, matronTraits.pattern);
-                let colorProbs = sumProbs(sireTraits.color, matronTraits.color);
-                let eyesProbs = sumProbs(sireTraits.eyes, matronTraits.eyes);
-                let mouthProbs = sumProbs(sireTraits.mouth, matronTraits.mouth);
-                let earsProbs = sumProbs(sireTraits.ears, matronTraits.ears);
-                let hornProbs = sumProbs(sireTraits.horn, matronTraits.horn);
-                let backProbs = sumProbs(sireTraits.back, matronTraits.back);
-                let tailProbs = sumProbs(sireTraits.tail, matronTraits.tail);
-
+                if (sireId == matronId) {
+                    var patternProbs = traitsToProb(sireTraits.pattern);
+                    var colorProbs = traitsToProb(sireTraits.color);
+                    var eyesProbs = traitsToProb(sireTraits.eyes);
+                    var mouthProbs = traitsToProb(sireTraits.mouth);
+                    var earsProbs = traitsToProb(sireTraits.ears);
+                    var hornProbs = traitsToProb(sireTraits.horn);
+                    var backProbs = traitsToProb(sireTraits.back);
+                    var tailProbs = traitsToProb(sireTraits.tail);
+                } else {
+                    var patternProbs = sumProbs(sireTraits.pattern, matronTraits.pattern);
+                    var colorProbs = sumProbs(sireTraits.color, matronTraits.color);
+                    var eyesProbs = sumProbs(sireTraits.eyes, matronTraits.eyes);
+                    var mouthProbs = sumProbs(sireTraits.mouth, matronTraits.mouth);
+                    var earsProbs = sumProbs(sireTraits.ears, matronTraits.ears);
+                    var hornProbs = sumProbs(sireTraits.horn, matronTraits.horn);
+                    var backProbs = sumProbs(sireTraits.back, matronTraits.back);
+                    var tailProbs = sumProbs(sireTraits.tail, matronTraits.tail);
+                }
 
                 renderProbs("eyes", eyesProbs, "row1");
                 $("#row1").append('<div class="col-1"></div>');
