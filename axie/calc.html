@@ -337,7 +337,7 @@
         if (trait in ["pattern", "color"]) {
             '<div class="card-header"><div class="col-12">' + capitalized + "</div></div>";
         } else {
-            out += '<div class="card-header row"><div class="col-5">' + capitalized + '</div><div class="col-6">' + getTypeImage(trait) + '</div></div>';
+            out += '<div class="card-header row"><div class="col-7 col-lg-6">' + capitalized + '</div><div class="col-5 col-lg-6">' + getTypeImage(trait) + '</div></div>';
         }
         for(let i in sorted) {
             out += '<div class="row mb-2">';
@@ -345,13 +345,13 @@
             let percentage = sorted[i][1];
             if (trait == "pattern") {
                 let pattern = patternMap[sorted[i][0]];
-                out += '<div class="col-5 mt-1 mb-2"><img height="40" class="changebg" src="colors/' + pattern + '-pattern.png"></div><div class="col-6">' + percentage + "%</div>";
+                out += '<div class="col-7 col-lg-6 mt-1 mb-2"><img height="40" class="changebg" src="colors/' + pattern + '-pattern.png"></div><div class="col-5 col-lg-6">' + percentage + "%</div>";
             } else if (trait == "color") {
                 let color = sorted[i][0];
-                out += '<div class="col-5 mt-1 mb-1"><img width="35" src="colors/' + color + '-body.png"></div><div class="col-6">' + percentage + "%</div>";
+                out += '<div class="col-7 col-lg-6 mt-1 mb-1"><img width="35" src="colors/' + color + '-body.png"></div><div class="col-5 col-lg-6">' + percentage + "%</div>";
             } else {
 
-                out += '<div class="col-5 mt-1 mb-1"><img width="18" src="' + images[partsClassMap[partName]] + '"> &nbsp;' + partName + '</div><div class="col-6">' + percentage + "%</div>";
+                out += '<div class="col-7 col-lg-6 mt-1 mb-1"><img width="18" src="' + images[partsClassMap[partName]] + '"> &nbsp;' + partName + '</div><div class="col-5 col-lg-6">' + percentage + "%</div>";
             }
             out += '</div>';
         }
