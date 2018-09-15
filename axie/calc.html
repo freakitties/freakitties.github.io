@@ -267,6 +267,14 @@
         return '<div class ="circle-' + type + '"></div>';
     }
 
+    function setImage(tag, axieID) {
+        $.get("https://api.axieinfinity.com/v1/axies/" + axieID, function(data) {
+            var img = $("#" + tag);
+            img.attr('src', data.figure.static.idle);
+            img.height = 100;
+        });
+    }
+
     function init() {
         $.ajax({
             url: "../header.html",
@@ -282,10 +290,13 @@
             if (matronId) {
                 $("#sireId").val(sireId);
                 $("#matronId").val(matronId);
+                setImage("sireImg", sireId);
+                setImage("matronImg", matronId);
                 calc(sireId, matronId);
             } else {
                 //act as gene reader
                 $("#sireId").val(sireId);
+                setImage("sireImg", sireId);
                 calc(sireId, sireId);
             }
         }
@@ -439,17 +450,22 @@
     <div id="headerDiv"></div><br/>
     <div id="mainDiv" class="container">
         <form class="" action="">
-            <div class="form-group col-4">
-                <label for="sireId">Axie Dad ID</label>
-                <input type="text" class="form-control" id="sireId" name="sireId" placeholder="Axie Dad ID">
+            <div class="row">
+                <div class="form-group col-4">
+                    <img src="https://axieinfinity.com/assets/images/cddcc89e2dd3e1dd023c2a1e5c12e28f.png" height="100" id="sireImg" class="rounded-circle mb-2"><br>
+                    <label for="sireId">Axie Dad ID</label>
+                    <input type="text" class="form-control" id="sireId" name="sireId" placeholder="Axie Dad ID">
+                </div>
+                <div class="form-group col-4">
+                    <img src="https://axieinfinity.com/assets/images/cddcc89e2dd3e1dd023c2a1e5c12e28f.png" height="100" id="matronImg" class="rounded-circle mb-2"><br>
+                    <label for="matronId">Axie Mom ID</label>
+                    <input type="text" class="form-control" id="matronId" name="matronId" placeholder="Axie Mom ID">
+                </div>
             </div>
-            <div class="form-group col-4">
-                <label for="matronId">Axie Mom ID</label>
-                <input type="text" class="form-control" id="matronId" name="matronId" placeholder="Axie Mom ID">
-            </div>
-            <div class="pl-3">
+            <div class="">
                 <input type="submit" value="Calculate" class="btn btn-primary" id="calcButton"></input>
             </div>
+
         </form>
         <br>
         <div id="result" class="ml-3">
