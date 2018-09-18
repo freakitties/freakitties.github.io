@@ -371,7 +371,7 @@
                 out += '<div class="col-7 col-lg-6 mt-1 mb-1"><img width="35" src="colors/' + color + '-body.png"></div><div class="col-5 col-lg-6">' + percentage + (parseInt(percentage) ? "%" : "") + "</div>";
             } else {
 
-                out += '<div class="col-7 col-lg-6 mt-1 mb-1"><img width="18" src="' + images[partsClassMap[partName + " " + trait]] + '"> &nbsp;' + partName + '</div><div class="col-5 col-lg-6">' + percentage + (parseInt(percentage) ? "%" : "") + "</div>";
+                out += '<div class="col-7 col-lg-6 mt-1 mb-1"><img width="18" src="' + images[partsClassMap[sorted[i][0] + " " + trait]] + '"> &nbsp;' + partName + '</div><div class="col-5 col-lg-6">' + percentage + (parseInt(percentage) ? "%" : "") + "</div>";
             }
             out += '</div>';
         }
