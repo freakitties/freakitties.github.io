@@ -20,6 +20,7 @@ Live site: [https://freakitties.github.io/](https://freakitties.github.io/)
 [Check if 2 cats are breed-able](/ck/breedable.html)
 
 
+
 [Blog about a bug in the CK contract: Even Digital Cats Have Fleas](https://medium.com/@freakitties/even-digital-cats-have-fleas-bugs-2ca54c018722)
 
 ---
