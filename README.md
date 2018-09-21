@@ -19,6 +19,9 @@ Live site: [https://freakitties.github.io/](https://freakitties.github.io/)
 
 [Check if 2 cats are breed-able](/ck/breedable.html)
 
+
+[Blog about a bug in the CK contract: Even Digital Cats Have Fleas](https://medium.com/@freakitties/even-digital-cats-have-fleas-bugs-2ca54c018722)
+
 ---
 
 
@@ -48,6 +51,7 @@ Live site: [https://freakitties.github.io/](https://freakitties.github.io/)
 [Table of all Axies and their stats](/axie/stats.html)
 
 [Gene breakdown of Axies by class and trait](/axie/genes.html)
+
 
 [Blog about the gene breakdown](/axie/blog/2018-04-05_Sequencing-the-Axie-Genome-572f147c45d9.html)
 
