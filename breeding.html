@@ -185,7 +185,11 @@
 
         function breedAll(checkOnly=false) {
             for (let i = 0; i <= numPairs; i++) {
-                selfBreed(i, checkOnly);
+                var matronId = $("#matronId" + i).val().trim();
+                var sireId = $("#sireId" + i).val().trim();
+                if (matronId && sireId) {
+                    selfBreed(i, checkOnly);
+                }
             }
         }
 
