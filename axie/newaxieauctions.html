@@ -240,15 +240,15 @@
     }
 
     function renderPureness(data, type, row, meta) {
-        if (row[4] instanceof Array) {
+        if (row[5] instanceof Array) {
             let numBeast = 0;
             let numAquatic = 0;
             let numPlant = 0;
             let numBird = 0;
             let numBug = 0;
             let numReptile = 0;
-            for (let i in row[4]) {
-                switch (row[4][i].class) {
+            for (let i in row[5]) {
+                switch (row[5][i].class) {
                     case "beast":
                         numBeast++;
                         break;
