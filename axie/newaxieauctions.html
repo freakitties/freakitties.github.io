@@ -209,6 +209,17 @@
         return data;
     }
 
+    function renderTag(data, type, row, meta) {
+        if (data == null) {
+            return "-";
+        } else if (data.startsWith("O")) {
+            return "O";
+        } else if (data == "MEO Corp") {
+            return "M";
+        }
+        return "?";
+    }
+
     function renderAxie(data, type, row, meta) {
         if (type == "display") {
             let axieID = parseInt(data);
@@ -329,6 +340,7 @@
             columns: [
                 {title: "Date Time", render: renderDate, type: "date" },
                 {title: "Axie", render: renderAxie},
+                {title: "Tag", render: renderTag},
                 {title: "Exp"},
                 {title: "Stage", render: renderStage},
                 {title: "Mystics", render: renderMystics},
@@ -400,9 +412,6 @@
                     processEvents(error, result, true);
                 }
             });
-
-
-
         });
 
 
@@ -416,10 +425,11 @@
 
     });
 
-    function addRow(id, exp, stage, parts, startPrice, endPrice, duration, seller, date, blockNumber, axie) {
+    function addRow(id, tag, exp, stage, parts, startPrice, endPrice, duration, seller, date, blockNumber, axie) {
         axieTable.row.add( [
             date,
             id,
+            tag,
             exp,
             stage,
             parts,
@@ -463,7 +473,7 @@
         added.push({id: id, blockNumber: blockNumber, date: date, startPrice: startPrice});
         $.get("https://axieinfinity.com/api/axies/" + id, function(data) {
             let axie = data;
-            addRow(id, axie.exp, axie.stage, axie.parts, startPrice/1e18, endPrice/1e18, duration, seller, date, blockNumber, axie);
+            addRow(id, axie.title, axie.exp, axie.stage, axie.parts, startPrice/1e18, endPrice/1e18, duration, seller, date, blockNumber, axie);
         });
 
     }
@@ -528,6 +538,7 @@
       <tr>
         <th scope="col">Date Time</th>
         <th scope="col">Axie</th>
+        <th scope="col">Tag</th>
         <th scope="col">Exp</th>
         <th scope="col">Mystics</th>
         <th scope="col">Pureness</th>
@@ -542,6 +553,7 @@
     <tbody id="tableBody">
       <tr>
         <td id="nodatayet">No new data yet. Waiting to scan the blockchain.</td>
+        <td></td>
         <td></td>
         <td></td>
         <td></td>
