@@ -290,7 +290,12 @@
         let bin = data.slice(4, 8);
         if(type === 'display'){
             let pattern = patternMap[bin];
-            return '<b><div class="text-primary binary">' + bin +  "(" + parseInt(bin, 2) + ')</div><img height="25" class="changebg autoBig" src="colors/' + pattern + '-pattern.png"></b>';
+            if (pattern) {
+                return '<b><div class="text-primary binary">' + bin +  "(" + parseInt(bin, 2) + ')</div><img height="25" class="changebg autoBig" src="colors/' + pattern + '-pattern.png"></b>';
+            }
+            else {
+                return '<b><div class="text-primary binary">' + bin +  "(" + parseInt(bin, 2) + ')</div>?</b>';
+            }
         }
         return bin;
     }
@@ -307,7 +312,12 @@
         let bin = data.slice(10, 14);
         if(type === 'display'){
             let pattern = patternMap[bin];
-            return '<div class="binary">' + bin +  "(" + parseInt(bin, 2) + ')</div><img height="25" class="changebg autoBig" src="colors/' + pattern + '-pattern.png">';
+            if (pattern) {
+                return '<div class="binary">' + bin +  "(" + parseInt(bin, 2) + ')</div><img height="25" class="changebg autoBig" src="colors/' + pattern + '-pattern.png">';
+            }
+            else {
+                return '<div class="binary">' + bin +  "(" + parseInt(bin, 2) + ')</div>?';
+            }
         }
         return bin;
     }
@@ -324,7 +334,12 @@
         let bin = data.slice(16, 20);
         if(type === 'display'){
             let pattern = patternMap[bin];
-            return '<div class="binary">' + bin +  "(" + parseInt(bin, 2) + ')</div><img height="25" class="changebg autoBig" src="colors/' + pattern + '-pattern.png">';
+            if (pattern) {
+                return '<div class="binary">' + bin +  "(" + parseInt(bin, 2) + ')</div><img height="25" class="changebg autoBig" src="colors/' + pattern + '-pattern.png">';
+            }
+            else {
+                return '<div class="binary">' + bin +  "(" + parseInt(bin, 2) + ')</div>?';
+            }
         }
         return bin;
     }
