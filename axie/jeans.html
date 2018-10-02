@@ -243,7 +243,7 @@
 
 
     function renderGroup04(data, type, row, meta) {
-        let bin = data.slice(13, 16);
+        let bin = data.slice(13, 15);
         if(type === 'display'){
             return '<div class="binary">'+ bin + '</div>';
         }
@@ -252,17 +252,19 @@
 
     //tag (Origin, AGAMOGENESIS). TODO: figure how many bits this is. for now just using 2bits.
     function renderGroup05(data, type, row, meta) {
-        let bin = data.slice(16, 18);
+        let bin = data.slice(15, 18);
         if(type === 'display'){
             let tag = "?";
-            if (bin == "00") {
+            if (bin == "000") {
                 tag = "Normal";
-            } else if (bin == "01") {
+            } else if (bin == "001") {
                 tag = "Origin";
-            } else if (bin == "10") {
+            } else if (bin == "010") {
                 tag = "Agamogenesis";
-            } else if (bin == "11") {
+            } else if (bin == "011") {
                 tag = "Meo Corp";
+            } else if (bin == "100") {
+                tag = "Meo Corp II";
             }
             return '<div class="binary">' + bin + '</div>' + tag;
         }
