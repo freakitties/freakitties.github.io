@@ -35,7 +35,7 @@
         $.get(url, function(data, status, xhr) {
             for (let i in data.axies) {
                 if (data.axies[i].stage < 3) continue;
-                axies[data.axies[i].id] = {"genes": genesToBin(new web3.BigNumber(data.axies[i].genes)), "owner": data.axies[i].owner, "class": data.class, "exp": data.axies[i].exp, "price": data.axies[i].auction.buyNowPrice/1e18};
+                axies[data.axies[i].id] = {"genes": genesToBin(new BigNumber(data.axies[i].genes)), "owner": data.axies[i].owner, "class": data.class, "exp": data.axies[i].exp, "price": data.axies[i].auction.buyNowPrice/1e18};
             }
             if (offset + 12 < MAX_AXIES) {
                 getMarketAxies(offset + 12, callback);
@@ -48,7 +48,6 @@
     }
 
     function init() {
-        clearInterval(initID);
         $.ajax({
             url: "../header.html",
             cache: false,
@@ -58,18 +57,15 @@
 
                 if (typeof web3 == 'undefined') {
                     $("#account").text("Web3 enabled browser not detected. Use the search box.");
-                    return;
-                }
-                if (typeof web3.eth.accounts[0] == "undefined") {
-                    $("#account").text("Can't detect your account. Unlock your wallet or try reloading the page and waiting a few seconds.");
-                    return;
                 } else {
-                    $("#account").text("Your Account: " + web3.eth.accounts[0]);
+                    if (typeof web3.eth.accounts[0] == "undefined") {
+                        $("#account").text("Can't detect your account. Unlock your wallet or try reloading the page and waiting a few seconds.");
+                    } else {
+                        $("#account").text("Your Account: " + web3.eth.accounts[0]);
+                    }
                 }
-
             }
         });
-        //getAxies(0, web3.eth.accounts[0], initData);
         getMarketAxies(0, function(initTable){
 
             let owner = columns.pop();
@@ -77,22 +73,20 @@
             columns.push(owner);
             initData(initTable);
             axieTable.order([83, 'asc']).draw();
-            //axieTable.columns( [85] ).visible( true );
-            //axieTable.columns( 'title:price' ).visible( true );
         });
     }
 
-    var initID;
     var traitMapping = binarytraits;
+    var BigNumber;
     window.addEventListener('load', async () => {
         // Modern dapp browsers...
         if (window.ethereum) {
             window.web3 = new Web3(ethereum);
+            BigNumber = web3.BigNumber;
             try {
                 // Request account access if needed
                 await ethereum.enable();
                 console.log("modern dapp browser");
-                init();
             } catch (error) {
                 // User denied account access...
                 console.log("User denied ethereum account access.")
@@ -101,14 +95,18 @@
         // Legacy dapp browsers...
         else if (window.web3) {
             window.web3 = new Web3(web3.currentProvider);
+            BigNumber = web3.BigNumber;
             // Acccounts always exposed
             console.log("legacy dapp browser");
-            initID = setInterval(init, 250);
         }
         // Non-dapp browsers...
         else {
-            console.log('Non-Ethereum browser detected. You should consider trying MetaMask!');
+            console.log('Non-Ethereum browser detected.');
+            //since we are using our own web3.min.js
+            let w3 = new Web3();
+            BigNumber = w3.BigNumber;
         }
+        init();
     });
 
     function refreshData() {
@@ -155,7 +153,7 @@
             <thead>
                 <tr>
                     <th rowspan="2">ID</th>
-                    <th colspan="7">Group 0 (Class, Region, Origin, Misc)</th>
+                    <th colspan="5">Group 0 (Class, Region, Origin, Misc)</th>
                     <th colspan="7">Group 1 (Pattern and Color)</th>
                     <th colspan="10">Group 2 (Eyes)</th>
                     <th colspan="10">Group 3 (Mouth)</th>
@@ -166,8 +164,6 @@
                     <th colspan="10">Additional Info</th>
                 </tr>
                 <tr>
-                    <th></th>
-                    <th></th>
                     <th></th>
                     <th></th>
                     <th></th>
