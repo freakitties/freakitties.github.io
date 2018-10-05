@@ -1,5 +1,7 @@
-    var classGeneMap = {"0000": "beast", "0001": "bug", "0010": "bird", "0011": "plant", "0100": "aquatic", "0101": "reptile", "1000": "???", "1001": "???", "1010": "???"};
-    var typeOrder = {"eyes": 2, "mouth": 3, "ears": 4, "horn": 5, "back": 6, "tail": 7};
+    const classGeneMap = {"0000": "beast", "0001": "bug", "0010": "bird", "0011": "plant", "0100": "aquatic", "0101": "reptile", "1000": "???", "1001": "???", "1010": "???"};
+    const typeOrder = {"eyes": 2, "mouth": 3, "ears": 4, "horn": 5, "back": 6, "tail": 7};
+    const regionGeneMap = {"00000": "global", "00001": "japan"};
+    const tagGeneMap ={"00000": "Normal", "00001": "Origin", "00100": "Agamogenesis", "00011": "Meo Corp", "00100": "Meo Corp II"}
     var hash = window.location.hash.substr(1);
 
     function getClassFromGenes(id) {
@@ -59,54 +61,33 @@
         return bin;
     }
 
-    function renderGroup02(data, type, row, meta) {
-        let bin = data.slice(8, 12);
+    //XXX: assuming 5 bits
+    function renderRegion(data, type, row, meta) {
+        let bin = data.slice(8, 13);
         if(type === 'display'){
-            return '<div class="binary">' + bin + '</div>';
+            let region = "?";
+            if (bin in regionGeneMap) {
+                region = regionGeneMap[bin];
+            }
+            return '<div class="binary">' + bin + "</div>" + region;
         }
         return bin;
     }
 
-    //region
-    function renderGroup03(data, type, row, meta) {
-        let bin = data.slice(12, 13);
-        if(type === 'display'){
-            return '<div class="binary">' + bin + "</div>" + regionMap[bin];
-        }
-        return bin;
-    }
-
-
-    function renderGroup04(data, type, row, meta) {
-        let bin = data.slice(13, 15);
-        if(type === 'display'){
-            return '<div class="binary">'+ bin + '</div>';
-        }
-        return bin;
-    }
-
-    //tag (Origin, AGAMOGENESIS). TODO: figure how many bits this is. for now just using 2bits.
-    function renderGroup05(data, type, row, meta) {
-        let bin = data.slice(15, 18);
+    //XXX: assuming 5 bits
+    function renderTag(data, type, row, meta) {
+        let bin = data.slice(13, 18);
         if(type === 'display'){
             let tag = "?";
-            if (bin == "000") {
-                tag = "Normal";
-            } else if (bin == "001") {
-                tag = "Origin";
-            } else if (bin == "010") {
-                tag = "Agamogenesis";
-            } else if (bin == "011") {
-                tag = "Meo Corp";
-            } else if (bin == "100") {
-                tag = "Meo Corp II";
+            if (bin in tagGeneMap) {
+                tag = tagGeneMap[bin];
             }
             return '<div class="binary">' + bin + '</div>' + tag;
         }
         return bin;
     }
 
-    function renderGroup06(data, type, row, meta) {
+    function renderGroup04(data, type, row, meta) {
         let bin = data.slice(18, 32);
         if(type === 'display'){
             return '<div class="binary">' + bin + '</div>';
@@ -242,9 +223,9 @@
     }
 
     function getRegion(row) {
-        let rBit = row.group0.slice(12,13);
-        if (rBit in regionMap) {
-            return regionMap[rBit];
+        let rBit = row.group0.slice(8,13);
+        if (rBit in regionGeneMap) {
+            return regionGeneMap[rBit];
         } else {
             console.log("unknown region");
             return null;
@@ -252,7 +233,6 @@
 
     }
 
-    var regionMap = {"0": "global", "1": "japan"};
     //TODO: fix firstSix. should just pass in mystic and trait class
     function getTraitName(row, firstSix, traitBinary, type, checkMystic = false) {
 
@@ -421,11 +401,11 @@
 
                 {title: "Class", data: "group0", render: renderGroup0, searchable: false},
                 {title: "0.1", data: "group0", render: renderGroup01, searchable: false},
-                {title: "0.2", data: "group0", render: renderGroup02, searchable: false},
-                {title: "Region", data: "group0", render: renderGroup03, searchable: false},
+//                {title: "0.2", data: "group0", render: renderGroup02, searchable: false},
+                {title: "Region", data: "group0", render: renderRegion, searchable: false},
+//                {title: "0.4", data: "group0", render: renderGroup04, searchable: false},
+                {title: "Tag", data: "group0", render: renderTag, searchable: false},
                 {title: "0.4", data: "group0", render: renderGroup04, searchable: false},
-                {title: "Tag", data: "group0", render: renderGroup05, searchable: false},
-                {title: "0.6", data: "group0", render: renderGroup06, searchable: false},
 
                 {title: "1.0", data: "group1", render: renderGroup1, searchable: false},
                 {title: "Pattern", data: "group1", render: renderPatternD, searchable: false},
