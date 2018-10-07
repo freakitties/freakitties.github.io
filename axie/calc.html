@@ -161,11 +161,11 @@
         alert(msg);
     }
 
-    var regionMap = {"0": "global", "1": "japan"};
+    const regionGeneMap = {"00000": "global", "00001": "japan"};
     function getRegionFromGroup(group) {
-        let rBit = group.slice(12,13);
-        if (rBit in regionMap) {
-            return regionMap[rBit];
+        let regionBin = group.slice(8,13);
+        if (regionBin in regionGeneMap) {
+            return regionGeneMap[regionBin];
         }
         return "Unknown Region";
     }
