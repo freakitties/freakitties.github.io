@@ -180,7 +180,7 @@
 
     function getPatternsFromGroup(group) {
         //patterns could be 6 bits. use 4 for now
-        return {d: group.slice(4, 8), r1: group.slice(10, 14), r2: group.slice(16, 20)};
+        return {d: group.slice(2, 8), r1: group.slice(8, 14), r2: group.slice(14, 20)};
     }
 
     function getColor(bin, cls) {
@@ -338,7 +338,7 @@
         return probs;
     }
 
-    var patternMap = {"0001": "greyfuzzy","0010": "(0, 0, 64, 130)", "0011": "(0, 0, 61, 107)", "0100": "(0, 0, 82, 74)", "0101": "(0, 0, 66, 101)", "0110": "(0, 0, 51, 134)", "0111": "(0, 0, 57, 117)", "1000": "(0, 0, 59, 67)", "1001": "(0, 0, 51, 104)", "1010": "(0, 0, 63, 131)", "1011": "(0, 0, 73, 153)", "1100": "(0, 0, 78, 127)", "1101": "(0, 0, 63, 99)", "1110": "(0, 0, 65, 55)"};
+    var patternMap = {"000001": "greyfuzzy","000010": "(0, 0, 64, 130)", "000011": "(0, 0, 61, 107)", "000100": "(0, 0, 82, 74)", "000101": "(0, 0, 66, 101)", "000110": "(0, 0, 51, 134)", "000111": "(0, 0, 57, 117)", "001000": "(0, 0, 59, 67)", "001001": "(0, 0, 51, 104)", "001010": "(0, 0, 63, 131)", "001011": "(0, 0, 73, 153)", "001100": "(0, 0, 78, 127)", "001101": "(0, 0, 63, 99)", "001110": "(0, 0, 65, 55)"};
     function renderProbs(trait, probs, parent) {
         let sorted = [];
         for (let p in probs) {
@@ -365,7 +365,11 @@
             let percentage = sorted[i][1];
             if (trait == "pattern") {
                 let pattern = patternMap[sorted[i][0]];
-                out += '<div class="col-7 col-lg-6 mt-1 mb-2"><img height="40" class="changebg" src="colors/' + pattern + '-pattern.png"></div><div class="col-5 col-lg-6">' + percentage + (parseInt(percentage) ? "%" : "") + "</div>";
+                if (pattern) {
+                    out += '<div class="col-7 col-lg-6 mt-1 mb-2"><img height="40" class="changebg" src="colors/' + pattern + '-pattern.png"></div><div class="col-5 col-lg-6">' + percentage + (parseInt(percentage) ? "%" : "") + "</div>";
+                } else {
+                    out += '<div class="col-7 col-lg-6 mt-1 mb-2">?</div><div class="col-5 col-lg-6">' + percentage + (parseInt(percentage) ? "%" : "") + "</div>";
+                }
             } else if (trait == "color") {
                 let color = sorted[i][0];
                 out += '<div class="col-7 col-lg-6 mt-1 mb-1"><img width="35" src="colors/' + color + '-body.png"></div><div class="col-5 col-lg-6">' + percentage + (parseInt(percentage) ? "%" : "") + "</div>";
