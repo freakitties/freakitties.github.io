@@ -62,7 +62,9 @@
         });
     }
 
+    var intID;
     function init() {
+        clearInterval(intID);
         $.ajax({
             url: "../header.html",
             cache: false,
@@ -116,7 +118,9 @@
             let w3 = new Web3();
             BigNumber = w3.BigNumber;
         }
-        init();
+        //defer init until accounts are loaded
+        intID = setInterval(init, 250);
+        //init();
     });
 
     function refreshData() {
