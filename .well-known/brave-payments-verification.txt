@@ -1,4 +1,4 @@
 This is a Brave Payments publisher verification file.
 
 Domain: freakitties.github.io
-Token: ddfef3200ca8286a57b59108690f0b7f679c398dd54b0efdef51b12f355af322
+Token: 19b0ddff83a226712018b10ef54de255d93cba6c57b2fca62617530f52c34988
