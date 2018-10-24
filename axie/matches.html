@@ -193,6 +193,7 @@ function getMatches(initTable) {
             alert("no matches found for this account");
             return;
         } else if (matches[matches.length -1 ].id <= lastMatchId) {
+            $("#loading").text("Done loading battles. Now loading axies.");
             getAxieDetails(initTable);
             return;
         }
@@ -202,12 +203,15 @@ function getMatches(initTable) {
             //slow synchronous requests
             function loop(page, numPages) {
                 if (page <= numPages) {
+                    $("#loading").text("Requesting page: " + page + "/" + numPages);
                     $.getJSON({url: "https://api.axieinfinity.com/v1/battle/history/matches?page=" + page + MATCH_COUNT_PARAM, headers: headers}, function(moreMatches) {
 
                         addMatches(moreMatches.matches);
                         if (Object.keys(allMatches).length == data.total) {
+                            $("#loading").text("Done loading battles. Now loading axies.");
                             getAxieDetails(initTable);
                         } else if (moreMatches.matches[moreMatches.matches.length -1 ].id <= lastMatchId) {
+                            $("#loading").text("Done loading battles (the rest is cached). Now loading axies.");
                             getAxieDetails(initTable);
                         } else {
                             loop(page + 1, numPages);
@@ -215,11 +219,13 @@ function getMatches(initTable) {
                     });
                 } else {
                     console.log("finished requesting matches");
+                    $("#loading").text("Done loading battles. Now loading axies.");
                     getAxieDetails(initTable);
                 }
             }
             loop(2, numPages);
         } else {
+            $("#loading").text("Done loading battles. Now loading axies.");
             getAxieDetails(initTable);
         }
     });
@@ -242,6 +248,8 @@ function getAxieDetails(cb) {
                             axies[id].activityPoint = points[i].activityPoint;
                         }
                         localStorage.setItem(storageKey, JSON.stringify({allTeams: allTeams, allMatches, axies: axies, lastMatchId: newLastMatchId}));
+                        $("#loading").text("Done.")
+                        $("#loading").fadeOut(2000);
                         cb();
                     });
 
@@ -279,40 +287,24 @@ function weakEscape(str) {
 
 function renderWinsLosses(data, type, full) {
     //return full.wins + "/" + full.losses;
-    return (full.wins / full.losses).toFixed(4);
+    let wl = (full.wins / full.losses).toFixed(4);
+    let percentage = full.wins/(full.wins + full.losses) * 100;
+    return wl + "<br>(" + percentage.toFixed(2) + "%)";
 }
 
 function renderTeam(data, type, full) {
-    /*
     let key = data.join("_");
     let out;
     if (key in battleTeamsDict) {
-        out = '<a target="_blank" href="https://axieinfinity.com/team/' + weakEscape(battleTeamsDict[key].teamId) + '">' + weakEscape(battleTeamsDict[key].teamId) + "</a>: " + weakEscape(battleTeamsDict[key].name);
-        return out;
-        //out += "<br>";
-        //out += '<input type="checkbox" class="form-check-input" id="' + weakEscape(battleTeamsDict[key].teamId) + '">';
-        //return out;
-    }
-    return "No active team";
-    */
-    let key = data.join("_");
-    let out;
-    //if(type === 'display') {
-        if (key in battleTeamsDict) {
-            out = '<a target="_blank" href="https://axieinfinity.com/team/' + weakEscape(battleTeamsDict[key].teamId) + '">';
-            if (battleTeamsDict[key].name.trim() != "") {
-                out += weakEscape(battleTeamsDict[key].name);
-            } else {
-                out += "&lt;EMPTY NAME&gt;";
-            }
-            out += "</a>";
-            return out;
-                //out += "<br>";
-            //out += '<div class="checkbox"><input type="checkbox" class="dt-checkboxes form-check-input" id="' + weakEscape(battleTeamsDict[key].teamId) + '"></div>';
-            //return out;
-                //data = '<div class="checkbox"><input type="checkbox" class="dt-checkboxes"><label></label></div>';
+        out = '<a target="_blank" href="https://axieinfinity.com/team/' + weakEscape(battleTeamsDict[key].teamId) + '">';
+        if (battleTeamsDict[key].name.trim() != "") {
+            out += weakEscape(battleTeamsDict[key].name);
+        } else {
+            out += "&lt;EMPTY NAME&gt;";
         }
-    //}
+        out += "</a>";
+        return out;
+    }
     return "No active team";
 
 }
@@ -342,28 +334,6 @@ function initTable() {
                 orderable: false,
                 checkboxes: {selectRow: true},
                 targets: 0
-                /*
-                render: function(data, type, row, meta) {
-                    let key = data.join("_");
-                    let out;
-                    if(type === 'display') {
-                        if (key in battleTeamsDict) {
-                            out = '<a target="_blank" href="https://axieinfinity.com/team/' + weakEscape(battleTeamsDict[key].teamId) + '">';
-                            if (battleTeamsDict[key].name.trim() != "") {
-                                out += weakEscape(battleTeamsDict[key].name);
-                            } else {
-                                out += "&lt;EMPTY NAME&gt;";
-                            }
-                            out += "</a>";
-                            //out += "<br>";
-                            out += '<div class="checkbox"><input type="checkbox" class="dt-checkboxes form-check-input" id="' + weakEscape(battleTeamsDict[key].teamId) + '"></div>';
-                            return out;
-                            //data = '<div class="checkbox"><input type="checkbox" class="dt-checkboxes"><label></label></div>';
-                        }
-                    }
-                    return "No active team";
-                }
-                */
             },
             {
                 className: "text-center", "targets": [ "_all" ]
@@ -384,6 +354,7 @@ function initTable() {
             {title: "Wins", data: "wins", searchable: false},
             {title: "Losses", data: "losses", searchable: false},
         ],
+        order: [[ 5, 'desc' ]],
         pageLength: 100
     });
 
@@ -425,6 +396,14 @@ function initTable() {
       // Prevent actual form submission
       e.preventDefault();
     });
+
+    teamTable.columns(1).search("^((?!No active team).)*$", true, false).draw()
+    $('#hideInactive').change(function() {
+        if (this.checked) {
+            teamTable.columns(1).search("^((?!No active team).)*$", true, false).draw()
+        } else {
+            teamTable.columns(1).search("").draw()
+    }    });
 }
 
 function appendResult(msg) {
@@ -526,6 +505,8 @@ function checkBlessing() {
 
     <div class="container">
         <div  class="text-left col-6" id="account"></div><br/>
+        <div id="loading">Loading...</div>
+        Hide inactive teams <input type="checkbox" id="hideInactive" checked>
         <form id="frm" method="GET">
             <table class="table" id="teamTable">
                 <thead>
