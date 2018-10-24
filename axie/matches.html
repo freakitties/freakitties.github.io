@@ -264,7 +264,7 @@ function renderAxie(data, type, full) {
     let axie = axies[data];
     let points = axie.activityPoint;
     if(type === 'display'){
-        let out = '<a href="https://axieinfinity.com/axie/' + id + '?r=freak" target="_blank"><img src="' + weakEscape(axie.image) + '" height="50"><br/>#' + id + '</a> (Exp: ' + axie.exp + '+' + axie.pendingExp + ')<br>';
+        let out = '<a href="https://axieinfinity.com/axie/' + id + '?r=freak" target="_blank"><img src="' + weakEscape(axie.image) + '" height="50"><br/>#' + id + '</a><br>(Exp: ' + axie.exp + '+' + axie.pendingExp + ')<br>';
         if (points / 720 >= 1) {
             out += "3/3 battles ready";
         } else if (points / 480 >= 1) {
