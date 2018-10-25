@@ -291,10 +291,13 @@ function weakEscape(str) {
 }
 
 function renderWinsLosses(data, type, full) {
-    //return full.wins + "/" + full.losses;
     let wl = (full.wins / full.losses).toFixed(4);
     let percentage = full.wins/(full.wins + full.losses) * 100;
-    return wl + "<br>(" + percentage.toFixed(2) + "%)";
+    if (type == "display") {
+        //return full.wins + "/" + full.losses;
+        return wl + "<br>(" + percentage.toFixed(2) + "%)";
+    }
+    return percentage;
 }
 
 function renderTeam(data, type, full) {
