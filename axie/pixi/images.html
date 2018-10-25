@@ -77,16 +77,18 @@
 
             //Test site
             //$.get({url: "http://axie.axieinfinity.co/api/v1/figure/" + axieID}, function(data, status, xhr) {
-            $.get({url: "https://axieinfinity.com/api/axies/" + axieID}, function(data, status, xhr) {
+            $.get({url: "https://api.axieinfinity.com/v1/axies/" + axieID}, function(data, status, xhr) {
+//            $.get({url: "https://axieinfinity.com/api/axies/" + axieID}, function(data, status, xhr) {
                 if (data.stage < 3) {
                     alert("This axie is either a larva or an egg.")
                     return;
                 }
                 let imageName = axieID + ".png";
                 //prevent using cache...AI servers have wonky CORS config.
-                atlasURL = data["figure"]["atlas"];
-                imageURL =  data["figure"]["images"][imageName];
-                modelURL = data["figure"]["model"];
+                atlasURL = data["figure"]["axie"]["atlas"];
+                //imageURL =  data["figure"]["images"][imageName];
+                imageURL =  data["figure"]["axie"]["image"];
+                modelURL = data["figure"]["axie"]["spineModel"];
 
 //atlasURL = "https://axieinfinity.com/assets/models/ab19de2b119e811ae576b581ebb8d60d.atlas"
 //imageURL = "https://axieinfinity.com/assets/models/fe8e753a148b171a91580dc5ac45e4a1.png"
@@ -130,18 +132,18 @@
 
                             animation = new PIXI.spine.Spine(spineData);
 
-                            animation.position.set(app.view.width/2 , app.view.height * 0.8);
-                            //animation.scale.set(0.3, 0.3);
-                            animation.stateData.setMix("walking", "appearing", 0.2);
-                            animation.stateData.setMix("appearing", "walking", 0.2);
+                            animation.position.set(app.view.width/2 , app.view.height * 0.85);
+                            animation.scale.set(0.65, 0.65);
+                            animation.stateData.setMix("idle", "appear", 0.2);
+                            animation.stateData.setMix("appear", "idle", 0.2);
 
-                            animation.stateData.setMix("bite", "walking", 0.2);
-                            animation.stateData.setMix("walking", "bite", 0.2);
+                            animation.stateData.setMix("atk-bite", "idle", 0.2);
+                            animation.stateData.setMix("idle", "atk-bite", 0.2);
 
                             if (animation.state.hasAnimation('idle')) {
                                 animation.state.setAnimation(0, 'idle', true);
-                            } else if (animation.state.hasAnimation('walking')) {
-                                animation.state.setAnimation(0, 'walking', true);
+                            } else if (animation.state.hasAnimation('idle')) {
+                                animation.state.setAnimation(0, 'idle', true);
                             }
 
                             app.stage.removeChildren();
@@ -330,8 +332,8 @@
                 tickerDown.start();
                 break;
             case 32:
-                animation.state.setAnimation(0, 'appearing', false);
-                animation.state.addAnimation(0, 'walking', true, 0);
+                animation.state.setAnimation(0, 'appear', false);
+                animation.state.addAnimation(0, 'idle', true, 0);
                 /*
                 let startingPositionSpace = animation.position.y;
                 let tickerSpace  =  new PIXI.ticker.Ticker();
@@ -349,8 +351,8 @@
                 */
                 break;
             case 88:
-                animation.state.setAnimation(0, 'bite', false);
-                animation.state.addAnimation(0, 'walking', true, 0);
+                animation.state.setAnimation(0, 'atk-bite', false);
+                animation.state.addAnimation(0, 'idle', true, 0);
                 break;
         }
     };
