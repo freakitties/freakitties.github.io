@@ -247,7 +247,12 @@ function getAxieDetails(cb) {
                             let id = points[i].axieId.toString();
                             axies[id].activityPoint = points[i].activityPoint;
                         }
-                        localStorage.setItem(storageKey, JSON.stringify({allTeams: allTeams, allMatches, axies: axies, lastMatchId: newLastMatchId}));
+                        //save storage space
+                        let emptyAxies = {};
+                        for(let id in axies) {
+                            emptyAxies[id] = {};
+                        }
+                        localStorage.setItem(storageKey, JSON.stringify({allTeams: allTeams, allMatches: emptyAxies, axies: axies, lastMatchId: newLastMatchId}));
                         $("#loading").text("Done.")
                         $("#loading").fadeOut(2000);
                         cb();
