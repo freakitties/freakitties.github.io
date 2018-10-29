@@ -1,5 +1,5 @@
     const classGeneMap = {"0000": "beast", "0001": "bug", "0010": "bird", "0011": "plant", "0100": "aquatic", "0101": "reptile", "1000": "???", "1001": "???", "1010": "???"};
-    const typeOrder = {"eyes": 2, "mouth": 3, "ears": 4, "horn": 5, "back": 6, "tail": 7};
+    const typeOrder = {"eyes": 2, "ears": 4, "mouth": 3, "horn": 5, "back": 6, "tail": 7};  //swap ears and mouth ordering
     const regionGeneMap = {"00000": "global", "00001": "japan"};
     const tagGeneMap ={"00000": "Normal", "00001": "Origin", "00100": "Agamogenesis", "00011": "Meo Corp", "00100": "Meo Corp II"}
     var hash = window.location.hash.substr(1);
