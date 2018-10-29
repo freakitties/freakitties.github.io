@@ -33,6 +33,8 @@
         let url = "https://axieinfinity.com/api/addresses/" + address + "/axies?offset=" + offset;
 
         $.get(url, function(data, status, xhr) {
+            let percentage = offset/data.totalAxies * 100;
+            $("#loading").text("Loading..." + Math.round(percentage) + "%");
             for (let i in data.axies) {
                 if (data.axies[i].stage < 3) continue;
                 axies[data.axies[i].id] = {"genes": genesToBin(new BigNumber(data.axies[i].genes)), "owner": data.axies[i].owner, "class": data.class, "exp": data.axies[i].exp};
@@ -42,6 +44,8 @@
             } else {
                 checkedAddresses.push(address);
                 if (callback != null) {
+                    $("#loading").text("Done.")
+                    $("#loading").fadeOut(3500);
                     callback(true);
                 }
             }
@@ -220,6 +224,7 @@
             <input class="text-right col-5" id="search" size="55" placeholder="ID, address or comma separated list of IDs and/or addresses" />&nbsp;
             <button type="submit" class="btn btn-dark" onclick="search();" id="searchButton0">Search</button>
         </div>
+        <div id="loading"></div>
         <div id="copyDiv"></div>
         <br/>
         <table class="table display nowrap" id="axieTable">
