@@ -1,0 +1,417 @@
+<!--
+    Copyright 2018 freakitties@gmail.com
+    You can copy and use this code if you agree to pay $1 per page load.
+-->
+<html>
+    <head>
+        <title>Axie Replays</title>
+        <script async src="https://www.googletagmanager.com/gtag/js?id=UA-116189657-1"></script>
+        <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'UA-116189657-1');
+        </script>
+        <!--web3 v0.20.6-->
+        <script src="/js/web3.min.js" integrity="sha384-rXHfd7f1o1jpr3t+dYI17CkzUY3Wswo1OGbiXPGSbg4s2E42+jkRgllwt7ss2Vlq"></script>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+        <style>
+            body {background-color: #efefef;}
+        </style>
+        <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.16/css/jquery.dataTables.min.css" integrity="sha384-1UXhfqyOyO+W+XsGhiIFwwD3hsaHRz2XDGMle3b8bXPH5+cMsXVShDoHA3AH/y/p" crossorigin="anonymous">
+        <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js" integrity="sha384-Z9D45cp3elqajO+xEyjRTIK1Gr3eYsXiyCPIKNog1sIQzpo2fqFDqFdADGiJjzOv" crossorigin="anonymous"></script>
+
+        <link type="text/css" href="https://gyrocode.github.io/jquery-datatables-checkboxes/1.2.11/css/dataTables.checkboxes.css" rel="stylesheet" integrity="sha384-OfMcw8qH7HMnF4am2M2GaX6mqj8uJCssdsbz4eRq0p8ns7EkZpcQ0x1eihWP2KUA" crossorigin="anonymous"/>
+        <script type="text/javascript" src="https://gyrocode.github.io/jquery-datatables-checkboxes/1.2.11/js/dataTables.checkboxes.min.js" integrity="sha384-vSOUjvfg1V/jcelw8tVqGjo1N6t3iUvP2GQeYHGR3pphkc5unpcUNAohKqBEmgzB" crossorigin="anonymous"></script>
+
+        <style>
+            .dropdown-menu>li>a, .dropdown-menu {
+                color: white;
+                background-color: #6c757d;
+            }
+        </style>
+    </head>
+<script>
+
+var allTeams = {};
+var allMatches = {};
+var axies = {};
+var lastMatchId = 0;
+var newLastMatchId = 0;
+
+const MATCH_COUNT = 10;
+const COUNT_PARAM = "&count=" + MATCH_COUNT;
+var storageKey;
+
+function addAxies(arr) {
+    for (let i in arr) {
+        let id = arr[i].toString();
+        if (!(id in axies)) {
+            axies[id] = {};
+        }
+    }
+}
+
+function updateTeams(matches) {
+    var address = web3.eth.accounts[0];
+    for (let i in matches) {
+        let key;
+        let win = 0;
+        let loss = 0;
+        let members;
+        if (matches[i].winner.address == address) {
+            key = matches[i].winner.axieIds.join("_");
+            win = 1;
+            members = matches[i].winner.axieIds;
+            addAxies(matches[i].winner.axieIds);
+        } else {    //matches[i].loser.address == address
+            key = matches[i].loser.axieIds.join("_");
+            loss = 1;
+            members = matches[i].loser.axieIds;
+            addAxies(matches[i].loser.axieIds);
+        }
+        if (!(key in allTeams)) {
+            allTeams[key] = {matches: [], wins: 0, losses: 0, members: members};
+        }
+        allTeams[key].matches.push(matches[i]);
+        allTeams[key].wins += win;
+        allTeams[key].losses += loss;
+    }
+}
+
+function addMatches(matches) {
+    let nonDupe = [];
+    for (let i in matches) {
+        let id = matches[i].id.toString();
+        if (matches[i].id > newLastMatchId) {
+            newLastMatchId = matches[i].id;
+        }
+        if (id in allMatches) continue;
+        allMatches[id] = matches[i];
+        nonDupe.push(matches[i]);
+    }
+    updateTeams(nonDupe);
+}
+
+function getMatches(initTable) {
+    var stored = localStorage.getItem(storageKey);
+    if (stored) {
+        stored = JSON.parse(stored);
+        if (stored.axies && stored.allTeams && stored.allMatches && stored.lastMatchId) {
+            axies = stored.axies;
+            allTeams = stored.allTeams;
+            allMatches = stored.allMatches;
+            lastMatchId = stored.lastMatchId;
+        }
+    }
+
+    let signature = localStorage.getItem(storageKey + "_signatureAxieInfinity");
+    if (!signature) {
+        alert("No signature found");
+        return;
+    }
+
+    let headers = {'Authorization': "Bearer " + signature};
+    //$.getJSON({url: "https://api.axieinfinity.com/v1/battle/history/matches?offset=0" + COUNT_PARAM, headers: headers}, function(data) {
+    $.getJSON({url: "https://api.axieinfinity.com/v1/battle/history/matches?page=1", headers: headers}, function(data) {
+        let matches = data.matches;
+        let address = web3.eth.accounts[0];
+
+        addMatches(matches);
+        if (matches.length == 0) {
+            $("#loading").text("No matches found for this account");
+            return;
+        } else if (matches[matches.length -1 ].id <= lastMatchId) {
+            $("#loading").text("Done loading battles. Now loading axies.");
+            getAxieDetails(initTable);
+            return;
+        }
+
+        var numPages = Math.ceil(data.total / MATCH_COUNT);
+        if (numPages > 1) {
+            //slow synchronous requests
+            function loop(page, numPages) {
+                if (page <= numPages) {
+                    $("#loading").text("Requesting page: " + page + "/" + numPages);
+                    $.getJSON({url: "https://api.axieinfinity.com/v1/battle/history/matches?page=" + page + COUNT_PARAM, headers: headers}, function(moreMatches) {
+
+                        addMatches(moreMatches.matches);
+                        if (Object.keys(allMatches).length == data.total) {
+                            $("#loading").text("Done loading battles. Now loading axies.");
+                            getAxieDetails(initTable);
+                        } else if (moreMatches.matches[moreMatches.matches.length -1 ].id <= lastMatchId) {
+                            $("#loading").text("Done loading battles (the rest is cached). Now loading axies.");
+                            getAxieDetails(initTable);
+                        } else {
+                            loop(page + 1, numPages);
+                        }
+                    });
+                } else {
+                    console.log("finished requesting matches");
+                    $("#loading").text("Done loading battles. Now loading axies.");
+                    getAxieDetails(initTable);
+
+                }
+            }
+            loop(2, numPages);
+        } else {
+            $("#loading").text("Done loading battles. Now loading axies.");
+            getAxieDetails(initTable);
+        }
+    });
+}
+
+function getAxieDetails(cb) {
+    for (let id in axies) {
+        var count = 0;
+        //if ("image" in axies[id]) continue;
+        $.getJSON("https://api.axieinfinity.com/v1/axies/" + id, function(data) {
+            axies[id.toString()] = {image: data.figure.static.idle, parts: data.parts, class: data.class, stats: data.stats, exp: data.exp, pendingExp: data.pendingExp};
+            count++;
+            if (count == Object.keys(axies).length) {
+                let params = Object.keys(axies).join("&axieId=");
+                let url = "https://api.axieinfinity.com/v1/battle/battle/activity-point?axieId=" + params;
+                $.getJSON(url, function(points) {
+                    for (let i in points) {
+                        let id = points[i].axieId.toString();
+                        axies[id].activityPoint = points[i].activityPoint;
+                    }
+                    //save storage space
+                    let emptyAxies = {};
+                    for(let id in axies) {
+                        emptyAxies[id] = {};
+                    }
+                    localStorage.setItem(storageKey, JSON.stringify({allTeams: allTeams, allMatches: allMatches, axies: emptyAxies, lastMatchId: newLastMatchId}));
+                    $("#loading").text("Done.")
+                    $("#loading").fadeOut(2000);
+                    cb();
+                });
+
+            }
+        });
+    }
+}
+
+function getAxieFromMatch(data, index) {
+    var team;
+    if (data.winner.address == web3.eth.accounts[0]) {
+        team = data.winner.axieIds;
+    } else {
+        team = data.loser.axieIds;
+    }
+    return parseInt(team[index]);
+}
+
+function renderAxie(data, type, full) {
+    let id = getAxieFromMatch(full, data);
+    let axie = axies[id.toString()];
+    let points = axie.activityPoint;
+    if(type === 'display'){
+        let out = '<a href="https://axieinfinity.com/axie/' + id + '?r=freak" target="_blank"><img src="' + weakEscape(axie.image) + '" height="50"><br/>#' + id + '</a> (Exp: ' + axie.exp + '+' + axie.pendingExp + ')<br>';
+        if (points / 720 >= 1) {
+            out += "3/3 battles ready";
+        } else if (points / 480 >= 1) {
+            out += "2/3 battles ready";
+        } else if (points / 240 >= 1) {
+            out += "1/3 battles ready";
+        } else {
+            out += "0/3 battles ready";
+        }
+        out += " (" + points +")";
+        return out;
+    }
+    return id;
+}
+
+function weakEscape(str) {
+    return str.replace(/'/g, "&apos;").replace(/"/g, "&quot;").replace(/</g, '&lt;').replace(/>/g, "&gt;");
+}
+
+function renderWatched(data, type, full) {
+    if (data.includes(web3.eth.accounts[0])) {
+        return "Watched";
+    }
+    return "Not watched";
+}
+
+function renderOutcome(data, type, full) {
+    if (data.address == web3.eth.accounts[0]) {
+        return "Won";
+    }
+    return "Lost";
+}
+
+function renderTeam(team) {
+    let links = [];
+    let images = [];
+    for (let i in team.axieIds) {
+        let id = parseInt(team.axieIds[i]);
+        links.push('<a target="_blank" href="https://axieinfinity.com/axie/' + id + '?r=freak">' + id + '</a>');
+    }
+    return weakEscape(team.name) + ": " + "<br>" + links.join(",") + "<br>" + images.join("");
+}
+
+function renderOpponent (data, type, full) {
+    var opp;
+    if (full.winner.address == web3.eth.accounts[0]) {
+        opp = full.loser;
+    } else {
+        opp = full.winner;
+    }
+    return renderTeam(opp);
+}
+
+function renderID(data, type, full) {
+    if(type === 'display'){
+        let battleID = parseInt(data);
+        return '<a target="_blank" href="https://axieinfinity.com/battle/' + battleID + '">' + battleID + '</a>';
+    }
+    return data;
+
+}
+
+var matchesTable;
+function initTable() {
+    var matches = [];
+    Object.keys(allMatches).forEach(function(key) {
+        matches.push(allMatches[key]);
+    });
+
+    matchesTable = $('#matchesTable').DataTable({
+        //order: [[ 0, "desc" ]],
+        data: matches,
+        columnDefs: [
+            {
+                className: "text-center", "targets": [ "_all" ]
+            }
+        ],
+        columns: [
+            {title: "ID", data: "id", render: renderID, searchable: false},
+            {title: "Watched", data: "watchedBy", render: renderWatched, searchable: false},
+            {title: "Outcome", data: "winner", render: renderOutcome, searchable: false},
+            {title: "Axie #1", render: function (data, type, full) { return renderAxie(0, type, full);}},
+            {title: "Axie #2", render: function (data, type, full) { return renderAxie(1, type, full);}},
+            {title: "Axie #3", render: function (data, type, full) { return renderAxie(2, type, full);}},
+            {title: "Opponent", render: renderOpponent}
+        ],
+        order: [[ 0, 'desc' ]],
+        pageLength: 50
+    });
+}
+
+function init(){
+    $.ajax({
+        url: "../../header.html",
+        cache: false,
+        dataType: "html",
+        success: function(data) {
+            $("#headerDiv").html(data);
+        }
+    });
+
+    if (typeof web3 == 'undefined') {
+        $("#account").text("Web3 enabled browser not detected.");
+        return;
+    } else {
+        if (typeof web3.eth.accounts[0] == "undefined") {
+            $("#account").text("Can't detect your account. Unlock your wallet or try reloading the page and waiting a few seconds.");
+            return;
+        } else {
+            $("#account").text("Your Account: " + web3.eth.accounts[0]);
+        }
+    }
+
+    storageKey = "freakitties.github.io" + "_REPLAYS_" + web3.eth.accounts[0];
+    let sig = localStorage.getItem(storageKey + "_signatureAxieInfinity");
+    if (!sig) {
+        let ok = confirm("This page will ask you to sign some text. By authorizing this signature, you are allowing the page to make requests to the Axie Infinity website on your behalf. This signature can be used to queue/edit/create teams or change axie/profile names. Don't get into a habit of arbitrarily authorizing signatures!");
+
+        if (ok === true) {
+            //Sign "Axie Infinity"
+            //basically CSRF or phishing vuln if a unique nonce is not included
+            web3.personal.sign("0x4178696520496e66696e697479", web3.eth.accounts[0], function(e,r) {
+                if (e) {
+                    alert("No signature found");
+                    return;
+                }
+                localStorage.setItem(storageKey + "_signatureAxieInfinity", r);
+                getMatches(initTable);
+            });
+        } else {
+            $("#loading").text("Signature not authorized.");
+        }
+    } else {
+        getMatches(initTable);
+    }
+}
+
+window.addEventListener('load', async () => {
+    // Modern dapp browsers...
+    if (window.ethereum) {
+        window.web3 = new Web3(ethereum);
+        BigNumber = web3.BigNumber;
+        try {
+            // Request account access if needed
+            await ethereum.enable();
+            console.log("modern dapp browser");
+        } catch (error) {
+            // User denied account access...
+            console.log("User denied ethereum account access.")
+        }
+    }
+    // Legacy dapp browsers...
+    else if (window.web3) {
+        window.web3 = await new Web3(web3.currentProvider);
+        BigNumber = web3.BigNumber;
+        // Acccounts always exposed
+        console.log("legacy dapp browser");
+    }
+    // Non-dapp browsers...
+    else {
+        console.log('Non-Ethereum browser detected.');
+        //since we are using our own web3.min.js
+        let w3 = new Web3();
+        BigNumber = w3.BigNumber;
+    }
+    //defer init until accounts are loaded
+    web3.eth.getAccounts(accounts => {init();})
+    //init();
+});
+
+</script>
+
+    <!-- header -->
+    <div id="headerDiv"></div><br/>
+
+    <div class="container">
+        <div  class="text-left col-6" id="account"></div><br/>
+        <div id="loading">Loading...</div>
+            <table class="table" id="matchesTable">
+                <thead>
+                  <tr>
+                    <th scope="col">Watched</th>
+                    <th scope="col">Outcome</th>
+                    <th scope="col">Axie #1</th>
+                    <th scope="col">Axie #2</th>
+                    <th scope="col">Axie #3</th>
+                    <th scope="col">Opponent</th>
+                    <th scope="col">Time</th>
+                  </tr>
+                </thead>
+                <tbody id="tableBody">
+                  <tr>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                  </tr>
+                </tbody>
+            </table>
+
+    </div>
+</html>
