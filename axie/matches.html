@@ -192,7 +192,7 @@ function getMatches(initTable) {
 
         addMatches(matches);
         if (matches.length == 0) {
-            alert("no matches found for this account");
+            $("#loading").text("No matches found for this account");
             return;
         } else if (matches[matches.length -1 ].id <= lastMatchId) {
             $("#loading").text("Done loading battles. Now loading axies.");
@@ -449,16 +449,23 @@ function init(){
     storageKey = "freakitties.github.io" + "_MATCHES_" + web3.eth.accounts[0];
     let sig = localStorage.getItem(storageKey + "_signatureAxieInfinity");
     if (!sig) {
-        //Sign "Axie Infinity"
-        //basically CSRF or phishing vuln if a unique nonce is not included
-        web3.personal.sign("0x4178696520496e66696e697479", web3.eth.accounts[0], function(e,r) {
-            if (e) {
-                alert("No signature found");
-                return;
-            }
-            localStorage.setItem(storageKey + "_signatureAxieInfinity", r);
-            getMatches(initTable);
-        });
+        let ok = confirm("This page will ask you to sign some text. By authorizing this signature, you are allowing the page to make requests to the Axie Infinity website on your behalf. This signature can be used to queue/edit/create teams or change axie/profile names. Don't get into a habit of arbitrarily authorizing signatures!");
+
+        if (ok === true) {
+            //Sign "Axie Infinity"
+            //basically CSRF or phishing vuln if a unique nonce is not included
+            web3.personal.sign("0x4178696520496e66696e697479", web3.eth.accounts[0], function(e,r) {
+                if (e) {
+                    alert("No signature found");
+                    return;
+                }
+                localStorage.setItem(storageKey + "_signatureAxieInfinity", r);
+                getMatches(initTable);
+            });
+        } else {
+            $("#loading").text("Signature not authorized.");
+        }
+
     } else {
         getMatches(initTable);
     }
