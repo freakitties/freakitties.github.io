@@ -579,8 +579,11 @@
                     axieTable.column("owner").search(searchVal).draw();
                 } else if (searchVal != "" && !isNaN(searchVal)) {
                     axieTable.column(0).search(searchVal).draw();
-                } else {
+                } else if (searchVal != "") {
                     axieTable.search(searchVal).draw();
+                } else {
+                    //??
+                    axieTable.columns().search(searchVal).draw();
                 }
             });
 
