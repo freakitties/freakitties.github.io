@@ -254,7 +254,12 @@ function getAxieDetails(cb) {
                         for(let id in axies) {
                             emptyAxies[id] = {};
                         }
-                        localStorage.setItem(storageKey, JSON.stringify({allTeams: allTeams, allMatches: emptyAxies, axies: axies, lastMatchId: newLastMatchId}));
+                        //save storage space
+                        let emptyMatches = {};
+                        for(let id in allMatches) {
+                            emptyMatches[id] = {};
+                        }
+                        localStorage.setItem(storageKey, JSON.stringify({allTeams: allTeams, allMatches: emptyMatches, axies: emptyAxies, lastMatchId: newLastMatchId}));
                         $("#loading").text("Done.")
                         $("#loading").fadeOut(2000);
                         cb();
