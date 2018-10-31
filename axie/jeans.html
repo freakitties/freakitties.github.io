@@ -150,6 +150,8 @@
     }
 
     function search() {
+        $("#loading").text("");
+        $("#loading").show();
         let text = $("#search").val().trim();
         if (axieTable) {
             axieTable.clear();
