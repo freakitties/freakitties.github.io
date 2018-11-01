@@ -32,22 +32,40 @@
     function getAxies(offset, address, callback) {
         let url = "https://axieinfinity.com/api/addresses/" + address + "/axies?offset=" + offset;
 
+        var numSkipped = 0;
         $.get(url, function(data, status, xhr) {
             let percentage = offset/data.totalAxies * 100;
             $("#loading").text("Loading..." + Math.round(percentage) + "%");
             for (let i in data.axies) {
-                if (data.axies[i].stage < 3) continue;
+                if (data.axies[i].stage < 3) {
+                    numSkipped++;
+                    continue;
+                }
                 axies[data.axies[i].id] = {"genes": genesToBin(new BigNumber(data.axies[i].genes)), "owner": data.axies[i].owner, "class": data.class, "exp": data.axies[i].exp};
             }
-            if (offset + 12 < data.totalAxies) {
-                getAxies(offset + 12, address, callback);
-            } else {
-                checkedAddresses.push(address);
-                if (callback != null) {
-                    $("#loading").text("Done.")
-                    $("#loading").fadeOut(3500);
-                    callback(true);
-                }
+            let totalAxies = data.totalAxies;
+            for (let i = 12; i < totalAxies; i+=12) {
+                let url = "https://axieinfinity.com/api/addresses/" + address + "/axies?offset=" + i;
+                $.get(url, function(data, status, xhr) {
+                    let percentage = Object.keys(axies).length/data.totalAxies * 100;
+                    $("#loading").text("Loading..." + Math.round(percentage) + "%");
+                    for (let i in data.axies) {
+                        if (data.axies[i].stage < 3) {
+                            numSkipped++;
+                            continue;
+                        }
+                        axies[data.axies[i].id] = {"genes": genesToBin(new BigNumber(data.axies[i].genes)), "owner": data.axies[i].owner, "class": data.class, "exp": data.axies[i].exp};
+                    }
+                    if (Object.keys(axies).length + numSkipped >= totalAxies) { //fudge incase over for some reason
+                        checkedAddresses.push(address);
+                        if (callback != null) {
+                            $("#loading").text("Done.")
+                            $("#loading").fadeOut(3500);
+                            callback(true);
+                        }
+                    }
+                });
+
             }
         });
     }
