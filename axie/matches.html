@@ -46,6 +46,161 @@ const TEAM_COUNT = 12;
 const MATCH_COUNT_PARAM = "&count=" + MATCH_COUNT;
 const TEAM_COUNT_PARAM = "&count=" + TEAM_COUNT;
 var storageKey;
+var db;
+
+function initDB(afterSuccess) {
+    if (!window.indexedDB) {
+        document.write("Your browser doesn't support IndexedDB.");
+        return;
+    }
+
+    var request = window.indexedDB.open("freakitties.github.io_axie_" + web3.eth.accounts[0], 1);
+
+    request.onerror = function(event) {
+        console.log("Error opening DB: " + event.target.errorCode);
+    };
+
+    request.onupgradeneeded = function(event) {
+        console.log("onupgradeneeded DB");
+        var db = event.target.result;
+
+        var teamStore = db.createObjectStore("teams", { keyPath: "teamKey" });
+        var matchStore = db.createObjectStore("matches", { keyPath: "matchId" });
+        var axieStore = db.createObjectStore("axies", { keyPath: "axieId" });
+        //var lastMatchIdStore = db.createObjectStore("lastMatchId", { keyPath: "lastMatchId" });
+        //localStorage.setItem(storageKey, JSON.stringify({allTeams: allTeams, allMatches: emptyMatches, axies: emptyAxies, lastMatchId: newLastMatchId}));
+    };
+
+    request.onsuccess = function(event) {
+        console.log("Opened DB");
+        db = event.target.result;
+        afterSuccess();
+    };
+}
+
+
+function setLocalStorageObject(obj) {
+    let stored;
+    if (typeof(ob) != "string") {
+        stored = JSON.stringify(obj);
+    } else {
+        stored = obj;
+    }
+    localStorage.setItem(storageKey, stored);
+}
+
+function storeLastMatchId(lastId) {
+    let local = getLocalStorageObject();
+    local.lastMatchId = lastId;
+    setLocalStorageObject(local);
+}
+
+function storeTeams() {
+    var transaction = db.transaction(["teams"], "readwrite");
+    var teamStore = transaction.objectStore("teams");
+    for(let key in allTeams) {
+        var team = allTeams[key];
+        team.teamKey = key;
+        let request = teamStore.put(team);
+        request.onsuccess = function(event) {
+            console.log("added team " + key);
+        };
+    }
+}
+
+function storeMatches() {
+    var transaction = db.transaction(["matches"], "readwrite");
+    var matchStore = transaction.objectStore("matches");
+    for(let matchId in allMatches) {
+        var match = allMatches[matchId];
+        match.matchId = matchId;
+        let request = matchStore.add(match);
+        request.onsuccess = function(event) {
+            console.log("added match " + matchId);
+        };
+    }
+}
+
+function storeAxies() {
+    var transaction = db.transaction(["axies"], "readwrite");
+    var axieStore = transaction.objectStore("axies");
+    for(let axieId in axies) {
+        var axie = axies[axieId];
+        axie.axieId = axieId;
+        let request = axieStore.add(axie);
+        request.onsuccess = function(event) {
+            console.log("added axie " + axieId);
+        };
+    }
+}
+
+function storeAxie(axie) {
+    var transaction = db.transaction(["axies"], "readwrite");
+    var axieStore = transaction.objectStore("axies");
+    let request = axieStore.add(axie);
+    request.onsuccess = function(event) {
+        console.log("added axie " + axie.axieId);
+    };
+
+}
+
+function getLocalStorageObject() {
+    let local = localStorage.getItem(storageKey);
+    if (local) return JSON.parse(localStorage.getItem(storageKey));
+    return null;
+}
+
+function getLastIdFromStorage() {
+    return getLocalStorageObject().lastMatchId;
+}
+
+function getAxieFromDB(axieId, result) {
+    db.transaction("axies").objectStore("axies").get(axieId.toString()).onsuccess = function(event) {
+        result(event.target.result);
+    };
+}
+
+function getAllAxiesFromDB(result) {
+    db.transaction("axies").objectStore("axies").getAll().onsuccess = function(event) {
+        let obj = {};
+        event.target.result.forEach((val) => {
+            obj[val.axieId] = val;
+        });
+        result(obj);
+    }
+}
+
+function getAllTeamsFromDB(result) {
+    db.transaction("teams").objectStore("teams").getAll().onsuccess = function(event) {
+        let obj = {};
+        event.target.result.forEach((val) => {
+            obj[val.teamKey] = val;
+        });
+        result(obj);
+    }
+}
+
+function getAllMatchesFromDB(result) {
+    db.transaction("matches").objectStore("matches").getAll().onsuccess = function(event) {
+        let obj = {};
+        event.target.result.forEach((val) => {
+            obj[val.matchId] = val;
+        });
+        result(obj);
+    }
+}
+
+function deleteDB() {
+    var DBDeleteRequest = window.indexedDB.deleteDatabase(storageKey);
+
+    DBDeleteRequest.onerror = function(event) {
+        console.log("Error deleting database.");
+    };
+
+    DBDeleteRequest.onsuccess = function(event) {
+        console.log("Database deleted successfully");
+    };
+}
 
 function addAxies(arr) {
     for (let i in arr) {
@@ -79,7 +234,7 @@ function updateTeams(matches) {
         }
 
         if (allTeams[key].matches.filter(e => e.id === matches[i].id).length > 0) continue;
-        allTeams[key].matches.push(matches[i]);
+        allTeams[key].matches.push(matches[i].id);
         allTeams[key].wins += win;
         allTeams[key].losses += loss;
     }
@@ -165,19 +320,7 @@ function getBattleTeams(callback) {
     });
 }
 
-
-function getMatches(initTable) {
-    var stored = localStorage.getItem(storageKey);
-    if (stored) {
-        stored = JSON.parse(stored);
-        if (stored.axies && stored.allTeams && stored.allMatches && stored.lastMatchId) {
-            axies = stored.axies;
-            allTeams = stored.allTeams;
-            allMatches = stored.allMatches;
-            lastMatchId = stored.lastMatchId;
-        }
-    }
-
+function requestMatches(initTable) {
     let signature = localStorage.getItem(storageKey + "_signatureAxieInfinity");
     if (!signature) {
         alert("No signature found");
@@ -233,6 +376,54 @@ function getMatches(initTable) {
     });
 }
 
+function getMatches(initTable) {
+    var stored = getLocalStorageObject();
+    if (stored) {
+        //clear old stored data
+        if (stored.hasOwnProperty("allTeams")) {
+            setLocalStorageObject({});
+        }
+        lastMatchId = stored.lastMatchId;
+        getAllMatchesFromDB((matches) => {
+            allMatches = matches;
+            getAllTeamsFromDB((teams) => {
+                allTeams = teams;
+                getAllAxiesFromDB((storedAxies) => {
+                    axies = storedAxies;
+                    requestMatches(initTable);
+                });
+            });
+        });
+    } else {
+        setLocalStorageObject({});
+        requestMatches(initTable);
+    }
+}
+
+function saveAll() {
+    storeLastMatchId(newLastMatchId);
+    storeTeams();
+    storeMatches();
+    storeAxies();
+    //localStorage.setItem(storageKey, JSON.stringify({allTeams: allTeams, allMatches: emptyMatches, axies: emptyAxies, lastMatchId: newLastMatchId}));
+}
+
+function getSingleAxieAndStore(id) {
+    $.getJSON("https://api.axieinfinity.com/v1/axies/" + id, function(data) {
+        axies[id.toString()] = {image: data.figure.static.idle, parts: data.parts, class: data.class, stats: data.stats, exp: data.exp, pendingExp: data.pendingExp};
+        let params = Object.keys(axies).join("&axieId=");
+        let url = "https://api.axieinfinity.com/v1/battle/battle/activity-point?axieId=" + params;
+        $.getJSON(url, function(points) {
+            for (let i in points) {
+                let id = points[i].axieId.toString();
+                axies[id].activityPoint = points[i].activityPoint;
+            }
+            axies[id].axieId = id;
+            storeAxie(axies[id]);
+        });
+    });
+}
+
 function getAxieDetails(cb) {
     getBattleTeams(function() {
         for (let id in axies) {
@@ -249,6 +440,7 @@ function getAxieDetails(cb) {
                             let id = points[i].axieId.toString();
                             axies[id].activityPoint = points[i].activityPoint;
                         }
+                        /*
                         //save storage space
                         let emptyAxies = {};
                         for(let id in axies) {
@@ -259,12 +451,12 @@ function getAxieDetails(cb) {
                         for(let id in allMatches) {
                             emptyMatches[id] = {};
                         }
-                        localStorage.setItem(storageKey, JSON.stringify({allTeams: allTeams, allMatches: emptyMatches, axies: emptyAxies, lastMatchId: newLastMatchId}));
+                        */
+                        saveAll();
                         $("#loading").text("Done.")
                         $("#loading").fadeOut(2000);
                         cb();
                     });
-
                 }
             });
         }
@@ -274,8 +466,15 @@ function getAxieDetails(cb) {
 function renderAxie(data, type, full) {
     let id = parseInt(data);
     let axie = axies[data];
-    let points = axie.activityPoint;
+
     if(type === 'display'){
+        //Hack. reload to get axie
+        if (!axie) {
+            console.log("missing axie " + id + ". Retrieving one-off deets. Reload the page.");
+            getSingleAxieAndStore(data);
+            return "#" + id + "(Missing data. Reload the page.)";
+        }
+        let points = axie.activityPoint;
         let out = '<a href="https://axieinfinity.com/axie/' + id + '?r=freak" target="_blank"><img src="' + weakEscape(axie.image) + '" height="50"><br/>#' + id + '</a><br>(Exp: ' + axie.exp + '+' + axie.pendingExp + ')<br>';
         if (points / 720 >= 1) {
             out += "3/3 battles ready";
@@ -506,7 +705,11 @@ window.addEventListener('load', async () => {
         BigNumber = w3.BigNumber;
     }
     //defer init until accounts are loaded
-    web3.eth.getAccounts(accounts => {init();})
+    web3.eth.getAccounts(accounts => {
+        initDB(() => {
+            init();
+        });
+    })
     //init();
 });
 
