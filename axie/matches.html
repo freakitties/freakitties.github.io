@@ -105,6 +105,10 @@ function storeTeams() {
         request.onsuccess = function(event) {
             console.log("added team " + key);
         };
+        request.onerror = function(event) {
+            console.log("Error performing indexedDB operation: " + JSON.stringify(event));
+            console.log(JSON.stringify(event.target.error, ["message", "code"]));
+        }
     }
 }
 
@@ -118,6 +122,10 @@ function storeMatches() {
         request.onsuccess = function(event) {
             console.log("added match " + matchId);
         };
+//        request.onerror = function(event) {
+//            console.log("Error performing indexedDB operation: " + JSON.stringify(event));
+//            console.log(JSON.stringify(event.target.error, ["message", "code"]));
+//        }
     }
 }
 
@@ -127,10 +135,14 @@ function storeAxies() {
     for(let axieId in axies) {
         var axie = axies[axieId];
         axie.axieId = axieId;
-        let request = axieStore.add(axie);
+        let request = axieStore.put(axie);
         request.onsuccess = function(event) {
             console.log("added axie " + axieId);
         };
+        request.onerror = function(event) {
+            console.log("Error performing indexedDB operation: " + JSON.stringify(event));
+            console.log(JSON.stringify(event.target.error, ["message", "code"]));
+        }
     }
 }
 
@@ -141,6 +153,10 @@ function storeAxie(axie) {
     request.onsuccess = function(event) {
         console.log("added axie " + axie.axieId);
     };
+    request.onerror = function(event) {
+        console.log("Error performing indexedDB operation: " + JSON.stringify(event));
+        console.log(JSON.stringify(event.target.error, ["message", "code"]));
+    }
 
 }
 
@@ -191,7 +207,8 @@ function getAllMatchesFromDB(result) {
 }
 
 function deleteDB() {
-    var DBDeleteRequest = window.indexedDB.deleteDatabase(storageKey);
+    db.close();
+    var DBDeleteRequest = window.indexedDB.deleteDatabase("freakitties.github.io_axie_" + web3.eth.accounts[0]);
 
     DBDeleteRequest.onerror = function(event) {
         console.log("Error deleting database.");
@@ -200,6 +217,16 @@ function deleteDB() {
     DBDeleteRequest.onsuccess = function(event) {
         console.log("Database deleted successfully");
     };
+
+    DBDeleteRequest.onblocked = function () {
+        console.log("Delete blocked.");
+    }
+}
+
+function clearCache() {
+    deleteDB();
+    localStorage.removeItem(storageKey);
+    alert("Cache cleared");
 }
 
 function addAxies(arr) {
@@ -317,6 +344,9 @@ function getBattleTeams(callback) {
             populateBattleTeamsDict();
             callback();
         }
+    }).fail((jqxhr, textStatus, error) => {
+        var err = textStatus + ", " + error;
+        console.log("Failed to get teams: " + err);
     });
 }
 
@@ -344,6 +374,7 @@ function requestMatches(initTable) {
         }
 
         var numPages = Math.ceil(data.total / MATCH_COUNT);
+        //numPages = 1; test
         if (numPages > 1) {
             //slow synchronous requests
             function loop(page, numPages) {
@@ -361,7 +392,10 @@ function requestMatches(initTable) {
                         } else {
                             loop(page + 1, numPages);
                         }
-                    });
+                    }).fail((jqxhr, textStatus, error) => {
+                        var err = textStatus + ", " + error;
+                        console.log("Failed to get match: " + err);
+                    });;
                 } else {
                     console.log("finished requesting matches");
                     $("#loading").text("Done loading battles. Now loading axies.");
@@ -373,6 +407,9 @@ function requestMatches(initTable) {
             $("#loading").text("Done loading battles. Now loading axies.");
             getAxieDetails(initTable);
         }
+    }).fail((jqxhr, textStatus, error) => {
+        var err = textStatus + ", " + error;
+        console.log("Failed to get matches: " + err);
     });
 }
 
@@ -420,8 +457,14 @@ function getSingleAxieAndStore(id) {
             }
             axies[id].axieId = id;
             storeAxie(axies[id]);
+        }).fail((jqxhr, textStatus, error) => {
+            var err = textStatus + ", " + error;
+            console.log("Failed to get activity points: " + err);
         });
-    });
+    }).fail((jqxhr, textStatus, error) => {
+        var err = textStatus + ", " + error;
+        console.log("1Failed to get activity points: " + err);
+    });;
 }
 
 function getAxieDetails(cb) {
@@ -440,25 +483,16 @@ function getAxieDetails(cb) {
                             let id = points[i].axieId.toString();
                             axies[id].activityPoint = points[i].activityPoint;
                         }
-                        /*
-                        //save storage space
-                        let emptyAxies = {};
-                        for(let id in axies) {
-                            emptyAxies[id] = {};
-                        }
-                        //save storage space
-                        let emptyMatches = {};
-                        for(let id in allMatches) {
-                            emptyMatches[id] = {};
-                        }
-                        */
                         saveAll();
                         $("#loading").text("Done.")
                         $("#loading").fadeOut(2000);
                         cb();
                     });
                 }
-            });
+            }).fail((jqxhr, textStatus, error) => {
+                var err = textStatus + ", " + error;
+                console.log("Failed to get axie: " + err);
+            });;
         }
     });
 }
@@ -677,6 +711,12 @@ function init(){
 }
 
 window.addEventListener('load', async () => {
+    var hash = window.location.hash.substr(1);
+    if (hash == "showClear") {
+        $("#clearButton").show();
+    } else {
+        $("#clearButton").hide();
+    }
     // Modern dapp browsers...
     if (window.ethereum) {
         window.web3 = new Web3(ethereum);
@@ -721,6 +761,9 @@ function checkBlessing() {
             $("#submitButton").prop("disabled",true);
             $("#submitButton").text("Bean's blessing is not active!");
         }
+    }).fail((jqxhr, textStatus, error) => {
+        var err = textStatus + ", " + error;
+        console.log("Failed to get check bean's charm: " + err);
     });
 }
 </script>
@@ -761,6 +804,8 @@ function checkBlessing() {
             </table>
             <p><button class="btn btn-primary" id="submitButton">Queue Teams</button></p>
         </form>
+        <button id="clearButton" onclick="clearCache()" class="btn btn-primary">Clear Cache</button><br>
         <div id="result" class="jumbotron"/>
+
     </div>
 </html>
