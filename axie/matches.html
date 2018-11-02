@@ -118,14 +118,14 @@ function storeMatches() {
     for(let matchId in allMatches) {
         var match = allMatches[matchId];
         match.matchId = matchId;
-        let request = matchStore.add(match);
+        let request = matchStore.put(match);
         request.onsuccess = function(event) {
             console.log("added match " + matchId);
         };
-//        request.onerror = function(event) {
-//            console.log("Error performing indexedDB operation: " + JSON.stringify(event));
-//            console.log(JSON.stringify(event.target.error, ["message", "code"]));
-//        }
+        request.onerror = function(event) {
+            console.log("Error performing indexedDB operation: " + JSON.stringify(event));
+            console.log(JSON.stringify(event.target.error, ["message", "code"]));
+        }
     }
 }
 
