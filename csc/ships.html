@@ -15,6 +15,8 @@
         gtag('js', new Date());
         gtag('config', 'UA-116189657-1');
         </script>
+        <!--web3 v0.20.6-->
+        <script src="/js/web3.min.js" integrity="sha384-rXHfd7f1o1jpr3t+dYI17CkzUY3Wswo1OGbiXPGSbg4s2E42+jkRgllwt7ss2Vlq"></script>
         <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.16/css/jquery.dataTables.min.css" integrity="sha384-1UXhfqyOyO+W+XsGhiIFwwD3hsaHRz2XDGMle3b8bXPH5+cMsXVShDoHA3AH/y/p" crossorigin="anonymous">
         <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js" integrity="sha384-Z9D45cp3elqajO+xEyjRTIK1Gr3eYsXiyCPIKNog1sIQzpo2fqFDqFdADGiJjzOv" crossorigin="anonymous"></script>
         <style>
@@ -267,7 +269,35 @@
     var hash = window.location.hash.substr(1);
     var cleared = false;
     var shipTable;
-    $(document).ready(function(){
+    var BigNumber;
+    $(document).ready(async function(){
+        // Modern dapp browsers...
+        if (window.ethereum) {
+            window.web3 = new Web3(ethereum);
+            BigNumber = web3.BigNumber;
+            try {
+                // Request account access if needed
+                await ethereum.enable();
+                console.log("modern dapp browser");
+            } catch (error) {
+                // User denied account access...
+                console.log("User denied ethereum account access.")
+            }
+        }
+        // Legacy dapp browsers...
+        else if (window.web3) {
+            window.web3 = await new Web3(web3.currentProvider);
+            BigNumber = web3.BigNumber;
+            // Acccounts always exposed
+            console.log("legacy dapp browser");
+        }
+        // Non-dapp browsers...
+        else {
+            console.log('Non-Ethereum browser detected.');
+            //since we are using our own web3.min.js
+            let w3 = new Web3();
+            BigNumber = w3.BigNumber;
+        }
         initID = setInterval(init, 250);
 
 
