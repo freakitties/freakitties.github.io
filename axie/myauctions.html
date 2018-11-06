@@ -5,6 +5,8 @@
 <html>
     <head>
         <title>My Cumulative Axie Sales</title>
+        <!--web3 v0.20.6-->
+        <script src="/js/web3.min.js" integrity="sha384-rXHfd7f1o1jpr3t+dYI17CkzUY3Wswo1OGbiXPGSbg4s2E42+jkRgllwt7ss2Vlq"></script>
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
@@ -255,7 +257,36 @@
     var initID;
     var hash = window.location.hash.substr(1);
     var cleared = false;
-    $(document).ready(function(){
+    var BigNumber;
+    $(document).ready(async function(){
+        // Modern dapp browsers...
+        if (window.ethereum) {
+            window.web3 = new Web3(ethereum);
+            BigNumber = web3.BigNumber;
+            try {
+                // Request account access if needed
+                await ethereum.enable();
+                console.log("modern dapp browser");
+            } catch (error) {
+                // User denied account access...
+                console.log("User denied ethereum account access.")
+            }
+        }
+        // Legacy dapp browsers...
+        else if (window.web3) {
+            window.web3 = new Web3(web3.currentProvider);
+            BigNumber = web3.BigNumber;
+            // Acccounts always exposed
+            console.log("legacy dapp browser");
+        }
+        // Non-dapp browsers...
+        else {
+            console.log('Non-Ethereum browser detected.');
+            //since we are using our own web3.min.js
+            let w3 = new Web3();
+            BigNumber = w3.BigNumber;
+        }
+
         initID = setInterval(init, 250);
 
         axieTable = $('#auctionTable').DataTable({
