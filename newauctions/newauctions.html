@@ -15,6 +15,8 @@
         gtag('js', new Date());
         gtag('config', 'UA-116189657-1');
         </script>
+        <!--web3 v0.20.6-->
+        <script src="/js/web3.min.js" integrity="sha384-rXHfd7f1o1jpr3t+dYI17CkzUY3Wswo1OGbiXPGSbg4s2E42+jkRgllwt7ss2Vlq"></script>
     </head>
 
 <script>
@@ -62,7 +64,36 @@
         });
     }
 
-    window.addEventListener('load', function () {
+    var BigNumber;
+    window.addEventListener('load', async () => {
+        // Modern dapp browsers...
+        if (window.ethereum) {
+            window.web3 = new Web3(ethereum);
+            BigNumber = web3.BigNumber;
+            try {
+                // Request account access if needed
+                await ethereum.enable();
+                console.log("modern dapp browser");
+            } catch (error) {
+                // User denied account access...
+                console.log("User denied ethereum account access.")
+            }
+        }
+        // Legacy dapp browsers...
+        else if (window.web3) {
+            window.web3 = new Web3(web3.currentProvider);
+            BigNumber = web3.BigNumber;
+            // Acccounts always exposed
+            console.log("legacy dapp browser");
+        }
+        // Non-dapp browsers...
+        else {
+            console.log('Non-Ethereum browser detected.');
+            //since we are using our own web3.min.js
+            let w3 = new Web3();
+            BigNumber = w3.BigNumber;
+        }
+
         $.ajax({
             url: "../header.html",
             cache: false,
