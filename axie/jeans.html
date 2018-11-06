@@ -65,7 +65,6 @@
                         }
                     }
                 });
-
             }
         });
     }
@@ -103,11 +102,11 @@
                         return;
                     } else {
                         $("#account").text("Your Account: " + web3.eth.accounts[0]);
+                        getAxies(0, web3.eth.accounts[0], initData);
                     }
                 }
             }
         });
-        getAxies(0, web3.eth.accounts[0], initData);
     }
 
     var traitMapping = binarytraits;
