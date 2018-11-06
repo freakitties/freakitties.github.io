@@ -22,6 +22,10 @@
                 background-color: rgb(255, 83, 65) !important;
                 border-color: rgb(255, 83, 65) !important;
             }
+            .btn-hidden_3, .btn-hidden_3:hover, .btn-hidden_3:active, .btn-hidden_3:visited {
+                background-color: rgb(54, 154, 183) !important;
+                border-color: rgb(54, 154, 183) !important;
+            }
             .text-plant {
                 color: rgb(108, 192, 0) !important;
             }
