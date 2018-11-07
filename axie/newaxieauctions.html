@@ -318,9 +318,19 @@
     }
 
     function renderSeller(data, type, row, meta) {
-        let trunc = data.slice(0, 12);
-        return '<a href="https://axieinfinity.com/profile/' + data + '?r=freak" target="_blank">' + trunc + '...</a>';
+        try {
+            let account = JSON.parse(data);
+            return '<a href="https://axieinfinity.com/profile/' + weakEscape(account.address) + '?r=freak" target="_blank">' + weakEscape(account.name) + '</a>';
+        } catch(e) {
+            let trunc = data.slice(0, 12);
+            return '<a href="https://axieinfinity.com/profile/' + data + '?r=freak" target="_blank">' + trunc + '...</a>';
+        }
     }
+
+    function weakEscape(str) {
+        return str.replace(/'/g, "&apos;").replace(/"/g, "&quot;").replace(/</g, '&lt;').replace(/>/g, "&gt;");
+    }
+
 
     var startingBlock;
     var blocksBack = NUM_HISTORIC_BLOCKS;
@@ -507,7 +517,12 @@
         added.push({id: id, blockNumber: blockNumber, date: date, startPrice: startPrice});
         $.get("https://axieinfinity.com/api/axies/" + id, function(data) {
             let axie = data;
-            addRow(id, axie.title, axie.exp, axie.stage, axie.parts, startPrice/1e18, endPrice/1e18, duration, seller, date, blockNumber, axie);
+            $.get("https://api.axieinfinity.com/v1/battle/accounts/" + seller, function(account) {
+                addRow(id, axie.title, axie.exp, axie.stage, axie.parts, startPrice/1e18, endPrice/1e18, duration, account, date, blockNumber, axie);
+            }).fail(function(e) {
+                addRow(id, axie.title, axie.exp, axie.stage, axie.parts, startPrice/1e18, endPrice/1e18, duration, seller, date, blockNumber, axie);
+            })
+
         });
 
     }
