@@ -64,7 +64,7 @@ function getAxies(address, callback) {
                 let percentage = Object.keys(axies).length/data.totalAxies * 100;
                 $("#loading").text("Loading axies..." + Math.round(percentage) + "%");
                 for (let i in data.axies) {
-                    if (data.axies[i].stage < 3) {
+                    if (data.axies[i].stage < 4) {
                         numSkipped++;
                         continue;
                     }
