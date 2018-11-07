@@ -1,0 +1,461 @@
+<!--
+    Copyright 2018 freakitties@gmail.com
+    You can copy and use this code if you agree to pay $1 per page load.
+-->
+<html>
+    <head>
+        <title>Axie Team Builder</title>
+        <script async src="https://www.googletagmanager.com/gtag/js?id=UA-116189657-1"></script>
+        <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'UA-116189657-1');
+        </script>
+        <!--web3 v0.20.6-->
+        <script src="/js/web3.min.js" integrity="sha384-rXHfd7f1o1jpr3t+dYI17CkzUY3Wswo1OGbiXPGSbg4s2E42+jkRgllwt7ss2Vlq"></script>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+        <style>
+            body {background-color: #efefef;}
+        </style>
+        <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.16/css/jquery.dataTables.min.css" integrity="sha384-1UXhfqyOyO+W+XsGhiIFwwD3hsaHRz2XDGMle3b8bXPH5+cMsXVShDoHA3AH/y/p" crossorigin="anonymous">
+        <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js" integrity="sha384-Z9D45cp3elqajO+xEyjRTIK1Gr3eYsXiyCPIKNog1sIQzpo2fqFDqFdADGiJjzOv" crossorigin="anonymous"></script>
+
+        <link type="text/css" href="https://gyrocode.github.io/jquery-datatables-checkboxes/1.2.11/css/dataTables.checkboxes.css" rel="stylesheet" integrity="sha384-OfMcw8qH7HMnF4am2M2GaX6mqj8uJCssdsbz4eRq0p8ns7EkZpcQ0x1eihWP2KUA" crossorigin="anonymous"/>
+        <script type="text/javascript" src="https://gyrocode.github.io/jquery-datatables-checkboxes/1.2.11/js/dataTables.checkboxes.min.js" integrity="sha384-vSOUjvfg1V/jcelw8tVqGjo1N6t3iUvP2GQeYHGR3pphkc5unpcUNAohKqBEmgzB" crossorigin="anonymous"></script>
+
+        <style>
+            .dropdown-menu>li>a, .dropdown-menu {
+                color: white;
+                background-color: #6c757d;
+            }
+        </style>
+    </head>
+    <body>
+
+<script>
+
+const TEAM_COUNT = 12;
+const TEAM_COUNT_PARAM = "&count=" + TEAM_COUNT;
+var axies = {};
+
+function getAxies(address, callback) {
+    if (!web3.isAddress(address)) {
+        alert("not a valid address");
+        return;
+    }
+    let url = "https://axieinfinity.com/api/addresses/" + address + "/axies?offset=0";
+    var numSkipped = 0;
+    $.get(url, function(data, status, xhr) {
+        $("#loading").text("Loading axies...");
+        for (let i in data.axies) {
+            if (data.axies[i].stage < 4) {
+                numSkipped++;
+                continue;
+            }
+            axies[data.axies[i].id.toString()] = {"class": data.axies[i].class, "parts": data.axies[i].parts, "stats": data.axies[i].stats};
+        }
+        let totalAxies = data.totalAxies;
+        for (let i = 12; i < totalAxies; i+=12) {
+            let url = "https://axieinfinity.com/api/addresses/" + address + "/axies?offset=" + i;
+            $.get(url, function(data, status, xhr) {
+                let percentage = Object.keys(axies).length/data.totalAxies * 100;
+                $("#loading").text("Loading axies..." + Math.round(percentage) + "%");
+                for (let i in data.axies) {
+                    if (data.axies[i].stage < 3) {
+                        numSkipped++;
+                        continue;
+                    }
+                    axies[data.axies[i].id.toString()] = {"class": data.axies[i].class, "parts": data.axies[i].parts, "stats": data.axies[i].stats};
+                }
+                if (Object.keys(axies).length + numSkipped >= totalAxies) { //fudge incase over for some reason
+                    if (callback != null) {
+                        $("#loading").text("Done loading axies. Getting existing teams.")
+                        callback();
+                    }
+                }
+            });
+        }
+    });
+}
+
+var battleTeams = [];
+function getBattleTeams(address, callback) {
+    if (!web3.isAddress(address)) {
+        alert("not a valid address");
+        return;
+    }
+    $.getJSON("https://api.axieinfinity.com/v1/battle/teams?address=" + address + "&offset=0" + TEAM_COUNT_PARAM, function(teams) {
+        Array.prototype.push.apply(battleTeams, teams.teams);
+        var numPages = Math.ceil(teams.total / TEAM_COUNT);
+        if (numPages > 1) {
+            for (var i=1; i < numPages; i++) {
+                if (i <= numPages) {
+                    $.getJSON("https://api.axieinfinity.com/v1/battle/teams?address=" + address + TEAM_COUNT_PARAM + "&offset=" + i * TEAM_COUNT , function(moreTeams) {
+                        let percentage = Object.keys(battleTeams).length/teams.total * 100;
+                        $("#loading").text("Loading teams..." + Math.round(percentage) + "%");
+                        Array.prototype.push.apply(battleTeams, moreTeams.teams);
+                        if (battleTeams.length >= teams.total) {
+                            $("#loading").text("Loaded teams...forming teams.");
+                            console.log("Got all teams");
+                            callback();
+                        }
+                    });
+                } else {
+                    callback();
+                }
+            }
+        } else {
+            callback();
+        }
+    }).fail((jqxhr, textStatus, error) => {
+        var err = textStatus + ", " + error;
+        console.log("Failed to get teams: " + err);
+    });
+}
+
+function getAxiesDetails(axieList, cb) {
+    for (let id in axieList) {
+        let axieId = axieList[id];
+        var count = 0;
+        //if ("image" in axies[id]) continue;
+        $.getJSON("https://api.axieinfinity.com/v1/axies/" + axieId, function(data) {
+            count++;
+            axies[axieId].image = data.figure.static.idle;
+            if (count == axieList.length) {
+                cb();
+            }
+        }).fail((jqxhr, textStatus, error) => {
+            var err = textStatus + ", " + error;
+            console.log("Failed to get axie: " + err);
+        });;
+    }
+}
+
+function renderAxie(data, type, full) {
+    let id = parseInt(data);
+    let axie = axies[data];
+
+    if(type === 'display'){
+        //Hack. reload to get axie
+        if (!axie) {
+            console.log("missing axie " + id + ". Retrieving one-off deets. Reload the page.");
+            getSingleAxieAndStore(data);
+            return "#" + id + "(Missing data. Reload the page.)";
+        }
+        let out = '<a href="https://axieinfinity.com/axie/' + id + '?r=freak" target="_blank"><img src="' + weakEscape(axie.image) + '" height="50"><br/>#' + id + '</a>';
+        let hp = parseInt(axie.stats.hp);
+        let speed = parseInt(axie.stats.speed);
+        let skill = parseInt(axie.stats.skill);
+        let morale = parseInt(axie.stats.morale);
+        out += "<br>hp: " + hp + ", spd: " + speed + ", skl: " + skill + ", mor: " + morale + "<br>";
+        return out;
+    }
+    return id;
+}
+
+
+function weakEscape(str) {
+    return str.replace(/'/g, "&apos;").replace(/"/g, "&quot;").replace(/</g, '&lt;').replace(/>/g, "&gt;");
+}
+
+var teamTable;
+function initTable() {
+
+    teamTable = $('#teamTable').DataTable({
+        //order: [[ 0, "desc" ]],
+        data: createdTeams,
+        columnDefs: [
+            {
+                orderable: false,
+                checkboxes: {selectRow: true},
+                targets: 0
+            },
+            {
+                className: "text-center", "targets": [ "_all" ]
+            }
+        ],
+        select: {
+            style: 'multi'
+        },
+        columns: [
+            {title: "Create", data: "id"}, //specify data so the framework can detect selected boxes
+            {title: "Axie #1", data: "plantId", render: renderAxie},
+            {title: "Axie #2", data: "beastId", render: renderAxie},
+            {title: "Axie #3", data: "aquaticId", render: renderAxie},
+        ],
+        pageLength: 100
+    });
+
+   $('#frm').on('submit', function(e){
+        let signature = localStorage.getItem(storageKey + "_signatureAxieInfinity");
+        if (!signature) {
+            alert("No signature found");
+            return;
+        }
+        let headers = {'Authorization': "Bearer " + signature};
+        var form = this;
+        var rows_selected = teamTable.column(0).checkboxes.selected();
+
+        try {
+            $.each(rows_selected, function(index, id) {
+                let team = createdTeams[id];
+                let teamName = team.plantId + " " + team.beastId + " " + team.aquaticId;
+                let postData = {};
+                postData.from = web3.eth.accounts[0];
+                postData.name = team.plantId + " " + team.beastId + " " + team.aquaticId;
+                postData.fighters = [];
+                //TODO: order moves by defense
+                //back, tail, horn, mouth
+                let plant = {"position":1,"moveSet":[{"index":4,"part":"mouth"},{"index":3,"part":"horn"},{"index":1,"part":"back"},{"index":2,"part":"tail"}]};
+                plant.id = parseInt(team.plantId);
+                //TODO: order moves by attack and accuracy
+                //horn, back, mouth, tail
+                let beast = {"position":2,"moveSet":[{"index":3,"part":"mouth"},{"index":1,"part":"horn"},{"index":2,"part":"back"},{"index":4,"part":"tail"}]};
+                beast.id = parseInt(team.beastId);
+                //TODO: order moves by attack and accuracy
+                //tail, mouth, horn, back
+                let aquatic = {"position":4,"moveSet":[{"index":2,"part":"mouth"},{"index":3,"part":"horn"},{"index":4,"part":"back"},{"index":1,"part":"tail"}]};
+                aquatic.id = parseInt(team.aquaticId);
+                postData.fighters.push(plant);
+                postData.fighters.push(beast);
+                postData.fighters.push(aquatic);
+
+                $.post({url: "https://api.axieinfinity.com/v1/battle/teams/create", headers: headers, data: postData}, function(result) {
+                    appendResult("Created team " + postData.name + ": " + result);
+                }).fail(function(jqXHR, textStatus, errorThrown) {
+                    appendResult("Team " + teamId + " (" + [team[0], team[1], team[2]].join(",") + ") didn't queue properly: " + jqXHR.responseText);
+                });
+            });
+        } catch (err) {
+            console.log(err);
+            alert(err);
+        }
+      // Prevent actual form submission
+      e.preventDefault();
+    });
+
+}
+
+function appendResult(msg) {
+    let newDiv = $("<div>");
+    newDiv.text(msg);
+    $("#result").append(newDiv);
+    $("#result").append("<br/>");
+}
+
+var createdTeams = [];
+function createTeams() {
+    getAxies(web3.eth.accounts[0], () => {
+        getBattleTeams(web3.eth.accounts[0], () => {
+            let hasTeam = [];
+            battleTeams.forEach(team => {
+                team.teamMembers.forEach(member => {
+                    if (!hasTeam.includes(member.axieId)) {
+                        hasTeam.push(member.axieId.toString());
+                    }
+                });
+            });
+            let allAxieIDs = Object.keys(axies);
+            let noTeam = allAxieIDs.filter(x => !hasTeam.includes(x));
+
+            //Create teams
+            //special cases:
+            //-strawberry is not in front
+            //order tank by HP+Defense
+
+            let plants = [];
+            let beasts = [];
+            let aquatics = [];
+            noTeam.forEach(axieId => {
+                if (axies[axieId].class == "plant") {
+                    var hasStrawBerry = false;
+                    axies[axieId].parts.forEach((part) => {
+                        if (part.id == "horn-strawberry-shortcake") {
+                            hasStrawBerry = true;
+                            return;
+                        }
+                    })
+                    if (!hasStrawBerry) {
+                        plants.push(axieId);
+                    } else {
+                        console.log("Omiting strawberry axie " + axieId);
+                    }
+
+                } else if (axies[axieId].class == "beast") {
+                    beasts.push(axieId);
+                } else if (axies[axieId].class == "aquatic") {
+                    aquatics.push(axieId);
+                }
+            });
+            //sort by highest HP+Defense
+            plants.sort((a, b) => {
+                let bDef = axies[b].stats.hp;
+                axies[b].parts.forEach(part => {
+                    //use first move. probably more moves for leveled up axies.
+                    if (part.moves.length > 0 && part.moves[0].hasOwnProperty("defense")) {
+                        bDef += part.moves[0].defense;
+                    }
+                })
+                let aDef = axies[a].stats.hp;
+                axies[a].parts.forEach(part => {
+                    //use first move. probably more moves for leveled up axies.
+                    if (part.moves.length > 0 && part.moves[0].hasOwnProperty("defense")) {
+                        aDef += part.moves[0].defense;
+                    }
+                })
+                return  bDef - aDef;
+            });
+
+            appendResult("Num Plants (minus Strawberry): " + plants.length);
+            appendResult("Num Beasts: " + beasts.length);
+            appendResult("Num Aquatics: " + aquatics.length);
+
+            let numTeams = Math.min(plants.length, beasts.length, aquatics.length);
+            appendResult("Creating " + numTeams + " teams");
+
+            let usedIds = [];
+            for (let i = 0; i < numTeams; i++) {
+                let plantId = plants[i];
+                let beastId = beasts[i];
+                let aquaticId = aquatics[i];
+                createdTeams.push({id: i, plantId: plantId, beastId: beastId, aquaticId: aquaticId});
+                usedIds.push(plantId);
+                usedIds.push(beastId);
+                usedIds.push(aquaticId);
+            }
+            $("#loading").text("Teams formed");
+            $("#loading").fadeOut(3500);
+            getAxiesDetails(usedIds, initTable);
+        });
+    });
+}
+
+
+function init(){
+    $.ajax({
+        url: "../../header.html",
+        cache: false,
+        dataType: "html",
+        success: function(data) {
+            $("#headerDiv").html(data);
+        }
+    });
+
+    if (typeof web3 == 'undefined') {
+        $("#account").text("Web3 enabled browser not detected.");
+        return;
+    } else {
+        if (typeof web3.eth.accounts[0] == "undefined") {
+            $("#account").text("Can't detect your account. Unlock your wallet or try reloading the page and waiting a few seconds.");
+            return;
+        } else {
+            $("#account").text("Your Account: " + web3.eth.accounts[0]);
+        }
+    }
+
+    storageKey = "freakitties.github.io" + "_MATCHES_" + web3.eth.accounts[0];
+    let sig = localStorage.getItem(storageKey + "_signatureAxieInfinity");
+    if (!sig) {
+        let ok = confirm("This page will ask you to sign some text. By authorizing this signature, you are allowing the page to make requests to the Axie Infinity website on your behalf. This signature can be used to queue/edit/create teams or change axie/profile names. Don't get into a habit of arbitrarily authorizing signatures!");
+
+        if (ok === true) {
+            //Sign "Axie Infinity"
+            //basically CSRF or phishing vuln if a unique nonce is not included
+            web3.personal.sign("0x4178696520496e66696e697479", web3.eth.accounts[0], function(e,r) {
+                if (e) {
+                    alert("No signature found");
+                    return;
+                }
+                localStorage.setItem(storageKey + "_signatureAxieInfinity", r);
+                createTeams();
+
+            });
+        } else {
+            $("#loading").text("Signature not authorized.");
+        }
+
+    } else {
+        createTeams();
+    }
+
+}
+
+window.addEventListener('load', async () => {
+    var hash = window.location.hash.substr(1);
+    if (hash == "showClear") {
+        $("#clearButton").show();
+    } else {
+        $("#clearButton").hide();
+    }
+    // Modern dapp browsers...
+    if (window.ethereum) {
+        window.web3 = new Web3(ethereum);
+        BigNumber = web3.BigNumber;
+        try {
+            // Request account access if needed
+            await ethereum.enable();
+            console.log("modern dapp browser");
+        } catch (error) {
+            // User denied account access...
+            console.log("User denied ethereum account access.")
+        }
+    }
+    // Legacy dapp browsers...
+    else if (window.web3) {
+        window.web3 = await new Web3(web3.currentProvider);
+        BigNumber = web3.BigNumber;
+        // Acccounts always exposed
+        console.log("legacy dapp browser");
+    }
+    // Non-dapp browsers...
+    else {
+        console.log('Non-Ethereum browser detected.');
+        //since we are using our own web3.min.js
+        let w3 = new Web3();
+        BigNumber = w3.BigNumber;
+    }
+    //defer init until accounts are loaded
+    web3.eth.getAccounts(accounts => {
+        init();
+    })
+    //init();
+});
+
+
+</script>
+
+    <!-- header -->
+    <div id="headerDiv"></div><br/>
+
+    <div class="container">
+        <div  class="text-left col-6" id="account"></div><br/>
+        <div id="loading">Loading...</div>
+        <form id="frm" method="GET">
+            <table class="table" id="teamTable">
+                <thead>
+                  <tr>
+                    <th scope="col">Create</th>
+                    <th scope="col">Axie #1</th>
+                    <th scope="col">Axie #2</th>
+                    <th scope="col">Axie #3</th>
+                  </tr>
+                </thead>
+                <tbody id="tableBody">
+                  <tr>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                  </tr>
+                </tbody>
+            </table>
+            <p><button class="btn btn-primary" id="submitButton">Create Teams</button></p>
+        </form>
+        <div id="result" class="jumbotron"/>
+
+    </div>
+</body>
+</html>
