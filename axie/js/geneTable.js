@@ -582,17 +582,26 @@
                 ]
             });
 
-            $('.dataTables_filter input').on( 'keyup click', function () {
+            $('.dataTables_filter input').off('keyup search input');
+            $('.dataTables_filter input').on('keyup search input' , function (e) {
                 var searchVal = $('.dataTables_filter input').val().trim();
-                if (searchVal.startsWith("0x")) {
-                    axieTable.column("owner").search(searchVal).draw();
-                } else if (searchVal != "" && !isNaN(searchVal)) {
-                    axieTable.column(0).search(searchVal).draw();
-                } else if (searchVal != "") {
-                    axieTable.search(searchVal).draw();
-                } else {
-                    //??
-                    axieTable.columns().search(searchVal).draw();
+                if (e.which == 13) {
+                    if (searchVal.startsWith("0x")) {
+                        axieTable.search("").columns().search("");
+                        axieTable.column(axieTable.columns()[0].length - 1).search(searchVal).draw();
+                    } else if (searchVal != "" && !isNaN(searchVal)) {
+                        axieTable.search("").columns().search("");
+                        axieTable.column(0).search(searchVal).draw();
+                    } else if (searchVal != "") {
+                        axieTable.search("").columns().search("");
+                        axieTable.search(searchVal).draw();
+                    } else {
+                        //??
+                        axieTable.search("").columns().search("").draw();
+                        //axieTable.columns().search(searchVal).draw();
+                    }
+                } else if (searchVal == "") {
+                    axieTable.search("").columns().search("").draw();
                 }
             });
 
