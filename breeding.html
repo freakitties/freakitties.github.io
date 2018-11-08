@@ -58,20 +58,20 @@
                 border-color: #545b62;
             }
             .fixed-top-2-front {
-                margin-top: 76px;
+                margin-top: 77px;
                 z-index: 2;
             }
             .fixed-top-2-back {
-                margin-top: 76px;
+                margin-top: 77px;
                 z-index: -1;
             }
             @media (max-width: 1024px) {
                 .fixed-top-2-front {
-                    margin-top: 96px;
+                    margin-top: 128px;
                     z-index: 2;
                 }
                 .fixed-top-2-back {
-                    margin-top: 96px;
+                    margin-top: 128px;
                     z-index: -1;
                 }
             }
@@ -278,6 +278,7 @@
 
         }
 
+        var feeAlerted = false;
         function selfBreed(id, checkOnly=false) {
             if (!checkOnly) console.log("Breeding pair " + id);
 
@@ -295,7 +296,13 @@
             }
             matronId = parseInt(matronId);
             sireId = parseInt(sireId);
-            if (autoBirthFee != 0.008*1e18) {alert("Birthing fee has changed to: " + autoBirthFee); /*return;*/}
+            if (autoBirthFee != 0.008*1e18) {
+                if (!feeAlerted) {
+                    feeAlerted = true;
+                    alert("Birthing fee has changed to: " + autoBirthFee);
+                    /*return;*/
+                }
+            }
             coreInstance.canBreedWith(matronId, sireId, (err, result) => {
                 if (err) {
                     setMsg(id, "Error checking breedability: " + err);
@@ -755,6 +762,7 @@
 
     <div id="breedersDiv" class="container back">
 
+        <br/>
         <br/>
         <div id="pair0">
 
