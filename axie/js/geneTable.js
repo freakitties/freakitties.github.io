@@ -103,8 +103,8 @@
         return bin;
     }
 
-    //wetdog 1+30?
-    //chubby 29+?
+    //wetdog 1+30? = 33
+    //chubby 29+3 = 34
     var patternMap = {"000001": "greyfuzzy","000010": "(0, 0, 64, 130)", "000011": "(0, 0, 61, 107)", "000100": "(0, 0, 82, 74)", "000101": "(0, 0, 66, 101)", "000110": "(0, 0, 51, 134)", "000111": "(0, 0, 57, 117)", "001000": "(0, 0, 59, 67)", "001001": "(0, 0, 51, 104)", "001010": "(0, 0, 63, 131)", "001011": "(0, 0, 73, 153)", "001100": "(0, 0, 78, 127)", "001101": "(0, 0, 63, 99)", "001110": "(0, 0, 65, 55)", "011101": "greyspiky", "011110": "greycurly", "100001": "greywetdog", "100010": "greychubby"};
     function renderPatternD(data, type, row, meta) {
         let bin = data.slice(2, 8);
@@ -595,6 +595,28 @@
                     axieTable.columns().search(searchVal).draw();
                 }
             });
+
+            //filter on enter instead of per keystroke
+            jQuery.fn.dataTableExt.oApi.fnFilterOnReturn = function (oSettings) {
+                var _that = this;
+
+                this.each(function (i) {
+                    $.fn.dataTableExt.iApiIndex = i;
+                    var $this = this;
+                    var anControl = $('input', _that.fnSettings().aanFeatures.f);
+                    anControl
+                        .unbind('keyup search input')
+                        .bind('keypress', function (e) {
+                            if (e.which == 13) {
+                                $.fn.dataTableExt.iApiIndex = i;
+                                _that.fnFilter(anControl.val());
+                            }
+                        });
+                    return this;
+                });
+                return this;
+            };
+            $('.dataTable').dataTable().fnFilterOnReturn();
 
             $("#axieTable_length").after('&nbsp; <input id="binaryToggle" class="text-right ml-4" type="checkbox" onclick="toggleBinary()"/> Hide binary');
 
