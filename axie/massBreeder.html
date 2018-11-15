@@ -63,7 +63,7 @@ function getAxies(address, callback) {
                 numSkipped++;
                 continue;
             }
-            axies[data.axies[i].id.toString()] = {"id": data.axies[i].id, "class": data.axies[i].class, "exp": data.axies[i].exp, "expForBreeding": data.axies[i].expForBreeding, "parts": data.axies[i].parts};
+            axies[data.axies[i].id.toString()] = {"id": data.axies[i].id, "class": data.axies[i].class, "exp": data.axies[i].exp, "expForBreeding": data.axies[i].expForBreeding, "parts": data.axies[i].parts, "sireId": data.axies[i].sireId, "matronId": data.axies[i].matronId, "auction": data.axies[i].auction};
         }
         let totalAxies = data.totalAxies;
         if (totalAxies > 12) {
@@ -77,7 +77,7 @@ function getAxies(address, callback) {
                             numSkipped++;
                             continue;
                         }
-                        axies[data.axies[i].id.toString()] = {"id": data.axies[i].id, "class": data.axies[i].class, "exp": data.axies[i].exp, "expForBreeding": data.axies[i].expForBreeding, "parts": data.axies[i].parts};
+                        axies[data.axies[i].id.toString()] = {"id": data.axies[i].id, "class": data.axies[i].class, "exp": data.axies[i].exp, "expForBreeding": data.axies[i].expForBreeding, "parts": data.axies[i].parts, "sireId": data.axies[i].sireId, "matronId": data.axies[i].matronId, "auction": data.axies[i].auction};
                     }
                     if (Object.keys(axies).length + numSkipped >= totalAxies) { //fudge incase over for some reason
                         if (callback != null) {
@@ -135,6 +135,33 @@ function getAxiesDetails(axieList, cb) {
     }
 }
 
+function isBreedable(axie1, axie2) {
+    //self check
+    if (axie1.id == axie2.id) {
+        return false;
+    }
+    //parents check
+    if (axie2.matronId == axie1.id || axie2.sireId == axie1.id) {
+        return false;
+    }
+    if (axie1.matronId == axie2.id || axie1.sireId == axie2.id) {
+        return false;
+    }
+    //After checking parents, skip if ether is a tagged axie
+    if (axie1.matronId == 0 || axie2.matronId == 0) {
+        return true;
+    }
+    //check siblings
+    if (axie1.matronId == axie2.matronId || axie1.matronId == axie2.sireId) {
+        return false;
+    }
+    if (axie1.sireId == axie2.matronId || axie1.sireId == axie2.sireId) {
+        return false;
+    }
+    return true;
+}
+
+
 var classMap = {"beast": [], "bug": [], "bird": [], "plant": [], "aquatic": [], "reptile": [], "hidden_1": [], "hidden_2": [], "hidden_3": []}; //hidden 1: nut, 2, star, 3 moon
 var breedingPairs = [];
 function getBreeders() {
@@ -143,7 +170,7 @@ function getBreeders() {
         getAxiesDetails(axieList, () => {
             for (let id in axies) {
                 let axie = axies[id];
-                if (axie.exp + axie.truePending >= axie.expForBreeding && axie.breedCount < 7) {
+                if (axie.exp + axie.truePending >= axie.expForBreeding && axie.breedCount < 7 && axie.auction == null) {
                     classMap[axies[id].class].push(axies[id]);
 //                    if (Array.isArray(axie.parts)) {
                         //fail closed
@@ -173,7 +200,13 @@ function getBreeders() {
                     let axie2 = classMap[cls][i + 1];
                     let ready2 = axie2.exp >= axie2.expForBreeding;
                     let bothReady = ready1 && ready2;
-                    breedingPairs.push({axie1: axie1, axie2, bothReady: bothReady, id: breedingPairs.length});
+
+                    //temporary hack. TODO: find next breedable axie.
+                    if (isBreedable(axie1, axie2)) {
+                        breedingPairs.push({axie1: axie1, axie2, bothReady: bothReady, id: breedingPairs.length});
+                    } else {
+                        console.log("Skipping unbreedable pair: " + axie1.id + ". " + axie2.id);
+                    }
                 }
             }
             initTable();
