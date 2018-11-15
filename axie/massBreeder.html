@@ -144,24 +144,24 @@ function getBreeders() {
             for (let id in axies) {
                 let axie = axies[id];
                 if (axie.exp + axie.truePending >= axie.expForBreeding && axie.breedCount < 7) {
-                    axie.parts
-                    if (Array.isArray(axie.parts)) {
+                    classMap[axies[id].class].push(axies[id]);
+//                    if (Array.isArray(axie.parts)) {
                         //fail closed
-                        let numMystics = 6;
-                        for (let i in axie.parts) {
-                            let part = axie.parts[i];
-                            if (part.mystic === false) {
-                                numMystics--;
-                            }
-                        }
-                        if (numMystics === 0) {
-                            classMap[axies[id].class].push(axies[id]);
-                        } else {
-                            console.log("Skipping mystic: " + axie.id);
-                        }
-                    } else {
-                        console.log("Parts list is not an array");
-                    }
+//                        let numMystics = 6;
+//                        for (let i in axie.parts) {
+//                            let part = axie.parts[i];
+//                            if (part.mystic === false) {
+//                                numMystics--;
+//                            }
+//                        }
+//                        if (numMystics === 0) {
+//                            classMap[axies[id].class].push(axies[id]);
+//                        } else {
+//                            console.log("Skipping mystic: " + axie.id);
+//                        }
+//                    } else {
+//                        console.log("Parts list is not an array");
+//                    }
                 }
             }
             //XXX: could sort classMap based on some breeding criteria
