@@ -1,0 +1,453 @@
+<!--
+    Copyright 2018 freakitties@gmail.com
+    You can copy and use this code if you agree to pay $1 per page load.
+-->
+<html>
+    <head>
+        <title>Axie Mass Breeder</title>
+        <script async src="https://www.googletagmanager.com/gtag/js?id=UA-116189657-1"></script>
+        <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'UA-116189657-1');
+        </script>
+        <!--web3 v0.20.6-->
+        <script src="/js/web3.min.js" integrity="sha384-rXHfd7f1o1jpr3t+dYI17CkzUY3Wswo1OGbiXPGSbg4s2E42+jkRgllwt7ss2Vlq"></script>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+        <style>
+            body {background-color: #efefef;}
+        </style>
+        <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.16/css/jquery.dataTables.min.css" integrity="sha384-1UXhfqyOyO+W+XsGhiIFwwD3hsaHRz2XDGMle3b8bXPH5+cMsXVShDoHA3AH/y/p" crossorigin="anonymous">
+        <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js" integrity="sha384-Z9D45cp3elqajO+xEyjRTIK1Gr3eYsXiyCPIKNog1sIQzpo2fqFDqFdADGiJjzOv" crossorigin="anonymous"></script>
+
+        <link type="text/css" href="https://gyrocode.github.io/jquery-datatables-checkboxes/1.2.11/css/dataTables.checkboxes.css" rel="stylesheet" integrity="sha384-OfMcw8qH7HMnF4am2M2GaX6mqj8uJCssdsbz4eRq0p8ns7EkZpcQ0x1eihWP2KUA" crossorigin="anonymous"/>
+        <script type="text/javascript" src="https://gyrocode.github.io/jquery-datatables-checkboxes/1.2.11/js/dataTables.checkboxes.min.js" integrity="sha384-vSOUjvfg1V/jcelw8tVqGjo1N6t3iUvP2GQeYHGR3pphkc5unpcUNAohKqBEmgzB" crossorigin="anonymous"></script>
+
+        <style>
+            .dropdown-menu>li>a, .dropdown-menu {
+                color: white;
+                background-color: #6c757d;
+            }
+        </style>
+    </head>
+    <body>
+
+<script>
+
+var incubatorAddress = "0x425372c0ac9d559a186a08a3854e0ddea1a00d5c";
+var incubatorABI = [{"constant":true,"inputs":[{"name":"","type":"uint256"}],"name":"NEEDED_EXP_FOR_BREEDING","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[{"name":"","type":"address"}],"name":"spawnerWhitelisted","outputs":[{"name":"","type":"bool"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"TO_LARVA_DURATION","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[{"name":"","type":"address"}],"name":"breederWhitelisted","outputs":[{"name":"","type":"bool"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"initialized","outputs":[{"name":"","type":"bool"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[{"name":"token","type":"address"}],"name":"reclaimToken","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":false,"inputs":[{"name":"_spawner","type":"address"},{"name":"_whitelisted","type":"bool"}],"name":"whitelistSpawner","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[{"name":"","type":"uint256"}],"name":"petiteGrowth","outputs":[{"name":"axieId","type":"uint256"},{"name":"growthDate","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[{"name":"contractAddr","type":"address"}],"name":"reclaimContract","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[{"name":"","type":"address"}],"name":"seederWhitelisted","outputs":[{"name":"","type":"bool"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"TO_ADULT_DURATION","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[],"name":"unpause","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":false,"inputs":[{"name":"_newSetter","type":"address"}],"name":"setWhitelistSetter","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[],"name":"paused","outputs":[{"name":"","type":"bool"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"coreExtraContract","outputs":[{"name":"","type":"address"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"legacyIncubatorContract","outputs":[{"name":"","type":"address"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[],"name":"pause","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[],"name":"owner","outputs":[{"name":"","type":"address"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"geneBrewerContract","outputs":[{"name":"","type":"address"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"defaultGasLimit","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[{"name":"_seeder","type":"address"},{"name":"_whitelisted","type":"bool"}],"name":"whitelistSeeder","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[],"name":"shouldBypassPetiteConfirmation","outputs":[{"name":"","type":"bool"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[{"name":"_breeder","type":"address"},{"name":"_whitelisted","type":"bool"}],"name":"whitelistBreeder","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[{"name":"","type":"uint256"}],"name":"axieggById","outputs":[{"name":"genesHash","type":"uint256"},{"name":"genes","type":"uint256"},{"name":"sireGenes","type":"uint256"},{"name":"matronGenes","type":"uint256"},{"name":"birthPlace","type":"uint256"},{"name":"seed","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"breedingManager","outputs":[{"name":"","type":"address"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[{"name":"from_","type":"address"},{"name":"value_","type":"uint256"},{"name":"data_","type":"bytes"}],"name":"tokenFallback","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":false,"inputs":[{"name":"_newManager","type":"address"}],"name":"setSpawnManager","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[],"name":"whitelistSetter","outputs":[{"name":"","type":"address"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"spawnManager","outputs":[{"name":"","type":"address"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[{"name":"","type":"uint256"}],"name":"petiteGrowthQueryId","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"shouldUseOraclize","outputs":[{"name":"","type":"bool"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"coreContract","outputs":[{"name":"","type":"address"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[{"name":"newOwner","type":"address"}],"name":"transferOwnership","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[],"name":"TO_PETITE_DURATION","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[{"name":"_newManager","type":"address"}],"name":"setBreedingManager","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"payable":true,"stateMutability":"payable","type":"fallback"},{"anonymous":false,"inputs":[{"indexed":true,"name":"_axieId","type":"uint256"},{"indexed":false,"name":"_withGenes","type":"bool"}],"name":"PetiteGrowthStarted","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"name":"_axieId","type":"uint256"}],"name":"PetiteGrowthFinished","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"name":"_axieId","type":"uint256"},{"indexed":false,"name":"_queryId","type":"uint256"}],"name":"PetiteGrowthByOraclizeStarted","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"name":"_axieId","type":"uint256"},{"indexed":false,"name":"_newQueryId","type":"uint256"},{"indexed":false,"name":"_oldQueryId","type":"uint256"}],"name":"PetiteGrowthByOraclizeRetried","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"name":"_axieId","type":"uint256"},{"indexed":false,"name":"_queryId","type":"uint256"}],"name":"PetiteGrowthByOraclizeFinished","type":"event"},{"anonymous":false,"inputs":[],"name":"Pause","type":"event"},{"anonymous":false,"inputs":[],"name":"Unpause","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"name":"previousOwner","type":"address"},{"indexed":true,"name":"newOwner","type":"address"}],"name":"OwnershipTransferred","type":"event"},{"anonymous":false,"inputs":[{"indexed":false,"name":"_seeder","type":"address"},{"indexed":false,"name":"_whitelisted","type":"bool"}],"name":"SeederWhitelisted","type":"event"},{"anonymous":false,"inputs":[{"indexed":false,"name":"_newManager","type":"address"},{"indexed":false,"name":"_oldManager","type":"address"}],"name":"BreedingManagerUpdated","type":"event"},{"anonymous":false,"inputs":[{"indexed":false,"name":"_breeder","type":"address"},{"indexed":false,"name":"_whitelisted","type":"bool"}],"name":"BreederWhitelisted","type":"event"},{"anonymous":false,"inputs":[{"indexed":false,"name":"_newManager","type":"address"},{"indexed":false,"name":"_oldManager","type":"address"}],"name":"SpawnManagerUpdated","type":"event"},{"anonymous":false,"inputs":[{"indexed":false,"name":"_spawner","type":"address"},{"indexed":false,"name":"_whitelisted","type":"bool"}],"name":"SpawnerWhitelisted","type":"event"},{"anonymous":false,"inputs":[{"indexed":false,"name":"_newSetter","type":"address"},{"indexed":false,"name":"_oldSetter","type":"address"}],"name":"WhitelistSetterUpdated","type":"event"},{"constant":false,"inputs":[{"name":"_queryId","type":"bytes32"},{"name":"_result","type":"string"}],"name":"__callback","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":false,"inputs":[{"name":"myid","type":"bytes32"},{"name":"result","type":"string"},{"name":"proof","type":"bytes"}],"name":"__callback","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":false,"inputs":[],"name":"reclaimEther","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":false,"inputs":[{"name":"_coreAddress","type":"address"}],"name":"setCoreContract","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":false,"inputs":[{"name":"_coreExtraAddress","type":"address"}],"name":"setCoreExtraContract","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":false,"inputs":[{"name":"_geneBrewerAddress","type":"address"}],"name":"setGeneBrewerContract","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":false,"inputs":[{"name":"_legacyIncubatorAddress","type":"address"}],"name":"setLegacyIncubatorContract","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":false,"inputs":[{"name":"_axieIds","type":"uint256[]"}],"name":"initializeAxieggs","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":false,"inputs":[{"name":"_fromId","type":"uint256"},{"name":"_toId","type":"uint256"}],"name":"initializeAxieggs","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":false,"inputs":[{"name":"_fromId","type":"uint256"},{"name":"_toId","type":"uint256"}],"name":"initializePetiteGrowths","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":false,"inputs":[{"name":"_axieIds","type":"uint256[]"}],"name":"initializePetiteGrowths","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":false,"inputs":[],"name":"finishInitialization","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[],"name":"breedingFee","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[{"name":"_newBreedingFee","type":"uint256"}],"name":"setBreedingFee","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":false,"inputs":[{"name":"_shouldUseOraclize","type":"bool"}],"name":"useOraclize","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":false,"inputs":[{"name":"_newGasLimit","type":"uint256"}],"name":"setDefaultGasLimit","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":false,"inputs":[{"name":"_shouldBypass","type":"bool"}],"name":"bypassPetiteConfirmation","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[{"name":"_axieId","type":"uint256"}],"name":"getAxiegg","outputs":[{"name":"","type":"uint256"},{"name":"","type":"uint256"},{"name":"","type":"uint256"},{"name":"","type":"uint256"},{"name":"","type":"uint256"},{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[{"name":"_axieId","type":"uint256"}],"name":"getPetiteGrowth","outputs":[{"name":"","type":"uint256"},{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[{"name":"_axieId","type":"uint256"}],"name":"getAxieStage","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[{"name":"_axieId","type":"uint256"}],"name":"neededExpForBreeding","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[{"name":"_axieId","type":"uint256"}],"name":"requireEnoughExpForBreeding","outputs":[],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[{"name":"_genesHash","type":"uint256"},{"name":"_owner","type":"address"}],"name":"spawnAxiegg","outputs":[{"name":"","type":"uint256"}],"payable":true,"stateMutability":"payable","type":"function"},{"constant":false,"inputs":[{"name":"_sireId","type":"uint256"},{"name":"_matronId","type":"uint256"},{"name":"_birthPlace","type":"uint256"}],"name":"breedOwnedAxies","outputs":[{"name":"","type":"uint256"}],"payable":true,"stateMutability":"payable","type":"function"},{"constant":false,"inputs":[{"name":"_sireId","type":"uint256"},{"name":"_matronId","type":"uint256"},{"name":"_birthPlace","type":"uint256"}],"name":"breedAxies","outputs":[{"name":"","type":"uint256"}],"payable":true,"stateMutability":"payable","type":"function"},{"constant":false,"inputs":[{"name":"_axieId","type":"uint256"}],"name":"growToPetiteAxie","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":false,"inputs":[{"name":"_axieId","type":"uint256"},{"name":"_genesOrSeed","type":"uint256"}],"name":"growToPetiteAxie","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":false,"inputs":[{"name":"_axieId","type":"uint256"},{"name":"_gasLimit","type":"uint256"}],"name":"retryGrowthToPetiteAxie","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":false,"inputs":[{"name":"_axieId","type":"uint256"},{"name":"_genesOrSeed","type":"uint256"}],"name":"finishGrowthToPetiteAxie","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":false,"inputs":[{"name":"_axieId","type":"uint256"}],"name":"growToAdultAxie","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"}];
+var incubatorContract;
+var incubatorInstance;
+
+var expCheckpointABI = [{"constant":false,"inputs":[],"name":"unpause","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[{"name":"account","type":"address"}],"name":"isPauser","outputs":[{"name":"","type":"bool"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"dailyExpLimit","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"paused","outputs":[{"name":"","type":"bool"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[],"name":"renouncePauser","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[],"name":"coreExtraContract","outputs":[{"name":"","type":"address"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[],"name":"renounceOwnership","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":false,"inputs":[{"name":"account","type":"address"}],"name":"addPauser","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":false,"inputs":[],"name":"pause","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[],"name":"owner","outputs":[{"name":"","type":"address"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"isOwner","outputs":[{"name":"","type":"bool"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[{"name":"account","type":"address"}],"name":"addMinter","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":false,"inputs":[],"name":"renounceMinter","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[{"name":"account","type":"address"}],"name":"isMinter","outputs":[{"name":"","type":"bool"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"coreContract","outputs":[{"name":"","type":"address"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[{"name":"newOwner","type":"address"}],"name":"transferOwnership","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"inputs":[{"name":"_coreContract","type":"address"},{"name":"_coreExtraContract","type":"address"},{"name":"_dailyExpLimit","type":"uint256"}],"payable":false,"stateMutability":"nonpayable","type":"constructor"},{"anonymous":false,"inputs":[{"indexed":true,"name":"_axieId","type":"uint256"},{"indexed":false,"name":"_exp","type":"uint256"}],"name":"ExpCheckpoint","type":"event"},{"anonymous":false,"inputs":[],"name":"Paused","type":"event"},{"anonymous":false,"inputs":[],"name":"Unpaused","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"name":"account","type":"address"}],"name":"PauserAdded","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"name":"account","type":"address"}],"name":"PauserRemoved","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"name":"previousOwner","type":"address"}],"name":"OwnershipRenounced","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"name":"previousOwner","type":"address"},{"indexed":true,"name":"newOwner","type":"address"}],"name":"OwnershipTransferred","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"name":"account","type":"address"}],"name":"MinterAdded","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"name":"account","type":"address"}],"name":"MinterRemoved","type":"event"},{"constant":true,"inputs":[{"name":"_axieId","type":"uint256"}],"name":"getCheckpoint","outputs":[{"name":"_exp","type":"uint256"},{"name":"_createdAt","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[{"name":"_axieId","type":"uint256"},{"name":"_exp","type":"uint256"},{"name":"_createdAt","type":"uint256"},{"name":"_signature","type":"bytes"},{"name":"_subscriber","type":"address"},{"name":"_data","type":"bytes"}],"name":"checkpointAndCall","outputs":[{"name":"_axieExp","type":"uint256"}],"payable":true,"stateMutability":"payable","type":"function"},{"constant":false,"inputs":[{"name":"_axieIds","type":"uint256[]"},{"name":"_expList","type":"uint256[]"},{"name":"_createdAtList","type":"uint256[]"},{"name":"_signatures","type":"bytes"},{"name":"_subscriber","type":"address"},{"name":"_data","type":"bytes"}],"name":"checkpointForMultiAndCall","outputs":[],"payable":true,"stateMutability":"payable","type":"function"},{"constant":false,"inputs":[{"name":"_axieId","type":"uint256"},{"name":"_exp","type":"uint256"},{"name":"_createdAt","type":"uint256"},{"name":"_signature","type":"bytes"}],"name":"checkpoint","outputs":[{"name":"_axieExp","type":"uint256"}],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":false,"inputs":[{"name":"_axieIds","type":"uint256[]"},{"name":"_expList","type":"uint256[]"},{"name":"_createdAtList","type":"uint256[]"},{"name":"_signatures","type":"bytes"}],"name":"checkpointForMulti","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":false,"inputs":[{"name":"_dailyExpLimit","type":"uint256"}],"name":"setDailyExpLimit","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"}];
+var expCheckpointAddress = "0x71FfC95Ca3BcEbF26024f689F40006182916167f";
+var expCheckpointContract;
+var expCheckpointInstance;
+
+var axies = {};
+
+function getAxies(address, callback) {
+    if (!web3.isAddress(address)) {
+        alert("not a valid address");
+        return;
+    }
+    let url = "https://axieinfinity.com/api/addresses/" + address + "/axies?offset=0";
+    var numSkipped = 0;
+    $.get(url, function(data, status, xhr) {
+        $("#loading").text("Loading axies...");
+        for (let i in data.axies) {
+            if (data.axies[i].stage < 4) {
+                numSkipped++;
+                continue;
+            }
+            axies[data.axies[i].id.toString()] = {"id": data.axies[i].id, "class": data.axies[i].class, "exp": data.axies[i].exp, "expForBreeding": data.axies[i].expForBreeding, "parts": data.axies[i].parts};
+        }
+        let totalAxies = data.totalAxies;
+        if (totalAxies > 12) {
+            for (let i = 12; i < totalAxies; i+=12) {
+                let url = "https://axieinfinity.com/api/addresses/" + address + "/axies?offset=" + i;
+                $.get(url, function(data, status, xhr) {
+                    let percentage = Object.keys(axies).length/data.totalAxies * 100;
+                    $("#loading").text("Loading axies..." + Math.round(percentage) + "%");
+                    for (let i in data.axies) {
+                        if (data.axies[i].stage < 4) {
+                            numSkipped++;
+                            continue;
+                        }
+                        axies[data.axies[i].id.toString()] = {"id": data.axies[i].id, "class": data.axies[i].class, "exp": data.axies[i].exp, "expForBreeding": data.axies[i].expForBreeding, "parts": data.axies[i].parts};
+                    }
+                    if (Object.keys(axies).length + numSkipped >= totalAxies) { //fudge incase over for some reason
+                        if (callback != null) {
+                            $("#loading").text("Done loading axies. Getting axie exp info.")
+                            callback();
+                        }
+                    }
+                });
+            }
+        } else {
+            $("#loading").text("Done loading axies. Getting axie exp info.");
+            callback();
+        }
+    });
+}
+
+function getAxiesDetails(axieList, cb) {
+    for (let id in axieList) {
+        let axieId = axieList[id];
+        var count = 0;
+        //if ("image" in axies[id]) continue;
+        $.getJSON("https://api.axieinfinity.com/v1/axies/" + axieId, function(data) {
+            let percentage = Math.round(count / axieList.length * 100);
+            $("#loading").text("Done loading axies. Getting axie exp info..." + percentage + "%");
+            axies[axieId].image = data.figure.static.idle;
+            axies[axieId].exp = data.exp;                           //replaces
+            if (data.hasOwnProperty("pendingExp")) {
+                axies[axieId].pendingExp = data.pendingExp;             //pendingExp is the total lifetime exp earned
+            } else {
+                axies[axieId].pendingExp = 0;
+            }
+            axies[axieId].expSubmittedAt = data.expSubmittedAt;
+            axies[axieId].expSignature = data.expSignature;
+            axies[axieId].breedCount = data.breedCount;
+            let id = parseInt(axieId);
+            expCheckpointInstance.getCheckpoint(id, (error, result) => {
+                if (error) {
+                    console.log("Error getting Exp Checkpoint from the contract");
+                    return;
+                }
+                axies[axieId].totalSynced = result[0].toNumber();
+                axies[axieId].truePending = axies[axieId].pendingExp - axies[axieId].totalSynced;
+                count++;
+                if (count == axieList.length) {
+                    $("#loading").text("Done.");
+                    $("#loading").fadeOut(3500);
+                    cb();
+                }
+            });
+
+        }).fail((jqxhr, textStatus, error) => {
+            var err = textStatus + ", " + error;
+            console.log("Failed to get axie: " + err);
+        });;
+    }
+}
+
+var classMap = {"beast": [], "bug": [], "bird": [], "plant": [], "aquatic": [], "reptile": [], "hidden_1": [], "hidden_2": [], "hidden_3": []}; //hidden 1: nut, 2, star, 3 moon
+var breedingPairs = [];
+function getBreeders() {
+    getAxies(web3.eth.accounts[0], () => {
+        let axieList = Object.keys(axies);
+        getAxiesDetails(axieList, () => {
+            for (let id in axies) {
+                let axie = axies[id];
+                if (axie.exp + axie.truePending >= axie.expForBreeding && axie.breedCount < 7) {
+                    axie.parts
+                    if (Array.isArray(axie.parts)) {
+                        //fail closed
+                        let numMystics = 6;
+                        for (let i in axie.parts) {
+                            let part = axie.parts[i];
+                            if (part.mystic === false) {
+                                numMystics--;
+                            }
+                        }
+                        if (numMystics === 0) {
+                            classMap[axies[id].class].push(axies[id]);
+                        } else {
+                            console.log("Skipping mystic: " + axie.id);
+                        }
+                    } else {
+                        console.log("Parts list is not an array");
+                    }
+                }
+            }
+            //XXX: could sort classMap based on some breeding criteria
+            for (let cls in classMap) {
+                let len = Math.floor(classMap[cls].length/2);
+                for (let i = 0; i < len; i += 2) {
+                    let axie1 = classMap[cls][i];
+                    let ready1 = axie1.exp >= axie1.expForBreeding;
+                    let axie2 = classMap[cls][i + 1];
+                    let ready2 = axie2.exp >= axie2.expForBreeding;
+                    let bothReady = ready1 && ready2;
+                    breedingPairs.push({axie1: axie1, axie2, bothReady: bothReady, id: breedingPairs.length});
+                }
+            }
+            initTable();
+        });
+    });
+}
+
+function renderAxie(axie, type, full) {
+    let id = parseInt(axie.id);
+    if(type === 'display'){
+        let out = '<a href="https://axieinfinity.com/axie/' + id + '?r=freak" target="_blank"><img src="' + weakEscape(axie.image) + '" height="50"><br/>#' + id + '</a>';
+        let exp = parseInt(axie.exp);
+        let truePending = parseInt(axie.truePending);
+        let expForBreeding = parseInt(axie.expForBreeding);
+        let count = parseInt(axie.breedCount);
+        let expOut = exp.toString();
+        if (exp < expForBreeding) {
+            expOut = '<span class="text-danger">' + exp + '</span>';
+        }
+        out += "<br>Exp: " + expOut + " (Pending: " + truePending + ")<br>Exp to breed: " + expForBreeding + ", count: " + count + "<br>";
+        return out;
+    }
+    return id;
+}
+
+function weakEscape(str) {
+    return str.replace(/'/g, "&apos;").replace(/"/g, "&quot;").replace(/</g, '&lt;').replace(/>/g, "&gt;");
+}
+
+function selectBreedable(invert=false) {
+    breedingTable.column(0).checkboxes.deselectAll();
+    breedingTable.cells(
+        breedingTable.rows(function(idx, data, node){
+            if (data.bothReady) {
+                return invert ? false : true;
+            }
+            return invert ? true : false;
+        }).indexes(), 0).checkboxes.select();
+}
+
+var breedingTable;
+function initTable() {
+
+    breedingTable = $('#breedingTable').DataTable({
+        data: breedingPairs,
+        columnDefs: [
+            {
+                orderable: false,
+                checkboxes: {selectRow: true},
+                targets: 0
+            },
+            {
+                className: "text-center", "targets": [ "_all" ]
+            }
+        ],
+        select: {
+            style: 'multi'
+        },
+        columns: [
+            {title: "Breed/Sync", data: "id"},
+            {title: "Axie #1", data: "axie1", render: renderAxie},
+            {title: "Axie #2", data: "axie2", render: renderAxie},
+        ],
+        pageLength: 100
+    });
+}
+
+function appendResult(msg) {
+    let newDiv = $("<div>");
+    newDiv.text(msg);
+    $("#result").append(newDiv);
+    $("#result").append("<br/>");
+}
+
+function init(){
+    $.ajax({
+        url: "../../header.html",
+        cache: false,
+        dataType: "html",
+        success: function(data) {
+            $("#headerDiv").html(data);
+        }
+    });
+
+    if (typeof web3 == 'undefined') {
+        $("#account").text("Web3 enabled browser not detected.");
+        return;
+    } else {
+        if (typeof web3.eth.accounts[0] == "undefined") {
+            $("#account").text("Can't detect your account. Unlock your wallet or try reloading the page and waiting a few seconds.");
+            return;
+        } else {
+            $("#account").text("Your Account: " + web3.eth.accounts[0]);
+        }
+    }
+    incubatorContract = web3.eth.contract(incubatorABI);
+    incubatorInstance = incubatorContract.at(incubatorAddress);
+    expCheckpointContract = web3.eth.contract(expCheckpointABI);
+    expCheckpointInstance = expCheckpointContract.at(expCheckpointAddress);
+    getBreeders();
+
+}
+
+window.addEventListener('load', async () => {
+    // Modern dapp browsers...
+    if (window.ethereum) {
+        window.web3 = new Web3(ethereum);
+        BigNumber = web3.BigNumber;
+        try {
+            // Request account access if needed
+            await ethereum.enable();
+            console.log("modern dapp browser");
+        } catch (error) {
+            // User denied account access...
+            console.log("User denied ethereum account access.")
+        }
+    }
+    // Legacy dapp browsers...
+    else if (window.web3) {
+        window.web3 = await new Web3(web3.currentProvider);
+        BigNumber = web3.BigNumber;
+        // Acccounts always exposed
+        console.log("legacy dapp browser");
+    }
+    // Non-dapp browsers...
+    else {
+        console.log('Non-Ethereum browser detected.');
+        //since we are using our own web3.min.js
+        let w3 = new Web3();
+        BigNumber = w3.BigNumber;
+    }
+    //defer init until accounts are loaded
+    web3.eth.getAccounts(accounts => {
+        init();
+    })
+});
+
+function checkContractAndGas(instance, action) {
+    $.getJSON("https://ethgasstation.info/json/ethgasAPI.json", (ethGas) => {
+        if (isNaN(ethGas.average)) {
+            alert("Couldn't get the gas cost from ethGasStation");
+            return;
+        }
+        var gasPriceGwei = ethGas.average/10 + 0.1;
+        var gasPrice = gasPriceGwei * 1e9;
+        let ok = confirm("The gas price is: " + gasPriceGwei + " gwei. Do you want to continue?");
+        if (ok) {
+            instance.paused((paused) => {
+                if (!paused) {
+                    action(gasPrice);
+                } else {
+                    alert("The contract at " + instance.address + " is paused. Has the address changed?");
+                }
+            });
+        } else {
+           console.log("Action canceled by user.");
+        }
+    }).fail(() => {
+        alert("Failed to get ethGasPrice from ethgasstation");
+    });
+}
+
+function breed(gasPrice) {
+    var rows_selected = breedingTable.column(0).checkboxes.selected();
+
+    try {
+        incubatorInstance.breedingFee((e, fee) => {
+            if (e) {
+                console.log("Erroring getting breeding fee: " + e);
+                alert("Erroring getting breeding fee");
+                return;
+            }
+            var breedingFee = fee.toNumber();
+
+            $.each(rows_selected, function(index, id) {
+                let pair = breedingPairs[parseInt(id)];
+                let axie1 = pair.axie1;
+                let axie2 = pair.axie2;
+                if (!pair.bothReady) {
+                    appendResult("Pair " + axie1.id + ", " + axie2.id + " was not bred due unsynced exp.");
+                    return;
+                }
+                console.log("Breeding: " + axie1.id + ", " + axie2.id);
+                incubatorInstance.breedOwnedAxies(axie1.id, axie2.id, 0, {from: web3.eth.accounts[0], value: breedingFee, gasPrice: gasPrice, gas: 500000}, (err, result) => {
+                    if (err) {
+                        console.log(err);
+                        appendResult(err.message + ": axies " + axie1.id + ", " + axie2.id);
+                        return;
+                    }
+                    appendResult("breedOwnedAxies Transaction ID: " + result);
+                });
+            });
+
+        });
+    } catch (err) {
+        console.log(err);
+        alert(err);
+    }
+}
+
+function syncAxie(axie, gasPrice) {
+    if (axie.exp >= axie.expForBreeding) {
+        appendResult("Not syncing axie #" + axie.id + " since it has enough exp to breed");
+    } else {
+        console.log("Syncing " + axie.id);
+        //pendingExp is the total lifetime exp earned
+        expCheckpointInstance.checkpoint(axie.id, axie.pendingExp, axie.expSubmittedAt, axie.expSignature, {from: web3.eth.accounts[0], gasPrice: gasPrice, gas: 150000}, (err, result) => {
+            if (err) {
+                console.log(err);
+                appendResult(err.message + ": axie " + axie.id);
+                return;
+            }
+            appendResult("Synced exp for " + axie.id + ". Transaction ID: " + result);
+        });
+    }
+}
+
+function sync(gasPrice) {
+    var rows_selected = breedingTable.column(0).checkboxes.selected();
+    try {
+        //TODO: find out how checkpointForMulti() works. What are the limits?
+        $.each(rows_selected, function(index, id) {
+            let pair = breedingPairs[parseInt(id)];
+            let axie1 = pair.axie1;
+            let axie2 = pair.axie2;
+
+            syncAxie(axie1, gasPrice);
+            syncAxie(axie2, gasPrice);
+        });
+    } catch (err) {
+        console.log(err);
+        alert(err);
+    }
+}
+
+</script>
+
+    <!-- header -->
+    <div id="headerDiv"></div><br/>
+
+    <div class="container">
+        <div  class="text-left col-6" id="account"></div><br/>
+        <p>To be safe, only have this one tab open. You don't want another site to inject a transaction while you're mass approving metamask transactions.</p>
+        <p>Out of an abundance of caution, don't keep a large balance on this account in case a bug causes a loss of ETH.</p>
+        <br>
+        <div id="loading">Loading...</div>
+        <button class="btn btn-primary" id="selectSyncButton" onclick="selectBreedable(true)">Select axies that need syncing</button> &nbsp;
+        <button class="btn btn-primary" id="selectBreedableButton" onclick="selectBreedable(false)">Select only breedable</button> &nbsp;
+        <br><br>
+        <table class="table" id="breedingTable">
+            <thead>
+                <tr>
+                    <th>Breed/Sync</th>
+                </tr>
+                <tr>
+                  <th scope="col"></th>
+                  <th scope="col">Axie #1</th>
+                  <th scope="col">Axie #2</th>
+                </tr>
+            </thead>
+            <tbody id="tableBody">
+              <tr>
+                <td></td>
+                <td></td>
+                <td></td>
+              </tr>
+            </tbody>
+        </table>
+        <p>
+            <button class="btn btn-primary" id="breedButton" onclick="checkContractAndGas(incubatorInstance, breed);">Breed</button> &nbsp;
+            <button class="btn btn-primary" id="syncButton" onclick="checkContractAndGas(expCheckpointInstance, sync);">Sync Exp</button> &nbsp;
+        </p><br>
+        <div id="result" class="jumbotron"/>
+
+    </div>
+</body>
+</html>
