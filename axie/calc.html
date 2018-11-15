@@ -18,6 +18,7 @@
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
 
         <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.18/css/jquery.dataTables.min.css" integrity="sha384-1UXhfqyOyO+W+XsGhiIFwwD3hsaHRz2XDGMle3b8bXPH5+cMsXVShDoHA3AH/y/p" crossorigin="anonymous">
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.bundle.min.js" integrity="sha384-feJI7QwhOS+hwpX2zkaeJQjeiwlhOP+SdQDqhgvvo1DsjtiSQByFdThsxO669S2D" crossorigin="anonymous"></script>
 
         <style>
             body {
@@ -275,15 +276,20 @@
         });
     }
 
-    function init() {
-        $.ajax({
-            url: "../header.html",
-            cache: false,
-            dataType: "html",
-            success: function(data) {
-                $("#headerDiv").html(data);
+    var bodyPartsMap = {};
+    function getBodyParts(callback) {
+        $.getJSON("https://axieinfinity.com/api/body-parts", (parts) => {
+            for (let i in parts) {
+                bodyPartsMap[parts[i].id] = parts[i];
             }
+        }).done(() => {
+            callback();
+        }).fail(() => {
+            console.log("Failed to get body parts from the API");
         });
+    }
+
+    function doIt() {
         let sireId = parseInt(getQueryParameter("sireId"));
         let matronId = parseInt(getQueryParameter("matronId"));
         if (sireId) {
@@ -299,6 +305,28 @@
                 setImage("sireImg", sireId);
                 calc(sireId, sireId);
             }
+        }
+    }
+
+    var details = false;
+    function init() {
+        $.ajax({
+            url: "../header.html",
+            cache: false,
+            dataType: "html",
+            success: function(data) {
+                $("#headerDiv").html(data);
+            }
+        });
+        let showDetails = getQueryParameter("showDetails");
+        if (showDetails === "true") {
+            $("#showDetails").prop( "checked", true );
+            details = true;
+            getBodyParts(() => {
+                doIt();
+            });
+        } else {
+            doIt();
         }
     }
 
@@ -374,8 +402,23 @@
                 let color = sorted[i][0];
                 out += '<div class="col-7 col-lg-6 mt-1 mb-1"><img width="35" src="colors/' + color + '-body.png"></div><div class="col-5 col-lg-6">' + percentage + (parseInt(percentage) ? "%" : "") + "</div>";
             } else {
+                out += '<div class="col-7 col-lg-6 mt-1 mb-1" ';
+                if (details) {
+                    let traitId = trait.toLowerCase() + "-" + partName.toLowerCase().replace(/\s/g, "-");
+                    let part = bodyPartsMap[traitId];
+                    let tipText = "";
+                    for (let i in part.moves) {
+                        tipText += "Atk: " + parseInt(part.moves[i].attack) + ", Def: " + parseInt(part.moves[i].defense) + ", Acc: " + parseInt(part.moves[i].accuracy);// + "<br>";
+                        for (let j in part.moves[i].effects) {
+                            tipText += " " + weakEscape(part.moves[i].effects[j].description) + " ";
+                        }
+                    }
+                    out += 'data-toggle="tooltip" title="' + tipText + '"' + ">";
+                } else {
+                    out += ">";
+                }
+                out += '<img width="18" src="' + images[partsClassMap[sorted[i][0] + " " + trait]] + '"> &nbsp;' + partName + '</div><div class="col-5 col-lg-6">' + percentage + (parseInt(percentage) ? "%" : "") + "</div>";
 
-                out += '<div class="col-7 col-lg-6 mt-1 mb-1"><img width="18" src="' + images[partsClassMap[sorted[i][0] + " " + trait]] + '"> &nbsp;' + partName + '</div><div class="col-5 col-lg-6">' + percentage + (parseInt(percentage) ? "%" : "") + "</div>";
             }
             out += '</div>';
         }
@@ -445,6 +488,10 @@
                 renderProbs("pattern", patternProbs, "row4");
                 $("#row4").append('<div class="col-1"></div>');
                 renderProbs("color", colorProbs, "row4");
+
+                if (details) {
+                    $('[data-toggle="tooltip"]').tooltip();
+                }
             });
         })
     }
@@ -468,6 +515,12 @@
             </div>
             <div class="">
                 <input type="submit" value="Calculate" class="btn btn-primary" id="calcButton"></input>
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" value="true" name="showDetails" id="showDetails">
+                    <label class="form-check-label" for="showDetails">
+                    Show move details
+                    </label>
+                </div>
             </div>
 
         </form>
