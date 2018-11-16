@@ -103,7 +103,6 @@ function getAxiesDetails(axieList, cb) {
             let percentage = Math.round(count / axieList.length * 100);
             $("#loading").text("Done loading axies. Getting axie exp info..." + percentage + "%");
             axies[axieId].image = data.figure.static.idle;
-            axies[axieId].exp = data.exp;                           //replaces
             if (data.hasOwnProperty("pendingExp")) {
                 axies[axieId].pendingExp = data.pendingExp;             //pendingExp is the total lifetime exp earned
             } else {
