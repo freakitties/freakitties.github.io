@@ -189,6 +189,8 @@ function getBreeders() {
 //                    } else {
 //                        console.log("Parts list is not an array");
 //                    }
+                } else if (axie.auction != null) {
+                    console.log("Skipping axie " + axie.id + " since it is on auction.");
                 }
             }
             //XXX: could sort classMap based on some breeding criteria
