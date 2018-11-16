@@ -75,7 +75,8 @@ function updateTeams(matches) {
         if (!(key in allTeams)) {
             allTeams[key] = {matches: [], wins: 0, losses: 0, members: members};
         }
-        allTeams[key].matches.push(matches[i]);
+        //allTeams[key].matches.push(matches[i]);
+        allTeams[key].matches.push(matches[i].id);
         allTeams[key].wins += win;
         allTeams[key].losses += loss;
     }
