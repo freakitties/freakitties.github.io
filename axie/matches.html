@@ -48,6 +48,12 @@ const TEAM_COUNT_PARAM = "&count=" + TEAM_COUNT;
 var storageKey;
 var db;
 
+var expCheckpointABI = [{"constant":false,"inputs":[],"name":"unpause","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[{"name":"account","type":"address"}],"name":"isPauser","outputs":[{"name":"","type":"bool"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"dailyExpLimit","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"paused","outputs":[{"name":"","type":"bool"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[],"name":"renouncePauser","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[],"name":"coreExtraContract","outputs":[{"name":"","type":"address"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[],"name":"renounceOwnership","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":false,"inputs":[{"name":"account","type":"address"}],"name":"addPauser","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":false,"inputs":[],"name":"pause","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[],"name":"owner","outputs":[{"name":"","type":"address"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"isOwner","outputs":[{"name":"","type":"bool"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[{"name":"account","type":"address"}],"name":"addMinter","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":false,"inputs":[],"name":"renounceMinter","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[{"name":"account","type":"address"}],"name":"isMinter","outputs":[{"name":"","type":"bool"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"coreContract","outputs":[{"name":"","type":"address"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[{"name":"newOwner","type":"address"}],"name":"transferOwnership","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"inputs":[{"name":"_coreContract","type":"address"},{"name":"_coreExtraContract","type":"address"},{"name":"_dailyExpLimit","type":"uint256"}],"payable":false,"stateMutability":"nonpayable","type":"constructor"},{"anonymous":false,"inputs":[{"indexed":true,"name":"_axieId","type":"uint256"},{"indexed":false,"name":"_exp","type":"uint256"}],"name":"ExpCheckpoint","type":"event"},{"anonymous":false,"inputs":[],"name":"Paused","type":"event"},{"anonymous":false,"inputs":[],"name":"Unpaused","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"name":"account","type":"address"}],"name":"PauserAdded","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"name":"account","type":"address"}],"name":"PauserRemoved","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"name":"previousOwner","type":"address"}],"name":"OwnershipRenounced","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"name":"previousOwner","type":"address"},{"indexed":true,"name":"newOwner","type":"address"}],"name":"OwnershipTransferred","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"name":"account","type":"address"}],"name":"MinterAdded","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"name":"account","type":"address"}],"name":"MinterRemoved","type":"event"},{"constant":true,"inputs":[{"name":"_axieId","type":"uint256"}],"name":"getCheckpoint","outputs":[{"name":"_exp","type":"uint256"},{"name":"_createdAt","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[{"name":"_axieId","type":"uint256"},{"name":"_exp","type":"uint256"},{"name":"_createdAt","type":"uint256"},{"name":"_signature","type":"bytes"},{"name":"_subscriber","type":"address"},{"name":"_data","type":"bytes"}],"name":"checkpointAndCall","outputs":[{"name":"_axieExp","type":"uint256"}],"payable":true,"stateMutability":"payable","type":"function"},{"constant":false,"inputs":[{"name":"_axieIds","type":"uint256[]"},{"name":"_expList","type":"uint256[]"},{"name":"_createdAtList","type":"uint256[]"},{"name":"_signatures","type":"bytes"},{"name":"_subscriber","type":"address"},{"name":"_data","type":"bytes"}],"name":"checkpointForMultiAndCall","outputs":[],"payable":true,"stateMutability":"payable","type":"function"},{"constant":false,"inputs":[{"name":"_axieId","type":"uint256"},{"name":"_exp","type":"uint256"},{"name":"_createdAt","type":"uint256"},{"name":"_signature","type":"bytes"}],"name":"checkpoint","outputs":[{"name":"_axieExp","type":"uint256"}],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":false,"inputs":[{"name":"_axieIds","type":"uint256[]"},{"name":"_expList","type":"uint256[]"},{"name":"_createdAtList","type":"uint256[]"},{"name":"_signatures","type":"bytes"}],"name":"checkpointForMulti","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":false,"inputs":[{"name":"_dailyExpLimit","type":"uint256"}],"name":"setDailyExpLimit","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"}];
+var expCheckpointAddress = "0x71FfC95Ca3BcEbF26024f689F40006182916167f";
+var expCheckpointContract;
+var expCheckpointInstance;
+
+
 function initDB(afterSuccess) {
     if (!window.indexedDB) {
         document.write("Your browser doesn't support IndexedDB.");
@@ -446,24 +452,29 @@ function saveAll() {
 }
 
 function getSingleAxieAndStore(id) {
-    $.getJSON("https://api.axieinfinity.com/v1/axies/" + id, function(data) {
-        axies[id.toString()] = {image: data.figure.static.idle, parts: data.parts, class: data.class, stats: data.stats, exp: data.exp, pendingExp: data.pendingExp};
-        let params = Object.keys(axies).join("&axieId=");
-        let url = "https://api.axieinfinity.com/v1/battle/battle/activity-point?axieId=" + params;
-        $.getJSON(url, function(points) {
-            for (let i in points) {
-                let id = points[i].axieId.toString();
-                axies[id].activityPoint = points[i].activityPoint;
-            }
-            axies[id].axieId = id;
-            storeAxie(axies[id]);
+    $.getJSON("https://axieinfinity.com/api/axies/" + id, function(basicAPI) {
+        $.getJSON("https://api.axieinfinity.com/v1/axies/" + id, function(data) {
+            axies[id.toString()] = {image: data.figure.static.idle, parts: data.parts, class: data.class, stats: data.stats, exp: basicAPI.exp, pendingExp: data.pendingExp};
+            let params = Object.keys(axies).join("&axieId=");
+            let url = "https://api.axieinfinity.com/v1/battle/battle/activity-point?axieId=" + params;
+            $.getJSON(url, function(points) {
+                for (let i in points) {
+                    let id = points[i].axieId.toString();
+                    axies[id].activityPoint = points[i].activityPoint;
+                }
+                axies[id].axieId = id;
+                storeAxie(axies[id]);
+            }).fail((jqxhr, textStatus, error) => {
+                var err = textStatus + ", " + error;
+                console.log("Failed to get activity points: " + err);
+            });
         }).fail((jqxhr, textStatus, error) => {
             var err = textStatus + ", " + error;
-            console.log("Failed to get activity points: " + err);
-        });
+            console.log("1Failed to get axie deets: " + err);
+        });;
     }).fail((jqxhr, textStatus, error) => {
         var err = textStatus + ", " + error;
-        console.log("1Failed to get activity points: " + err);
+        console.log("2Failed to get axie deets: " + err);
     });;
 }
 
@@ -472,27 +483,41 @@ function getAxieDetails(cb) {
         for (let id in axies) {
             var count = 0;
             //if ("image" in axies[id]) continue;
-            $.getJSON("https://api.axieinfinity.com/v1/axies/" + id, function(data) {
-                axies[id.toString()] = {image: data.figure.static.idle, parts: data.parts, class: data.class, stats: data.stats, exp: data.exp, pendingExp: data.pendingExp};
-                count++;
-                if (count == Object.keys(axies).length) {
-                    let params = Object.keys(axies).join("&axieId=");
-                    let url = "https://api.axieinfinity.com/v1/battle/battle/activity-point?axieId=" + params;
-                    $.getJSON(url, function(points) {
-                        for (let i in points) {
-                            let id = points[i].axieId.toString();
-                            axies[id].activityPoint = points[i].activityPoint;
+            $.getJSON("https://axieinfinity.com/api/axies/" + id, function(basicAPI) {
+                $.getJSON("https://api.axieinfinity.com/v1/axies/" + id, function(data) {
+                    axies[id.toString()] = {image: data.figure.static.idle, parts: data.parts, class: data.class, stats: data.stats, exp: basicAPI.exp, pendingExp: data.pendingExp};
+                    expCheckpointInstance.getCheckpoint(id, (error, result) => {
+                        if (error) {
+                            console.log("Error getting Exp Checkpoint from the contract");
+                            return;
                         }
-                        saveAll();
-                        $("#loading").text("Done.")
-                        $("#loading").fadeOut(2000);
-                        cb();
+                        axies[id].totalSynced = result[0].toNumber();
+                        axies[id].truePending = axies[id].pendingExp - axies[id].totalSynced;
+                        count++;
+
+                        if (count == Object.keys(axies).length) {
+                            let params = Object.keys(axies).join("&axieId=");
+                            let url = "https://api.axieinfinity.com/v1/battle/battle/activity-point?axieId=" + params;
+                            $.getJSON(url, function(points) {
+                                for (let i in points) {
+                                    let id = points[i].axieId.toString();
+                                    axies[id].activityPoint = points[i].activityPoint;
+                                }
+                                saveAll();
+                                $("#loading").text("Done.")
+                                $("#loading").fadeOut(2000);
+                                cb();
+                            });
+                        }
                     });
-                }
+                }).fail((jqxhr, textStatus, error) => {
+                    var err = textStatus + ", " + error;
+                    console.log("Failed to get axie: " + err);
+                });
             }).fail((jqxhr, textStatus, error) => {
                 var err = textStatus + ", " + error;
-                console.log("Failed to get axie: " + err);
-            });;
+                console.log("Failed to get axie deets: " + err);
+            });
         }
     });
 }
@@ -509,7 +534,7 @@ function renderAxie(data, type, full) {
             return "#" + id + "(Missing data. Reload the page.)";
         }
         let points = axie.activityPoint;
-        let out = '<a href="https://axieinfinity.com/axie/' + id + '?r=freak" target="_blank"><img src="' + weakEscape(axie.image) + '" height="50"><br/>#' + id + '</a><br>(Exp: ' + axie.exp + '+' + axie.pendingExp + ')<br>';
+        let out = '<a href="https://axieinfinity.com/axie/' + id + '?r=freak" target="_blank"><img src="' + weakEscape(axie.image) + '" height="50"><br/>#' + id + '</a><br>(Exp: ' + axie.exp + '+' + axie.truePending + ')<br>';
         if (points / 720 >= 1) {
             out += "3/3 battles ready";
         } else if (points / 480 >= 1) {
@@ -684,6 +709,9 @@ function init(){
         }
     }
 
+    expCheckpointContract = web3.eth.contract(expCheckpointABI);
+    expCheckpointInstance = expCheckpointContract.at(expCheckpointAddress);
+
     storageKey = "freakitties.github.io" + "_MATCHES_" + web3.eth.accounts[0];
     let sig = localStorage.getItem(storageKey + "_signatureAxieInfinity");
     if (!sig) {
@@ -691,7 +719,7 @@ function init(){
 
         if (ok === true) {
             //Sign "Axie Infinity"
-            //basically CSRF or phishing vuln if a unique nonce is not included
+            //basically Session hijacking or phishing vuln if a unique nonce is not included
             web3.personal.sign("0x4178696520496e66696e697479", web3.eth.accounts[0], function(e,r) {
                 if (e) {
                     alert("No signature found");
