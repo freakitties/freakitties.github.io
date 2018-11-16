@@ -381,6 +381,19 @@ function breed(gasPrice) {
                 return;
             }
             var breedingFee = fee.toNumber();
+            if (breedingFee != 2000000000000000) {
+                let feeEth = 0;
+                if (breedingFee == 0) {
+                    console.log("Missing breeding fee???");
+                    console.log(breedingFee);
+                } else {
+                    feeEth = breedingFee/1e18;
+                }
+                let confirmation = confirm("Unexpected breeding fee: " + feeEth + ". Do you want to continue?");
+                if (!confirmation) {
+                    return;
+                }
+            }
 
             $.each(rows_selected, function(index, id) {
                 let pair = breedingPairs[parseInt(id)];
