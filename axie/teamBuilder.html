@@ -58,25 +58,31 @@ function getAxies(address, callback) {
             axies[data.axies[i].id.toString()] = {"class": data.axies[i].class, "parts": data.axies[i].parts, "stats": data.axies[i].stats};
         }
         let totalAxies = data.totalAxies;
-        for (let i = 12; i < totalAxies; i+=12) {
-            let url = "https://axieinfinity.com/api/addresses/" + address + "/axies?offset=" + i;
-            $.get(url, function(data, status, xhr) {
-                let percentage = Object.keys(axies).length/data.totalAxies * 100;
-                $("#loading").text("Loading axies..." + Math.round(percentage) + "%");
-                for (let i in data.axies) {
-                    if (data.axies[i].stage < 4) {
-                        numSkipped++;
-                        continue;
+        if (totalAxies > 12) {
+            for (let i = 12; i < totalAxies; i+=12) {
+                let url = "https://axieinfinity.com/api/addresses/" + address + "/axies?offset=" + i;
+                $.get(url, function(data, status, xhr) {
+                    let percentage = Object.keys(axies).length/data.totalAxies * 100;
+                    $("#loading").text("Loading axies..." + Math.round(percentage) + "%");
+                    for (let i in data.axies) {
+                        if (data.axies[i].stage < 4) {
+                            numSkipped++;
+                            continue;
+                        }
+                        axies[data.axies[i].id.toString()] = {"class": data.axies[i].class, "parts": data.axies[i].parts, "stats": data.axies[i].stats};
                     }
-                    axies[data.axies[i].id.toString()] = {"class": data.axies[i].class, "parts": data.axies[i].parts, "stats": data.axies[i].stats};
-                }
-                if (Object.keys(axies).length + numSkipped >= totalAxies) { //fudge incase over for some reason
-                    if (callback != null) {
-                        $("#loading").text("Done loading axies. Getting existing teams.")
-                        callback();
+                    if (Object.keys(axies).length + numSkipped >= totalAxies) { //fudge incase over for some reason
+                        if (callback != null) {
+                            $("#loading").text("Done loading axies. Getting existing teams.")
+                            callback();
+                        }
                     }
-                }
-            });
+                });
+            }
+        } else {
+            $("#loading").text("Done.")
+            $("#loading").fadeOut(3500);
+            callback(true);
         }
     });
 }
@@ -310,8 +316,11 @@ function createTeams() {
             });
 
             appendResult("Num Plants (minus Strawberry): " + plants.length);
+            //appendResult(plants.join(", "));
             appendResult("Num Beasts: " + beasts.length);
+            //appendResult(beasts.join(", "));
             appendResult("Num Aquatics: " + aquatics.length);
+            //appendResult(aquatics.join(", "));
 
             let numTeams = Math.min(plants.length, beasts.length, aquatics.length);
             appendResult("Creating " + numTeams + " teams");
