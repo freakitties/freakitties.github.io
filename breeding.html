@@ -58,20 +58,20 @@
                 border-color: #545b62;
             }
             .fixed-top-2-front {
-                margin-top: 77px;
+                margin-top: 72px;
                 z-index: 2;
             }
             .fixed-top-2-back {
-                margin-top: 77px;
+                margin-top: 72px;
                 z-index: -1;
             }
             @media (max-width: 1024px) {
                 .fixed-top-2-front {
-                    margin-top: 128px;
+                    margin-top: 95px;
                     z-index: 2;
                 }
                 .fixed-top-2-back {
-                    margin-top: 128px;
+                    margin-top: 95px;
                     z-index: -1;
                 }
             }
@@ -138,7 +138,7 @@
                 dataType: "html",
                 success: function(data) {
                     $("#headerDiv").html(data);
-                    let buttons = '<div class="text-white small" id="account"></div>' +
+                    let buttons = //'<div class="text-white small" id="account"></div>' +
                     //'<br/>' +
                     '<div class="row col-12 mb-1">' +
                     '<button class="btn btn-outline-light text-white" onclick="createForm()"><i class="fas fa-plus-circle"></i> Add a pair</button> &nbsp;' +
@@ -764,6 +764,12 @@
 
         <br/>
         <br/>
+
+        <div class="row">
+            <div  class="text-left col-6" id="account"></div><br/><br/>
+        </div>
+
+
         <div id="pair0">
 
         <div class="col-md-9 border" onmouseover="$('#upButton0').show();$('#downButton0').show();$('#closeButton0').show();" onmouseout="$('#upButton0').hide();$('#downButton0').hide();$('#closeButton0').hide();" >
