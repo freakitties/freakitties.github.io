@@ -92,6 +92,7 @@
             success: function(data) {
                 $("#headerDiv").html(data);
 
+                initTable();
                 if (typeof web3 == 'undefined') {
                     $("#account").text("Web3 enabled browser not detected. Use the search box.");
                     return;
@@ -100,7 +101,6 @@
                         $("#account").text("Can't detect your account. Unlock your wallet or try reloading the page and waiting a few seconds.");
                         return;
                     } else {
-                        initTable();
                         $("#account").text("Your Account: " + web3.eth.accounts[0]);
                         getAxies(0, web3.eth.accounts[0]);
                     }
