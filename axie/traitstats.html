@@ -29,7 +29,7 @@
 
     function render(data, type, row, meta) {
         if(type === 'display'){
-            data = '<img width=60 src="' + encodeURIComponent(data) + '" onerror="this.src=\'unknown.png\'"/><br/>' + row.name;
+            data = '<img width=60 src="' + encodeURIComponent(data) + '" onerror="this.src=\'images/unknown.png\'"/><br/>' + row.name;
         }
         return data;
     }
@@ -63,7 +63,7 @@ $(document).ready(function(){
             let row;
             if (!(key in traits)) {
                 console.log("Unknown trait: " + JSON.stringify(bodyParts[p]));
-                row = {image: "unknown.png", name: part.name.replace(/"/g, "&quot;").replace(/</g, '&lt;'), type: part.type.replace(/"/g, "&quot;").replace(/</g, '&lt;'), class: part.class.replace(/"/g, "&quot;").replace(/</g, '&lt;')};
+                row = {image: "images/unknown.png", name: part.name.replace(/"/g, "&quot;").replace(/</g, '&lt;'), type: part.type.replace(/"/g, "&quot;").replace(/</g, '&lt;'), class: part.class.replace(/"/g, "&quot;").replace(/</g, '&lt;')};
             } else {
                 row = {image: traits[key].image.replace(/"/g, "&quot;").replace(/</g, '&lt;'), name: part.name.replace(/"/g, "&quot;").replace(/</g, '&lt;'), type: part.type.replace(/"/g, "&quot;").replace(/</g, '&lt;'), class: part.class.replace(/"/g, "&quot;").replace(/</g, '&lt;')};
             }
