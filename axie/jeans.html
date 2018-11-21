@@ -29,19 +29,20 @@
 <script>
     var axies = {};
     var checkedAddresses = [];
-    function getAxies(offset, address, callback) {
+    function getAxies(offset, address) {
         let url = "https://axieinfinity.com/api/addresses/" + address + "/axies?offset=" + offset;
 
         var numSkipped = 0;
         $.get(url, function(data, status, xhr) {
-            let percentage = offset/data.totalAxies * 100;
+            let percentage = (offset + 12)/data.totalAxies * 100;
             $("#loading").text("Loading..." + Math.round(percentage) + "%");
             for (let i in data.axies) {
                 if (data.axies[i].stage < 3) {
                     numSkipped++;
                     continue;
                 }
-                axies[data.axies[i].id] = {"genes": genesToBin(new BigNumber(data.axies[i].genes)), "owner": data.axies[i].owner, "class": data.class, "exp": data.axies[i].exp};
+                axies[data.axies[i].id] = {"id": data.axies[i].id, "genes": genesToBin(new BigNumber(data.axies[i].genes)), "owner": data.axies[i].owner, "class": data.class, "exp": data.axies[i].exp};
+                addRow(axies[data.axies[i].id]);
             }
             let totalAxies = data.totalAxies;
             if (totalAxies > 12) {
@@ -55,37 +56,29 @@
                                 numSkipped++;
                                 continue;
                             }
-                            axies[data.axies[i].id] = {"genes": genesToBin(new BigNumber(data.axies[i].genes)), "owner": data.axies[i].owner, "class": data.class, "exp": data.axies[i].exp};
+                            axies[data.axies[i].id] = {"id": data.axies[i].id, "genes": genesToBin(new BigNumber(data.axies[i].genes)), "owner": data.axies[i].owner, "class": data.class, "exp": data.axies[i].exp};
+                            addRow(axies[data.axies[i].id]);
                         }
                         if (Object.keys(axies).length + numSkipped >= totalAxies) { //fudge incase over for some reason
-                            checkedAddresses.push(address);
-                            if (callback != null) {
-                                $("#loading").text("Done.")
-                                $("#loading").fadeOut(3500);
-                                callback(true);
-                            }
+                            $("#loading").text("Done.")
+                            $("#loading").fadeOut(3500);
                         }
                     });
                 }
             } else {
                 $("#loading").text("Done.")
                 $("#loading").fadeOut(3500);
-                callback(true);
             }
         });
     }
 
-    var checkedAxies = 0;
-    function getAxie(id, callback) {
+    function getAxie(id) {
         $.get("https://axieinfinity.com/api/axies/" + parseInt(id), function(data, status, xhr) {
             if (data.stage < 3) {
-                callback();
                 return;
             }
-            axies[data.id] = {"genes": genesToBin(new BigNumber(data.genes)), "owner": data.owner, "class": data.class, "exp": data.exp};
-            if (callback != null) {
-                callback();
-            }
+            axies[data.id] = {"id": data.id, "genes": genesToBin(new BigNumber(data.genes)), "owner": data.owner, "class": data.class, "exp": data.exp};
+            addRow(axies[data.id]);
         });
     }
 
@@ -107,8 +100,9 @@
                         $("#account").text("Can't detect your account. Unlock your wallet or try reloading the page and waiting a few seconds.");
                         return;
                     } else {
+                        initTable();
                         $("#account").text("Your Account: " + web3.eth.accounts[0]);
-                        getAxies(0, web3.eth.accounts[0], initData);
+                        getAxies(0, web3.eth.accounts[0]);
                     }
                 }
             }
@@ -147,28 +141,11 @@
         }
         //defer init until accounts are loaded
         intID = setInterval(init, 250);
-        //init();
     });
-
-    function refreshData() {
-        let refresh = false;
-        if (!axieTable) {
-            initData(true);
-        } else {
-            initData(false);
-            axieTable.rows.add(data);
-            axieTable.columns.adjust().draw();
-        }
-    }
 
     function addSinglesAxie(ids) {
         for (let i in ids) {
-            getAxie(ids[i], function() {
-                checkedAxies++;
-                if (checkedAxies == ids.length) {
-                    refreshData();
-                }
-            });
+            getAxie(ids[i]);
         }
     }
 
@@ -194,29 +171,17 @@
                 }
             }
             axies = {};
-            checkedAddresses = [];
-            checkedAxies = 0;
-            if (addresses.length == 0) {
-                addSinglesAxie(ids);
-            } else {
-                for (let a in addresses) {
-                    getAxies(0, addresses[a], function() {
-                        if (checkedAddresses.length == addresses.length) {
-                            if (ids.length == 0) {
-                                refreshData();
-                            } else {
-                                addSinglesAxie(ids);
-                            }
-                        }
-                    });
-                }
+            addSinglesAxie(ids);
+            for (let a in addresses) {
+                getAxies(0, addresses[a]);
             }
+
         } else if ($.isNumeric(text)) {
             axies = {};
             if (text.startsWith("0x")) {
-                getAxies(0, [text], refreshData);
+                getAxies(0, [text]);
             } else {
-                getAxie(text, refreshData);
+                getAxie(text);
             }
         } else {
             //TODO: do this more elegantly
@@ -249,7 +214,7 @@
             <input class="text-right col-5 form-control" id="search" size="55" placeholder="ID, address or comma separated list of IDs and/or addresses" />&nbsp;
             <button type="submit" class="btn btn-dark" onclick="search();" id="searchButton0">Search</button>
         </div>
-        <div id="loading"></div>
+        <div id="loading">Loading...</div>
         <div id="copyDiv"></div>
         <br/>
         <table class="table display nowrap" id="axieTable">

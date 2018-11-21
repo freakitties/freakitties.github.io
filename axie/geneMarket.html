@@ -30,23 +30,21 @@
     var axies = {};
     var MAX_AXIES = 100;
     var marketURL = "https://axieinfinity.com/api/axies?sale=1&sorting=lowest_price&offset=";
-    function getMarketAxies(offset, callback) {
+    function getMarketAxies(offset) {
         let url = marketURL + offset;
         $.get(url, function(data, status, xhr) {
-            let percentage = offset/MAX_AXIES * 100;
+            let percentage = (offset + 12)/MAX_AXIES * 100;
             $("#loading").text("Loading..." + Math.round(percentage) + "%");
             for (let i in data.axies) {
                 if (data.axies[i].stage < 3) continue;
-                axies[data.axies[i].id] = {"genes": genesToBin(new BigNumber(data.axies[i].genes)), "owner": data.axies[i].owner, "class": data.class, "exp": data.axies[i].exp, "price": data.axies[i].auction.buyNowPrice/1e18};
+                axies[data.axies[i].id] = {"id": data.axies[i].id, "genes": genesToBin(new BigNumber(data.axies[i].genes)), "owner": data.axies[i].owner, "class": data.class, "exp": data.axies[i].exp, "price": data.axies[i].auction.buyNowPrice/1e18};
+                addRow(axies[data.axies[i].id]);
             }
             if (offset + 12 < MAX_AXIES && offset < data.totalAxies) {
-                getMarketAxies(offset + 12, callback);
+                getMarketAxies(offset + 12);
             } else {
                 $("#loading").text("Done.")
                 $("#loading").fadeOut(3500);
-                if (callback != null) {
-                    callback(true);
-                }
             }
         });
     }
@@ -88,14 +86,13 @@
             MAX_AXIES = parseInt(maxAxies);
         }
 
-        getMarketAxies(0, function(initTable){
 
-            let owner = columns.pop();
-            columns.push({title: "Price", data: "price", render: renderPrice});
-            columns.push(owner);
-            initData(initTable);
-            axieTable.order([81, 'asc']).draw();
-        });
+        let owner = columns.pop();
+        columns.push({title: "Price", data: "price", render: renderPrice});
+        columns.push(owner);
+        initTable();
+        axieTable.order([81, 'asc']).draw();
+        getMarketAxies(0);
     }
 
     var traitMapping = binarytraits;
@@ -131,17 +128,6 @@
         init();
     });
 
-    function refreshData() {
-        let refresh = false;
-        if (!axieTable) {
-            initData(true);
-        } else {
-            initData(false);
-            axieTable.rows.add(data);
-            axieTable.columns.adjust().draw();
-        }
-    }
-
     function toggleBinary() {
         if ($('#binaryToggle').is(":checked")) {
             $(".binary").css("display", "none");
@@ -161,7 +147,7 @@
             axieTable.draw();
         }
         axies = {};
-        getMarketAxies(0, refreshData);
+        getMarketAxies(0);
     }
 </script>
     <!-- header -->
@@ -169,7 +155,7 @@
     <div id="mainDiv" class="container ml-5">
 
         <div class="text-left"><input id="breedableToggle" class="ml-4" type="checkbox" onclick="toggleBreedable()"/> Breedable only</div>
-        <div id="loading"></div>
+        <div id="loading">Loading...</div>
         <div id="copyDiv"></div>
         <br/>
         <table class="table display nowrap" id="axieTable">

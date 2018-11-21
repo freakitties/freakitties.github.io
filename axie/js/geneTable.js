@@ -507,128 +507,126 @@
                 {title: "Num Reptile", data: "reptiles"},
                 {title: "owner", data: "owner", searchable: true}
                 ];
-    function initData(initTable=false) {
-        data = [];
-        for (let id in axies) {
-            let row = {id: id};
-            let numMystic = 0;
-            let numBeast = 0;
-            let numBug = 0;
-            let numBird = 0;
-            let numPlant = 0;
-            let numAquatic = 0;
-            let numReptile = 0;
+    function addRow(axie) {
+        let row = {id: axie.id};
+        let numMystic = 0;
+        let numBeast = 0;
+        let numBug = 0;
+        let numBird = 0;
+        let numPlant = 0;
+        let numAquatic = 0;
+        let numReptile = 0;
 
-            for (let i = 0; i < 8; i++) {
-                row["group" + i] = axies[id].genes.slice(i * 32, i * 32 + 32);
-                if (i > 1) {
-                    if (row["group" + i].slice(0, 2) == "11") {
-                        numMystic++;
-                    }
-                    let cls = row["group" + i].slice(2, 6);
-                    switch(classGeneMap[cls]) {
-                        case "beast":
-                            numBeast++;
-                            break;
-                        case "bug":
-                            numBug++;
-                            break;
-                        case "bird":
-                            numBird++;
-                            break;
-                        case "plant":
-                            numPlant++;
-                            break;
-                        case "aquatic":
-                            numAquatic++;
-                            break;
-                        case "reptile":
-                            numReptile++;
-                            break;
-                    }
+        for (let i = 0; i < 8; i++) {
+            row["group" + i] = axie.genes.slice(i * 32, i * 32 + 32);
+            if (i > 1) {
+                if (row["group" + i].slice(0, 2) == "11") {
+                    numMystic++;
                 }
-                //row["group" + i].slice(12,16) //R2
-                //row["group" + i].slice(22,26) //R1
+                let cls = row["group" + i].slice(2, 6);
+                switch(classGeneMap[cls]) {
+                    case "beast":
+                        numBeast++;
+                        break;
+                    case "bug":
+                        numBug++;
+                        break;
+                    case "bird":
+                        numBird++;
+                        break;
+                    case "plant":
+                        numPlant++;
+                        break;
+                    case "aquatic":
+                        numAquatic++;
+                        break;
+                    case "reptile":
+                        numReptile++;
+                        break;
+                }
             }
-            row['mystics'] = numMystic;
-            let axie = axies[id];
-            if (axie != null && 'owner' in axie) {
-                row['owner'] = axie['owner'];
-            } else {
-                row['owner'] = "?";
-            }
-            row['exp'] = axie['exp'];
-            row["beasts"] = numBeast;
-            row["bugs"] = numBug;
-            row["birds"] = numBird;
-            row["plants"] = numPlant;
-            row["aquatics"] = numAquatic;
-            row["reptiles"] = numReptile;
-            if ("price" in axie) row["price"] = axie["price"];
-            data.push(row);
+            //row["group" + i].slice(12,16) //R2
+            //row["group" + i].slice(22,26) //R1
         }
+        row['mystics'] = numMystic;
+        if ('owner' in axie) {
+            row['owner'] = axie['owner'];
+        } else {
+            row['owner'] = "?";
+        }
+        row['exp'] = axie['exp'];
+        row["beasts"] = numBeast;
+        row["bugs"] = numBug;
+        row["birds"] = numBird;
+        row["plants"] = numPlant;
+        row["aquatics"] = numAquatic;
+        row["reptiles"] = numReptile;
+        if ("price" in axie) row["price"] = axie["price"];
 
-        if (initTable) {
-            axieTable = $('#axieTable').DataTable({
+        axieTable.row.add(row);
+        axieTable.draw();
+    }
+
+    function initTable() {
+        axieTable = $('#axieTable').DataTable({
 //                dom: 'lfrBtip',
-                buttons: [{
-                    extend: 'copy',
-                    text: 'Copy table to clipboard'
-                }],
-                data: data,
-                order: [[ 0, "desc" ]],
-                columns: columns,
-                "language": {"search": "Filter (ID,owner or trait):"},
-                pageLength: 100,
-                "columnDefs": [
-                    { className: "text-center", "targets": [ "_all" ] }
-                ]
-            });
+            buttons: [{
+                extend: 'copy',
+                text: 'Copy table to clipboard'
+            }],
+            data: data,
+            order: [[ 0, "desc" ]],
+            columns: columns,
+            "language": {"search": "Filter (ID,owner or trait):"},
+            pageLength: 100,
+            "columnDefs": [
+                { className: "text-center", "targets": [ "_all" ] }
+            ]
+        });
 
-            $('.dataTables_filter input').off('keyup search input');
-            $('.dataTables_filter input').on('keyup search input' , function (e) {
-                var searchVal = $('.dataTables_filter input').val().trim();
-                if (e.which == 13) {
-                    if (searchVal.startsWith("0x")) {
-                        axieTable.search("").columns().search("");
-                        axieTable.column(axieTable.columns()[0].length - 1).search(searchVal).draw();
-                    } else if (searchVal != "" && !isNaN(searchVal)) {
-                        axieTable.search("").columns().search("");
-                        axieTable.column(0).search(searchVal).draw();
-                    } else if (searchVal != "") {
-                        axieTable.search("").columns().search("");
-                        axieTable.search(searchVal).draw();
-                    } else {
-                        //??
-                        axieTable.search("").columns().search("").draw();
-                        //axieTable.columns().search(searchVal).draw();
-                    }
-                } else if (searchVal == "") {
+        $('.dataTables_filter input').off('keyup search input');
+        $('.dataTables_filter input').on('keyup search input' , function (e) {
+            var searchVal = $('.dataTables_filter input').val().trim();
+            if (e.which == 13) {
+                if (searchVal.startsWith("0x")) {
+                    axieTable.search("").columns().search("");
+                    axieTable.column(axieTable.columns()[0].length - 1).search(searchVal).draw();
+                } else if (searchVal != "" && !isNaN(searchVal)) {
+                    axieTable.search("").columns().search("");
+                    axieTable.column(0).search(searchVal).draw();
+                } else if (searchVal != "") {
+                    axieTable.search("").columns().search("");
+                    axieTable.search(searchVal).draw();
+                } else {
+                    //??
                     axieTable.search("").columns().search("").draw();
+                    //axieTable.columns().search(searchVal).draw();
                 }
-            });
+            } else if (searchVal == "") {
+                axieTable.search("").columns().search("").draw();
+            }
+        });
 
-            $("#axieTable_length").after('&nbsp; <input id="binaryToggle" class="text-right ml-4" type="checkbox" onclick="toggleBinary()"/> Hide binary');
+        $("#axieTable_length").after('&nbsp; <input id="binaryToggle" class="text-right ml-4" type="checkbox" onclick="toggleBinary()"/> Hide binary');
 
-            //doesn't copy nicely yet. don't show for now
-            //axieTable.buttons().container().appendTo( $('#copyDiv') );
+        //doesn't copy nicely yet. don't show for now
+        //axieTable.buttons().container().appendTo( $('#copyDiv') );
 
-            $('#axieTable tbody').on('click', 'tr', function () {
-                    var tr = $(this).closest('tr');
-                    var row = axieTable.row( tr );
+        $('#axieTable tbody').on('click', 'tr', function () {
+            var tr = $(this).closest('tr');
+            var row = axieTable.row( tr );
 
-                    if ( row.child.isShown() ) {
-                        // This row is already open - close it
-                        row.child.hide();
-                        //tr.removeClass('shown');
-                    }
-                    else {
-                        // Open this row
-                        let html = formatCompact(row.data());
-                        row.child(html).show();
-                        row.child()[0].firstChild.colSpan = 8;
-                        //tr.addClass('shown');
-                    }
-                } );
-        }
+            if ( row.child.isShown() ) {
+                // This row is already open - close it
+                row.child.hide();
+                //tr.removeClass('shown');
+            }
+            else {
+                // Open this row
+                let html = formatCompact(row.data());
+                row.child(html).show();
+                row.child()[0].firstChild.colSpan = 8;
+                //tr.addClass('shown');
+            }
+        } );
     }
