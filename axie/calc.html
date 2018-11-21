@@ -442,6 +442,32 @@
         return temp;
     }
 
+    function isBreedable(axie1, axie2) {
+        //self check
+        if (axie1.id == axie2.id) {
+            return false;
+        }
+        //parents check
+        if (axie2.matronId == axie1.id || axie2.sireId == axie1.id) {
+            return false;
+        }
+        if (axie1.matronId == axie2.id || axie1.sireId == axie2.id) {
+            return false;
+        }
+        //After checking parents, skip if ether is a tagged axie
+        if (axie1.matronId == 0 || axie2.matronId == 0) {
+            return true;
+        }
+        //check siblings
+        if (axie1.matronId == axie2.matronId || axie1.matronId == axie2.sireId) {
+            return false;
+        }
+        if (axie1.sireId == axie2.matronId || axie1.sireId == axie2.sireId) {
+            return false;
+        }
+        return true;
+    }
+
     function calc(sireId, matronId) {
         if (!sireId || !matronId) {
             setError("Invalid axie ID");
@@ -476,6 +502,9 @@
                     var tailProbs = sumProbs(sireTraits.tail, matronTraits.tail);
                 }
 
+                if (!isBreedable(sire, matron)) {
+                    $("#result").prepend('<span class="text-warning">WARNING: These two axies are related and cannot be bred.</span><br><br>');
+                }
                 renderProbs("eyes", eyesProbs, "row1");
                 $("#row1").append('<div class="col-1"></div>');
                 renderProbs("ears", earsProbs, "row1");
