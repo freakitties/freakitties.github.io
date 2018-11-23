@@ -244,15 +244,15 @@
     }
 
     function renderPureness(data, type, row, meta) {
-        if (row[5] instanceof Array) {
+        if (row[pureColumn] instanceof Array) {
             let numBeast = 0;
             let numAquatic = 0;
             let numPlant = 0;
             let numBird = 0;
             let numBug = 0;
             let numReptile = 0;
-            for (let i in row[5]) {
-                switch (row[5][i].class) {
+            for (let i in row[pureColumn]) {
+                switch (row[pureColumn][i].class) {
                     case "beast":
                         numBeast++;
                         break;
@@ -337,6 +337,7 @@
     var cleared = false;
     var eventsInitialized = false;
     var BigNumber;
+    var pureColumn;
 
     $(document).ready(async function() {
         // Modern dapp browsers...
@@ -379,6 +380,7 @@
             document.write("web3 not detected. Are you using a web3 enabled browser like MetaMask?");
         }
 
+        pureColumn = 6;     //update this when columns change
         axieTable = $('#auctionTable').DataTable({
             order: [[ 0, "desc" ]],
             columns: [
@@ -386,6 +388,7 @@
                 {title: "Axie", render: renderAxie},
                 {title: "Tag", render: renderTag},
                 {title: "Exp"},
+                {title: "Breeds"},
                 {title: "Stage", render: renderStage},
                 {title: "Mystics", render: renderMystics},
                 {title: "Purenesss", render: renderPureness, sortable: false},
@@ -469,12 +472,13 @@
 
     });
 
-    function addRow(id, tag, exp, stage, parts, startPrice, endPrice, duration, seller, date, blockNumber, axie) {
+    function addRow(id, tag, exp, breedCount, stage, parts, startPrice, endPrice, duration, seller, date, blockNumber, axie) {
         axieTable.row.add( [
             date,
             id,
             tag,
             exp,
+            breedCount,
             stage,
             parts,
             null,
@@ -515,14 +519,16 @@
             return;
         }
         added.push({id: id, blockNumber: blockNumber, date: date, startPrice: startPrice});
-        $.get("https://axieinfinity.com/api/axies/" + id, function(data) {
-            let axie = data;
-            $.get("https://api.axieinfinity.com/v1/battle/accounts/" + seller, function(account) {
-                addRow(id, axie.title, axie.exp, axie.stage, axie.parts, startPrice/1e18, endPrice/1e18, duration, account, date, blockNumber, axie);
-            }).fail(function(e) {
-                addRow(id, axie.title, axie.exp, axie.stage, axie.parts, startPrice/1e18, endPrice/1e18, duration, seller, date, blockNumber, axie);
-            })
-
+        $.get("https://axieinfinity.com/api/axies/" + id, function(oldAPI) {
+            $.getJSON("https://api.axieinfinity.com/v1/axies/" + id, function(newAPI) {
+                let axie = oldAPI;
+                axie.breedCount = parseInt(newAPI.breedCount);
+                $.get("https://api.axieinfinity.com/v1/battle/accounts/" + seller, function(account) {
+                    addRow(id, axie.title, axie.exp, axie.breedCount, axie.stage, axie.parts, startPrice/1e18, endPrice/1e18, duration, account, date, blockNumber, axie);
+                }).fail(function(e) {
+                    addRow(id, axie.title, axie.exp, axie.breedCount, axie.stage, axie.parts, startPrice/1e18, endPrice/1e18, duration, seller, date, blockNumber, axie);
+                })
+            });
         });
 
     }
@@ -589,6 +595,7 @@
         <th scope="col">Axie</th>
         <th scope="col">Tag</th>
         <th scope="col">Exp</th>
+        <th scope="col">Breeds</th>
         <th scope="col">Mystics</th>
         <th scope="col">Pureness</th>
         <th scope="col">Stage</th>
@@ -602,6 +609,7 @@
     <tbody id="tableBody">
       <tr>
         <td id="nodatayet">No new data yet. Waiting to scan the blockchain.</td>
+        <td></td>
         <td></td>
         <td></td>
         <td></td>
