@@ -8,7 +8,9 @@
         gtag('js', new Date());
         gtag('config', 'UA-116189657-1');
         </script>
-        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js" integrity="sha384-tsQFqpEReu7ZLhBV2VZlAu7zcOV+rXbYlF2cqB8txI/8aZajjp4Bqd+V6D5IgvKT" crossorigin="anonymous"></script>
+        <!-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js" integrity="sha384-tsQFqpEReu7ZLhBV2VZlAu7zcOV+rXbYlF2cqB8txI/8aZajjp4Bqd+V6D5IgvKT" crossorigin="anonymous"></script> -->
+        <!-- jquery 3.3.1-->
+        <script src="/js/jquery.min.js" integrity="sha384-tsQFqpEReu7ZLhBV2VZlAu7zcOV+rXbYlF2cqB8txI/8aZajjp4Bqd+V6D5IgvKT"></script>
         <script src="../../bignumber.min.js"></script>
         <script src="traitmapping.js"></script>
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
@@ -257,7 +259,7 @@
                 callback(null);
                 return;
             }
-            var axie = {"genes": genesToBin(new BigNumber(data.genes))}; //, "owner": data.owner, "class": data.class, "exp": data.exp};
+            var axie = {"id": id, "sireId": data.sireId, "matronId": data.matronId, "genes": genesToBin(new BigNumber(data.genes))}; //, "owner": data.owner, "class": data.class, "exp": data.exp};
             if (callback != null) {
                 callback(axie);
             }
