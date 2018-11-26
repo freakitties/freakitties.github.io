@@ -406,7 +406,7 @@
             } else {
                 out += '<div class="col-7 col-lg-6 mt-1 mb-1" ';
                 if (details) {
-                    let traitId = trait.toLowerCase() + "-" + partName.toLowerCase().replace(/\s/g, "-");
+                    let traitId = trait.toLowerCase() + "-" + partName.toLowerCase().replace(/\s/g, "-").replace(/\?/g, "");
                     let part = bodyPartsMap[traitId];
                     let tipText = "";
                     for (let i in part.moves) {
