@@ -63,7 +63,7 @@ function getAxies(address, callback) {
                 numSkipped++;
                 continue;
             }
-            axies[data.axies[i].id.toString()] = {"id": data.axies[i].id, "class": data.axies[i].class, "exp": data.axies[i].exp, "expForBreeding": data.axies[i].expForBreeding, "parts": data.axies[i].parts, "sireId": data.axies[i].sireId, "matronId": data.axies[i].matronId, "auction": data.axies[i].auction};
+            axies[data.axies[i].id.toString()] = {"id": data.axies[i].id, "class": data.axies[i].class, "exp": data.axies[i].exp, "expForBreeding": data.axies[i].expForBreeding, "stats": data.axies[i].stats, "parts": data.axies[i].parts, "sireId": data.axies[i].sireId, "matronId": data.axies[i].matronId, "auction": data.axies[i].auction};
         }
         let totalAxies = data.totalAxies;
         if (totalAxies > 12) {
@@ -77,7 +77,7 @@ function getAxies(address, callback) {
                             numSkipped++;
                             continue;
                         }
-                        axies[data.axies[i].id.toString()] = {"id": data.axies[i].id, "class": data.axies[i].class, "exp": data.axies[i].exp, "expForBreeding": data.axies[i].expForBreeding, "parts": data.axies[i].parts, "sireId": data.axies[i].sireId, "matronId": data.axies[i].matronId, "auction": data.axies[i].auction};
+                        axies[data.axies[i].id.toString()] = {"id": data.axies[i].id, "class": data.axies[i].class, "exp": data.axies[i].exp, "expForBreeding": data.axies[i].expForBreeding, "stats": data.axies[i].stats, "parts": data.axies[i].parts, "sireId": data.axies[i].sireId, "matronId": data.axies[i].matronId, "auction": data.axies[i].auction};
                     }
                     if (Object.keys(axies).length + numSkipped >= totalAxies) { //fudge incase over for some reason
                         if (callback != null) {
@@ -161,6 +161,7 @@ function isBreedable(axie1, axie2) {
 }
 
 
+const omitMystics = false;
 var classMap = {"beast": [], "bug": [], "bird": [], "plant": [], "aquatic": [], "reptile": [], "hidden_1": [], "hidden_2": [], "hidden_3": []}; //hidden 1: nut, 2, star, 3 moon
 var breedingPairs = [];
 function getBreeders() {
@@ -170,29 +171,32 @@ function getBreeders() {
             for (let id in axies) {
                 let axie = axies[id];
                 if (axie.exp + axie.truePending >= axie.expForBreeding && axie.breedCount < 7 && axie.auction == null) {
-                    classMap[axies[id].class].push(axies[id]);
-//                    if (Array.isArray(axie.parts)) {
-                        //fail closed
-//                        let numMystics = 6;
-//                        for (let i in axie.parts) {
-//                            let part = axie.parts[i];
-//                            if (part.mystic === false) {
-//                                numMystics--;
-//                            }
-//                        }
-//                        if (numMystics === 0) {
-//                            classMap[axies[id].class].push(axies[id]);
-//                        } else {
-//                            console.log("Skipping mystic: " + axie.id);
-//                        }
-//                    } else {
-//                        console.log("Parts list is not an array");
-//                    }
+                    if (omitMystics) {
+                        if (Array.isArray(axie.parts)) {
+                            //fail closed
+                            let numMystics = 6;
+                            for (let i in axie.parts) {
+                                let part = axie.parts[i];
+                                if (part.mystic === false) {
+                                    numMystics--;
+                                }
+                            }
+                            if (numMystics === 0) {
+                                classMap[axies[id].class].push(axies[id]);
+                            } else {
+                                console.log("Skipping mystic: " + axie.id);
+                            }
+                        } else {
+                            console.log("Parts list is not an array");
+                        }
+                    } else {
+                        classMap[axies[id].class].push(axies[id]);
+                    }
                 } else if (axie.auction != null) {
                     console.log("Skipping axie " + axie.id + " since it is on auction.");
                 }
             }
-            //XXX: could sort classMap based on some breeding criteria
+            //XXX: could sort classMap based on some breeding criteria. make this better
             for (let cls in classMap) {
                 let len = Math.floor(classMap[cls].length/2);
                 for (let i = 0; i < len; i += 2) {
@@ -303,9 +307,9 @@ function init(){
             $("#account").text("Your Account: " + web3.eth.accounts[0]);
         }
     }
-    incubatorContract = web3.eth.contract(incubatorABI);
+    incubatorContract = web3query.eth.contract(incubatorABI);
     incubatorInstance = incubatorContract.at(incubatorAddress);
-    expCheckpointContract = web3.eth.contract(expCheckpointABI);
+    expCheckpointContract = web3query.eth.contract(expCheckpointABI);
     expCheckpointInstance = expCheckpointContract.at(expCheckpointAddress);
     getBreeders();
 
@@ -315,6 +319,7 @@ window.addEventListener('load', async () => {
     // Modern dapp browsers...
     if (window.ethereum) {
         window.web3 = new Web3(ethereum);
+        window.web3query = new Web3(new Web3.providers.HttpProvider('https://api.mycryptoapi.com/eth'));
         BigNumber = web3.BigNumber;
         try {
             // Request account access if needed
@@ -328,6 +333,7 @@ window.addEventListener('load', async () => {
     // Legacy dapp browsers...
     else if (window.web3) {
         window.web3 = await new Web3(web3.currentProvider);
+        window.web3query = await new Web3(new Web3.providers.HttpProvider('https://api.mycryptoapi.com/eth'));
         BigNumber = web3.BigNumber;
         // Acccounts always exposed
         console.log("legacy dapp browser");
