@@ -47,6 +47,13 @@ var expCheckpointAddress = "0x71FfC95Ca3BcEbF26024f689F40006182916167f";
 var expCheckpointContract;
 var expCheckpointInstance;
 
+//Instances for writing to contracts (Use wallet's provider here. Don't use wallet provider for querying)
+var incubatorContractWrite;
+var incubatorInstanceWrite;
+var expCheckpointContractWrite;
+var expCheckpointInstanceWrite;
+
+
 var axies = {};
 
 function getAxies(address, callback) {
@@ -311,6 +318,12 @@ function init(){
     incubatorInstance = incubatorContract.at(incubatorAddress);
     expCheckpointContract = web3query.eth.contract(expCheckpointABI);
     expCheckpointInstance = expCheckpointContract.at(expCheckpointAddress);
+
+    incubatorContractWrite = web3.eth.contract(incubatorABI);
+    incubatorInstanceWrite = incubatorContractWrite.at(incubatorAddress);
+    expCheckpointContractWrite = web3.eth.contract(expCheckpointABI);
+    expCheckpointInstanceWrite = expCheckpointContractWrite.at(expCheckpointAddress);
+
     getBreeders();
 
 }
@@ -410,7 +423,7 @@ function breed(gasPrice) {
                     return;
                 }
                 console.log("Breeding: " + axie1.id + ", " + axie2.id);
-                incubatorInstance.breedOwnedAxies(axie1.id, axie2.id, 0, {from: web3.eth.accounts[0], value: breedingFee, gasPrice: gasPrice, gas: 500000}, (err, result) => {
+                incubatorInstanceWrite.breedOwnedAxies(axie1.id, axie2.id, 0, {from: web3.eth.accounts[0], value: breedingFee, gasPrice: gasPrice, gas: 500000}, (err, result) => {
                     if (err) {
                         console.log(err);
                         appendResult(err.message + ": axies " + axie1.id + ", " + axie2.id);
@@ -433,7 +446,7 @@ function syncAxie(axie, gasPrice) {
     } else {
         console.log("Syncing " + axie.id);
         //pendingExp is the total lifetime exp earned
-        expCheckpointInstance.checkpoint(axie.id, axie.pendingExp, axie.expSubmittedAt, axie.expSignature, {from: web3.eth.accounts[0], gasPrice: gasPrice, gas: 150000}, (err, result) => {
+        expCheckpointInstanceWrite.checkpoint(axie.id, axie.pendingExp, axie.expSubmittedAt, axie.expSignature, {from: web3.eth.accounts[0], gasPrice: gasPrice, gas: 150000}, (err, result) => {
             if (err) {
                 console.log(err);
                 appendResult(err.message + ": axie " + axie.id);
