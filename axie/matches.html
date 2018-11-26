@@ -709,7 +709,7 @@ function init(){
         }
     }
 
-    expCheckpointContract = web3.eth.contract(expCheckpointABI);
+    expCheckpointContract = web3query.eth.contract(expCheckpointABI);
     expCheckpointInstance = expCheckpointContract.at(expCheckpointAddress);
 
     storageKey = "freakitties.github.io" + "_MATCHES_" + web3.eth.accounts[0];
@@ -748,6 +748,7 @@ window.addEventListener('load', async () => {
     // Modern dapp browsers...
     if (window.ethereum) {
         window.web3 = new Web3(ethereum);
+        window.web3query = new Web3(new Web3.providers.HttpProvider('https://api.mycryptoapi.com/eth'));
         BigNumber = web3.BigNumber;
         try {
             // Request account access if needed
@@ -761,6 +762,7 @@ window.addEventListener('load', async () => {
     // Legacy dapp browsers...
     else if (window.web3) {
         window.web3 = await new Web3(web3.currentProvider);
+        window.web3query = await new Web3(new Web3.providers.HttpProvider('https://api.mycryptoapi.com/eth'));
         BigNumber = web3.BigNumber;
         // Acccounts always exposed
         console.log("legacy dapp browser");
