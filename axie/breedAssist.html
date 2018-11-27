@@ -19,17 +19,19 @@
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
         <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.18/css/jquery.dataTables.min.css" integrity="sha384-1UXhfqyOyO+W+XsGhiIFwwD3hsaHRz2XDGMle3b8bXPH5+cMsXVShDoHA3AH/y/p" crossorigin="anonymous">
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.bundle.min.js" integrity="sha384-feJI7QwhOS+hwpX2zkaeJQjeiwlhOP+SdQDqhgvvo1DsjtiSQByFdThsxO669S2D" crossorigin="anonymous"></script>
-
+        <script src="/js/bootstrap-slider.js" integrity="sha384-yQTxBH0l7mux8HY0qyr0LdOqG/+el1ppRzF1JE+Oe8mRBzWpD98poRDcUYzFKu+u"></script>
+        <link rel="stylesheet" type="text/css" href="/css/bootstrap-slider.css" integrity="sha384-YJQSzSUxT6mfDlJJf1YgYzlx/GC2eWMHtiKTbEFh+1DAbFDf6Y+f040Q7gM7idhd">
         <style>
             body {
                 background-color: #181818;
                 color: #ffffff;
             }
-        </style>
-        <style>
             .dropdown-menu>li>a, .dropdown-menu {
                 color: white;
                 background-color: #6c757d;
+            }
+            .slider-tick {
+                opacity: 1;
             }
         </style>
     </head>
@@ -303,6 +305,12 @@ search box
                 if (["beast","bug","bird","plant", "aquatic","reptile","nut","star","moon"].includes(cls)) {
                     axies = {}; //mem
                     let filterOptions = {"class": cls};
+                    let sliderValue = $("#purenessSlider").slider("getValue");
+                    if ([0, 1, 2, 3, 4, 5, 6].includes(sliderValue)) {
+                        if (sliderValue > 0) {
+                            filterOptions.pureness = sliderValue;
+                        }
+                    }
                     getAxies(web3.eth.accounts[0], filterOptions, () => {
                         for (let id in axies) {
                             let traits = getTraits(axies[id].genes);
@@ -359,12 +367,30 @@ search box
             }
         });
 
+        $("#purenessSlider").slider({
+            id: "purenessRange",
+            ticks: [0, 1, 2, 3, 4, 5, 6],
+            ticks_labels: ['All', '1', '2', '3', '4', '5', '6'],
+            selection: 'none',
+            value: 0
+
+        });
+        $("#purenessRange").addClass("ml-4 mb-0");
+
         $('#omitExisting').change(function () {
-            $('input[type="radio"]').prop('checked', false);
+            clearSelections();
         });
         $('#omitMystics').change(function () {
-            $('input[type="radio"]').prop('checked', false);
+            clearSelections();
         });
+        $("#purenessSlider").change(function() {
+            clearSelections();
+        });
+    }
+
+    function clearSelections() {
+        $('input[type="radio"]').prop('checked', false);
+        $("#result").empty();
     }
 
     function renderPureProbs(cls, allProbs) {
@@ -609,19 +635,26 @@ search box
             </div>
         </div>
         <div class="row">
-            <div class="form-check">
+            <div class="col-3 form-check">
                 <input class="form-check-input" type="checkbox" value="true" name="omitExisting" id="omitExisting" checked>
                 <label class="form-check-label" for="omitExisting">
                 Omit existing purebreeds
                 </label>
             </div>
-            <div class="form-check ml-2">
+            <div class="col-2 form-check">
                 <input class="form-check-input" type="checkbox" value="true" name="omitMystics" id="omitMystics" checked>
                 <label class="form-check-label" for="omitMystics">
                 Omit mystics
                 </label>
             </div>
+            <div class="col-4 row">
+                <div class="form-group col-12">
+                    <label for="purenessSlider">Pureness:</label>
+                    <div id="purenessSlider"></div>
+                </div>
+            </div>
         </div>
+
 
         <br>
 <!--TODO
