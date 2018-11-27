@@ -170,6 +170,7 @@ search box
     }
 
     function getPartsFromGroup(part, group, region) {
+        let mystic = group.slice(0, 2) == "11";
         let dClass = classGeneMap[group.slice(2, 6)];
         let dBin = group.slice(6, 11);
         let dID = getPartName(dClass, part, region, dBin);
@@ -182,7 +183,7 @@ search box
         let r2Bin = group.slice(26, 31);
         let r2ID = getPartName(r2Class, part, region, r2Bin);
 
-        return {d: dID, r1: r1ID, r2: r2ID};
+        return {d: dID, r1: r1ID, r2: r2ID, mystic: mystic};
     }
 
     function getTraits(genes) {
@@ -204,6 +205,8 @@ search box
         $.get("https://api.axieinfinity.com/v1/axies/" + axieID, function(data) {
             var img = $("#" + tag);
             img.attr('src', data.figure.static.idle);
+        }).fail(() => {
+            console.log("Failed to get axie details: " + axieID);
         });
     }
 
@@ -311,6 +314,12 @@ search box
                                     //continue;
                                 }
                             }
+                            if ($('#omitMystics').is(":checked") && id in axies) {
+                                if (traits.eyes.mystic || traits.mouth.mystic || traits.ears.mystic || traits.horn.mystic || traits.back.mystic || traits.tail.mystic) {
+                                    console.log("Omitting mystic: " + id)
+                                    delete axies[id];
+                                }
+                            }
                         }
 
 
@@ -347,6 +356,9 @@ search box
         $('#omitExisting').change(function () {
             $('input[type="radio"]').prop('checked', false);
         });
+        $('#omitMystics').change(function () {
+            $('input[type="radio"]').prop('checked', false);
+        });
     }
 
     function renderPureProbs(cls, allProbs) {
@@ -370,8 +382,8 @@ search box
             let id2 = "axie" + parseInt(pair[1]) + "_" + i;
             images.push({tagId: id1, axieId: pair[0]})
             images.push({tagId: id2, axieId: pair[1]})
-            out += '<div class="col-4 text-center"><a target="_blank" href="https://axieinfinity.com/axie/' + parseInt(pair[0]) + '?r=freak"><img id="' + id1 + '" height="60"><br>#' + pair[0] + '</a></div>';
-            out += '<div class="col-4 text-center"><a target="_blank" href="https://axieinfinity.com/axie/' + parseInt(pair[1]) + '?r=freak"><img id="' + id2 + '" height="60"><br>#' + pair[1] + '</a></div>';
+            out += '<div class="col-4 text-center"><a target="_blank" href="https://axieinfinity.com/axie/' + parseInt(pair[0]) + '?r=freak"><img id="' + id1 + '" height="80"><br>#' + pair[0] + '</a></div>';
+            out += '<div class="col-4 text-center"><a target="_blank" href="https://axieinfinity.com/axie/' + parseInt(pair[1]) + '?r=freak"><img id="' + id2 + '" height="80"><br>#' + pair[1] + '</a></div>';
             out += '</div>';
         }
         out += "</div>"
@@ -431,6 +443,7 @@ search box
     function sumProbs(sireTraits, matronTraits) {
         let probs = {};
         for (let place in sireTraits) {
+            if (place == "mystic") continue;
             if (sireTraits[place] in probs) {
                 probs[sireTraits[place]] += PROBABILITIES[place];
             } else {
@@ -438,6 +451,7 @@ search box
             }
         }
         for (let place in matronTraits) {
+            if (place == "mystic") continue;
             if (matronTraits[place] in probs) {
                 probs[matronTraits[place]] += PROBABILITIES[place];
             } else {
@@ -588,12 +602,21 @@ search box
                 <input class="form-control" type="radio" id="moonRadio" name="class" value="moon">
             </div>
         </div>
-        <div class="form-check">
-            <input class="form-check-input" type="checkbox" value="true" name="omitExisting" id="omitExisting" checked>
-            <label class="form-check-label" for="omitExisting">
-            Omit existing purebreeds
-            </label>
+        <div class="row">
+            <div class="form-check">
+                <input class="form-check-input" type="checkbox" value="true" name="omitExisting" id="omitExisting" checked>
+                <label class="form-check-label" for="omitExisting">
+                Omit existing purebreeds
+                </label>
+            </div>
+            <div class="form-check ml-2">
+                <input class="form-check-input" type="checkbox" value="true" name="omitMystics" id="omitMystics" checked>
+                <label class="form-check-label" for="omitMystics">
+                Omit mystics
+                </label>
+            </div>
         </div>
+
         <br>
 <!--TODO
         <form class="" action="">
