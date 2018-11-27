@@ -512,7 +512,7 @@ search box
         $.get(url, function(data, status, xhr) {
             for (let i in data.axies) {
                 //XXX: consider optionalizing inclusion of petites
-                if (data.axies[i].stage < 4) {
+                if (data.axies[i].stage < 3) {      //include petites
                     numSkipped++;
                     continue;
                 }
@@ -528,7 +528,7 @@ search box
                         let percentage = Object.keys(axies).length/data.totalAxies * 100;
                         $("#loading").text("Loading axies..." + Math.round(percentage) + "%");
                         for (let i in data.axies) {
-                            if (data.axies[i].stage < 4) {
+                            if (data.axies[i].stage < 3) {      //include petites
                                 numSkipped++;
                                 continue;
                             }
