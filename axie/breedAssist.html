@@ -88,6 +88,8 @@ search box
     //moon hidden_3
     "1010": {"0010": "D9D9D9", "0011": "D9D9D9","0100": "D9D9D9", "0110": "D9D9D9"}};
 
+    var numToDisplay = 10;
+
     function strMul(str, num) {
         var s = "";
         for (var i = 0; i < num; i++) {
@@ -285,6 +287,10 @@ search box
                 $("#account").text("Your Account: " + web3.eth.accounts[0]);
             }
         }
+        let n = getQueryParameter("numToDisplay");
+        if (n !== false) {
+            numToDisplay = parseInt(n);
+        }
 
         getBodyParts(); //maybe wait
 
@@ -373,7 +379,7 @@ search box
         }
 
         let images = [];
-        for (let i=0; i < Math.min(10, allProbs.length); i++) {
+        for (let i=0; i < Math.min(numToDisplay, allProbs.length); i++) {
             out += '<div class="row border-bottom">';
             let prob = (allProbs[i].probability * 100).toFixed(3);
             out += '<div class="col-3">' + prob + "%</div>";
