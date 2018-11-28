@@ -259,6 +259,24 @@
         return eyesClsProb * mouthClsProb * earsClsProb * hornClsProb * backClsProb * tailClsProb;
     }
 
+    const parts = ["eyes", "mouth" ,"ears", "horn", "back", "tail"];
+    const MAX_QUALITY = 6 * (PROBABILITIES.d + PROBABILITIES.r1 + PROBABILITIES.r2);
+    function getQuality(traits, cls) {
+        let quality = 0;
+        for (let i in parts) {
+            if (traits[parts[i]].d.class == cls) {
+                quality += PROBABILITIES.d;
+            }
+            if (traits[parts[i]].r1.class == cls) {
+                quality += PROBABILITIES.r1;
+            }
+            if (traits[parts[i]].r2.class == cls) {
+                quality += PROBABILITIES.r2;
+            }
+        }
+        return quality/MAX_QUALITY;
+    }
+
     var details = false;
     function init() {
         clearInterval(intID);
@@ -295,7 +313,7 @@
         $('input:radio[name="class"]').change(function() {
             if ($(this).is(':checked')) {
                 let cls = $(this).val()
-                if (["beast","bug","bird","plant", "aquatic","reptile","nut","star","moon"].includes(cls)) {
+                if (["beast", "bug", "bird", "plant", "aquatic", "reptile", "nut", "star", "moon"].includes(cls)) {
                     axies = {}; //mem
                     let filterOptions = {"class": cls};
                     let sliderValue = $("#purenessSlider").slider("getValue");
@@ -307,7 +325,9 @@
                     getAxies(web3.eth.accounts[0], filterOptions, () => {
                         for (let id in axies) {
                             let traits = getTraits(axies[id].genes);
+                            let quality = getQuality(traits, cls);
                             axies[id].traits = traits;
+                            axies[id].quality = quality;
                             if ($('#omitExisting').is(":checked")) {
                                 let dTraits = [traits.eyes.d.class,
                                 traits.mouth.d.class,
@@ -406,8 +426,8 @@
             let id2 = "axie" + parseInt(pair[1]) + "_" + i;
             images.push({tagId: id1, axieId: pair[0]})
             images.push({tagId: id2, axieId: pair[1]})
-            out += '<div class="col-4 text-center"><a target="_blank" href="https://axieinfinity.com/axie/' + parseInt(pair[0]) + '?r=freak"><img id="' + id1 + '" height="80"><br>#' + pair[0] + '</a></div>';
-            out += '<div class="col-4 text-center"><a target="_blank" href="https://axieinfinity.com/axie/' + parseInt(pair[1]) + '?r=freak"><img id="' + id2 + '" height="80"><br>#' + pair[1] + '</a></div>';
+            out += '<div class="col-4 text-center"><a target="_blank" href="https://axieinfinity.com/axie/' + parseInt(pair[0]) + '?r=freak"><img id="' + id1 + '" height="80" data-toggle="tooltip" data-placement="top" title="Quality: ' + Math.round(axies[pair[0]].quality * 100) + '%"><br>#' + pair[0] + '</a></div>';
+            out += '<div class="col-4 text-center"><a target="_blank" href="https://axieinfinity.com/axie/' + parseInt(pair[1]) + '?r=freak"><img id="' + id2 + '" height="80" data-toggle="tooltip" data-placement="top" title="Quality: ' + Math.round(axies[pair[1]].quality * 100) + '%"><br>#' + pair[1] + '</a></div>';
             out += '</div>';
         }
         out += "</div>"
@@ -416,6 +436,7 @@
         for (let id in images) {
             setImage(images[id].tagId, images[id].axieId);
         }
+      $('[data-toggle="tooltip"]').tooltip();
     }
 
     function getQueryParameter(name) {
