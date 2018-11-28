@@ -9,6 +9,8 @@
 
 [Preliminary Axie Breeding Calculator ](calc.html)
 
+[Breeding assistant (currently for purebreeds)](breedAssist.html)
+
 [View the genes of Axies currently on the market (1st 100 cheapest only)](geneMarket.html)
 
 [Parts glossary ordered by rarity](traits.html)

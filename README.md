@@ -35,6 +35,8 @@ Live site: [https://freakitties.github.io/](https://freakitties.github.io/)
 
 [Preliminary Axie Breeding Calculator ](/axie/calc.html)
 
+[Breeding assistant (currently for purebreeds)](breedAssist.html)
+
 [View the genes of Axies currently on the market (1st 100 cheapest only)](/axie/geneMarket.html)
 
 [Parts glossary ordered by rarity](/axie/traits.html)
