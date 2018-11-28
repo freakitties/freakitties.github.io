@@ -17,8 +17,8 @@
                     <li><a class="dropdown-item" href="/axie/">Axie Infinity Tools</a></li>
                     <li><a class="dropdown-item" href="/csc/">Crypto Space Commander</a></li>
                     <li><a class="dropdown-item" href="/ck/">CryptoKitties Tools</a></li>
+                    <li><a class="dropdown-item" target="_blank" href="http://twitter.com/home?status=@irfreak+Please+create+a+tool+to...">Request a tool</a></li>
                   </ul>
-                  <div class="text-right text-white ml-2 mt-2"><a target="_blank" href="http://twitter.com/home?status=@irfreak+Please+create+a+tool+to..." class="text-white">Request a tool</a></div>
                 </div>
                 <div id="navContent" class="col-sm-6 col-md-7 row">
                     <div id="navContentLeft" class="text-left text-white col-sm-6 col-md-7 mt-2"></div>
@@ -27,7 +27,7 @@
                         <!--<a class="text-white" href="https://godsunchained.com/?refcode=0x08797952462b82dB639DDBFdeF2ab1718ffa7676"><u>Buy GU Packs</u></a>&nbsp;-->
                         <a class="text-white mr-4" href="https://www.cryptokitties.co/profile/0x08797952462b82db639ddbfdef2ab1718ffa7676?include=sale,sire&orderDirection=desc">Buy Kitties</a>&nbsp;
 
-                        <a class="text-warning" href="https://axieinfinity.com/axie-lab?r=freak">Buy Axies</a>
+                        <a class="text-info" href="https://axieinfinity.com/axie-lab?r=freak">Buy Axies</a>
                     </div>
                 </div>
                 <div id="donationDiv" class="text-right col-sm-4 col-md-3">
@@ -41,6 +41,9 @@
             const BLOCKS_SEC = 15;
             const BLOCKS_MONTH = (30 * 24 * 60 * 60)/BLOCKS_SEC;
             const LIMIT = 100;
+
+            $('.dropdown-toggle').dropdown();
+
             if (typeof web3 != 'undefined') {
                 let html = '<input id="donateValue" class="form-control-sm col-md-4 col-lg-4 col-xl-2" type="text" value="0.002"> ' +
                            '<button class="btn btn-sm btn-primary" onclick="donate()">Donate</button>';
