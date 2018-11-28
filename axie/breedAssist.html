@@ -161,7 +161,7 @@ search box
             if (region in binarytraits[cls][part][binary]) {
                 trait = binarytraits[cls][part][binary][region];
             } else if ("global" in binarytraits[cls][part][binary]) {
-                trait = binarytraits[cls][part][binary]["global"];
+                trait = binarytraits[cls][part][binary]["global"];      //don't use mystic name. breeding doesn't pass mystic.
             } else {
                 trait = "UNKNOWN Regional " + cls + " " + part;
             }
@@ -177,17 +177,17 @@ search box
         let mystic = group.slice(0, 2) == "11";
         let dClass = classGeneMap[group.slice(2, 6)];
         let dBin = group.slice(6, 11);
-        let dID = getPartName(dClass, part, region, dBin);
+        let dName = getPartName(dClass, part, region, dBin);
 
         let r1Class = classGeneMap[group.slice(12, 16)];
         let r1Bin = group.slice(16, 21);
-        let r1ID = getPartName(r1Class, part, region, r1Bin);
+        let r1Name = getPartName(r1Class, part, region, r1Bin);
 
         let r2Class = classGeneMap[group.slice(22, 26)];
         let r2Bin = group.slice(26, 31);
-        let r2ID = getPartName(r2Class, part, region, r2Bin);
+        let r2Name = getPartName(r2Class, part, region, r2Bin);
 
-        return {d: dID, r1: r1ID, r2: r2ID, mystic: mystic};
+        return {d: getPartFromName(part, dName), r1: getPartFromName(part, r1Name), r2: getPartFromName(part, r2Name), mystic: mystic};
     }
 
     function getTraits(genes) {
@@ -234,12 +234,35 @@ search box
         return bodyPartsMap[traitId];
     }
 
+    const PROBABILITIES = {d: 0.375, r1: 0.09375, r2: 0.03125};
+    function sumProbs(sireTraits, matronTraits) {
+        let probs = {};
+        for (let place in sireTraits) {
+            if (place == "mystic") continue;
+            if (sireTraits[place].id in probs) {
+                probs[sireTraits[place].id] += PROBABILITIES[place];
+            } else {
+                probs[sireTraits[place].id] = PROBABILITIES[place];
+            }
+        }
+        for (let place in matronTraits) {
+            if (place == "mystic") continue;
+            if (matronTraits[place].id in probs) {
+                probs[matronTraits[place].id] += PROBABILITIES[place];
+            } else {
+                probs[matronTraits[place].id] = PROBABILITIES[place];
+            }
+        }
+        return probs;
+    }
+
+    var NameClassMap = {};
     function calcClassProb(cls, trait, probs) {
         let classProbability = 0;
-        for (let partName in probs) {
-            let part = getPartFromName(trait, partName);
+        for (let partId in probs) {
+            let part = bodyPartsMap[partId];
             if (part.class == cls) {
-                classProbability += probs[partName]/100;
+                classProbability += probs[partId];
             }
         }
         return classProbability;
@@ -316,12 +339,12 @@ search box
                             let traits = getTraits(axies[id].genes);
                             axies[id].traits = traits;
                             if ($('#omitExisting').is(":checked")) {
-                                let dTraits = [getPartFromName("eyes", traits.eyes.d).class,
-                                getPartFromName("mouth", traits.mouth.d).class,
-                                getPartFromName("ears", traits.ears.d).class,
-                                getPartFromName("horn", traits.horn.d).class,
-                                getPartFromName("back", traits.back.d).class,
-                                getPartFromName("tail", traits.tail.d).class];
+                                let dTraits = [traits.eyes.d.class,
+                                traits.mouth.d.class,
+                                traits.ears.d.class,
+                                traits.horn.d.class,
+                                traits.back.d.class,
+                                traits.tail.d.class];
                                 if (dTraits.every(function(v) { return v === cls; })) {
                                     console.log("Omitting purebreb: " + id)
                                     delete axies[id];
@@ -339,7 +362,6 @@ search box
 
                         let allProbs = [];
                         let pairs = [];
-                        let numIter = Object.keys(axies).length ** 2;
                         $("#loading").text("Calculating...");
                         for (let i in axies) {
                             for (let j in axies) {
@@ -470,28 +492,6 @@ search box
         //defer init until accounts are loaded
         intID = setInterval(init, 250);
     });
-
-    const PROBABILITIES = {d: 37.5, r1: 9.375, r2: 3.125};
-    function sumProbs(sireTraits, matronTraits) {
-        let probs = {};
-        for (let place in sireTraits) {
-            if (place == "mystic") continue;
-            if (sireTraits[place] in probs) {
-                probs[sireTraits[place]] += PROBABILITIES[place];
-            } else {
-                probs[sireTraits[place]] = PROBABILITIES[place];
-            }
-        }
-        for (let place in matronTraits) {
-            if (place == "mystic") continue;
-            if (matronTraits[place] in probs) {
-                probs[matronTraits[place]] += PROBABILITIES[place];
-            } else {
-                probs[matronTraits[place]] = PROBABILITIES[place];
-            }
-        }
-        return probs;
-    }
 
     function isBreedable(axie1, axie2) {
         //self check
