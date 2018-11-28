@@ -420,14 +420,14 @@
         for (let i=0; i < Math.min(numToDisplay, allProbs.length); i++) {
             out += '<div class="row border-bottom">';
             let prob = (allProbs[i].probability * 100).toFixed(3);
-            out += '<div class="col-3">' + prob + "%</div>";
+            out += '<div class="col-3 d-flex justify-content-center flex-column">' + prob + "%</div>";
             let pair = allProbs[i].pair.split("_");
             let id1 = "axie" + parseInt(pair[0]) + "_" + i;
             let id2 = "axie" + parseInt(pair[1]) + "_" + i;
             images.push({tagId: id1, axieId: pair[0]})
             images.push({tagId: id2, axieId: pair[1]})
-            out += '<div class="col-4 text-center"><a target="_blank" href="https://axieinfinity.com/axie/' + parseInt(pair[0]) + '?r=freak"><img id="' + id1 + '" height="80" data-toggle="tooltip" data-placement="top" title="Quality: ' + Math.round(axies[pair[0]].quality * 100) + '%"><br>#' + pair[0] + '</a></div>';
-            out += '<div class="col-4 text-center"><a target="_blank" href="https://axieinfinity.com/axie/' + parseInt(pair[1]) + '?r=freak"><img id="' + id2 + '" height="80" data-toggle="tooltip" data-placement="top" title="Quality: ' + Math.round(axies[pair[1]].quality * 100) + '%"><br>#' + pair[1] + '</a></div>';
+            out += '<div class="col-4 text-center d-flex justify-content-center flex-column"><a target="_blank" href="https://axieinfinity.com/axie/' + parseInt(pair[0]) + '?r=freak"><img id="' + id1 + '" height="80" data-toggle="tooltip" data-placement="top" title="Quality: ' + Math.round(axies[pair[0]].quality * 100) + '%"><br>#' + pair[0] + '</a></div>';
+            out += '<div class="col-4 text-center d-flex justify-content-center flex-column"><a target="_blank" href="https://axieinfinity.com/axie/' + parseInt(pair[1]) + '?r=freak"><img id="' + id2 + '" height="80" data-toggle="tooltip" data-placement="top" title="Quality: ' + Math.round(axies[pair[1]].quality * 100) + '%"><br>#' + pair[1] + '</a></div>';
             out += '</div>';
         }
         out += "</div>"
