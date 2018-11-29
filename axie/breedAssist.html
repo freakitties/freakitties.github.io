@@ -318,7 +318,7 @@
                             checkPure.push(i);
                         }
                     }
-                    if (checkPure.length == 1) {
+                    if (checkPure.length == 1 && checkPure[0] > 0) {
                         filterOptions.pureness = checkPure[0];
                     }
                     getAxies(web3.eth.accounts[0], filterOptions, () => {
@@ -617,6 +617,10 @@
             </div>
             Pureness:
             <div class="row col-4 col-sm-5" id="purenessChecks">
+                <div class="form-check col-1">
+                    <input class="form-check-input-inline" type="checkbox" value="true" name="purenessCheck[]" id="purenessCheck0" checked>
+                    <label for="purenessCheck0" class="pl-1">0</label>
+                </div>
                 <div class="form-check col-1">
                     <input class="form-check-input-inline" type="checkbox" value="true" name="purenessCheck[]" id="purenessCheck1" checked>
                     <label for="purenessCheck1" class="pl-1">1</label>
