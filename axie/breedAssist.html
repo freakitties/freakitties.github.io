@@ -332,19 +332,6 @@
                                 console.log("Omitting axie with pureness " + axies[id].pureness + " : " + id);
                                 delete axies[id];
                             }
-                            if ($('#omitExisting').is(":checked") && id in axies) {
-                                let dTraits = [traits.eyes.d.class,
-                                traits.mouth.d.class,
-                                traits.ears.d.class,
-                                traits.horn.d.class,
-                                traits.back.d.class,
-                                traits.tail.d.class];
-                                if (dTraits.every(function(v) { return v === classToCheck; })) {
-                                    console.log("Omitting purebreb: " + id);
-                                    delete axies[id];
-                                    //continue;
-                                }
-                            }
                             if ($('#omitMystics').is(":checked") && id in axies) {
                                 if (traits.eyes.mystic || traits.mouth.mystic || traits.ears.mystic || traits.horn.mystic || traits.back.mystic || traits.tail.mystic) {
                                     console.log("Omitting mystic: " + id)
@@ -622,12 +609,6 @@
             </div>
         </div>
         <div class="row">
-            <div class="col-lg-3 col-sm-2 form-check text-center">
-                <input class="form-check-input" type="checkbox" value="true" name="omitExisting" id="omitExisting" checked>
-                <label class="form-check-label" for="omitExisting">
-                Omit existing purebreeds
-                </label>
-            </div>
             <div class="col-lg-2 col-sm-2 form-check text-center">
                 <input class="form-check-input" type="checkbox" value="true" name="omitMystics" id="omitMystics" checked>
                 <label class="form-check-label" for="omitMystics">
@@ -636,10 +617,6 @@
             </div>
             Pureness:
             <div class="row col-4 col-sm-5" id="purenessChecks">
-                <div class="form-check col-1">
-                    <input class="form-check-input-inline" type="checkbox" value="true" name="purenessCheck[]" id="purenessCheck0" checked>
-                    <label for="purenessCheck0" class="pl-1">0</label>
-                </div>
                 <div class="form-check col-1">
                     <input class="form-check-input-inline" type="checkbox" value="true" name="purenessCheck[]" id="purenessCheck1" checked>
                     <label for="purenessCheck1" class="pl-1">1</label>
@@ -661,7 +638,7 @@
                     <label for="purenessCheck5" class="pl-1">5</label>
                 </div>
                 <div class="form-check col-1">
-                    <input class="form-check-input-inline" type="checkbox" value="true" name="purenessCheck[]" id="purenessCheck6" checked>
+                    <input class="form-check-input-inline" type="checkbox" value="true" name="purenessCheck[]" id="purenessCheck6">
                     <label for="purenessCheck6" class="pl-1">6</label>
                 </div>
             </div>
