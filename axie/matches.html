@@ -126,7 +126,7 @@ function storeMatches() {
         match.matchId = matchId;
         let request = matchStore.put(match);
         request.onsuccess = function(event) {
-            console.log("added match " + matchId);
+            //console.log("added match " + matchId);
         };
         request.onerror = function(event) {
             console.log("Error performing indexedDB operation: " + JSON.stringify(event));
@@ -143,7 +143,7 @@ function storeAxies() {
         axie.axieId = axieId;
         let request = axieStore.put(axie);
         request.onsuccess = function(event) {
-            console.log("added axie " + axieId);
+            //console.log("added axie " + axieId);
         };
         request.onerror = function(event) {
             console.log("Error performing indexedDB operation: " + JSON.stringify(event));
@@ -157,7 +157,7 @@ function storeAxie(axie) {
     var axieStore = transaction.objectStore("axies");
     let request = axieStore.add(axie);
     request.onsuccess = function(event) {
-        console.log("added axie " + axie.axieId);
+        //console.log("added axie " + axie.axieId);
     };
     request.onerror = function(event) {
         console.log("Error performing indexedDB operation: " + JSON.stringify(event));
