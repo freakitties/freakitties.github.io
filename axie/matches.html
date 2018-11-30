@@ -781,15 +781,30 @@ window.addEventListener('load', async () => {
         });
     })
     //init();
+   $("#overrideBeans").change(function() {
+        if ($(this).is(':checked')) {
+            $("#submitButton").prop("disabled", false);
+            $("#submitButton").text("Bean's blessing is not active! Submit anyway");
+        } else if (!beansActive) {
+            $("#submitButton").prop("disabled", true);
+            $("#submitButton").text("Bean's blessing is not active!");
+        }
+    });
+
 });
 
+var beansActive = false;
 function checkBlessing() {
     let url = "https://api.axieinfinity.com/v1/battle/battle/check-charm/" + web3.eth.accounts[0];
     $.getJSON(url, function(data) {
 
         if (!data.isCharmActivated) {
-            $("#submitButton").prop("disabled",true);
+            $("#submitButton").prop("disabled", true);
             $("#submitButton").text("Bean's blessing is not active!");
+            $("#overrideBeans").prop("disabled", false);
+        } else {
+            beansActive = true;
+            $("#overrideBeans").prop("disabled", true);
         }
     }).fail((jqxhr, textStatus, error) => {
         var err = textStatus + ", " + error;
@@ -832,7 +847,9 @@ function checkBlessing() {
                   </tr>
                 </tbody>
             </table>
-            <p><button class="btn btn-primary" id="submitButton">Queue Teams</button></p>
+            <p><button class="btn btn-primary" id="submitButton">Queue Teams</button>
+                <input type="checkbox" name="overrideBeans" id="overrideBeans"">&nbsp;Submit without Bean's blessing (if not active)
+            </p>
         </form>
         <button id="clearButton" onclick="clearCache()" class="btn btn-primary">Clear Cache</button><br>
         <div id="result" class="jumbotron"/>
