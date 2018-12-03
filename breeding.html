@@ -222,7 +222,7 @@
                     alert("Couldn't get the gas cost from ethGasStation");
                     return;
                 }
-                let gasPriceGwei = ethGas.average/10 + 0.1;
+                let gasPriceGwei = Math.round( (ethGas.average/10 + 0.1) * 100) / 100;
                 $("#customGas").val(gasPriceGwei);
             }).fail(() => {
                 alert("Failed to get ethGasPrice from ethgasstation");
