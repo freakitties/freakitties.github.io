@@ -204,6 +204,8 @@
                 BigNumber = w3.BigNumber;
             }
 
+            checkEthGas();
+
             acctInt = setInterval(initContract, 250);
             $('[data-toggle="tooltip"]').tooltip();
             var hash = window.location.hash.substr(1);
@@ -213,6 +215,19 @@
             reconstructBookmark(hash);
             $('[data-toggle="tooltip"]').tooltip();
         });
+
+        function checkEthGas() {
+            $.getJSON("https://ethgasstation.info/json/ethgasAPI.json", (ethGas) => {
+                if (isNaN(ethGas.average)) {
+                    alert("Couldn't get the gas cost from ethGasStation");
+                    return;
+                }
+                let gasPriceGwei = ethGas.average/10 + 0.1;
+                $("#customGas").val(gasPriceGwei);
+            }).fail(() => {
+                alert("Failed to get ethGasPrice from ethgasstation");
+            });
+        }
 
         function breedAll(checkOnly=false) {
             for (let i = 0; i <= numPairs; i++) {
@@ -331,7 +346,10 @@
                                 } else {
                                     $("#sireReady" + id).text("");
                                     $("#matronReady" + id).text("");
-                                    coreInstance.breedWithAuto(matronId, sireId, {from: web3.eth.accounts[0], value: autoBirthFee}, (err, result) => {
+
+                                    let gasPriceGwei = parseFloat($("#customGas").val());
+                                    let gasPrice = gasPriceGwei * 1e9;
+                                    coreInstance.breedWithAuto(matronId, sireId, {from: web3.eth.accounts[0], value: autoBirthFee, gasPrice: gasPrice}, (err, result) => {
                                         if (err) {
                                             //alert(err);
                                             console.log(err);
@@ -766,9 +784,14 @@
         <br/>
 
         <div class="row">
-            <div  class="text-left col-6" id="account"></div><br/><br/>
+            <div class="text-left col-6 col-form-label" id="account"></div><br/><br/>
         </div>
 
+        <div class="col-6 row">
+            <label for="customGas" class="col-form-label col-sm-4 col-lg-3">Gas Price:</label>
+            <input class="form-control col-sm-4 col-lg-3" type="text" id="customGas" value="5">
+        </div>
+        <br>
 
         <div id="pair0">
 
