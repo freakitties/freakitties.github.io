@@ -11,3 +11,7 @@
         genesString = strMul("0", 256 - genesString.length) + genesString
         return genesString;
     }
+
+    function weakEscape(str) {
+        return str.replace(/'/g, "&apos;").replace(/"/g, "&quot;").replace(/</g, '&lt;').replace(/>/g, "&gt;");
+    }
