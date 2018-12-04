@@ -103,8 +103,8 @@
                 } else {
                     if (typeof web3.eth.accounts[0] == "undefined") {
                         $("#account").text("Can't detect your account. Unlock your wallet or try reloading the page and waiting a few seconds.");
-                    $("#loading").text("")
-                    $("#loading").fadeOut(1);
+                        $("#loading").text("")
+                        $("#loading").fadeOut(1);
                         return;
                     } else {
                         $("#account").text("Your Account: " + web3.eth.accounts[0]);
