@@ -370,7 +370,7 @@ function checkContractAndGas(instance, action) {
             alert("Couldn't get the gas cost from ethGasStation");
             return;
         }
-        var gasPriceGwei = ethGas.average/10 + 0.1;
+        var gasPriceGwei = Math.round( (ethGas.average/10 + 0.1) * 100) / 100 ;
         var gasPrice = gasPriceGwei * 1e9;
         let ok = confirm("The gas price is: " + gasPriceGwei + " gwei. Do you want to continue?");
         if (ok) {
