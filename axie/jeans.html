@@ -458,7 +458,7 @@
             let axieId2 = parseInt(pair[1]);
             out += '<div class="row border-bottom">';
             let prob = (allProbs[i].probability * 100).toFixed(3);
-            out += '<div class="col-3 d-flex justify-content-center flex-column"><a href="/axie/calc.html?sireId=' + axieId1 + '&matronId=' + axieId2 + '">' + prob + "%</a></div>";
+            out += '<div class="col-3 d-flex justify-content-center flex-column"><a target="blank" href="/axie/calc.html?sireId=' + axieId1 + '&matronId=' + axieId2 + '">' + prob + "%</a></div>";
             let id1 = "axie" + axieId1 + "_" + i;
             let id2 = "axie" + axieId2 + "_" + i;
             images.push({tagId: id1, axieId: pair[0]})
