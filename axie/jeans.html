@@ -23,14 +23,171 @@
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
         <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.16/css/jquery.dataTables.min.css" integrity="sha384-1UXhfqyOyO+W+XsGhiIFwwD3hsaHRz2XDGMle3b8bXPH5+cMsXVShDoHA3AH/y/p" crossorigin="anonymous">
         <link rel="stylesheet" href="https://cdn.datatables.net/buttons/1.5.2/css/buttons.dataTables.min.css" integrity="sha384-4zgE69bwrfaNYUZPA2TaKwT/mjqMcBEvQmjHf1qkjg3c2JSWfEGflXXz6xXBLGGN" crossorigin="anonymous">
+        <link rel="stylesheet" href="/css/jquery-ui.css" integrity="sha384-7UG1JWOW1s2Zo3gDfHmL9dAVD/QS57qS+pRAq3icsyDwzlkPRQlk4PDD0bySIiQq">
+        <script src="/js/jquery-ui.min.js" integrity="sha384-PtTRqvDhycIBU6x1wwIqnbDo8adeWIWP3AHmnrvccafo35E7oIvW7HPXn2YimvWu"></script>
+        <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.5.0/css/all.css" integrity="sha384-B4dIYHKNBt8Bc12p+WXckhzcICo0wtJAoU8YZTY5qE0Id1GSseTk6S+L3BlXeVIU" crossorigin="anonymous">
         <style>
             body {background-color: #efefef;}
+            .selected {
+                position: relative;
+                width: auto;
+                /*font-size: 14px;*/
+                background-color: rgb(255, 255, 255);
+                padding: 4px 8px 4px 4px;
+                border-radius: 18px;
+                border-width: 1.5px;
+                border-style: solid;
+                border-color: rgb(230, 230, 230);
+                border-image: initial;
+                color: black;
+                display: inline-block;
+            }
+            .selected-box {
+                display: inline-block;
+                margin-right: 5px   ;
+            }
+
+
+            [data-toggle="collapse"] .fa:before {
+                content: "\f139";
+            }
+
+            [data-toggle="collapse"].collapsed .fa:before {
+                content: "\f13a";
+            }
+            .pointer {
+                cursor: pointer;
+            }
+            .circle-horn, .circle-eyes, .circle-mouth, .circle-ears, .circle-back, .circle-tail {
+                width: 18px !important;
+                height: 18px !important;
+            }
+            .ib {
+                display: inline-block;
+            }
         </style>
         <link rel="stylesheet" href="css/axie.css">
     </head>
 <script>
     var axies = {};
     var checkedAddresses = [];
+
+    function getRegionFromGroup(group) {
+        let regionBin = group.slice(8,13);
+        if (regionBin in regionGeneMap) {
+            return regionGeneMap[regionBin];
+        }
+        return "Unknown Region";
+    }
+
+    function getClassFromGroup(group) {
+        let bin = group.slice(0, 4);
+        if (!(bin in classGeneMap)) {
+            return "Unknown Class";
+        }
+        return classGeneMap[bin];
+    }
+
+    function getPatternsFromGroup(group) {
+        //patterns could be 6 bits. use 4 for now
+        return {d: group.slice(2, 8), r1: group.slice(8, 14), r2: group.slice(14, 20)};
+    }
+
+    function getColor(bin, cls) {
+        let color;
+        if (bin == "0000") {
+            color = "ffffff";
+        } else if (bin == "0001") {
+            color = "7a6767";
+        } else {
+            color = geneColorMap[cls][bin];
+        }
+        return color;
+    }
+
+    function getColorsFromGroup(group, cls) {
+        return {d: getColor(group.slice(20, 24), cls), r1: getColor(group.slice(24, 28), cls), r2: getColor(group.slice(28, 32), cls)};
+    }
+
+    //hack. key: part name + " " + part type
+    var partsClassMap = {};
+    function getPartName(cls, part, region, binary) {
+        let trait;
+        if (binary in binarytraits[cls][part]) {
+            if (region in binarytraits[cls][part][binary]) {
+                trait = binarytraits[cls][part][binary][region];
+            } else if ("global" in binarytraits[cls][part][binary]) {
+                trait = binarytraits[cls][part][binary]["global"];      //don't use mystic name. breeding doesn't pass mystic.
+            } else {
+                trait = "UNKNOWN Regional " + cls + " " + part;
+            }
+        } else {
+            trait = "UNKNOWN " + cls + " " + part;
+        }
+        //return part + "-" + trait.toLowerCase().replace(/\s/g, "-");
+        partsClassMap[trait + " " + part] = cls;
+        return trait;
+    }
+
+    function getPartsFromGroup(part, group, region) {
+        let mystic = group.slice(0, 2) == "11";
+        let dClass = classGeneMap[group.slice(2, 6)];
+        let dBin = group.slice(6, 11);
+        let dName = getPartName(dClass, part, region, dBin);
+
+        let r1Class = classGeneMap[group.slice(12, 16)];
+        let r1Bin = group.slice(16, 21);
+        let r1Name = getPartName(r1Class, part, region, r1Bin);
+
+        let r2Class = classGeneMap[group.slice(22, 26)];
+        let r2Bin = group.slice(26, 31);
+        let r2Name = getPartName(r2Class, part, region, r2Bin);
+
+        return {d: getPartFromName(part, dName), r1: getPartFromName(part, r1Name), r2: getPartFromName(part, r2Name), mystic: mystic};
+    }
+
+    function getTraits(genes) {
+        var groups = [genes.slice(0, 32), genes.slice(32, 64), genes.slice(64, 96), genes.slice(96, 128), genes.slice(128, 160), genes.slice(160, 192), genes.slice(192, 224), genes.slice(224, 256)];
+        let cls = getClassFromGroup(groups[0]);
+        let region = getRegionFromGroup(groups[0]);
+        let pattern = getPatternsFromGroup(groups[1]);
+        let color = getColorsFromGroup(groups[1], groups[0].slice(0, 4));
+        let eyes = getPartsFromGroup("eyes", groups[2], region);
+        let mouth = getPartsFromGroup("mouth", groups[3], region);
+        let ears = getPartsFromGroup("ears", groups[4], region);
+        let horn = getPartsFromGroup("horn", groups[5], region);
+        let back = getPartsFromGroup("back", groups[6], region);
+        let tail = getPartsFromGroup("tail", groups[7], region);
+        return {cls: cls, region: region, pattern: pattern, color: color, eyes: eyes, mouth: mouth, ears: ears, horn: horn, back: back, tail: tail};
+    }
+
+    function getPartFromName(traitType, partName) {
+        let traitId = traitType.toLowerCase() + "-" + partName.toLowerCase().replace(/\s/g, "-").replace(/[\?']/g, "");
+        return bodyPartsMap[traitId];
+    }
+
+    const PROBABILITIES = {d: 0.375, r1: 0.09375, r2: 0.03125};
+    function sumProbs(sireTraits, matronTraits) {
+        let probs = {};
+        for (let place in sireTraits) {
+            if (place == "mystic") continue;
+            if (sireTraits[place].id in probs) {
+                probs[sireTraits[place].id] += PROBABILITIES[place];
+            } else {
+                probs[sireTraits[place].id] = PROBABILITIES[place];
+            }
+        }
+        for (let place in matronTraits) {
+            if (place == "mystic") continue;
+            if (matronTraits[place].id in probs) {
+                probs[matronTraits[place].id] += PROBABILITIES[place];
+            } else {
+                probs[matronTraits[place].id] = PROBABILITIES[place];
+            }
+        }
+        return probs;
+    }
+
     function getAxies(offset, address) {
         let url = "https://axieinfinity.com/api/addresses/" + address + "/axies?stage=3&stage=4&offset=" + offset;
 
@@ -43,7 +200,9 @@
                     numSkipped++;
                     continue;
                 }
-                axies[data.axies[i].id] = {"id": data.axies[i].id, "genes": genesToBin(new BigNumber(data.axies[i].genes)), "owner": data.axies[i].owner, "class": data.class, "exp": data.axies[i].exp};
+                axies[data.axies[i].id] = {"id": data.axies[i].id, "genes": genesToBin(new BigNumber(data.axies[i].genes)), "owner": data.axies[i].owner, "class": data.axies[i].class, "exp": data.axies[i].exp, "sireId": data.axies[i].sireId, "matronId": data.axies[i].matronId};
+                let axie = axies[data.axies[i].id];
+                axie.traits = getTraits(axie.genes);
                 addRow(axies[data.axies[i].id]);
             }
             let totalAxies = data.totalAxies;
@@ -58,7 +217,9 @@
                                 numSkipped++;
                                 continue;
                             }
-                            axies[data.axies[i].id] = {"id": data.axies[i].id, "genes": genesToBin(new BigNumber(data.axies[i].genes)), "owner": data.axies[i].owner, "class": data.class, "exp": data.axies[i].exp};
+                            axies[data.axies[i].id] = {"id": data.axies[i].id, "genes": genesToBin(new BigNumber(data.axies[i].genes)), "owner": data.axies[i].owner, "class": data.axies[i].class, "exp": data.axies[i].exp, "sireId": data.axies[i].sireId, "matronId": data.axies[i].matronId};
+                            let axie = axies[data.axies[i].id];
+                            axie.traits = getTraits(axie.genes);
                             addRow(axies[data.axies[i].id]);
                         }
                         if (Object.keys(axies).length + numSkipped >= totalAxies) { //fudge incase over for some reason
@@ -72,6 +233,32 @@
                 $("#loading").fadeOut(3500);
             }
         });
+    }
+
+    function isBreedable(axie1, axie2) {
+        //self check
+        if (axie1.id == axie2.id) {
+            return false;
+        }
+        //parents check
+        if (axie2.matronId == axie1.id || axie2.sireId == axie1.id) {
+            return false;
+        }
+        if (axie1.matronId == axie2.id || axie1.sireId == axie2.id) {
+            return false;
+        }
+        //After checking parents, skip if ether is a tagged axie
+        if (axie1.matronId == 0 || axie2.matronId == 0) {
+            return true;
+        }
+        //check siblings
+        if (axie1.matronId == axie2.matronId || axie1.matronId == axie2.sireId) {
+            return false;
+        }
+        if (axie1.sireId == axie2.matronId || axie1.sireId == axie2.sireId) {
+            return false;
+        }
+        return true;
     }
 
     function getAxie(id) {
@@ -115,6 +302,40 @@
         });
     }
 
+    function calcTraitsProb(traits, sire, matron) {
+        let sireTraits = sire.traits;
+        let matronTraits = matron.traits;
+
+        let probability = 1;
+        for (let typ in traits) {
+            let typeProb = sumProbs(sireTraits[typ], matronTraits[typ]);
+            if (typeProb.hasOwnProperty(traits[typ])) {
+                probability *= typeProb[traits[typ]]
+            } else {
+                probability = 0;
+            }
+        }
+        return probability;
+    }
+
+    var bodyPartsMap = {};
+    var bodyParts;
+    function getBodyParts(callback) {
+        $.getJSON("https://axieinfinity.com/api/body-parts", (parts) => {
+            bodyParts = parts;
+            for (let i in parts) {
+                bodyPartsMap[parts[i].id] = parts[i];
+            }
+        }).done(() => {
+            if (callback) {
+                callback();
+            }
+        }).fail(() => {
+            console.log("Failed to get body parts from the API");
+        });
+    }
+
+    var allProbs;
     var traitMapping = binarytraits;
     var BigNumber;
     window.addEventListener('load', async () => {
@@ -145,9 +366,160 @@
             let w3 = new Web3();
             BigNumber = w3.BigNumber;
         }
-        //defer init until accounts are loaded
-        intID = setInterval(init, 250);
+
+        getBodyParts(() => {
+            for (let i in bodyParts) {
+                bodyParts[i].value = bodyParts[i].id;
+                bodyParts[i].label = bodyParts[i].name;
+            }
+            $("#searchParts").autocomplete({
+                source: bodyParts,
+                select: partSelected,
+            }).autocomplete("instance")._renderItem = renderSearch;
+            $("#searchForm").show();
+
+            //defer init until accounts are loaded
+            intID = setInterval(init, 250);
+
+        }); //maybe wait
+
+        $("#searchForm").submit(calc);
+        $("#calcPartsButton").click(calc);
     });
+
+    function calc(e) {
+        event.preventDefault();
+        let selectedIds = Object.keys(selectedParts);
+        console.log("sub " + selectedIds);
+
+        let typePartMap = {};
+        for (let id in selectedParts) {
+           typePartMap[id.substr(0, id.indexOf("-"))] = id;
+        }
+
+        var matchingParts = {};
+        for (let id in axies) {
+            let axie = axies[id];
+            for (let typ in typePartMap) {
+                if (selectedIds.includes(axie.traits[typ].d.id) || selectedIds.includes(axie.traits[typ].r1.id) || selectedIds.includes(axie.traits[typ].r2.id)) {
+                    matchingParts[axie.id] = axie;
+                    break;
+                }
+            }
+        }
+        allProbs = [];
+        let pairs = [];
+        for (let id1 in matchingParts) {
+            for (let id2 in matchingParts) {
+                let pair = Math.min(id1, id2) + "_" + Math.max(id1, id2);
+                //lazy
+                if (id1 != id2 && isBreedable(matchingParts[id1], matchingParts[id2]) && !pairs.includes(pair)) {
+                    let prob = calcTraitsProb(typePartMap, matchingParts[id1], matchingParts[id2]);
+                    if (prob > 0) {
+                        allProbs.push({probability : prob, pair: pair});
+                    }
+                    pairs.push(pair);
+                }
+            }
+        }
+        $("#loading").text("Done.");
+        $("#loading").fadeOut(2000);
+        $("#loading").text("");
+        $("#loading").fadeIn(0);
+        allProbs.sort((a, b) => {
+            return b.probability - a.probability;
+        });
+        renderTraitProbs(selectedParts, allProbs);
+    }
+
+    function renderTraitProbs(traits, allProbs) {
+        let names = [];
+        for (let t in traits) {
+            names.push(traits[t].name);
+        }
+        let out = '<div class="card mb-3 col-12">';
+        out += '<div class="card-header row">Probability for breeding traits: ' + weakEscape(names.join(", ")) + '</div>';
+
+        if (allProbs.length == 0) {
+            out += "<div>No axies found or none meet the criteria.</div></div>";
+            $("#result").empty();
+            $("#result").append(out);
+            return;
+        }
+
+        //let numToDisplay = parseInt($("#numToDisplay").val());
+        const numToDisplay = 10;
+        let images = [];
+        for (let i=0; i < Math.min(numToDisplay, allProbs.length); i++) {
+            let pair = allProbs[i].pair.split("_");
+            let axieId1 = parseInt(pair[0]);
+            let axieId2 = parseInt(pair[1]);
+            out += '<div class="row border-bottom">';
+            let prob = (allProbs[i].probability * 100).toFixed(3);
+            out += '<div class="col-3 d-flex justify-content-center flex-column"><a href="/axie/calc.html?sireId=' + axieId1 + '&matronId=' + axieId2 + '">' + prob + "%</a></div>";
+            let id1 = "axie" + axieId1 + "_" + i;
+            let id2 = "axie" + axieId2 + "_" + i;
+            images.push({tagId: id1, axieId: pair[0]})
+            images.push({tagId: id2, axieId: pair[1]})
+            out += '<div class="col-4 text-center d-flex justify-content-center flex-column"><a target="_blank" href="https://axieinfinity.com/axie/' + axieId1 + '?r=freak"><img id="' + id1 + '" height="80" data-toggle="tooltip" data-placement="top"><br>#' + axieId1 + '</a></div>';
+            out += '<div class="col-4 text-center d-flex justify-content-center flex-column"><a target="_blank" href="https://axieinfinity.com/axie/' + axieId2 + '?r=freak"><img id="' + id2 + '" height="80" data-toggle="tooltip" data-placement="top"><br>#' + axieId2 + '</a></div>';
+            out += '</div>';
+        }
+        out += "</div>"
+        $("#result").empty();
+        $("#result").append(out);
+        for (let id in images) {
+            setImage(images[id].tagId, images[id].axieId);
+        }
+      $('[data-toggle="tooltip"]').tooltip();
+    }
+
+    function setImage(tag, axieID) {
+        $.get("https://api.axieinfinity.com/v1/axies/" + axieID, function(data) {
+            var img = $("#" + tag);
+            img.attr('src', data.figure.static.idle);
+        }).fail(() => {
+            console.log("Failed to get axie details: " + axieID);
+        });
+    }
+
+    var selectedParts = {};
+    function partSelected(event, ui) {
+        $("#searchParts").val("");
+        event.preventDefault();
+        if (selectedParts.hasOwnProperty(ui.item.id)) {
+            return true;
+        }
+        let id = ui.item.id + "-selected";
+        selectedParts[ui.item.id] = bodyPartsMap[ui.item.id];
+        $("#calcPartsButton").show();
+        $("<div/>", {"class": "selected", "id": ui.item.id + "-parent"})
+        .append($('<div/>', {"class": "selected-box", "text": ui.item.name}))
+        .prepend($("<div> ").prop('class', 'align-middle mr-1 ib circle-' + ui.item.type + ' btn-' + ui.item.class))
+        .append($("<span/>", {"id": id, "text": "x", "class": "pointer text-secondary"}))
+        .prependTo( "#searchResult" );
+        $("#" + id).click(function() {
+            let spanId = $(this).prop('id');
+            let partId = spanId.substr(0, spanId.indexOf("-selected"));
+            $("#" + partId + "-parent").remove();
+            delete selectedParts[partId];
+        });
+      return true;
+    }
+
+    function renderSearch(ul, item ) {
+        for (let i in selectedParts) {
+            if (selectedParts[i].type == item.type) {
+                return $( "<li>" )
+            }
+        }
+        return $( "<li>" )
+        .append(
+            $("<div/>", {"text": item.name})
+            .prepend($("<div> ").prop('class', 'align-middle mr-1 ib circle-' + item.type + ' btn-' + item.class))
+        )
+        .appendTo( ul );
+    };
 
     function addSinglesAxie(ids) {
         for (let i in ids) {
@@ -223,6 +595,34 @@
         <div id="loading">Loading...</div>
         <div id="copyDiv"></div>
         <br/>
+        <div class="pl-3" id="partBreeding">
+            <p>
+                <button class="btn btn-link collapsed" type="button" data-toggle="collapse" data-target="#collapseSearch" aria-expanded="true" aria-controls="collapseSearch">
+                    <i class="fa"></i> Part Breeding
+                </button>
+            </p>
+            <div class="col-8">
+                <div class="collapse" id="collapseSearch" data-parent="#partBreeding">
+                    <form class="" action="" id="searchForm">
+                        <div class="row">
+                            <div class="form-inline col-10">
+                                <input type="text" class="form-control col-6" id="searchParts" name="searchParts" placeholder="Search for parts">
+                                <input type="submit" value="Search" class="btn btn-primary" id="searchButton"></input>
+                            </div>
+                        </div>
+                    </form>
+                    <div>
+                        <div id="searchResult" class="mb-3"></div>
+                        <button id="calcPartsButton" class="btn btn-primary">Find pairs</button>
+                    </div>
+                    <br>
+                    <div id="result" class="">
+                    </div><br>
+                </div>
+            </div>
+
+        </div><br>
+
         <table class="table display nowrap" id="axieTable">
             <thead>
                 <tr>
