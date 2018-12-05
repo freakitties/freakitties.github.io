@@ -58,7 +58,7 @@
             .pointer {
                 cursor: pointer;
             }
-            .circle-horn, .circle-eyes, .circle-mouth, .circle-ears, .circle-back, .circle-tail {
+            .circle-horn-sm, .circle-eyes-sm, .circle-mouth-sm, .circle-ears-sm, .circle-back-sm, .circle-tail-sm {
                 width: 18px !important;
                 height: 18px !important;
             }
@@ -495,7 +495,7 @@
         $("#calcPartsButton").show();
         $("<div/>", {"class": "selected", "id": ui.item.id + "-parent"})
         .append($('<div/>', {"class": "selected-box", "text": ui.item.name}))
-        .prepend($("<div> ").prop('class', 'align-middle mr-1 ib circle-' + ui.item.type + ' btn-' + ui.item.class))
+        .prepend($("<div> ").prop('class', 'align-middle mr-1 ib circle-' + ui.item.type + ' circle-' + ui.item.type + '-sm btn-' + ui.item.class))
         .append($("<span/>", {"id": id, "text": "x", "class": "pointer text-secondary"}))
         .prependTo( "#searchResult" );
         $("#" + id).click(function() {
@@ -516,7 +516,7 @@
         return $( "<li>" )
         .append(
             $("<div/>", {"text": item.name})
-            .prepend($("<div> ").prop('class', 'align-middle mr-1 ib circle-' + item.type + ' btn-' + item.class))
+            .prepend($("<div> ").prop('class', 'align-middle mr-1 ib circle-' + item.type + ' circle-' + item.type + '-sm btn-' + item.class))
         )
         .appendTo( ul );
     };
