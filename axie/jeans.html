@@ -268,7 +268,9 @@
             if (data.stage < 3) {
                 return;
             }
-            axies[data.id] = {"id": data.id, "genes": genesToBin(new BigNumber(data.genes)), "owner": data.owner, "class": data.class, "exp": data.exp};
+            axies[data.id] = {"id": data.id, "genes": genesToBin(new BigNumber(data.genes)), "owner": data.owner, "class": data.class, "exp": data.exp, "sireId": data.sireId, "matronId": data.matronId};
+            let axie = axies[data.id];
+            axie.traits = getTraits(axie.genes);
             addRow(axies[data.id]);
         });
     }
@@ -434,6 +436,7 @@
         renderTraitProbs(selectedParts, allProbs);
     }
 
+    var numToDisplay = 10;
     function renderTraitProbs(traits, allProbs) {
         let names = [];
         for (let t in traits) {
@@ -450,7 +453,7 @@
         }
 
         //let numToDisplay = parseInt($("#numToDisplay").val());
-        const numToDisplay = 10;
+        //const numToDisplay = 10;
         let images = [];
         for (let i=0; i < Math.min(numToDisplay, allProbs.length); i++) {
             let pair = allProbs[i].pair.split("_");
