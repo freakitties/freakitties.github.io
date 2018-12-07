@@ -356,7 +356,14 @@ function getBattleTeams(callback) {
     });
 }
 
-function requestMatches(initTable) {
+function updateStatusGetDetails(msg, callback) {
+    $("#loading").text(msg);
+    storeLastMatchId(newLastMatchId);
+    storeMatches();
+    getAxieDetails(callback);
+}
+
+function requestMatches(callback) {
     let signature = localStorage.getItem(storageKey + "_signatureAxieInfinity");
     if (!signature) {
         alert("No signature found");
@@ -374,8 +381,7 @@ function requestMatches(initTable) {
             $("#loading").text("No matches found for this account");
             return;
         } else if (matches[matches.length -1 ].id <= lastMatchId) {
-            $("#loading").text("Done loading battles. Now loading axies.");
-            getAxieDetails(initTable);
+            updateStatusGetDetails("Done loading battles. Now loading axies.", callback);
             return;
         }
 
@@ -390,11 +396,9 @@ function requestMatches(initTable) {
 
                         addMatches(moreMatches.matches);
                         if (Object.keys(allMatches).length == data.total) {
-                            $("#loading").text("Done loading battles. Now loading axies.");
-                            getAxieDetails(initTable);
+                            updateStatusGetDetails("Done loading battles. Now loading axies.", callback);
                         } else if (moreMatches.matches[moreMatches.matches.length -1 ].id <= lastMatchId) {
-                            $("#loading").text("Done loading battles (the rest is cached). Now loading axies.");
-                            getAxieDetails(initTable);
+                            updateStatusGetDetails("Done loading battles (the rest is cached). Now loading axies.", callback);
                         } else {
                             loop(page + 1, numPages);
                         }
@@ -404,14 +408,12 @@ function requestMatches(initTable) {
                     });;
                 } else {
                     console.log("finished requesting matches");
-                    $("#loading").text("Done loading battles. Now loading axies.");
-                    getAxieDetails(initTable);
+                    updateStatusGetDetails("Done loading battles. Now loading axies.", callback);
                 }
             }
             loop(2, numPages);
         } else {
-            $("#loading").text("Done loading battles. Now loading axies.");
-            getAxieDetails(initTable);
+            updateStatusGetDetails("Done loading battles. Now loading axies.", callback);
         }
     }).fail((jqxhr, textStatus, error) => {
         var err = textStatus + ", " + error;
@@ -443,14 +445,6 @@ function getMatches(initTable) {
     }
 }
 
-function saveAll() {
-    storeLastMatchId(newLastMatchId);
-    storeTeams();
-    storeMatches();
-    storeAxies();
-    //localStorage.setItem(storageKey, JSON.stringify({allTeams: allTeams, allMatches: emptyMatches, axies: emptyAxies, lastMatchId: newLastMatchId}));
-}
-
 function getSingleAxieAndStore(id) {
     $.getJSON("https://axieinfinity.com/api/axies/" + id, function(basicAPI) {
         $.getJSON("https://api.axieinfinity.com/v1/axies/" + id, function(data) {
@@ -480,6 +474,7 @@ function getSingleAxieAndStore(id) {
 
 function getAxieDetails(cb) {
     getBattleTeams(function() {
+        storeTeams();
         for (let id in axies) {
             var count = 0;
             //if ("image" in axies[id]) continue;
@@ -503,7 +498,7 @@ function getAxieDetails(cb) {
                                     let id = points[i].axieId.toString();
                                     axies[id].activityPoint = points[i].activityPoint;
                                 }
-                                saveAll();
+                                storeAxies();
                                 $("#loading").text("Done.")
                                 $("#loading").fadeOut(2000);
                                 cb();
