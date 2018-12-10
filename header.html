@@ -9,7 +9,7 @@
         </style>
         <nav id="navBar" class="navbar navbar-light bg-secondary" style="background-image: linear-gradient(#6c757d, #555555, #6c757d)">
             <div class="container-fluid row">
-                <div id="dropdownDiv" class="dropdown col-2 row">
+                <div id="dropdownDiv" class="dropdown col-1 row">
                   <button class="btn btn-default" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
                     <span class="navbar-toggler-icon"></span>
                   </button>
@@ -20,7 +20,7 @@
                     <li><a class="dropdown-item" target="_blank" href="http://twitter.com/home?status=@irfreak+Please+create+a+tool+to...">Request a tool</a></li>
                   </ul>
                 </div>
-                <div id="navContent" class="col-sm-6 col-md-7 row">
+                <div id="navContent" class="col-sm-7 col-md-7 row">
                     <div id="navContentLeft" class="text-left text-white col-sm-6 col-md-7 mt-2"></div>
                     <div id="navContentRight" class="text-right text-white col-sm-6 col-md-5 mt-2">
                         Support the tools: &nbsp;&nbsp;&nbsp;
@@ -45,7 +45,7 @@
             $('.dropdown-toggle').dropdown();
 
             if (typeof web3 != 'undefined') {
-                let html = '<input id="donateValue" class="form-control-sm col-md-4 col-lg-4 col-xl-2" type="text" value="0.002"> ' +
+                let html = '<input id="donateValue" class="form-control-sm col-md-4 col-lg-4 col-xl-3" type="text" value="0.002"> ' +
                            '<button class="btn btn-sm btn-primary" onclick="donate()">Donate</button>';
                 $("#donationDiv").append(html);
             } else {
