@@ -286,22 +286,22 @@
                 $("#headerDiv").html(data);
 
                 initTable();
+                let cb = null;
                 if (typeof web3 == 'undefined') {
                     $("#account").text("Web3 enabled browser not detected. Use the search box.");
                     $("#loading").text("")
                     $("#loading").fadeOut(1);
-                    return;
                 } else {
                     if (typeof web3.eth.accounts[0] == "undefined") {
                         $("#account").text("Can't detect your account. Unlock your wallet or try reloading the page and waiting a few seconds.");
                         $("#loading").text("")
                         $("#loading").fadeOut(1);
-                        return;
                     } else {
                         $("#account").text("Your Account: " + web3.eth.accounts[0]);
-                        getAxies(0, web3.eth.accounts[0]);
+                        cb = () => {getAxies(0, web3.eth.accounts[0]);}
                     }
                 }
+                getBodyParts(cb);
             }
         });
     }
@@ -329,7 +329,15 @@
             bodyParts = parts;
             for (let i in parts) {
                 bodyPartsMap[parts[i].id] = parts[i];
+                bodyParts[i].value = bodyParts[i].id;
+                bodyParts[i].label = bodyParts[i].name;
             }
+            $("#search").prop("disabled", false);
+            $("#searchParts").autocomplete({
+                source: bodyParts,
+                select: partSelected,
+            }).autocomplete("instance")._renderItem = renderSearch;
+            $("#searchForm").show();
         }).done(() => {
             if (callback) {
                 callback();
@@ -371,69 +379,105 @@
             BigNumber = w3.BigNumber;
         }
 
-        getBodyParts(() => {
-            for (let i in bodyParts) {
-                bodyParts[i].value = bodyParts[i].id;
-                bodyParts[i].label = bodyParts[i].name;
-            }
-            $("#searchParts").autocomplete({
-                source: bodyParts,
-                select: partSelected,
-            }).autocomplete("instance")._renderItem = renderSearch;
-            $("#searchForm").show();
+        //defer init until accounts are loaded
+        intID = setInterval(init, 250);
 
-            //defer init until accounts are loaded
-            intID = setInterval(init, 250);
-
-        }); //maybe wait
 
         $("#searchForm").submit(calc);
         $("#calcPartsButton").click(calc);
+        $("#ignoreAxieButton").click(addIgnore);
+
+        $("#clearIgnoreAxieButton").click(clearIgnore);
+        $("#ignoreForm").submit(clearIgnore);
+
     });
 
+    function clearIgnore(e) {
+        if (e) {
+            e.preventDefault();
+        }
+        ignoreList.clear();
+        $("#ignoreUL").empty();
+        calc();
+    }
+
+    var ignoreList = new Set();
+    function addIgnore(e) {
+        if (e) {
+            e.preventDefault();
+        }
+        let axieId = parseInt($("#ignoreAxie").val());
+        if (axieId) {
+            if (!ignoreList.has(axieId)) {
+                ignoreList.add(axieId);
+                let ignoreItemId = "ignoreItem" + axieId;
+                $("#ignoreUL").append($("<li/>", {"class": "list-group-item pointer", "text": axieId, "id": ignoreItemId}));
+                $("#" + ignoreItemId).click(function () {
+                    ignoreList.delete(axieId);
+                    $("#" + ignoreItemId).remove();
+                    calc();
+                });
+                calc();
+            }
+        }
+    }
+
     function calc(e) {
-        e.preventDefault();
-        let selectedIds = Object.keys(selectedParts);
-        console.log("sub " + selectedIds);
-
-        let typePartMap = {};
-        for (let id in selectedParts) {
-           typePartMap[id.substr(0, id.indexOf("-"))] = id;
+        if (e) {
+            e.preventDefault();
         }
+        $("#result").empty();
+        $("#loading").text("Calculating...");
+        $("#loading").show();
+        function offThreadCalc() {
+            let selectedIds = Object.keys(selectedParts);
+            console.log("sub " + selectedIds);
 
-        var matchingParts = {};
-        for (let id in axies) {
-            let axie = axies[id];
-            for (let typ in typePartMap) {
-                if (selectedIds.includes(axie.traits[typ].d.id) || selectedIds.includes(axie.traits[typ].r1.id) || selectedIds.includes(axie.traits[typ].r2.id)) {
-                    matchingParts[axie.id] = axie;
-                    break;
-                }
+            let typePartMap = {};
+            for (let id in selectedParts) {
+               typePartMap[id.substr(0, id.indexOf("-"))] = id;
             }
-        }
-        allProbs = [];
-        let pairs = [];
-        for (let id1 in matchingParts) {
-            for (let id2 in matchingParts) {
-                let pair = Math.min(id1, id2) + "_" + Math.max(id1, id2);
-                //lazy
-                if (id1 != id2 && isBreedable(matchingParts[id1], matchingParts[id2]) && !pairs.includes(pair)) {
-                    let prob = calcTraitsProb(typePartMap, matchingParts[id1], matchingParts[id2]);
-                    if (prob > 0) {
-                        allProbs.push({probability : prob, pair: pair});
+
+            var matchingParts = {};
+            for (let id in axies) {
+                if (ignoreList.has(parseInt(id))) continue;
+                let axie = axies[id];
+                for (let typ in typePartMap) {
+                    if (selectedIds.includes(axie.traits[typ].d.id) || selectedIds.includes(axie.traits[typ].r1.id) || selectedIds.includes(axie.traits[typ].r2.id)) {
+                        matchingParts[axie.id] = axie;
+                        break;
                     }
-                    pairs.push(pair);
                 }
             }
+            allProbs = [];
+            let pairs = [];
+            for (let id1 in matchingParts) {
+                for (let id2 in matchingParts) {
+                    let pair = Math.min(id1, id2) + "_" + Math.max(id1, id2);
+                    //lazy
+                    if (id1 != id2 && isBreedable(matchingParts[id1], matchingParts[id2]) && !pairs.includes(pair)) {
+                        let prob = calcTraitsProb(typePartMap, matchingParts[id1], matchingParts[id2]);
+                        if (prob > 0) {
+                            allProbs.push({probability : prob, pair: pair});
+                        }
+                        pairs.push(pair);
+                    }
+                }
+            }
+            $("#loading").text("Done.");
+            $("#loading").fadeOut(1000, () => {
+                $("#loading").text("");
+                $("#loading").fadeIn(0);
+            });
+            allProbs.sort((a, b) => {
+                return b.probability - a.probability;
+            });
+            renderTraitProbs(selectedParts, allProbs);
         }
-        $("#loading").text("Done.");
-        $("#loading").fadeOut(2000);
-        $("#loading").text("");
-        $("#loading").fadeIn(0);
-        allProbs.sort((a, b) => {
-            return b.probability - a.probability;
-        });
-        renderTraitProbs(selectedParts, allProbs);
+        let calcId = setInterval(() => {
+            clearInterval(calcId);
+            offThreadCalc();
+        }, 10);
     }
 
     var numToDisplay = 10;
@@ -443,7 +487,7 @@
             names.push(traits[t].name);
         }
         let out = '<div class="card mb-3 col-12">';
-        out += '<div class="card-header row">Probability for breeding traits: ' + weakEscape(names.join(", ")) + '</div>';
+        out += '<div class="card-header row">Probability for breeding traits: ' + weakEscape(names.join(", ")) + (ignoreList.size > 0 ? " (" + ignoreList.size + " axies ignored)" : "") + '</div>';
 
         if (allProbs.length == 0) {
             out += "<div>No axies found or none meet the criteria.</div></div>";
@@ -594,10 +638,12 @@
 
         <div class="row">
             <div  class="text-left col-6" id="account"></div><br/>
-            <input class="text-right col-5 form-control" id="search" size="55" placeholder="ID, address or comma separated list of IDs and/or addresses" />&nbsp;
+            <input class="text-right col-5 form-control" id="search" size="55" placeholder="ID, address or comma separated list of IDs and/or addresses" disabled/>&nbsp;
             <button type="submit" class="btn btn-dark" onclick="search();" id="searchButton0">Search</button>
         </div>
-        <div id="loading">Loading...</div>
+        <div class="row">
+            <div id="loading">Loading...</div><div id="spacer">&nbsp;</div>
+        </div>
         <div id="copyDiv"></div>
         <br/>
         <div class="pl-3" id="partBreeding">
@@ -606,26 +652,44 @@
                     <i class="fa"></i> Part Breeding
                 </button>
             </p>
-            <div class="col-8">
+            <div class="">
                 <div class="collapse" id="collapseSearch" data-parent="#partBreeding">
-                    <form class="" action="" id="searchForm">
-                        <div class="row">
-                            <div class="form-inline col-10">
-                                <input type="text" class="form-control col-6" id="searchParts" name="searchParts" placeholder="Search for parts">
-                                <input type="submit" value="Search" class="btn btn-primary" id="searchButton"></input>
+                    <div class="row">
+                        <div class="col-8">
+                            <form class="col-12" action="" id="searchForm">
+                                <div class="row">
+                                    <div class="form-inline col-10">
+                                        <input type="text" class="form-control col-6" id="searchParts" name="searchParts" placeholder="Search for parts">
+                                        <input type="submit" value="Search" class="btn btn-primary" id="searchButton"></input>
+                                    </div>
+                                </div>
+                                <div>
+                                    <br>
+                                    <div id="searchResult" class="mb-3"></div>
+                                    <button id="calcPartsButton" class="btn btn-primary">Find pairs</button>
+                                </div>
+                            </form>
+                            <div id="result" class=""></div>
+                            <br>
+                        </div>
+                        <div class="col-4">
+                            <form class="form-inline col-12" action="" id="ignoreForm">
+                                <input type="number" class="form-control col-6 number" id="ignoreAxie" name="ignoreAxie" placeholder="Ignore axie #">
+                                <button class="btn btn-primary" id="ignoreAxieButton">Ignore</button>
+                                <button class="btn btn-primary ml-1" id="clearIgnoreAxieButton">Clear</button>
+                            </form>
+                            <br>
+                            <div id="ignores" class="col-9">
+                                <div class="card">
+                                    <div class="card-header">Ignoring</div>
+                                    <ul class="list-group list-group-flush" id="ignoreUL">
+                                    </ul>
+                                </div>
                             </div>
                         </div>
-                    </form>
-                    <div>
-                        <div id="searchResult" class="mb-3"></div>
-                        <button id="calcPartsButton" class="btn btn-primary">Find pairs</button>
                     </div>
-                    <br>
-                    <div id="result" class="">
-                    </div><br>
                 </div>
             </div>
-
         </div><br>
 
         <table class="table display nowrap" id="axieTable">
