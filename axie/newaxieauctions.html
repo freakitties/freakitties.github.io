@@ -497,7 +497,9 @@
         }
     }
 
+    accounts = {};
     added = [];
+    axies = new Set();
     function addAxie(id, startPrice, endPrice, duration, seller, date, blockNumber) {
 
         id = parseInt(id);
@@ -519,17 +521,24 @@
             return;
         }
         added.push({id: id, blockNumber: blockNumber, date: date, startPrice: startPrice});
-        $.get("https://axieinfinity.com/api/axies/" + id, function(oldAPI) {
-            $.getJSON("https://api.axieinfinity.com/v1/axies/" + id, function(newAPI) {
-                let axie = oldAPI;
-                axie.breedCount = parseInt(newAPI.breedCount);
-                $.get("https://api.axieinfinity.com/v1/battle/accounts/" + seller, function(account) {
-                    addRow(id, axie.title, axie.exp, axie.breedCount, axie.stage, axie.parts, startPrice/1e18, endPrice/1e18, duration, account, date, blockNumber, axie);
-                }).fail(function(e) {
-                    addRow(id, axie.title, axie.exp, axie.breedCount, axie.stage, axie.parts, startPrice/1e18, endPrice/1e18, duration, seller, date, blockNumber, axie);
-                })
+        if (!axies.has(id) || blockNumber > startingBlock) {    //refresh axies after startingBlock
+            axies.add(id);
+            $.get("https://axieinfinity.com/api/axies/" + id, function(oldAPI) {
+                $.getJSON("https://api.axieinfinity.com/v1/axies/" + id, function(newAPI) {
+                    let axie = oldAPI;
+                    axie.breedCount = parseInt(newAPI.breedCount);
+                    if (!accounts.hasOwnProperty(seller)) {
+                        accounts[seller] = seller;  //default to seller and set key before request
+                        $.get("https://api.axieinfinity.com/v1/battle/accounts/" + seller, function(account) {
+                            accounts[seller] = account;
+                            addRow(id, axie.title, axie.exp, axie.breedCount, axie.stage, axie.parts, startPrice/1e18, endPrice/1e18, duration, account, date, blockNumber, axie);
+                        }).fail(function(e) {
+                            addRow(id, axie.title, axie.exp, axie.breedCount, axie.stage, axie.parts, startPrice/1e18, endPrice/1e18, duration, seller, date, blockNumber, axie);
+                        })
+                    }
+                });
             });
-        });
+        }
 
     }
 
