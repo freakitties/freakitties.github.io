@@ -145,6 +145,7 @@ function getBattleTeams(callback) {
     });
 }
 
+const ACTIVITY_POINT_BATCH_SIZE = 200;
 function getAxieDetails(cb) {
     getBattleTeams(function() {
 //        storeTeams();
@@ -167,17 +168,29 @@ function getAxieDetails(cb) {
                         count++;
 
                         if (count == numAxies) {
-                            let params = Object.keys(axies).join("&axieId=");
-                            let url = "https://api.axieinfinity.com/v1/battle/battle/activity-point?axieId=" + params;
-                            $.getJSON(url, function(points) {
-                                for (let i in points) {
-                                    let id = points[i].axieId.toString();
-                                    axies[id].activityPoint = points[i].activityPoint;
-                                }
-                                $("#loading").text("Done.")
-                                $("#loading").fadeOut(2000);
-                                cb();
-                            });
+                            //batch. limit is around 600
+                            let axieIds = Object.keys(axies);
+                            let batches = Math.ceil(axieIds.length/ACTIVITY_POINT_BATCH_SIZE);
+                            let axiesUpdated = 0;
+                            for (let i = 0; i < batches; i++) {
+                                let start = i  * ACTIVITY_POINT_BATCH_SIZE;
+                                let end = start + ACTIVITY_POINT_BATCH_SIZE > axieIds.length ? axieIds.length : start + ACTIVITY_POINT_BATCH_SIZE;
+                                let slice = axieIds.slice(start, end);
+                                let params = slice.join("&axieId=");
+                                let url = "https://api.axieinfinity.com/v1/battle/battle/activity-point?axieId=" + params;
+                                $.getJSON(url, function(points) {
+                                    for (let i in points) {
+                                        let id = points[i].axieId.toString();
+                                        axies[id].activityPoint = points[i].activityPoint;
+                                        axiesUpdated++;
+                                    }
+                                    if (axiesUpdated == axieIds.length) {
+                                        $("#loading").text("Done.")
+                                        $("#loading").fadeOut(2000);
+                                        cb();
+                                    }
+                                });
+                            }
                         }
                     });
                 }).fail((jqxhr, textStatus, error) => {
