@@ -407,6 +407,7 @@
             e.preventDefault();
         }
         let axieId = parseInt($("#ignoreAxie").val());
+        $("#ignoreAxie").val('');
         if (axieId) {
             if (!ignoreList.has(axieId)) {
                 ignoreList.add(axieId);
