@@ -525,12 +525,19 @@
     }
 
     function setImage(tag, axieID) {
-        $.get("https://api.axieinfinity.com/v1/axies/" + axieID, function(data) {
+        let axie = axies[axieID.toString()];
+        if (axie.hasOwnProperty("image")) {
             var img = $("#" + tag);
-            img.attr('src', data.figure.static.idle);
-        }).fail(() => {
-            console.log("Failed to get axie details: " + axieID);
-        });
+            img.attr('src', axie.image);
+        } else {
+            $.get("https://api.axieinfinity.com/v1/axies/" + axieID, function(data) {
+                var img = $("#" + tag);
+                img.attr('src', data.figure.static.idle);
+                axie.image = data.figure.static.idle;
+            }).fail(() => {
+                console.log("Failed to get axie details: " + axieID);
+            });
+        }
     }
 
     var selectedParts = {};
