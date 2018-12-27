@@ -282,7 +282,7 @@
     }
 
     function renderGroup22(data, type, row, meta) {
-        let bin = data.slice(6, 11);
+        let bin = data.slice(6, 12);
         name = getTraitName(row, data.slice(0, 6), bin, meta.settings.aoColumns[meta.col].sTitle.toLowerCase(), true);
         if(type === 'display'){
             //name = getTraitName(row, data.slice(0, 6), bin, meta.settings.aoColumns[meta.col].sTitle.toLowerCase(), true);
@@ -291,7 +291,7 @@
         //return bin;
         return name;
     }
-
+/*
     function renderGroup23(data, type, row, meta) {
         let bin = data.slice(11,12);
         if (type === 'display') {
@@ -299,18 +299,18 @@
         }
         return bin;
     }
-
+*/
     function renderGroup24(data, type, row, meta) {
-        let bin = data.slice(12,16);
+        let bin = data.slice(12, 16);
         if (type === 'display') {
-            return '<div class="binary">' + bin + '</div>' + classGeneMap[data.slice(12,16)];
+            return '<div class="binary">' + bin + '</div>' + classGeneMap[data.slice(12, 16)];
         }
         return bin;
     }
 
     function renderGroup25(data, type, row, meta) {
-        let bin = data.slice(16,21);
-        let name = getTraitName(row, data.slice(10,16), bin, meta.settings.aoColumns[meta.col].sTitle.toLowerCase().slice(0, -3));
+        let bin = data.slice(16, 22);
+        let name = getTraitName(row, data.slice(10, 16), bin, meta.settings.aoColumns[meta.col].sTitle.toLowerCase().slice(0, -3));
         if (type === 'display') {
             //let name = getTraitName(row, data.slice(10,16), bin, meta.settings.aoColumns[meta.col].sTitle.toLowerCase().slice(0, -3));
             return '<div class="binary">' + bin + "</div>" + name;
@@ -318,7 +318,7 @@
         return name;
         //return bin;
     }
-
+/*
     function renderGroup26(data, type, row, meta) {
         let bin = data.slice(21,22);
         if (type === 'display') {
@@ -326,18 +326,18 @@
         }
         return bin;
     }
-
+*/
     function renderGroup27(data, type, row, meta) {
-        let bin = data.slice(22,26);
+        let bin = data.slice(22, 26);
         if (type === 'display') {
-            return '<div class="binary">' + bin + '</div>' + classGeneMap[data.slice(22,26)];
+            return '<div class="binary">' + bin + '</div>' + classGeneMap[data.slice(22, 26)];
         }
         return bin;
     }
 
     function renderGroup28(data, type, row, meta) {
-        let bin = data.slice(26,31);
-        let name = getTraitName(row, data.slice(20,26), bin, meta.settings.aoColumns[meta.col].sTitle.toLowerCase().slice(0, -3));
+        let bin = data.slice(26, 32);
+        let name = getTraitName(row, data.slice(20, 26), bin, meta.settings.aoColumns[meta.col].sTitle.toLowerCase().slice(0, -3));
         if (type === 'display') {
             //let name = getTraitName(row, data.slice(20,26), bin, meta.settings.aoColumns[meta.col].sTitle.toLowerCase().slice(0, -3));
             return '<div class="binary">' + bin + "</div>" + name;
@@ -345,7 +345,7 @@
         return name;
         //return bin;
     }
-
+/*
     function renderGroup29(data, type, row, meta) {
         let bin = data.slice(31, 32);
         if (type === 'display') {
@@ -353,7 +353,7 @@
         }
         return bin;
     }
-
+*/
     function renderPrice(data, type, row, meta) {
         if (data && type === 'display') {
             return data.toFixed(5);
@@ -385,7 +385,7 @@
                 let group = "group" + typeOrder[type];
                 let firstSix = row[group].slice(0, 6);
                 let cls = classGeneMap[row[group].slice(2, 6)];
-                let bin = row[group].slice(6, 11);
+                let bin = row[group].slice(6, 12);
                 let html = "<tr><td>" + getTypeImage(cls, type) + "</td>";
                 name = getTraitName(row, firstSix, bin, type, true);
                 if (firstSix.startsWith("11")) {
@@ -393,11 +393,11 @@
                 }
                 html += "<td>" + cls + "</td><td class=\"text-" + cls + "\">" + name + "</td>";
                 cls = classGeneMap[row[group].slice(12, 16)];
-                bin = row[group].slice(16,21);
+                bin = row[group].slice(16,22);
                 name = getTraitName(row, row[group].slice(10, 16), bin, type, false);
                 html += "<td>" + cls + "</td><td class=\"text-" + cls + "\">" + name + "</td>";
                 cls = classGeneMap[row[group].slice(22, 26)];
-                bin = row[group].slice(26,31);
+                bin = row[group].slice(26,32);
                 name = getTraitName(row, row[group].slice(20, 26), bin, type, false);
                 html += "<td>" + cls + "</td><td class=\"text-" + cls + "\">" + name + "</td></tr>";
                 tbl += html;
@@ -434,68 +434,50 @@
                 {title: "Mystic", data: "group2", render: renderGroup2, searchable: false},
                 {title: "Eyes Class", data: "group2", render: renderGroup21, searchable: false},
                 {title: "Eyes", data: "group2", render: renderGroup22, searchable: true},
-                {title: "?", data: "group2", render: renderGroup23, searchable: false},
                 {title: "Eyes Class R1", data: "group2", render: renderGroup24, searchable: false},
                 {title: "Eyes R1", data: "group2", render: renderGroup25, searchable: true},
-                {title: "?", data: "group2", render: renderGroup26, searchable: false},
                 {title: "Eyes Class R2", data: "group2", render: renderGroup27, searchable: false},
                 {title: "Eyes R2", data: "group2", render: renderGroup28, searchable: true},
-                {title: "?", data: "group2", render: renderGroup29, searchable: false},
 
                 {title: "Mystic", data: "group3", render: renderGroup2, searchable: false},
                 {title: "Mouth Class", data: "group3", render: renderGroup21, searchable: false},
                 {title: "Mouth", data: "group3", render: renderGroup22, searchable: true},
-                {title: "?", data: "group2", render: renderGroup23, searchable: false},
                 {title: "Mouth Class R1", data: "group3", render: renderGroup24, searchable: false},
                 {title: "Mouth R1", data: "group3", render: renderGroup25, searchable: true},
-                {title: "?", data: "group2", render: renderGroup26, searchable: false},
                 {title: "Mouth Class R2", data: "group3", render: renderGroup27, searchable: false},
                 {title: "Mouth R2", data: "group3", render: renderGroup28, searchable:true},
-                {title: "?", data: "group3", render: renderGroup29, searchable: false},
 
                 {title: "Mystic", data: "group4", render: renderGroup2, searchable: false},
                 {title: "Ears Class", data: "group4", render: renderGroup21, searchable: false},
                 {title: "Ears", data: "group4", render: renderGroup22, searchable: true},
-                {title: "?", data: "group2", render: renderGroup23, searchable: false},
                 {title: "Ears Class R1", data: "group4", render: renderGroup24, searchable: false},
                 {title: "Ears R1", data: "group4", render: renderGroup25, searchable: true},
-                {title: "?", data: "group2", render: renderGroup26, searchable: false},
                 {title: "Ears Class R2", data: "group4", render: renderGroup27, searchable: false},
                 {title: "Ears R2", data: "group4", render: renderGroup28, searchable: true},
-                {title: "?", data: "group4", render: renderGroup29, searchable: false},
 
                 {title: "Mystic", data: "group5", render: renderGroup2, searchable: false},
                 {title: "Horn Class", data: "group5", render: renderGroup21, searchable: false},
                 {title: "Horn", data: "group5", render: renderGroup22, searchable: true},
-                {title: "?", data: "group2", render: renderGroup23, searchable: false},
                 {title: "Horn Class R1", data: "group5", render: renderGroup24, searchable: false},
                 {title: "Horn R1", data: "group5", render: renderGroup25, searchable: true},
-                {title: "?", data: "group2", render: renderGroup26, searchable: false},
                 {title: "Horn Class R2", data: "group5", render: renderGroup27, searchable: false},
                 {title: "Horn R2", data: "group5", render: renderGroup28, searchable: true},
-                {title: "?", data: "group5", render: renderGroup29, searchable: false},
 
                 {title: "Mystic", data: "group6", render: renderGroup2, searchable: false},
                 {title: "Back Class", data: "group6", render: renderGroup21, searchable: false},
                 {title: "Back", data: "group6", render: renderGroup22, searchable: true},
-                {title: "?", data: "group2", render: renderGroup23, searchable: false},
                 {title: "Back Class R1", data: "group6", render: renderGroup24, searchable: false},
                 {title: "Back R1", data: "group6", render: renderGroup25, searchable: true},
-                {title: "?", data: "group2", render: renderGroup26, searchable: false},
                 {title: "Back Class R2", data: "group6", render: renderGroup27, searchable: false},
                 {title: "Back R2", data: "group6", render: renderGroup28, searchable: true},
-                {title: "?", data: "group6", render: renderGroup29, searchable: false},
 
                 {title: "Mystic", data: "group7", render: renderGroup2, searchable: false},
                 {title: "Tail Class", data: "group7", render: renderGroup21, searchable: false},
                 {title: "Tail", data: "group7", render: renderGroup22, searchable: true},
-                {title: "?", data: "group2", render: renderGroup23, searchable: false},
                 {title: "Tail Class R1", data: "group7", render: renderGroup24, searchable: false},
                 {title: "Tail R1", data: "group7", render: renderGroup25, searchable: true},
-                {title: "?", data: "group2", render: renderGroup26, searchable: false},
                 {title: "Tail Class R2", data: "group7", render: renderGroup27, searchable: false},
                 {title: "Tail R2", data: "group7", render: renderGroup28, searchable: true},
-                {title: "?", data: "group7", render: renderGroup29, searchable: false},
 
                 {title: "Exp", data: "exp"},
                 {title: "Num Mystics", data: "mystics"},

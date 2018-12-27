@@ -134,15 +134,15 @@
     function getPartsFromGroup(part, group, region) {
         let mystic = group.slice(0, 2) == "11";
         let dClass = classGeneMap[group.slice(2, 6)];
-        let dBin = group.slice(6, 11);
+        let dBin = group.slice(6, 12);
         let dName = getPartName(dClass, part, region, dBin);
 
         let r1Class = classGeneMap[group.slice(12, 16)];
-        let r1Bin = group.slice(16, 21);
+        let r1Bin = group.slice(16, 22);
         let r1Name = getPartName(r1Class, part, region, r1Bin);
 
         let r2Class = classGeneMap[group.slice(22, 26)];
-        let r2Bin = group.slice(26, 31);
+        let r2Bin = group.slice(26, 32);
         let r2Name = getPartName(r2Class, part, region, r2Bin);
 
         return {d: getPartFromName(part, dName), r1: getPartFromName(part, r1Name), r2: getPartFromName(part, r2Name), mystic: mystic};
@@ -698,33 +698,15 @@
                     <th rowspan="2">ID</th>
                     <th colspan="5">Group 0 (Class, Region, Origin, Misc)</th>
                     <th colspan="7">Group 1 (Pattern and Color)</th>
-                    <th colspan="10">Group 2 (Eyes)</th>
-                    <th colspan="10">Group 3 (Mouth)</th>
-                    <th colspan="10">Group 4 (Ears)</th>
-                    <th colspan="10">Group 5 (Horn)</th>
-                    <th colspan="10">Group 6 (Back)</th>
-                    <th colspan="10">Group 7 (Tail)</th>
+                    <th colspan="7">Group 2 (Eyes)</th>
+                    <th colspan="7">Group 3 (Mouth)</th>
+                    <th colspan="7">Group 4 (Ears)</th>
+                    <th colspan="7">Group 5 (Horn)</th>
+                    <th colspan="7">Group 6 (Back)</th>
+                    <th colspan="7">Group 7 (Tail)</th>
                     <th colspan="9">Additional Info</th>
                 </tr>
                 <tr>
-                    <th></th>
-                    <th></th>
-                    <th></th>
-                    <th></th>
-                    <th></th>
-                    <th></th>
-                    <th></th>
-                    <th></th>
-                    <th></th>
-                    <th></th>
-                    <th></th>
-                    <th></th>
-                    <th></th>
-                    <th></th>
-                    <th></th>
-                    <th></th>
-                    <th></th>
-                    <th></th>
                     <th></th>
                     <th></th>
                     <th></th>
