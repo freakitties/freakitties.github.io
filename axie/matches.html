@@ -503,13 +503,12 @@ const ACTIVITY_POINT_BATCH_SIZE = 200;
 function getAxieDetails(id, callback) {
     $.getJSON("https://axieinfinity.com/api/axies/" + id, function(basicAPI) {
         $.getJSON("https://api.axieinfinity.com/v1/axies/" + id, function(data) {
-            //axies[id.toString()] = {image: data.figure.static.idle, parts: data.parts, class: data.class, stats: data.stats, exp: basicAPI.exp, pendingExp: data.pendingExp};
-            Object.assign(axies[id.toString()], {image: data.figure.static.idle, parts: data.parts, class: data.class, stats: data.stats, exp: basicAPI.exp, pendingExp: data.pendingExp});
             expCheckpointInstance.getCheckpoint(id, (error, result) => {
                 if (error) {
                     console.log("Error getting Exp Checkpoint from the contract");
                     return;
                 }
+                Object.assign(axies[id.toString()], {axieId: id.toString(), image: data.figure.static.idle, parts: data.parts, class: data.class, stats: data.stats, exp: basicAPI.exp, pendingExp: data.pendingExp});
                 axies[id].totalSynced = result[0].toNumber();
                 axies[id].truePending = axies[id].pendingExp - axies[id].totalSynced;
                 callback();
@@ -524,30 +523,48 @@ function getAxieDetails(id, callback) {
     });
 }
 
+function htmlRenderAxie(axieId, divId) {
+    let axie = axies[axieId];
+    let id = parseInt(axie.axieId);
+    let points = parseInt(axie.activityPoint);
+    let out = '<a href="https://axieinfinity.com/axie/' + id + '?r=freak" target="_blank"><img src="' + weakEscape(axie.image) + '" height="50"><br/>#' + id + '</a><br>(Exp: ' + parseInt(axie.exp) + '+' + parseInt(axie.truePending) + ')<br>';
+    if (points / 720 >= 1) {
+        out += "3/3 battles ready";
+    } else if (points / 480 >= 1) {
+        out += "2/3 battles ready";
+    } else if (points / 240 >= 1) {
+        out += "1/3 battles ready";
+    } else {
+        out += "0/3 battles ready";
+    }
+    out += " (" + points +")";
+    return out;
+}
+
+var axieRenders = {};
 function renderAxie(data, type, full) {
     let id = parseInt(data);
 
+    let divId = "axie" + id;
+    if (axieRenders.hasOwnProperty(divId)) {
+        axieRenders[divId]++;
+        divId += "-" + axieRenders[divId];
+    } else {
+        axieRenders[divId] = 0;
+    }
+
     if(type === 'display'){
-        getAxieDetails(id, () => {
-
-            let axie = axies[data];
-            let points = axie.activityPoint;
-            let out = '<a href="https://axieinfinity.com/axie/' + id + '?r=freak" target="_blank"><img src="' + weakEscape(axie.image) + '" height="50"><br/>#' + id + '</a><br>(Exp: ' + axie.exp + '+' + axie.truePending + ')<br>';
-            if (points / 720 >= 1) {
-                out += "3/3 battles ready";
-            } else if (points / 480 >= 1) {
-                out += "2/3 battles ready";
-            } else if (points / 240 >= 1) {
-                out += "1/3 battles ready";
-            } else {
-                out += "0/3 battles ready";
-            }
-            out += " (" + points +")";
-            $("#axie" + id).empty();
-            $("#axie" + id).html(out);
-        });
-
-        return '<div id="axie' + id + '">Axie #' + id  + '</div>';
+        if(!axies[data].image) {
+            getAxieDetails(id, () => {
+                let out = htmlRenderAxie(data, divId);
+                $("#" + divId).empty();
+                $("#" + divId).html(out);
+            });
+            return '<div id="' + divId + '">Axie #' + id  + '</div>';
+        } else {
+            let out = htmlRenderAxie(data, divId);
+            return '<div id="' + divId + '">' + out + '</div>';
+        }
     }
     return id;
 }
@@ -585,12 +602,13 @@ function renderTeam(data, type, full) {
 }
 
 var teamTable;
+var inactiveTeams = [];
 function initTable() {
     var teams = [];
     Object.keys(allTeams).forEach(function(key) {
-        //filter inactive teams
-        if (key in battleTeamsDict) {
-            teams.push(allTeams[key]);
+        teams.push(allTeams[key]);
+        if (!(key in battleTeamsDict)) {
+            inactiveTeams.push(key);
         }
     });
 
@@ -602,9 +620,10 @@ function initTable() {
              api.cells(
                 api.rows(function(idx, data, node){
                     //hack
-                    //let teamExists = renderTeam(data.members, 'display') != "No active team";
-                    //return teamExists && axies[data.members[0]].activityPoint >= 240 && axies[data.members[1]].activityPoint >= 240 && axies[data.members[2]].activityPoint >= 240 ? false : true;
-                    return axies[data.members[0]].activityPoint >= 240 && axies[data.members[1]].activityPoint >= 240 && axies[data.members[2]].activityPoint >= 240 ? false : true;
+                    let key = data.members.join("_");
+                    let teamExists = !inactiveTeams.includes(key);
+                    return teamExists && axies[data.members[0]].activityPoint >= 240 && axies[data.members[1]].activityPoint >= 240 && axies[data.members[2]].activityPoint >= 240 ? false : true;
+                    //return axies[data.members[0]].activityPoint >= 240 && axies[data.members[1]].activityPoint >= 240 && axies[data.members[2]].activityPoint >= 240 ? false : true;
                    //return (data[2] === 'Not ready') ? true : false;
                 }).indexes(), 0).checkboxes.disable();
         },
@@ -674,6 +693,15 @@ function initTable() {
         }
       // Prevent actual form submission
       e.preventDefault();
+    });
+
+    teamTable.columns(1).search("^((?!No active team).)*$", true, false).draw();
+    $('#hideInactive').change(function() {
+        if (this.checked) {
+            teamTable.columns(1).search("^((?!No active team).)*$", true, false).draw();
+        } else {
+            teamTable.columns(1).search("").rows().invalidate().draw();
+        }
     });
 }
 
@@ -817,6 +845,7 @@ function checkBlessing() {
     <div class="container">
         <div  class="text-left col-6" id="account"></div><br/>
         <div id="loading">Loading...</div>
+        Hide inactive teams <input type="checkbox" id="hideInactive" checked>
         <form id="frm" method="GET">
             <table class="table" id="teamTable">
                 <thead>
