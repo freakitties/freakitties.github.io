@@ -224,15 +224,15 @@
 
     function getPartsFromGroup(part, group, region) {
         let dClass = classGeneMap[group.slice(2, 6)];
-        let dBin = group.slice(6, 11);
+        let dBin = group.slice(6, 12);
         let dID = getPartName(dClass, part, region, dBin);
 
         let r1Class = classGeneMap[group.slice(12, 16)];
-        let r1Bin = group.slice(16, 21);
+        let r1Bin = group.slice(16, 22);
         let r1ID = getPartName(r1Class, part, region, r1Bin);
 
         let r2Class = classGeneMap[group.slice(22, 26)];
-        let r2Bin = group.slice(26, 31);
+        let r2Bin = group.slice(26, 32);
         let r2ID = getPartName(r2Class, part, region, r2Bin);
 
         return {d: dID, r1: r1ID, r2: r2ID};
