@@ -250,8 +250,8 @@
 
     }
 
-    //TODO: fix firstSix. should just pass in mystic and trait class
-    function getTraitName(row, firstSix, traitBinary, type, checkMystic = false) {
+    //skinBinary is the first 2 bits of the group (e.g. mystic is 11). It's same skinBinary for all 3 D, R1, R2
+    function getTraitName(row, skinBinary, classBinary, traitBinary, type, checkMystic = false) {
 
         let region = getRegion(row);
         if (region == null) {
@@ -259,18 +259,16 @@
             return "Unknown regional trait";
         }
 
-        let classBinary = firstSix.slice(2, 6);
         if (traitMapping[classGeneMap[classBinary]][type] == null) {
             console.log("classBinary: " + classBinary + "classGeneMap[classBinary]" + classGeneMap[classBinary] + " type: " + type + " traitMapping[classGeneMap[classBinary]][type] " + traitMapping[classGeneMap[classBinary]][type]);
         }
         if (!(traitBinary in traitMapping[classGeneMap[classBinary]][type])) return "UNKNOWN";
         let name = "";
-        let skin = firstSix.slice(0, 2);
-        if (skin == "11" && checkMystic) {
-            let isMystic = skin == "11";
+        if (skinBinary == "11" && checkMystic) {
+            let isMystic = skinBinary == "11";
             name = traitMapping[classGeneMap[classBinary]][type][traitBinary]["mystic"];
         } else {
-            if (skin == "10") {
+            if (skinBinary == "10") {
                 name = traitMapping[classGeneMap[classBinary]][type][traitBinary]["xmas"];
             } else {
                 name = traitMapping[classGeneMap[classBinary]][type][traitBinary][region];
@@ -293,7 +291,7 @@
 
     function renderGroup22(data, type, row, meta) {
         let bin = data.slice(6, 12);
-        name = getTraitName(row, data.slice(0, 6), bin, meta.settings.aoColumns[meta.col].sTitle.toLowerCase(), true);
+        name = getTraitName(row, data.slice(0, 2), data.slice(2, 6), bin, meta.settings.aoColumns[meta.col].sTitle.toLowerCase(), true);
         if(type === 'display'){
             //name = getTraitName(row, data.slice(0, 6), bin, meta.settings.aoColumns[meta.col].sTitle.toLowerCase(), true);
             return '<div class="text-primary"><b><div class="binary">' + bin + "</div>" + name + "</b></div>";
@@ -320,7 +318,7 @@
 
     function renderGroup25(data, type, row, meta) {
         let bin = data.slice(16, 22);
-        let name = getTraitName(row, data.slice(10, 16), bin, meta.settings.aoColumns[meta.col].sTitle.toLowerCase().slice(0, -3));
+        let name = getTraitName(row, data.slice(0, 2), data.slice(12, 16), bin, meta.settings.aoColumns[meta.col].sTitle.toLowerCase().slice(0, -3));
         if (type === 'display') {
             //let name = getTraitName(row, data.slice(10,16), bin, meta.settings.aoColumns[meta.col].sTitle.toLowerCase().slice(0, -3));
             return '<div class="binary">' + bin + "</div>" + name;
@@ -347,7 +345,7 @@
 
     function renderGroup28(data, type, row, meta) {
         let bin = data.slice(26, 32);
-        let name = getTraitName(row, data.slice(20, 26), bin, meta.settings.aoColumns[meta.col].sTitle.toLowerCase().slice(0, -3));
+        let name = getTraitName(row, data.slice(0, 2), data.slice(22, 26), bin, meta.settings.aoColumns[meta.col].sTitle.toLowerCase().slice(0, -3));
         if (type === 'display') {
             //let name = getTraitName(row, data.slice(20,26), bin, meta.settings.aoColumns[meta.col].sTitle.toLowerCase().slice(0, -3));
             return '<div class="binary">' + bin + "</div>" + name;
@@ -393,22 +391,25 @@
 
             for (let type in typeOrder) {
                 let group = "group" + typeOrder[type];
-                let firstSix = row[group].slice(0, 6);
-                let cls = classGeneMap[row[group].slice(2, 6)];
+                let skinBinary = row[group].slice(0, 2);
+                let classBinary = row[group].slice(2, 6);
+                let cls = classGeneMap[classBinary];
                 let bin = row[group].slice(6, 12);
                 let html = "<tr><td>" + getTypeImage(cls, type) + "</td>";
-                name = getTraitName(row, firstSix, bin, type, true);
-                if (firstSix.startsWith("11")) {
+                name = getTraitName(row, skinBinary, classBinary, bin, type, true);
+                if (skinBinary == "11") {
                     name += "*";
                 }
                 html += "<td>" + cls + "</td><td class=\"text-" + cls + "\">" + name + "</td>";
+                classBinary = row[group].slice(12, 16);
                 cls = classGeneMap[row[group].slice(12, 16)];
                 bin = row[group].slice(16,22);
-                name = getTraitName(row, row[group].slice(10, 16), bin, type, false);
+                name = getTraitName(row, skinBinary, classBinary, bin, type, false);
                 html += "<td>" + cls + "</td><td class=\"text-" + cls + "\">" + name + "</td>";
+                classBinary = row[group].slice(22, 26);
                 cls = classGeneMap[row[group].slice(22, 26)];
                 bin = row[group].slice(26,32);
-                name = getTraitName(row, row[group].slice(20, 26), bin, type, false);
+                name = getTraitName(row, skinBinary, classBinary, bin, type, false);
                 html += "<td>" + cls + "</td><td class=\"text-" + cls + "\">" + name + "</td></tr>";
                 tbl += html;
             }
