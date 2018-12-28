@@ -220,7 +220,12 @@
     function renderGroup2(data, type, row, meta) {
         let bin = data.slice(0, 2);
         if (type === 'display') {
-            return '<div class="binary">' + bin + '</div>' + ((bin == "11") ? "Yes" : "No");
+            if (bin == "11") {
+                return '<div class="binary">' + bin + '</div>Mystic';
+            } else if (bin == "10") {
+                return '<div class="binary">' + bin + '</div>Xmas';
+            }
+            return '<div class="binary">' + bin + '</div>Normal';
         }
         return bin;
     }
@@ -260,11 +265,16 @@
         }
         if (!(traitBinary in traitMapping[classGeneMap[classBinary]][type])) return "UNKNOWN";
         let name = "";
-        if (checkMystic) {
-            let isMystic = firstSix.slice(0, 2) == "11";
-            name = traitMapping[classGeneMap[classBinary]][type][traitBinary][isMystic ? "mystic" : region];
+        let skin = firstSix.slice(0, 2);
+        if (skin == "11" && checkMystic) {
+            let isMystic = skin == "11";
+            name = traitMapping[classGeneMap[classBinary]][type][traitBinary]["mystic"];
         } else {
-            name = traitMapping[classGeneMap[classBinary]][type][traitBinary][region];
+            if (skin == "10") {
+                name = traitMapping[classGeneMap[classBinary]][type][traitBinary]["xmas"];
+            } else {
+                name = traitMapping[classGeneMap[classBinary]][type][traitBinary][region];
+            }
         }
         if (typeof name == "undefined") {
             //unknown region?
@@ -431,7 +441,7 @@
                 {title: "Color R1", data: "group1", render: renderGroup17, searchable: false},
                 {title: "Color R2", data: "group1", render: renderGroup18, searchable: false},
 
-                {title: "Mystic", data: "group2", render: renderGroup2, searchable: false},
+                {title: "Skin", data: "group2", render: renderGroup2, searchable: false},
                 {title: "Eyes Class", data: "group2", render: renderGroup21, searchable: false},
                 {title: "Eyes", data: "group2", render: renderGroup22, searchable: true},
                 {title: "Eyes Class R1", data: "group2", render: renderGroup24, searchable: false},
@@ -439,7 +449,7 @@
                 {title: "Eyes Class R2", data: "group2", render: renderGroup27, searchable: false},
                 {title: "Eyes R2", data: "group2", render: renderGroup28, searchable: true},
 
-                {title: "Mystic", data: "group3", render: renderGroup2, searchable: false},
+                {title: "Skin", data: "group3", render: renderGroup2, searchable: false},
                 {title: "Mouth Class", data: "group3", render: renderGroup21, searchable: false},
                 {title: "Mouth", data: "group3", render: renderGroup22, searchable: true},
                 {title: "Mouth Class R1", data: "group3", render: renderGroup24, searchable: false},
@@ -447,7 +457,7 @@
                 {title: "Mouth Class R2", data: "group3", render: renderGroup27, searchable: false},
                 {title: "Mouth R2", data: "group3", render: renderGroup28, searchable:true},
 
-                {title: "Mystic", data: "group4", render: renderGroup2, searchable: false},
+                {title: "Skin", data: "group4", render: renderGroup2, searchable: false},
                 {title: "Ears Class", data: "group4", render: renderGroup21, searchable: false},
                 {title: "Ears", data: "group4", render: renderGroup22, searchable: true},
                 {title: "Ears Class R1", data: "group4", render: renderGroup24, searchable: false},
@@ -455,7 +465,7 @@
                 {title: "Ears Class R2", data: "group4", render: renderGroup27, searchable: false},
                 {title: "Ears R2", data: "group4", render: renderGroup28, searchable: true},
 
-                {title: "Mystic", data: "group5", render: renderGroup2, searchable: false},
+                {title: "Skin", data: "group5", render: renderGroup2, searchable: false},
                 {title: "Horn Class", data: "group5", render: renderGroup21, searchable: false},
                 {title: "Horn", data: "group5", render: renderGroup22, searchable: true},
                 {title: "Horn Class R1", data: "group5", render: renderGroup24, searchable: false},
@@ -463,7 +473,7 @@
                 {title: "Horn Class R2", data: "group5", render: renderGroup27, searchable: false},
                 {title: "Horn R2", data: "group5", render: renderGroup28, searchable: true},
 
-                {title: "Mystic", data: "group6", render: renderGroup2, searchable: false},
+                {title: "Skin", data: "group6", render: renderGroup2, searchable: false},
                 {title: "Back Class", data: "group6", render: renderGroup21, searchable: false},
                 {title: "Back", data: "group6", render: renderGroup22, searchable: true},
                 {title: "Back Class R1", data: "group6", render: renderGroup24, searchable: false},
@@ -471,7 +481,7 @@
                 {title: "Back Class R2", data: "group6", render: renderGroup27, searchable: false},
                 {title: "Back R2", data: "group6", render: renderGroup28, searchable: true},
 
-                {title: "Mystic", data: "group7", render: renderGroup2, searchable: false},
+                {title: "Skin", data: "group7", render: renderGroup2, searchable: false},
                 {title: "Tail Class", data: "group7", render: renderGroup21, searchable: false},
                 {title: "Tail", data: "group7", render: renderGroup22, searchable: true},
                 {title: "Tail Class R1", data: "group7", render: renderGroup24, searchable: false},
