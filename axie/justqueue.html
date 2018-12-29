@@ -146,89 +146,100 @@ function getBattleTeams(callback) {
 }
 
 const ACTIVITY_POINT_BATCH_SIZE = 200;
-function getAxieDetails(cb) {
-    getBattleTeams(function() {
-//        storeTeams();
-        $("#loading").text("Loading axies...");
-        let numAxies = Object.keys(axies).length;
-        for (let id in axies) {
-            var count = 0;
-            //if ("image" in axies[id]) continue;
-            $.getJSON("https://axieinfinity.com/api/axies/" + id, function(basicAPI) {
-                $.getJSON("https://api.axieinfinity.com/v1/axies/" + id, function(data) {
-                    $("#loading").text("Loading axies..." + count + "/" + numAxies);
-                    axies[id.toString()] = {image: data.figure.static.idle, parts: data.parts, class: data.class, stats: data.stats, exp: basicAPI.exp, pendingExp: data.pendingExp};
-                    expCheckpointInstance.getCheckpoint(id, (error, result) => {
-                        if (error) {
-                            console.log("Error getting Exp Checkpoint from the contract");
-                            return;
-                        }
-                        axies[id].totalSynced = result[0].toNumber();
-                        axies[id].truePending = axies[id].pendingExp - axies[id].totalSynced;
-                        count++;
+function getAxieDetails(id, callback) {
+    $.getJSON("https://axieinfinity.com/api/axies/" + id, function(basicAPI) {
+        $.getJSON("https://api.axieinfinity.com/v1/axies/" + id, function(data) {
+            expCheckpointInstance.getCheckpoint(id, (error, result) => {
+                if (error) {
+                    console.log("Error getting Exp Checkpoint from the contract");
+                    return;
+                }
+                Object.assign(axies[id.toString()], {axieId: id.toString(), image: data.figure.static.idle, parts: data.parts, class: data.class, stats: data.stats, exp: basicAPI.exp, pendingExp: data.pendingExp});
+                axies[id].totalSynced = result[0].toNumber();
+                axies[id].truePending = axies[id].pendingExp - axies[id].totalSynced;
+                callback();
+            });
+        }).fail((jqxhr, textStatus, error) => {
+            var err = textStatus + ", " + error;
+            console.log("Failed to get axie: " + err);
+        });
+    }).fail((jqxhr, textStatus, error) => {
+        var err = textStatus + ", " + error;
+        console.log("Failed to get axie deets: " + err);
+    });
+}
 
-                        if (count == numAxies) {
-                            //batch. limit is around 600
-                            let axieIds = Object.keys(axies);
-                            let batches = Math.ceil(axieIds.length/ACTIVITY_POINT_BATCH_SIZE);
-                            let axiesUpdated = 0;
-                            for (let i = 0; i < batches; i++) {
-                                let start = i  * ACTIVITY_POINT_BATCH_SIZE;
-                                let end = start + ACTIVITY_POINT_BATCH_SIZE > axieIds.length ? axieIds.length : start + ACTIVITY_POINT_BATCH_SIZE;
-                                let slice = axieIds.slice(start, end);
-                                let params = slice.join("&axieId=");
-                                let url = "https://api.axieinfinity.com/v1/battle/battle/activity-point?axieId=" + params;
-                                $.getJSON(url, function(points) {
-                                    for (let i in points) {
-                                        let id = points[i].axieId.toString();
-                                        axies[id].activityPoint = points[i].activityPoint;
-                                        axiesUpdated++;
-                                    }
-                                    if (axiesUpdated == axieIds.length) {
-                                        $("#loading").text("Done.")
-                                        $("#loading").fadeOut(2000);
-                                        cb();
-                                    }
-                                });
-                            }
-                        }
-                    });
-                }).fail((jqxhr, textStatus, error) => {
-                    var err = textStatus + ", " + error;
-                    console.log("Failed to get axie: " + err);
-                });
-            }).fail((jqxhr, textStatus, error) => {
-                var err = textStatus + ", " + error;
-                console.log("Failed to get axie deets: " + err);
+function getBattleTeamsAndActivity(callback) {
+    getBattleTeams(() => {
+        //batch. limit is around 600
+        let axieIds = Object.keys(axies);
+        let batches = Math.ceil(axieIds.length/ACTIVITY_POINT_BATCH_SIZE);
+        let axiesUpdated = 0;
+        for (let i = 0; i < batches; i++) {
+            let start = i  * ACTIVITY_POINT_BATCH_SIZE;
+            let end = start + ACTIVITY_POINT_BATCH_SIZE > axieIds.length ? axieIds.length : start + ACTIVITY_POINT_BATCH_SIZE;
+            let slice = axieIds.slice(start, end);
+            let params = slice.join("&axieId=");
+            let url = "https://api.axieinfinity.com/v1/battle/battle/activity-point?axieId=" + params;
+            $.getJSON(url, function(points) {
+                for (let i in points) {
+                    let id = points[i].axieId.toString();
+                    axies[id].activityPoint = points[i].activityPoint;
+                    axiesUpdated++;
+                }
+                if (axiesUpdated == axieIds.length) {
+                    $("#loading").text("Done.")
+                    $("#loading").fadeOut(2000);
+                    //storeAxies();
+                    callback();
+                }
             });
         }
     });
 }
 
+function htmlRenderAxie(axieId, divId) {
+    let axie = axies[axieId];
+    let id = parseInt(axie.axieId);
+    let points = parseInt(axie.activityPoint);
+    let out = '<a href="https://axieinfinity.com/axie/' + id + '?r=freak" target="_blank"><img src="' + weakEscape(axie.image) + '" height="50"><br/>#' + id + '</a><br>(Exp: ' + parseInt(axie.exp) + '+' + parseInt(axie.truePending) + ')<br>';
+    if (points / 720 >= 1) {
+        out += "3/3 battles ready";
+    } else if (points / 480 >= 1) {
+        out += "2/3 battles ready";
+    } else if (points / 240 >= 1) {
+        out += "1/3 battles ready";
+    } else {
+        out += "0/3 battles ready";
+    }
+    out += " (" + points +")";
+    return out;
+}
+
+var axieRenders = {};
 function renderAxie(data, type, full) {
     let id = parseInt(data);
-    let axie = axies[data];
+
+    let divId = "axie" + id;
+    if (axieRenders.hasOwnProperty(divId)) {
+        axieRenders[divId]++;
+        divId += "-" + axieRenders[divId];
+    } else {
+        axieRenders[divId] = 0;
+    }
 
     if(type === 'display'){
-        //Hack. reload to get axie
-        if (!axie) {
-            console.log("missing axie " + id);
-            //getSingleAxieAndStore(data);
-            return "#" + id + "(Missing data.)";
-        }
-        let points = axie.activityPoint;
-        let out = '<a href="https://axieinfinity.com/axie/' + id + '?r=freak" target="_blank"><img src="' + weakEscape(axie.image) + '" height="50"><br/>#' + id + '</a><br>(Exp: ' + axie.exp + '+' + axie.truePending + ')<br>';
-        if (points / 720 >= 1) {
-            out += "3/3 battles ready";
-        } else if (points / 480 >= 1) {
-            out += "2/3 battles ready";
-        } else if (points / 240 >= 1) {
-            out += "1/3 battles ready";
+        if(!axies[data].image) {
+            getAxieDetails(id, () => {
+                let out = htmlRenderAxie(data, divId);
+                $("#" + divId).empty();
+                $("#" + divId).html(out);
+            });
+            return '<div id="' + divId + '">Axie #' + id  + '</div>';
         } else {
-            out += "0/3 battles ready";
+            let out = htmlRenderAxie(data, divId);
+            return '<div id="' + divId + '">' + out + '</div>';
         }
-        out += " (" + points +")";
-        return out;
     }
     return id;
 }
@@ -268,10 +279,7 @@ function initTable() {
             var api = this.api();
              api.cells(
                 api.rows(function(idx, data, node){
-                    //hack
-                    let teamExists = renderTeam(data.members, 'display') != "No active team";
-                    return teamExists && axies[data.members[0]].activityPoint >= 240 && axies[data.members[1]].activityPoint >= 240 && axies[data.members[2]].activityPoint >= 240 ? false : true;
-                   //return (data[2] === 'Not ready') ? true : false;
+                    return axies[data.members[0]].activityPoint >= 240 && axies[data.members[1]].activityPoint >= 240 && axies[data.members[2]].activityPoint >= 240 ? false : true;
                 }).indexes(), 0).checkboxes.disable();
         },
         columnDefs: [
@@ -297,7 +305,7 @@ function initTable() {
             {title: "Axie #3", data: "members.2", render: renderAxie},
         ],
         //order: [[ 5, 'desc' ]],
-        pageLength: 200
+        pageLength: 50
     });
 
    $('#frm').on('submit', function(e){
@@ -339,13 +347,6 @@ function initTable() {
       e.preventDefault();
     });
 
-    teamTable.columns(1).search("^((?!No active team).)*$", true, false).draw()
-    $('#hideInactive').change(function() {
-        if (this.checked) {
-            teamTable.columns(1).search("^((?!No active team).)*$", true, false).draw()
-        } else {
-            teamTable.columns(1).search("").draw()
-    }    });
 }
 
 function appendResult(msg) {
@@ -395,14 +396,14 @@ function init(){
                     return;
                 }
                 localStorage.setItem(storageKey + "_signatureAxieInfinity", r);
-                getAxieDetails(initTable);
+                getBattleTeamsAndActivity(initTable);
             });
         } else {
             $("#loading").text("Signature not authorized.");
         }
 
     } else {
-        getAxieDetails(initTable);
+        getBattleTeamsAndActivity(initTable);
     }
     checkBlessing();
 }
@@ -486,7 +487,6 @@ function checkBlessing() {
     <div class="container">
         <div  class="text-left col-6" id="account"></div><br/>
         <div id="loading">Loading...</div>
-        Hide inactive teams <input type="checkbox" id="hideInactive" checked>
         <form id="frm" method="GET">
             <table class="table" id="teamTable">
                 <thead>
