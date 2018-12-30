@@ -42,7 +42,7 @@ var lastMatchId = 0;
 var newLastMatchId = 0;
 
 const MATCH_COUNT = 10;
-const TEAM_COUNT = 12;
+const TEAM_COUNT = 47;
 const MATCH_COUNT_PARAM = "&count=" + MATCH_COUNT;
 const TEAM_COUNT_PARAM = "&count=" + TEAM_COUNT;
 var storageKey;
@@ -307,7 +307,7 @@ function getBattleTeams(callback) {
         alert("not a valid address");
         return;
     }
-    $.getJSON("https://api.axieinfinity.com/v1/battle/teams?address=" + address + "&offset=0" + TEAM_COUNT_PARAM, function(teams) {
+    $.getJSON("https://api.axieinfinity.com/v1/battle/teams?no_limit=1&address=" + address + "&offset=0" + TEAM_COUNT_PARAM, function(teams) {
         Array.prototype.push.apply(battleTeams, teams.teams);
         var numPages = Math.ceil(teams.total / TEAM_COUNT);
         if (numPages > 1) {
@@ -315,7 +315,7 @@ function getBattleTeams(callback) {
             function loop(page, numPages) {
             //for (var i=1; i < numPages; i++) {
                 if (page <= numPages) {
-                    $.getJSON("https://api.axieinfinity.com/v1/battle/teams?address=" + address + TEAM_COUNT_PARAM + "&offset=" + page * TEAM_COUNT , function(moreTeams) {
+                    $.getJSON("https://api.axieinfinity.com/v1/battle/teams?no_limit=1&address=" + address + TEAM_COUNT_PARAM + "&offset=" + page * TEAM_COUNT , function(moreTeams) {
                         Array.prototype.push.apply(battleTeams, moreTeams.teams);
                         if (battleTeams.length == teams.total) {
                             for (let t in battleTeams) {
