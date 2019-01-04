@@ -425,7 +425,7 @@ function requestMatches(callback) {
                         addMatches(moreMatches.matches);
                         if (Object.keys(allMatches).length == data.total) {
                             updateStatusGetDetails("Done loading battles. Now loading teams.", callback);
-                        } else if (moreMatches.matches[moreMatches.matches.length -1 ].id <= lastMatchId) {
+                        } else if (moreMatches.matches.length == 0 || moreMatches.matches[moreMatches.matches.length - 1].id <= lastMatchId) {
                             updateStatusGetDetails("Done loading battles (the rest is cached). Now loading teams.", callback);
                         } else {
                             loop(page + 1, numPages);
