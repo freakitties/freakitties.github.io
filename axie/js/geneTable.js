@@ -498,6 +498,12 @@
                 {title: "Num Plant", data: "plants"},
                 {title: "Num Aquatic", data: "aquatics"},
                 {title: "Num Reptile", data: "reptiles"},
+
+                {title: "HP", data: "stats.hp"},
+                {title: "Speed", data: "stats.speed"},
+                {title: "Skill", data: "stats.skill"},
+                {title: "Morale", data: "stats.morale"},
+
                 {title: "owner", data: "owner", searchable: true}
                 ];
     function addRow(axie) {
@@ -555,6 +561,8 @@
         row["aquatics"] = numAquatic;
         row["reptiles"] = numReptile;
         if ("price" in axie) row["price"] = axie["price"];
+
+        row["stats"] = axie.stats;
 
         axieTable.row.add(row);
         axieTable.draw();
