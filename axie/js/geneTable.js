@@ -562,7 +562,12 @@
         row["reptiles"] = numReptile;
         if ("price" in axie) row["price"] = axie["price"];
 
-        row["stats"] = axie.stats;
+        row.stats = axie.stats;
+        //validate
+        row.stats.hp = parseInt(axie.stats.hp);
+        row.stats.speed = parseInt(axie.stats.speed);
+        row.stats.skill = parseInt(axie.stats.skill);
+        row.stats.morale = parseInt(axie.stats.morale);
 
         axieTable.row.add(row);
         axieTable.draw();
