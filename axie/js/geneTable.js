@@ -40,7 +40,7 @@
         let out = data;
         if(type === 'display'){
             out = generateIDs([data]);
-            if (axies[data].name) {
+            if (axies[data].name && axies[data].name != "Axie #" + data) {
                 let name = axies[data].name;
                 if (name.length > 12) {
                     name = name.substr(0, 12) + "…";
