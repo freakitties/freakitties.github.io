@@ -37,10 +37,18 @@
     }
 
     function renderID(data, type, row, meta) {
+        let out = data;
         if(type === 'display'){
-            data = generateIDs([data]);
+            out = generateIDs([data]);
+            if (axies[data].name) {
+                let name = axies[data].name;
+                if (name.length > 12) {
+                    name = name.substr(0, 12) + "…";
+                }
+                out += '<br><span class="small">' + weakEscape(name) + "</span>";
+            }
         }
-        return data;
+        return out;
     }
 
     function renderGroup0(data, type, row, meta) {
@@ -490,19 +498,19 @@
                 {title: "Tail Class R2", data: "group7", render: renderGroup27, searchable: false},
                 {title: "Tail R2", data: "group7", render: renderGroup28, searchable: true},
 
-                {title: "Exp", data: "exp"},
-                {title: "Num Mystics", data: "mystics"},
-                {title: "Num Beast", data: "beasts"},
-                {title: "Num Bug", data: "bugs"},
-                {title: "Num Bird", data: "birds"},
-                {title: "Num Plant", data: "plants"},
-                {title: "Num Aquatic", data: "aquatics"},
-                {title: "Num Reptile", data: "reptiles"},
+                {title: "Exp", data: "exp", searchable: false},
+                {title: "Num Mystics", data: "mystics", searchable: false},
+                {title: "Num Beast", data: "beasts", searchable: false},
+                {title: "Num Bug", data: "bugs", searchable: false},
+                {title: "Num Bird", data: "birds", searchable: false},
+                {title: "Num Plant", data: "plants", searchable: false},
+                {title: "Num Aquatic", data: "aquatics", searchable: false},
+                {title: "Num Reptile", data: "reptiles", searchable: false},
 
-                {title: "HP", data: "stats.hp"},
-                {title: "Speed", data: "stats.speed"},
-                {title: "Skill", data: "stats.skill"},
-                {title: "Morale", data: "stats.morale"},
+                {title: "HP", data: "stats.hp", searchable: false},
+                {title: "Speed", data: "stats.speed", searchable: false},
+                {title: "Skill", data: "stats.skill", searchable: false},
+                {title: "Morale", data: "stats.morale", searchable: false},
 
                 {title: "owner", data: "owner", searchable: true}
                 ];

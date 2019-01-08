@@ -202,7 +202,7 @@
                     numSkipped++;
                     continue;
                 }
-                axies[data.axies[i].id] = {"id": data.axies[i].id, "genes": genesToBin(new BigNumber(data.axies[i].genes)), "owner": data.axies[i].owner, "class": data.axies[i].class, "exp": data.axies[i].exp, "sireId": data.axies[i].sireId, "matronId": data.axies[i].matronId, "stats": data.axies[i].stats};    //update 3 places
+                axies[data.axies[i].id] = {"id": data.axies[i].id, "genes": genesToBin(new BigNumber(data.axies[i].genes)), "owner": data.axies[i].owner, "class": data.axies[i].class, "exp": data.axies[i].exp, "sireId": data.axies[i].sireId, "matronId": data.axies[i].matronId, "stats": data.axies[i].stats, "name": data.axies[i].name};    //update 3 places
                 let axie = axies[data.axies[i].id];
                 axie.traits = getTraits(axie.genes);
                 addRow(axies[data.axies[i].id]);
@@ -219,7 +219,7 @@
                                 numSkipped++;
                                 continue;
                             }
-                            axies[data.axies[i].id] = {"id": data.axies[i].id, "genes": genesToBin(new BigNumber(data.axies[i].genes)), "owner": data.axies[i].owner, "class": data.axies[i].class, "exp": data.axies[i].exp, "sireId": data.axies[i].sireId, "matronId": data.axies[i].matronId, "stats": data.axies[i].stats};    //update 3 places
+                            axies[data.axies[i].id] = {"id": data.axies[i].id, "genes": genesToBin(new BigNumber(data.axies[i].genes)), "owner": data.axies[i].owner, "class": data.axies[i].class, "exp": data.axies[i].exp, "sireId": data.axies[i].sireId, "matronId": data.axies[i].matronId, "stats": data.axies[i].stats, "name": data.axies[i].name};    //update 3 places
                             let axie = axies[data.axies[i].id];
                             axie.traits = getTraits(axie.genes);
                             addRow(axies[data.axies[i].id]);
@@ -268,7 +268,7 @@
             if (data.stage < 3) {
                 return;
             }
-            axies[data.id] = {"id": data.id, "genes": genesToBin(new BigNumber(data.genes)), "owner": data.owner, "class": data.class, "exp": data.exp, "sireId": data.sireId, "matronId": data.matronId, "stats": data.stats}; //update 3 places
+            axies[data.id] = {"id": data.id, "genes": genesToBin(new BigNumber(data.genes)), "owner": data.owner, "class": data.class, "exp": data.exp, "sireId": data.sireId, "matronId": data.matronId, "stats": data.stats, "name": data.name}; //update 3 places
             let axie = axies[data.id];
             axie.traits = getTraits(axie.genes);
             addRow(axies[data.id]);
