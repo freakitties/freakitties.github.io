@@ -441,6 +441,7 @@ function requestMatches(callback) {
                             } else if (batchCount == pageLimit - page) {
                                 loop(page + matchRequestBatchSize, numPages);
                             } else {
+                                /*
                                 console.log(Object.keys(allMatches).length);
                                 console.log(data.total);
                                 console.log(moreMatches.matches.length);
@@ -449,6 +450,7 @@ function requestMatches(callback) {
                                 console.log(pageLimit);
                                 console.log(page);
                                 console.log("---");
+                                */
                             }
                         }).fail((jqxhr, textStatus, error) => {
                             var err = textStatus + ", " + error;
