@@ -391,6 +391,8 @@ function updateStatusGetDetails(msg, callback) {
     //getAxieDetails(callback);
 }
 
+var matchRequestBatchSize = 5;
+
 function requestMatches(callback) {
     let signature = localStorage.getItem(storageKey + "_signatureAxieInfinity");
     if (!signature) {
@@ -419,21 +421,40 @@ function requestMatches(callback) {
             //slow synchronous requests
             function loop(page, numPages) {
                 if (page <= numPages) {
-                    $("#loading").text("Requesting page: " + page + "/" + numPages);
-                    $.getJSON({url: "https://api.axieinfinity.com/v1/battle/history/matches?page=" + page + MATCH_COUNT_PARAM, headers: headers}, function(moreMatches) {
 
-                        addMatches(moreMatches.matches);
-                        if (Object.keys(allMatches).length == data.total) {
-                            updateStatusGetDetails("Done loading battles. Now loading teams.", callback);
-                        } else if (moreMatches.matches.length == 0 || moreMatches.matches[moreMatches.matches.length - 1].id <= lastMatchId) {
-                            updateStatusGetDetails("Done loading battles (the rest is cached). Now loading teams.", callback);
-                        } else {
-                            loop(page + 1, numPages);
-                        }
-                    }).fail((jqxhr, textStatus, error) => {
-                        var err = textStatus + ", " + error;
-                        console.log("Failed to get match: " + err);
-                    });;
+                    var batchCount = 0;
+                    let pageLimit = Math.min(page + matchRequestBatchSize, numPages);
+                    var syncedToLast = false;
+                    for (let i = page; i < pageLimit; i++) {
+
+                        $("#loading").text("Requesting page: " + i + "/" + numPages);
+                        $.getJSON({url: "https://api.axieinfinity.com/v1/battle/history/matches?page=" + i + MATCH_COUNT_PARAM, headers: headers}, function(moreMatches) {
+                            batchCount++;
+                            addMatches(moreMatches.matches);
+                            if (moreMatches.matches[moreMatches.matches.length - 1].id <= lastMatchId) {
+                                syncedToLast = true;
+                            }
+                            if (Object.keys(allMatches).length == data.total) {
+                                updateStatusGetDetails("Done loading battles. Now loading teams.", callback);
+                            } else if (moreMatches.matches.length == 0 || (syncedToLast && batchCount == batchSize)) {
+                                updateStatusGetDetails("Done loading battles (the rest is cached). Now loading teams.", callback);
+                            } else if (batchCount == pageLimit - page) {
+                                loop(page + matchRequestBatchSize, numPages);
+                            } else {
+                                console.log(Object.keys(allMatches).length);
+                                console.log(data.total);
+                                console.log(moreMatches.matches.length);
+                                console.log(syncedToLast);
+                                console.log(batchCount);
+                                console.log(pageLimit);
+                                console.log(page);
+                                console.log("---");
+                            }
+                        }).fail((jqxhr, textStatus, error) => {
+                            var err = textStatus + ", " + error;
+                            console.log("Failed to get match: " + err);
+                        });;
+                    }
                 } else {
                     console.log("finished requesting matches");
                     updateStatusGetDetails("Done loading battles. Now loading teams.", callback);
@@ -508,7 +529,11 @@ function getAxieDetails(id, callback) {
                     console.log("Error getting Exp Checkpoint from the contract");
                     return;
                 }
-                Object.assign(axies[id.toString()], {axieId: id.toString(), image: data.figure.static.idle, parts: data.parts, class: data.class, stats: data.stats, exp: basicAPI.exp, pendingExp: data.pendingExp});
+                let idStr = id.toString();
+                if (!axies.hasOwnProperty(idStr)) {
+                    axies[idStr] = {};
+                }
+                Object.assign(axies[id.toString()], {axieId: idStr, image: data.figure.static.idle, parts: data.parts, class: data.class, stats: data.stats, exp: basicAPI.exp, pendingExp: data.pendingExp});
                 axies[id].totalSynced = result[0].toNumber();
                 axies[id].truePending = axies[id].pendingExp - axies[id].totalSynced;
                 callback();
@@ -554,7 +579,7 @@ function renderAxie(data, type, full) {
     }
 
     if(type === 'display'){
-        if(!axies[data].image) {
+        if(!axies.hasOwnProperty(data) || !axies[data].image) {
             getAxieDetails(id, () => {
                 let out = htmlRenderAxie(data, divId);
                 $("#" + divId).empty();
@@ -599,6 +624,22 @@ function renderTeam(data, type, full) {
     }
     return "No active team";
 
+}
+
+function renderReplays(data, type, full) {
+    let key = full.members.join("_");
+    let replays = data.slice(0, 10);    //at most 10
+    let out = '<p><a class="btn btn-primary" data-toggle="collapse" href="#collapseReplays' + key + '" role="button" aria-expanded="false" aria-controls="collapseReplays' + key + '">Replays</a></p><div class="collapse" id="collapseReplays' + key + '"><div class="card card-body">';
+
+    let links = [];
+    for (let i in replays) {
+        let num = parseInt(replays[i]);
+        links.push('<a href="https://axieinfinity.com/battle/' + num + '" target="_blank">' + num + '</a>');
+    }
+    out += links.join(" ");
+    out += '</div></div>';
+
+    return out;
 }
 
 var teamTable;
@@ -651,6 +692,7 @@ function initTable() {
             {title: "Win/Loss", render: renderWinsLosses, searchable: false},
             {title: "Wins", data: "wins", searchable: false},
             {title: "Losses", data: "losses", searchable: false},
+            {title: "Replays", data: "matches", render: renderReplays, searchable: false},
         ],
         order: [[ 5, 'desc' ]],
         pageLength: 50
@@ -858,10 +900,12 @@ function checkBlessing() {
                     <th scope="col">Wins/Losses</th>
                     <th scope="col">Wins</th>
                     <th scope="col">Losses</th>
+                    <th scope="col">Replays</th>
                   </tr>
                 </thead>
                 <tbody id="tableBody">
                   <tr>
+                    <td></td>
                     <td></td>
                     <td></td>
                     <td></td>
