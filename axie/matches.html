@@ -436,7 +436,7 @@ function requestMatches(callback) {
                             }
                             if (Object.keys(allMatches).length == data.total) {
                                 updateStatusGetDetails("Done loading battles. Now loading teams.", callback);
-                            } else if (moreMatches.matches.length == 0 || (syncedToLast && batchCount == batchSize)) {
+                            } else if (moreMatches.matches.length == 0 || (syncedToLast && batchCount == pageLimit - page)) {
                                 updateStatusGetDetails("Done loading battles (the rest is cached). Now loading teams.", callback);
                             } else if (batchCount == pageLimit - page) {
                                 loop(page + matchRequestBatchSize, numPages);
