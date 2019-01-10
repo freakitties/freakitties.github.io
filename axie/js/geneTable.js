@@ -4,7 +4,7 @@
     const classGeneMap = {"0000": "beast", "0001": "bug", "0010": "bird", "0011": "plant", "0100": "aquatic", "0101": "reptile", "1000": "??? Nut", "1001": "??? Star", "1010": "??? Moon"};
     const typeOrder = {"eyes": 2, "ears": 4, "mouth": 3, "horn": 5, "back": 6, "tail": 7};  //swap ears and mouth ordering
     const regionGeneMap = {"00000": "global", "00001": "japan"};
-    const tagGeneMap ={"00000": "Normal", "00001": "Origin", "00100": "Agamogenesis", "00011": "Meo Corp", "00100": "Meo Corp II"}
+    const tagGeneMap ={"00000": "Normal", "00001": "Origin", "00010": "Agamogenesis", "00011": "Meo Corp", "00100": "Meo Corp II"}
     var hash = window.location.hash.substr(1);
 
     function getClassFromGenes(id) {
@@ -114,9 +114,10 @@
         return bin;
     }
 
-    //wetdog 1+30? = 33
-    //chubby 29+3 = 34
-    var patternMap = {"000001": "greyfuzzy","000010": "(0, 0, 64, 130)", "000011": "(0, 0, 61, 107)", "000100": "(0, 0, 82, 74)", "000101": "(0, 0, 66, 101)", "000110": "(0, 0, 51, 134)", "000111": "(0, 0, 57, 117)", "001000": "(0, 0, 59, 67)", "001001": "(0, 0, 51, 104)", "001010": "(0, 0, 63, 131)", "001011": "(0, 0, 73, 153)", "001100": "(0, 0, 78, 127)", "001101": "(0, 0, 63, 99)", "001110": "(0, 0, 65, 55)", "011101": "greyspiky", "011110": "greycurly", "100001": "greywetdog", "100010": "greychubby"};
+    //wetdog 1 + 30 = 33
+    //chubby 29 + 3 = 34
+    //bigyak 33 + 34 = 49
+    var patternMap = {"000001": "greyfuzzy","000010": "(0, 0, 64, 130)", "000011": "(0, 0, 61, 107)", "000100": "(0, 0, 82, 74)", "000101": "(0, 0, 66, 101)", "000110": "(0, 0, 51, 134)", "000111": "(0, 0, 57, 117)", "001000": "(0, 0, 59, 67)", "001001": "(0, 0, 51, 104)", "001010": "(0, 0, 63, 131)", "001011": "(0, 0, 73, 153)", "001100": "(0, 0, 78, 127)", "001101": "(0, 0, 63, 99)", "001110": "(0, 0, 65, 55)", "011101": "greyspiky", "011110": "greycurly", "100001": "greywetdog", "100010": "greychubby", "110001": "greybigyak"};
     function renderPatternD(data, type, row, meta) {
         let bin = data.slice(2, 8);
         if(type === 'display'){
