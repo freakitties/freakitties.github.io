@@ -507,11 +507,11 @@
                     var hornProbs = sumProbs(sireTraits.horn, matronTraits.horn);
                     var backProbs = sumProbs(sireTraits.back, matronTraits.back);
                     var tailProbs = sumProbs(sireTraits.tail, matronTraits.tail);
+                    if (!isBreedable(sire, matron)) {
+                        $("#result").prepend('<span class="text-warning">WARNING: These two axies are related and cannot be bred.</span><br><br>');
+                    }
                 }
 
-                if (!isBreedable(sire, matron)) {
-                    $("#result").prepend('<span class="text-warning">WARNING: These two axies are related and cannot be bred.</span><br><br>');
-                }
                 renderProbs("eyes", eyesProbs, "row1");
                 $("#row1").append('<div class="col-1"></div>');
                 renderProbs("ears", earsProbs, "row1");
