@@ -332,17 +332,19 @@
                 bodyParts[i].value = bodyParts[i].id;
                 bodyParts[i].label = bodyParts[i].name;
             }
-            $("#search").prop("disabled", false);
             $("#searchParts").autocomplete({
                 source: bodyParts,
                 select: partSelected,
             }).autocomplete("instance")._renderItem = renderSearch;
             $("#searchForm").show();
-        }).done(() => {
+        }).always(() => {
+            $("#search").prop("disabled", false);
             if (callback) {
                 callback();
             }
         }).fail(() => {
+            $("#searchParts").prop("disabled", true);
+            $("#searchParts").prop("placeholder", "Error connecting to Axie API");
             console.log("Failed to get body parts from the API");
         });
     }
