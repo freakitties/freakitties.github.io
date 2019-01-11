@@ -22,6 +22,14 @@
                 background-color: rgb(255, 83, 65) !important;
                 border-color: rgb(255, 83, 65) !important;
             }
+            .btn-hidden_1, .btn-hidden_1:hover, .btn-hidden_1:active, .btn-hidden_1:visited {
+                background-color: rgb(185, 173, 202) !important;
+                border-color: rgb(185, 173, 202) !important;
+            }
+            .btn-hidden_2, .btn-hidden_2:hover, .btn-hidden_2:active, .btn-hidden_2:visited {
+                background-color: rgb(176, 191, 255) !important;
+                border-color: rgb(176, 191, 255) !important;
+            }
             .btn-hidden_3, .btn-hidden_3:hover, .btn-hidden_3:active, .btn-hidden_3:visited {
                 background-color: rgb(54, 154, 183) !important;
                 border-color: rgb(54, 154, 183) !important;
