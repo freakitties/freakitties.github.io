@@ -427,6 +427,40 @@
                 renderPureProbs(classToCheck, allProbs);
             }
         });
+
+        $("#ignoreAxieButton").click(addIgnore);
+        $("#ignoreForm").submit(clearIgnore);
+    }
+
+    function clearIgnore(e) {
+        if (e) {
+            e.preventDefault();
+        }
+        ignoreList.clear();
+        $("#ignoreUL").empty();
+        renderPureProbs(classToCheck, allProbs);
+    }
+
+    var ignoreList = new Set();
+    function addIgnore(e) {
+        if (e) {
+            e.preventDefault();
+        }
+        let axieId = parseInt($("#ignoreAxie").val());
+        $("#ignoreAxie").val('');
+        if (axieId) {
+            if (!ignoreList.has(axieId)) {
+                ignoreList.add(axieId);
+                let ignoreItemId = "ignoreItem" + axieId;
+                $("#ignoreUL").append($("<li/>", {"class": "list-group-item pointer", "text": axieId, "id": ignoreItemId}));
+                $("#" + ignoreItemId).click(function () {
+                    ignoreList.delete(axieId);
+                    $("#" + ignoreItemId).remove();
+                    renderPureProbs(classToCheck, allProbs);
+                });
+                renderPureProbs(classToCheck, allProbs);
+            }
+        }
     }
 
     function clearSelections() {
@@ -447,10 +481,13 @@
 
         let numToDisplay = parseInt($("#numToDisplay").val());
         let images = [];
-        for (let i=0; i < Math.min(numToDisplay, allProbs.length); i++) {
+        let count = 0;
+        for (let i=0; i < allProbs.length && count < numToDisplay ; i++) {
             let pair = allProbs[i].pair.split("_");
             let axieId1 = parseInt(pair[0]);
             let axieId2 = parseInt(pair[1]);
+            if (ignoreList.has(axieId1) || ignoreList.has(axieId2)) continue;
+            count++;
             out += '<div class="row border-bottom">';
             let prob = (allProbs[i].probability * 100).toFixed(3);
             out += '<div class="col-3 d-flex justify-content-center flex-column"><a target="blank" href="/axie/calc.html?sireId=' + axieId1 + '&matronId=' + axieId2 + '">' + prob + "%</a></div>";
@@ -643,6 +680,7 @@
                 <img height="13" src="" id="reptileRadioImg" class="mb-2"><br>
                 <input class="form-control-inline" type="radio" id="reptileRadio" name="class" value="reptile">
             </div>
+            <!--
             <div class="form-group col-1 text-center">
                 <label for="nutRadio">Nut</label><br>
                 <img height="13" src="" id="nutRadioImg" class="mb-2"><br>
@@ -658,6 +696,7 @@
                 <img height="13" src="" id="moonRadioImg" class="mb-2"><br>
                 <input class="form-control-inline" type="radio" id="moonRadio" name="class" value="moon">
             </div>
+            -->
         </div>
         <div class="row">
             <div class="col-lg-2 col-sm-2 form-check text-center">
@@ -717,24 +756,32 @@
                 </div>
             </div>
         </div>
-        <div class="text-left col-lg-3 col-4">
-            <label for="numToDisplay">Number of pairs to display</label>
-            <input class="form-control col-2 col-sm-3" type="number" id="numToDisplay" name="numToDisplay" min="10" max="100" value="10">
-        </div>
-
-        <br>
-<!--TODO
-        <form class="" action="">
-            <div class="row">
-                <div class="form-inline col-10">
-                    <input type="text" class="form-control col-6" id="search" name="search" placeholder="Search">
-                    <input type="submit" value="Search" class="btn btn-primary" id="searchButton"></input>
+        <div class="row">
+            <div class="text-left col-lg-3 col-4">
+                <label for="numToDisplay">Number of pairs to display</label>
+                <input class="form-control col-2 col-sm-3" type="number" id="numToDisplay" name="numToDisplay" min="10" max="100" value="10">
+            </div>
+            <div class="col-2">
+            </div>
+            <div class="col-4 ">
+                <label class="pl-3" for="ignoreAxie">Enter ID to ignore</label>
+                <form class="form-inline col-12" action="" id="ignoreForm">
+                    <input type="number" class="form-control col-6 number" id="ignoreAxie" name="ignoreAxie" placeholder="Ignore axie #">
+                    <button class="btn btn-primary" id="ignoreAxieButton">Ignore</button>
+                    <button class="btn btn-primary ml-1" id="clearIgnoreAxieButton">Clear</button>
+                </form>
+                <br>
+                <div id="ignores" class="col-9">
+                    <div class="card text-dark">
+                        <div class="card-header">Ignore List</div>
+                        <ul class="list-group list-group-flush" id="ignoreUL">
+                        </ul>
+                    </div>
                 </div>
             </div>
-        </form>
--->
+        </div>
         <br>
-
+        <br>
         <div id="result" class="">
         </div>
     <br><br><br>
