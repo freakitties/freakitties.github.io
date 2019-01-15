@@ -630,6 +630,7 @@ function renderTeam(data, type, full) {
 
 function renderReplays(data, type, full) {
     let key = full.members.join("_");
+    data.sort( (a,b) => { return b - a; } );
     let replays = data.slice(0, 10);    //at most 10
     let out = '<p><a class="btn btn-primary" data-toggle="collapse" href="#collapseReplays' + key + '" role="button" aria-expanded="false" aria-controls="collapseReplays' + key + '">Replays</a></p><div class="collapse" id="collapseReplays' + key + '"><div class="card card-body">';
 
