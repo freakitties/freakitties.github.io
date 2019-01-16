@@ -400,7 +400,7 @@
         }
         ignoreList.clear();
         $("#ignoreUL").empty();
-        calc();
+        renderTraitProbs(selectedParts, allProbs);
     }
 
     var ignoreList = new Set();
@@ -418,9 +418,9 @@
                 $("#" + ignoreItemId).click(function () {
                     ignoreList.delete(axieId);
                     $("#" + ignoreItemId).remove();
-                    calc();
+                    renderTraitProbs(selectedParts, allProbs);
                 });
-                calc();
+                renderTraitProbs(selectedParts, allProbs);
             }
         }
     }
@@ -502,10 +502,13 @@
         //let numToDisplay = parseInt($("#numToDisplay").val());
         //const numToDisplay = 10;
         let images = [];
-        for (let i=0; i < Math.min(numToDisplay, allProbs.length); i++) {
+        let count = 0;
+        for (let i=0; i < allProbs.length && count < numToDisplay ; i++) {
             let pair = allProbs[i].pair.split("_");
             let axieId1 = parseInt(pair[0]);
             let axieId2 = parseInt(pair[1]);
+            if (ignoreList.has(axieId1) || ignoreList.has(axieId2)) continue;
+            count++;
             out += '<div class="row border-bottom">';
             let prob = (allProbs[i].probability * 100).toFixed(3);
             out += '<div class="col-3 d-flex justify-content-center flex-column"><a target="blank" href="/axie/calc.html?sireId=' + axieId1 + '&matronId=' + axieId2 + '">' + prob + "%</a></div>";
