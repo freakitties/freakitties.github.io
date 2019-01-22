@@ -21,7 +21,9 @@
                   </ul>
                 </div>
                 <div id="navContent" class="col-sm-7 col-md-7 row">
-                    <div id="navContentLeft" class="text-left text-white col-sm-6 col-md-7 mt-2"></div>
+                    <div id="navContentLeft" class="text-left text-white col-sm-6 col-md-7 mt-2">
+                        <a class="text-warning" href="https://land.axieinfinity.com/purchase?r=CHl5UkYrgttjndv97yqxcY_6dnY">Axie Infinity Land Sale!</a>&nbsp; Starts Jan 22nd 9a EST (GMT 14:00)
+                    </div>
                     <div id="navContentRight" class="text-right text-white col-sm-6 col-md-5 mt-2">
                         Support the tools: &nbsp;&nbsp;&nbsp;
                         <!--<a class="text-white" href="https://godsunchained.com/?refcode=0x08797952462b82dB639DDBFdeF2ab1718ffa7676"><u>Buy GU Packs</u></a>&nbsp;-->
@@ -52,11 +54,13 @@
                 $("#donationDiv").append('<div id="donation" class="text-white">Donations: ' + donationAddress + ' &nbsp;</div>');
             }
 
+            /*
             if (window.location.pathname.match(/^\/axie\//)) {
                 let profileLink = '<a class="text-white" href="https://www.cryptokitties.co/profile/0x08797952462b82db639ddbfdef2ab1718ffa7676?include=sale,sire"><u>Buy Kitties</u></a>';
                 let text = 'New tool! <a class="text-info" href="/axie/breedAssist.html">Pure breeding assistant</a>';
                 $("#navContentLeft").append(text);
             }
+            */
 
             var totalDonated = 0;
             function getTransactions(url, page, callback) {
