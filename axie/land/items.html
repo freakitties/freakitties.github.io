@@ -1,0 +1,67 @@
+<html>
+    <head>
+        <title>Axie Items</title>
+        <script async src="https://www.googletagmanager.com/gtag/js?id=UA-116189657-1"></script>
+        <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'UA-116189657-1');
+        </script>
+        <script src="/js/jquery.min.js" integrity="sha384-tsQFqpEReu7ZLhBV2VZlAu7zcOV+rXbYlF2cqB8txI/8aZajjp4Bqd+V6D5IgvKT"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+
+        <script src="items.js"></script>
+        <script src="/axie/js/utils.js"></script>
+        <style>
+            .item-image {
+                width: auto;
+                max-width: 140px;
+                max-height: 140px;
+                display: block;
+                margin: 0 auto;
+            }
+        </style>
+    </head>
+    <body>
+        <script>
+
+        function cap(string)
+        {
+            return string.charAt(0).toUpperCase() + string.slice(1);
+        }
+
+        $( document ).ready(function() {
+            let count = 0;
+
+            var deck;
+            //TODO: paginate! Maybe tabify based on rarity
+            for (let i in allItems) {
+                if (count % 5 == 0) {
+                    deck = $("<div/>", {"class": "card-deck"});
+                    $("#items").append(deck).append("<br>");
+                }
+                count++;
+                let card = $("<div/>", {"class": "card"});
+                let img = $("<img/>", {"src": allItems[i].figureUrl, "class": "item-image card-img-top"});
+                let body = $("<div/>", {"class": "card-body"});
+                body.append($("<h5/>", {"class": "card-title", "text": allItems[i].name}));
+                body.append($("<p/>", {"class": "card-text", "text": "Rarity: " + cap(allItems[i].rarity)}));
+                body.append($("<p/>", {"class": "card-text", "text": "Type: " + cap(allItems[i].type)}));
+                body.append($("<p/>", {"class": "card-text", "text": allItems[i].description}));
+                for (let j in allItems[i].effects) {
+                    body.append($("<p/>", {"class": "card-text", "text": allItems[i].effects[j]}));
+                }
+                card.append(img).append(body);
+                deck.append(card);
+            }
+
+        });
+
+        </script>
+        <div id="items" class="container">
+        </div>
+        <br>
+    </body>
+</html
