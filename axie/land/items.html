@@ -33,34 +33,78 @@
         }
 
         $( document ).ready(function() {
-            let count = 0;
+
+            let byRarity = {"mystic": [], "epic": [], "rare": [], "common": []};
+            for (let i in allItems) {
+                switch (allItems[i].rarity) {
+                    case "mystic":
+                        byRarity.mystic.push(allItems[i]);
+                        break;
+                    case "epic":
+                        byRarity.epic.push(allItems[i]);
+                        break;
+                    case "rare":
+                        byRarity.rare.push(allItems[i]);
+                        break;
+                    case "common":
+                        byRarity.common.push(allItems[i]);
+                        break;
+                    default:
+                        break;
+                }
+            }
 
             var deck;
-            //TODO: paginate! Maybe tabify based on rarity
-            for (let i in allItems) {
-                if (count % 5 == 0) {
-                    deck = $("<div/>", {"class": "card-deck"});
-                    $("#items").append(deck).append("<br>");
+            //TODO: maybe lazy load
+            for (let r in byRarity) {
+                let tab = $("#" + r);
+                let count = 0;
+                for (let i in byRarity[r]) {
+                    if (count % 5 == 0) {
+                        deck = $("<div/>", {"class": "card-deck"});
+                        tab.append(deck).append("<br>");
+                    }
+                    count++;
+                    let card = $("<div/>", {"class": "card"});
+                    let img = $("<img/>", {"src": byRarity[r][i].figureUrl, "class": "item-image card-img-top mt-2"});
+                    let body = $("<div/>", {"class": "card-body"});
+                    body.append($("<h5/>", {"class": "card-title", "text": byRarity[r][i].name}));
+                    body.append($("<p/>", {"class": "card-text", "text": "Rarity: " + cap(byRarity[r][i].rarity)}));
+                    body.append($("<p/>", {"class": "card-text", "text": "Type: " + cap(byRarity[r][i].type)}));
+                    body.append($("<p/>", {"class": "card-text", "text": byRarity[r][i].description}));
+                    for (let j in byRarity[r][i].effects) {
+                        body.append($("<p/>", {"class": "card-text", "text": byRarity[r][i].effects[j]}));
+                    }
+                    card.append(img).append(body);
+                    deck.append(card);
                 }
-                count++;
-                let card = $("<div/>", {"class": "card"});
-                let img = $("<img/>", {"src": allItems[i].figureUrl, "class": "item-image card-img-top"});
-                let body = $("<div/>", {"class": "card-body"});
-                body.append($("<h5/>", {"class": "card-title", "text": allItems[i].name}));
-                body.append($("<p/>", {"class": "card-text", "text": "Rarity: " + cap(allItems[i].rarity)}));
-                body.append($("<p/>", {"class": "card-text", "text": "Type: " + cap(allItems[i].type)}));
-                body.append($("<p/>", {"class": "card-text", "text": allItems[i].description}));
-                for (let j in allItems[i].effects) {
-                    body.append($("<p/>", {"class": "card-text", "text": allItems[i].effects[j]}));
-                }
-                card.append(img).append(body);
-                deck.append(card);
             }
 
         });
 
         </script>
+        <br>
         <div id="items" class="container">
+            <ul class="nav nav-tabs" id="myTab" role="tablist">
+                <li class="nav-item">
+                    <a class="nav-link active" id="mystic-tab" data-toggle="tab" href="#mystic" role="tab" aria-controls="mystic" aria-selected="true">Mystic</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" id="epic-tab" data-toggle="tab" href="#epic" role="tab" aria-controls="epic" aria-selected="false">Epic</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" id="rare-tab" data-toggle="tab" href="#rare" role="tab" aria-controls="rare" aria-selected="false">Rare</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" id="common-tab" data-toggle="tab" href="#common" role="tab" aria-controls="common" aria-selected="false">Common</a>
+                </li>
+            </ul>
+        <div class="tab-content" id="myTabContent">
+          <div class="tab-pane fade show active" id="mystic" role="tabpanel" aria-labelledby="mystic-tab"></div>
+          <div class="tab-pane fade" id="epic" role="tabpanel" aria-labelledby="epic-tab"></div>
+          <div class="tab-pane fade" id="rare" role="tabpanel" aria-labelledby="rare-tab"></div>
+          <div class="tab-pane fade" id="common" role="tabpanel" aria-labelledby="common-tab"></div>
+        </div>
         </div>
         <br>
     </body>
