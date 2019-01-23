@@ -1,0 +1,66 @@
+<html>
+    <head>
+        <title>Axie Inventory</title>
+        <script async src="https://www.googletagmanager.com/gtag/js?id=UA-116189657-1"></script>
+        <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'UA-116189657-1');
+        </script>
+
+        <script src="/js/jquery.min.js" integrity="sha384-tsQFqpEReu7ZLhBV2VZlAu7zcOV+rXbYlF2cqB8txI/8aZajjp4Bqd+V6D5IgvKT"></script>
+
+    </head>
+    <body>
+        <script>
+            var quals = {"common": new Set(), "rare": new Set(), "epic": new Set(), "mystic": new Set()};
+            var items = {};
+            function getInv() {
+                let address = $("#address").val();
+                $.getJSON("https://axieinfinity.com/land-api/profile/" + address + "/inventory", (x) => {
+                    for (let i in x.items) {
+                        if (items.hasOwnProperty(x.items[i].id)) {
+                            items[x.items[i].id].count++;
+                        } else {
+                            items[x.items[i].id] = {};
+                            items[x.items[i].id].count = 1;
+                            items[x.items[i].id].details = x.items[i];
+                        }
+                    }
+
+                    for (let i in items) {
+                        switch(items[i].details.rarity) {
+                            case "common":
+                                quals.common.add(items[i].details.id);
+                            break;
+                            case "rare":
+                                quals.rare.add(items[i].details.id);
+                            break;
+                            case "epic":
+                                quals.epic.add(items[i].details.id);
+                            break;
+                            case "mystic":
+                                quals.mystic.add(items[i].details.id);
+                            break;
+                        }
+                    }
+                    let out = [];
+                    for (let i in quals) {
+                        out.push(i + ":" + quals[i].size);
+                    }
+                    $("#output").text(out.join(", "));
+            });
+        }
+        $( document ).ready(function() {
+            $("#button").click(getInv);
+        });
+
+        </script>
+        <div id="output">
+        </div><br><br>
+        Address: <input id="address" type="text"/>
+        <button id="button" type="text">Get inventory count</button>
+
+    </body>
+</html
