@@ -8,6 +8,8 @@
         gtag('js', new Date());
         gtag('config', 'UA-116189657-1');
         </script>
+        <!--web3 v0.20.6-->
+        <script src="/js/web3.min.js" integrity="sha384-rXHfd7f1o1jpr3t+dYI17CkzUY3Wswo1OGbiXPGSbg4s2E42+jkRgllwt7ss2Vlq"></script>
         <script src="/js/jquery.min.js" integrity="sha384-tsQFqpEReu7ZLhBV2VZlAu7zcOV+rXbYlF2cqB8txI/8aZajjp4Bqd+V6D5IgvKT"></script>
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
@@ -24,16 +26,29 @@
             }
         </style>
     </head>
-    <body>
-        <script>
+
+    <script>
 
         function cap(string)
         {
             return string.charAt(0).toUpperCase() + string.slice(1);
         }
 
-        $( document ).ready(function() {
+        function init() {
+            clearInterval(intID);
+            $.ajax({
+                url: "../../header.html",
+                cache: false,
+                dataType: "html",
+                success: function(data) {
+                    $("#headerDiv").html(data);
+                }
+            });
+        }
 
+        var intID;
+        $( document ).ready(function() {
+            intID = setInterval(init, 250);
             let byRarity = {"mystic": [], "epic": [], "rare": [], "common": []};
             for (let i in allItems) {
                 switch (allItems[i].rarity) {
@@ -82,7 +97,9 @@
 
         });
 
-        </script>
+    </script>
+    <body>
+        <div id="headerDiv"></div><br/>
         <br>
         <div id="items" class="container">
             <ul class="nav nav-tabs" id="myTab" role="tablist">
