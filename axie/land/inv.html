@@ -62,7 +62,7 @@
                     $("#output").text(out.join(", "));
                     $("#missing").text("Missing: ").append("<br>");
                     for (let i in missing) {
-                        $("#missing").append(weakEscape(missing[i].rarity + ": " + missing[i].name));
+                        $("#missing").append(weakEscape(missing[i].rarity + ": " + missing[i].name) + "<br>");
                     }
                     /*
                     niceOut = {};
