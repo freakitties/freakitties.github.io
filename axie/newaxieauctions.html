@@ -535,6 +535,8 @@
                         }).fail(function(e) {
                             addRow(id, axie.title, axie.exp, axie.breedCount, axie.stage, axie.parts, startPrice/1e18, endPrice/1e18, duration, seller, date, blockNumber, axie);
                         })
+                    } else {
+                        addRow(id, axie.title, axie.exp, axie.breedCount, axie.stage, axie.parts, startPrice/1e18, endPrice/1e18, duration, accounts[seller], date, blockNumber, axie);
                     }
                 });
             });
