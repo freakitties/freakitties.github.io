@@ -191,12 +191,18 @@
             for (let i in parts) {
                 bodyPartsMap[parts[i].id] = parts[i];
             }
-        }).done(() => {
+        }).fail(() => {
+            console.log("Failed to get body parts from the API");
+            //API is unreliable. fall back to hard-coded local copy.
+            $.getJSON("/axie/js/body-parts.json", (parts) => {
+                for (let i in parts) {
+                    bodyPartsMap[parts[i].id] = parts[i];
+                }
+            });
+        }).always(() => {
             if (callback) {
                 callback();
             }
-        }).fail(() => {
-            console.log("Failed to get body parts from the API");
         });
     }
 
