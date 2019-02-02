@@ -9,6 +9,8 @@
         gtag('config', 'UA-116189657-1');
         </script>
         <script src="/js/jquery.min.js" integrity="sha384-tsQFqpEReu7ZLhBV2VZlAu7zcOV+rXbYlF2cqB8txI/8aZajjp4Bqd+V6D5IgvKT"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
         <script src="items.js"></script>
         <script src="/axie/js/utils.js"></script>
     </head>
@@ -16,7 +18,9 @@
         <script>
             var quals;
             var items;
-            function getInv() {
+            function getInv(e) {
+                e.preventDefault();
+
                 quals = {"common": new Set(), "rare": new Set(), "epic": new Set(), "mystic": new Set()};
                 items = {};
                 let address = $("#address").val();
@@ -61,8 +65,12 @@
                     }
                     $("#output").text(out.join(", "));
                     $("#missing").text("Missing: ").append("<br>");
-                    for (let i in missing) {
-                        $("#missing").append(weakEscape(missing[i].rarity + ": " + missing[i].name) + "<br>");
+                    if (Object.keys(missing).length == 0) {
+                        $("#missing").appenx("None");
+                    } else {
+                        for (let i in missing) {
+                            $("#missing").append(weakEscape(missing[i].rarity + ": " + missing[i].name) + "<br>");
+                        }
                     }
                     /*
                     niceOut = {};
@@ -74,18 +82,40 @@
                     */
             });
         }
+
+        function init() {
+            clearInterval(intID);
+            $.ajax({
+                url: "../../header.html",
+                cache: false,
+                dataType: "html",
+                success: function(data) {
+                    $("#headerDiv").html(data);
+                }
+            });
+        }
+
+        var intID;
         $( document ).ready(function() {
+            intID = setInterval(init, 250);
             $("#button").click(getInv);
+            $("#invForm").submit(getInv);
         });
 
         </script>
-        <div id="output">
-        </div>
+        <div id="headerDiv"></div><br/>
         <br>
-        <div id="missing">
-        </div><br><br>
-        Address: <input id="address" type="text"/>
-        <button id="button" type="text">Get inventory count</button>
-
+        <div class="container">
+            <div id="output">
+            </div>
+            <br>
+            <div id="missing">
+            </div><br><br>
+            <form id="invForm" class="col-5 pl-0">
+                <label for="address">Address: </label>
+                <input class="form-control" id="address" type="text"/>
+                <button class="btn btn-primary" id="button" type="text">Get inventory count</button>
+            </form>
+        </div>
     </body>
 </html
