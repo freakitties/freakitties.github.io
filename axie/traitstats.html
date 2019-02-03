@@ -42,7 +42,79 @@
         }
     }
 
+function processPartsInitTable(parts) {
+    bodyParts = parts;
+
+    data = [];
+    for (let p in bodyParts) {
+        let part = bodyParts[p];
+        let key = part.name + "_" + part.type + "_" + part.class;
+        //console.log(key);
+        let row;
+        if (!(key in traits)) {
+            console.log("Unknown trait: " + JSON.stringify(bodyParts[p]));
+            row = {image: "images/unknown.png", name: part.name.replace(/"/g, "&quot;").replace(/</g, '&lt;'), type: part.type.replace(/"/g, "&quot;").replace(/</g, '&lt;'), class: part.class.replace(/"/g, "&quot;").replace(/</g, '&lt;')};
+        } else {
+            row = {image: traits[key].image.replace(/"/g, "&quot;").replace(/</g, '&lt;'), name: part.name.replace(/"/g, "&quot;").replace(/</g, '&lt;'), type: part.type.replace(/"/g, "&quot;").replace(/</g, '&lt;'), class: part.class.replace(/"/g, "&quot;").replace(/</g, '&lt;')};
+        }
+        if (part.moves.length > 0) {
+            row.moveType = part.moves[0].type.replace(/"/g, "&quot;").replace(/</g, '&lt;');
+            row.moveName = part.moves[0].name.replace(/"/g, "&quot;").replace(/</g, '&lt;');
+            row.attack = parseInt(part.moves[0].attack);
+            row.defense = parseInt(part.moves[0].defense);
+            row.accuracy = parseInt(part.moves[0].accuracy);
+            row.effectiveAttack = row.attack * (row.accuracy/100);
+            row.adRatio = row.effectiveAttack / row.defense;
+            row.adMultiple = row.effectiveAttack * row.defense;
+            row.effects = "";
+            if (part.moves[0].effects.length > 0) {
+
+                let text = "";
+                for (let i in part.moves[0].effects) {
+                    text += part.moves[0].effects[i].name.replace(/"/g, "&quot;").replace(/</g, '&lt;');
+                    if (part.moves[0].effects[i].type == "passive") {
+                        text += " (passive)";
+                    }
+                    text += ": " + part.moves[0].effects[i].description.replace(/"/g, "&quot;").replace(/</g, '&lt;') + "<br/>\n";
+                }
+                row.effects = text;
+            }
+        } else {
+            row.moveType = row.moveName = row.attack = row.defense = row.accuracy = row.effects = row.effectiveAttack = row.adRatio = row.adMultiple = "-";
+        }
+        data.push(row);
+    }
+
+    var axieTable = $('#axieTable').DataTable({
+        data: data,
+        columns: [
+        {title: "Part", data: "image", "render": render},
+        {title: "Move Name", data: "moveName"},
+        {title: "Type", data: "type"},
+        {title: "Class", data: "class"},
+        {title: "Move Type", data: "moveType"},
+        {title: "Attack", data: "attack", searchable: false},
+        {title: "Defense", data: "defense", searchable: false},
+        {title: "Accuracy", data: "accuracy", searchable: false},
+        /*
+        {title: "Effective attack", data: "effectiveAttack", searchable: false, render: renderFloat},
+        {title: "A/D", data: "adRatio", searchable: false,render: renderFloat},
+        {title: "A*D", data: "adMultiple", searchable: false,render: renderFloat},
+        */
+        {title: "Effect", data: "effects"},
+        ],
+        "language": {"search": "Search (part name, type, class, move type, or effect):"},
+        pageLength: 250,
+        "columnDefs": [
+            { className: "text-center", "targets": [0, 2, 3, 4, 5, 6, 7] }
+        ]
+
+    });
+
+}
+
 var bodyParts;
+var data;
 $(document).ready(function(){
     $.ajax({
         url: "../header.html",
@@ -52,74 +124,14 @@ $(document).ready(function(){
             $("#headerDiv").html(data);
         }
     });
-    $.get("https://axieinfinity.com/api/body-parts", function(data) {
-        bodyParts = data;
-
-        data = [];
-        for (let p in bodyParts) {
-            let part = bodyParts[p];
-            let key = part.name + "_" + part.type + "_" + part.class;
-            //console.log(key);
-            let row;
-            if (!(key in traits)) {
-                console.log("Unknown trait: " + JSON.stringify(bodyParts[p]));
-                row = {image: "images/unknown.png", name: part.name.replace(/"/g, "&quot;").replace(/</g, '&lt;'), type: part.type.replace(/"/g, "&quot;").replace(/</g, '&lt;'), class: part.class.replace(/"/g, "&quot;").replace(/</g, '&lt;')};
-            } else {
-                row = {image: traits[key].image.replace(/"/g, "&quot;").replace(/</g, '&lt;'), name: part.name.replace(/"/g, "&quot;").replace(/</g, '&lt;'), type: part.type.replace(/"/g, "&quot;").replace(/</g, '&lt;'), class: part.class.replace(/"/g, "&quot;").replace(/</g, '&lt;')};
-            }
-            if (part.moves.length > 0) {
-                row.moveType = part.moves[0].type.replace(/"/g, "&quot;").replace(/</g, '&lt;');
-                row.moveName = part.moves[0].name.replace(/"/g, "&quot;").replace(/</g, '&lt;');
-                row.attack = parseInt(part.moves[0].attack);
-                row.defense = parseInt(part.moves[0].defense);
-                row.accuracy = parseInt(part.moves[0].accuracy);
-                row.effectiveAttack = row.attack * (row.accuracy/100);
-                row.adRatio = row.effectiveAttack / row.defense;
-                row.adMultiple = row.effectiveAttack * row.defense;
-                row.effects = "";
-                if (part.moves[0].effects.length > 0) {
-
-                    let text = "";
-                    for (let i in part.moves[0].effects) {
-                        text += part.moves[0].effects[i].name.replace(/"/g, "&quot;").replace(/</g, '&lt;');
-                        if (part.moves[0].effects[i].type == "passive") {
-                            text += " (passive)";
-                        }
-                        text += ": " + part.moves[0].effects[i].description.replace(/"/g, "&quot;").replace(/</g, '&lt;') + "<br/>\n";
-                    }
-                    row.effects = text;
-                }
-            } else {
-                row.moveType = row.moveName = row.attack = row.defense = row.accuracy = row.effects = row.effectiveAttack = row.adRatio = row.adMultiple = "-";
-            }
-            data.push(row);
-        }
-
-
-        var axieTable = $('#axieTable').DataTable({
-            data: data,
-            columns: [
-            {title: "Part", data: "image", "render": render},
-            {title: "Move Name", data: "moveName"},
-            {title: "Type", data: "type"},
-            {title: "Class", data: "class"},
-            {title: "Move Type", data: "moveType"},
-            {title: "Attack", data: "attack", searchable: false},
-            {title: "Defense", data: "defense", searchable: false},
-            {title: "Accuracy", data: "accuracy", searchable: false},
-            /*
-            {title: "Effective attack", data: "effectiveAttack", searchable: false, render: renderFloat},
-            {title: "A/D", data: "adRatio", searchable: false,render: renderFloat},
-            {title: "A*D", data: "adMultiple", searchable: false,render: renderFloat},
-            */
-            {title: "Effect", data: "effects"},
-            ],
-            "language": {"search": "Search (part name, type, class, move type, or effect):"},
-            pageLength: 250,
-            "columnDefs": [
-                { className: "text-center", "targets": [0, 2, 3, 4, 5, 6, 7] }
-            ]
-
+    $.get("https://axieinfinity.com/api/body-parts", function(parts) {
+        processPartsInitTable(parts);
+    }).fail(() => {
+        console.log("Failed to get body parts from the API");
+        //API is unreliable. fall back to hard-coded local copy.
+        $.getJSON("/axie/js/body-parts.json", (parts) => {
+            console.log("Falling back to local parts list.");
+            processPartsInitTable(parts);
         });
     });
 });
