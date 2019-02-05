@@ -374,6 +374,7 @@
     }
 
     added = [];
+    axies = new Set();
     function addAxie(id, totalPrice, winner, date, blockNumber) {
 
         id = parseInt(id);
@@ -393,10 +394,13 @@
             return;
         }
         added.push({id: id, blockNumber: blockNumber, date: date, totalPrice: totalPrice});
-        $.get("https://axieinfinity.com/api/axies/" + id, function(data) {
-            let axie = data;
-            addRow(id, axie.exp, axie.stage, axie.parts, totalPrice/1e18, winner, date, blockNumber, axie);
-        });
+        if (!axies.has(id) || blockNumber > startingBlock) {    //refresh axies after startingBlock
+            axies.add(id);
+            $.get("https://axieinfinity.com/api/axies/" + id, function(data) {
+                let axie = data;
+                addRow(id, axie.exp, axie.stage, axie.parts, totalPrice/1e18, winner, date, blockNumber, axie);
+            });
+        }
 
     }
 
