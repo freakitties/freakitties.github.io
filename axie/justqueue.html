@@ -248,7 +248,7 @@ function renderAxie(data, type, full) {
                 $("#" + divId).html(out);
                 if (axies[id].owner != web3.eth.accounts[0]) {
                     $("#" + divId).addClass("rela");
-                    $("#" + divId).append($("<div/>", {class: "notYourAxie"}));
+                    $("#" + divId).append($("<div/>", {class: "notYourAxie"}).on('click', ()=>{window.open('https://axieinfinity.com/axie/' + id + '?r=freak', '_blank');}));
                 }
             });
             return '<div id="' + divId + '">Axie #' + id  + '</div>';
