@@ -326,30 +326,40 @@
         return probability;
     }
 
+    function initBodyParts(parts) {
+        bodyParts = parts;
+        for (let i in parts) {
+            bodyPartsMap[parts[i].id] = parts[i];
+            bodyParts[i].value = bodyParts[i].id;
+            bodyParts[i].label = bodyParts[i].name;
+        }
+        $("#searchParts").autocomplete({
+            source: bodyParts,
+            select: partSelected,
+        }).autocomplete("instance")._renderItem = renderSearch;
+        $("#searchForm").show();
+    }
+
     var bodyPartsMap = {};
     var bodyParts;
     function getBodyParts(callback) {
         $.getJSON("https://axieinfinity.com/api/body-parts", (parts) => {
-            bodyParts = parts;
-            for (let i in parts) {
-                bodyPartsMap[parts[i].id] = parts[i];
-                bodyParts[i].value = bodyParts[i].id;
-                bodyParts[i].label = bodyParts[i].name;
-            }
-            $("#searchParts").autocomplete({
-                source: bodyParts,
-                select: partSelected,
-            }).autocomplete("instance")._renderItem = renderSearch;
-            $("#searchForm").show();
+            initBodyParts(parts);
         }).always(() => {
             $("#search").prop("disabled", false);
             if (callback) {
                 callback();
             }
         }).fail(() => {
-            $("#searchParts").prop("disabled", true);
-            $("#searchParts").prop("placeholder", "Error connecting to Axie API");
             console.log("Failed to get body parts from the API");
+            //API is unreliable. fall back to hard-coded local copy.
+            $.getJSON("/axie/js/body-parts.json", (parts) => {
+                console.log("Using static body part data");
+                initBodyParts(parts);
+            }).fail(() => {
+                $("#searchParts").prop("disabled", true);
+                $("#searchParts").prop("placeholder", "Error connecting to Axie API");
+            });
         });
     }
 
