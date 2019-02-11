@@ -20,6 +20,7 @@
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
         <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.18/css/jquery.dataTables.min.css" integrity="sha384-1UXhfqyOyO+W+XsGhiIFwwD3hsaHRz2XDGMle3b8bXPH5+cMsXVShDoHA3AH/y/p" crossorigin="anonymous">
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.bundle.min.js" integrity="sha384-feJI7QwhOS+hwpX2zkaeJQjeiwlhOP+SdQDqhgvvo1DsjtiSQByFdThsxO669S2D" crossorigin="anonymous"></script>
+        <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.5.0/css/all.css" integrity="sha384-B4dIYHKNBt8Bc12p+WXckhzcICo0wtJAoU8YZTY5qE0Id1GSseTk6S+L3BlXeVIU" crossorigin="anonymous">
         <style>
             body {
                 background-color: #181818;
@@ -318,6 +319,14 @@
         return {quality: quality/MAX_QUALITY, pureness: dPureness};
     }
 
+    function renderAccounts() {
+        if (addresses.length == 1) {
+            $("#account").text("Your Account: " + web3.eth.accounts[0]);
+        } else {
+            $("#account").html("Your Accounts: <br>" + addresses.join("<br>"));
+        }
+    }
+
     var details = false;
     var classToCheck;
     var targetPureness = 6;
@@ -341,7 +350,14 @@
                 $("#account").text("Can't detect your account. Unlock your wallet or try reloading the page and waiting a few seconds.");
                 return;
             } else {
-                $("#account").text("Your Account: " + web3.eth.accounts[0]);
+                let storageKey = "freakitties.github.io" + "_BREEDASSIST_" + web3.eth.accounts[0];
+                let stored = localStorage.getItem(storageKey);
+                if (stored) {
+                    addresses = JSON.parse(stored);
+                } else {
+                    addresses.push(web3.eth.accounts[0]);
+                }
+                renderAccounts();
             }
         }
 
@@ -368,7 +384,7 @@
                     if (checkPure.length == 1 && checkPure[0] > 0) {
                         filterOptions.pureness = checkPure[0];
                     }
-                    getAxies(web3.eth.accounts[0], filterOptions, () => {
+                    getFromAllAddresses(addresses, 0, filterOptions, () => {
                         for (let id in axies) {
                             let traits = getTraits(axies[id].genes);
                             let qp = getQualityAndPureness(traits, classToCheck);
@@ -390,27 +406,31 @@
                         allProbs = [];
                         let pairs = [];
                         $("#loading").text("Calculating...");
-                        for (let i in axies) {
-                            for (let j in axies) {
-                                let pair = Math.min(i, j) + "_" + Math.max(i, j);
-                                //lazy
-                                if (i != j && isBreedable(axies[i], axies[j]) && !pairs.includes(pair)) {
-                                    let prob = calcPureChance(classToCheck, axies[i], axies[j], targetPureness);
-                                    if (prob > 0) {
-                                        allProbs.push({probability : prob, pair: pair});
+                        //TODO: use web worker
+                        let calcId = setInterval(() => {
+                            clearInterval(calcId);
+                            for (let i in axies) {
+                                for (let j in axies) {
+                                    let pair = Math.min(i, j) + "_" + Math.max(i, j);
+                                    //lazy
+                                    if (i != j && isBreedable(axies[i], axies[j]) && !pairs.includes(pair)) {
+                                        let prob = calcPureChance(classToCheck, axies[i], axies[j], targetPureness);
+                                        if (prob > 0) {
+                                            allProbs.push({probability : prob, pair: pair});
+                                        }
+                                        pairs.push(pair);
                                     }
-                                    pairs.push(pair);
                                 }
                             }
-                        }
-                        $("#loading").text("Done.");
-                        $("#loading").fadeOut(2000);
-                        $("#loading").text("");
-                        $("#loading").fadeIn(0);
-                        allProbs.sort((a, b) => {
-                            return b.probability - a.probability;
-                        });
-                        renderPureProbs(classToCheck, allProbs);
+                            $("#loading").text("Done.");
+                            $("#loading").fadeOut(2000);
+                            $("#loading").text("");
+                            $("#loading").fadeIn(0);
+                            allProbs.sort((a, b) => {
+                                return b.probability - a.probability;
+                            });
+                            renderPureProbs(classToCheck, allProbs);
+                        }, 100);
                     });
                 }
             }
@@ -436,6 +456,10 @@
 
         $("#ignoreAxieButton").click(addIgnore);
         $("#ignoreForm").submit(clearIgnore);
+
+        $("#showAddAddressModel").click(()=>{$('#addAddressModal').modal();});
+        $("#addAddressButton").click(addAddress);
+        $("#clearAddressesButton").click(clearAddresses);
     }
 
     function clearIgnore(e) {
@@ -445,6 +469,33 @@
         ignoreList.clear();
         $("#ignoreUL").empty();
         renderPureProbs(classToCheck, allProbs);
+    }
+
+    var addresses = [];
+    function addAddress() {
+        let newAddr = $("#addAddress").val();
+        $("#addAddress").val("");
+        if (!web3.isAddress(newAddr)) {
+            alert("Not a valid address");
+            return;
+        }
+        if (!addresses.includes(newAddr)) {
+            addresses.push(newAddr);
+        }
+        let storageKey = "freakitties.github.io" + "_BREEDASSIST_" + web3.eth.accounts[0];
+        localStorage.setItem(storageKey, JSON.stringify(addresses));
+        renderAccounts();
+        clearSelections();
+        $('#addAddressModal').modal('hide');
+    }
+
+    function clearAddresses() {
+        let storageKey = "freakitties.github.io" + "_BREEDASSIST_" + web3.eth.accounts[0];
+        localStorage.removeItem(storageKey);
+        addresses = [web3.eth.accounts[0]];
+        renderAccounts();
+        clearSelections();
+        $('#addAddressModal').modal('hide');
     }
 
     var ignoreList = new Set();
@@ -601,10 +652,10 @@
             options.push(opt + "=" + filterOptions[opt]);
 
         }
-
+        let numAdded = 0;
         let url = "https://axieinfinity.com/api/addresses/" + address + "/axies?" + options.join("&") + "&offset=0";
-        var numSkipped = 0;
-        $("#loading").text("Loading axies...");
+        let numSkipped = 0;
+        $("#loading").text("Loading axies for " + address + "...");
         $.get(url, function(data, status, xhr) {
             for (let i in data.axies) {
                 //XXX: consider optionalizing inclusion of petites
@@ -613,24 +664,26 @@
                     continue;
                 }
                 axies[data.axies[i].id.toString()] = {"id": data.axies[i].id, "genes": genesToBin(new BigNumber(data.axies[i].genes)), "class": data.axies[i].class, "exp": data.axies[i].exp, "expForBreeding": data.axies[i].expForBreeding, "parts": data.axies[i].parts, "sireId": data.axies[i].sireId, "matronId": data.axies[i].matronId, "auction": data.axies[i].auction};
+                numAdded++;
             }
-            let percentage = Object.keys(axies).length/data.totalAxies * 100;
-            $("#loading").text("Loading axies..." + Math.round(percentage) + "%");
+            let percentage = numAdded/data.totalAxies * 100;
+            $("#loading").text("Loading axies for " + address + "..." + Math.round(percentage) + "%");
             let totalAxies = data.totalAxies;
             if (totalAxies > 12) {
                 for (let i = 12; i < totalAxies; i+=12) {
                     let url = "https://axieinfinity.com/api/addresses/" + address + "/axies?" + options.join("&") + "&offset=" + i;
                     $.get(url, function(data, status, xhr) {
-                        let percentage = Object.keys(axies).length/data.totalAxies * 100;
-                        $("#loading").text("Loading axies..." + Math.round(percentage) + "%");
+                        let percentage = numAdded/data.totalAxies * 100;
+                        $("#loading").text("Loading axies for " + address + "..." + Math.round(percentage) + "%");
                         for (let i in data.axies) {
                             if (data.axies[i].stage < 3) {      //include petites
                                 numSkipped++;
                                 continue;
                             }
                             axies[data.axies[i].id.toString()] = {"id": data.axies[i].id, "genes": genesToBin(new BigNumber(data.axies[i].genes)), "class": data.axies[i].class, "exp": data.axies[i].exp, "expForBreeding": data.axies[i].expForBreeding, "parts": data.axies[i].parts, "sireId": data.axies[i].sireId, "matronId": data.axies[i].matronId, "auction": data.axies[i].auction};
+                            numAdded++;
                         }
-                        if (Object.keys(axies).length + numSkipped >= totalAxies) { //fudge incase over for some reason
+                        if (numAdded + numSkipped >= totalAxies) { //fudge incase over for some reason
                             if (callback != null) {
                                 $("#loading").text("Done loading axies.");
                                 callback();
@@ -647,16 +700,49 @@
         });
     }
 
+    function getFromAllAddresses(addresses, index, filterOptions, callback) {
+        if (index < addresses.length) {
+            getAxies(addresses[index], filterOptions, () => {
+                getFromAllAddresses(addresses, index + 1, filterOptions, callback);
+            });
+        } else {
+            if (callback) {
+                callback();
+            }
+        }
+    }
+
 </script>
 <body>
     <!-- header -->
     <div id="headerDiv"></div><br/>
     <div id="mainDiv" class="container">
-        <div class="row">
-            <div  class="text-left col-6" id="account"></div><br/>
+        <div class="row col-12">
+            <i class="fas fa-plus-circle pr-2" id="showAddAddressModel"></i>
+            <div class="text-left" id="account"></div>
+            <br/>
+        </div>
+        <div id="addAddressModal" class="modal text-dark" tabindex="-1" role="dialog">
+          <div class="modal-dialog" role="document">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title">Add Address</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                  <span aria-hidden="true">&times;</span>
+                </button>
+              </div>
+              <div class="modal-body">
+                <input type="text" class="form-control" id="addAddress" placeholder="0x..." />
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-primary" id="addAddressButton">Add</button>
+                <button type="button" class="btn btn-info" id="clearAddressesButton">Clear all</button>
+              </div>
+            </div>
+          </div>
         </div>
         <br>
-        <div id="loading"></div>
+        <div id="loading"></div><br>
 
         <!-- radio buttons -->
         <div class="row" id="classRadios">
