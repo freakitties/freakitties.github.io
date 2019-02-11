@@ -564,6 +564,10 @@
         if (axie1.id == axie2.id) {
             return false;
         }
+        //sterile check
+        if(axie1.expForBreeding > 10000 || axie2.expForBreeding > 10000){
+            return false;
+        }
         //parents check
         if (axie2.matronId == axie1.id || axie2.sireId == axie1.id) {
             return false;
