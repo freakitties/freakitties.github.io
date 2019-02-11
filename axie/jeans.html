@@ -302,7 +302,11 @@
                         $("#loading").fadeOut(1);
                     } else {
                         $("#account").text("Your Account: " + web3.eth.accounts[0]);
-                        cb = () => {getAxies(0, web3.eth.accounts[0]);}
+                        if (window.location.hash.substr(1) == "noAuto") {
+                            $("#loading").text("");
+                        } else {
+                            cb = () => {getAxies(0, web3.eth.accounts[0]);}
+                        }
                     }
                 }
                 getBodyParts(cb);
