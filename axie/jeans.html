@@ -168,28 +168,6 @@
         return bodyPartsMap[traitId];
     }
 
-    const PROBABILITIES = {d: 0.375, r1: 0.09375, r2: 0.03125};
-    function sumProbs(sireTraits, matronTraits) {
-        let probs = {};
-        for (let place in sireTraits) {
-            if (place == "mystic") continue;
-            if (sireTraits[place].id in probs) {
-                probs[sireTraits[place].id] += PROBABILITIES[place];
-            } else {
-                probs[sireTraits[place].id] = PROBABILITIES[place];
-            }
-        }
-        for (let place in matronTraits) {
-            if (place == "mystic") continue;
-            if (matronTraits[place].id in probs) {
-                probs[matronTraits[place].id] += PROBABILITIES[place];
-            } else {
-                probs[matronTraits[place].id] = PROBABILITIES[place];
-            }
-        }
-        return probs;
-    }
-
     function getAxies(offset, address) {
         let url = "https://axieinfinity.com/api/addresses/" + address + "/axies?stage=3&stage=4&offset=" + offset;
 
@@ -237,36 +215,6 @@
         });
     }
 
-    function isBreedable(axie1, axie2) {
-        //self check
-        if (axie1.id == axie2.id) {
-            return false;
-        }
-        //sterile check
-        if(axie1.expForBreeding > 10000 || axie2.expForBreeding > 10000){
-            return false;
-        }
-        //parents check
-        if (axie2.matronId == axie1.id || axie2.sireId == axie1.id) {
-            return false;
-        }
-        if (axie1.matronId == axie2.id || axie1.sireId == axie2.id) {
-            return false;
-        }
-        //After checking parents, skip if ether is a tagged axie
-        if (axie1.matronId == 0 || axie2.matronId == 0) {
-            return true;
-        }
-        //check siblings
-        if (axie1.matronId == axie2.matronId || axie1.matronId == axie2.sireId) {
-            return false;
-        }
-        if (axie1.sireId == axie2.matronId || axie1.sireId == axie2.sireId) {
-            return false;
-        }
-        return true;
-    }
-
     function getAxie(id) {
         $.get("https://axieinfinity.com/api/axies/" + parseInt(id), function(data, status, xhr) {
             if (data.stage < 3) {
@@ -279,6 +227,7 @@
         });
     }
 
+    var calcWorker;
     var intID;
     function init() {
         clearInterval(intID);
@@ -305,29 +254,17 @@
                         if (window.location.hash.substr(1) == "noAuto") {
                             $("#loading").text("");
                         } else {
-                            cb = () => {getAxies(0, web3.eth.accounts[0]);}
+                            cb = () => {
+                                getAxies(0, web3.eth.accounts[0]);
+                            }
                         }
                     }
                 }
                 getBodyParts(cb);
+                calcWorker = new Worker('js/partBreederWorker.js');
+                calcWorker.onmessage = receiveCalc;
             }
         });
-    }
-
-    function calcTraitsProb(traits, sire, matron) {
-        let sireTraits = sire.traits;
-        let matronTraits = matron.traits;
-
-        let probability = 1;
-        for (let typ in traits) {
-            let typeProb = sumProbs(sireTraits[typ], matronTraits[typ]);
-            if (typeProb.hasOwnProperty(traits[typ])) {
-                probability *= typeProb[traits[typ]]
-            } else {
-                probability = 0;
-            }
-        }
-        return probability;
     }
 
     function initBodyParts(parts) {
@@ -409,7 +346,6 @@
 
         $("#clearIgnoreAxieButton").click(clearIgnore);
         $("#ignoreForm").submit(clearIgnore);
-
     });
 
     function clearIgnore(e) {
@@ -443,6 +379,16 @@
         }
     }
 
+    function receiveCalc(e) {
+        $("#loading").text("Done.");
+        $("#loading").fadeOut(1000, () => {
+            $("#loading").text("");
+            $("#loading").fadeIn(0);
+        });
+        allProbs = e.data.allProbs;
+        renderTraitProbs(selectedParts, allProbs);
+    }
+
     function calc(e) {
         if (e) {
             e.preventDefault();
@@ -450,55 +396,7 @@
         $("#result").empty();
         $("#loading").text("Calculating...");
         $("#loading").show();
-        function offThreadCalc() {
-            let selectedIds = Object.keys(selectedParts);
-            console.log("sub " + selectedIds);
-
-            let typePartMap = {};
-            for (let id in selectedParts) {
-               typePartMap[id.substr(0, id.indexOf("-"))] = id;
-            }
-
-            var matchingParts = {};
-            for (let id in axies) {
-                if (ignoreList.has(parseInt(id))) continue;
-                let axie = axies[id];
-                for (let typ in typePartMap) {
-                    if (selectedIds.includes(axie.traits[typ].d.id) || selectedIds.includes(axie.traits[typ].r1.id) || selectedIds.includes(axie.traits[typ].r2.id)) {
-                        matchingParts[axie.id] = axie;
-                        break;
-                    }
-                }
-            }
-            allProbs = [];
-            let pairs = [];
-            for (let id1 in matchingParts) {
-                for (let id2 in matchingParts) {
-                    let pair = Math.min(id1, id2) + "_" + Math.max(id1, id2);
-                    //lazy
-                    if (id1 != id2 && isBreedable(matchingParts[id1], matchingParts[id2]) && !pairs.includes(pair)) {
-                        let prob = calcTraitsProb(typePartMap, matchingParts[id1], matchingParts[id2]);
-                        if (prob > 0) {
-                            allProbs.push({probability : prob, pair: pair});
-                        }
-                        pairs.push(pair);
-                    }
-                }
-            }
-            $("#loading").text("Done.");
-            $("#loading").fadeOut(1000, () => {
-                $("#loading").text("");
-                $("#loading").fadeIn(0);
-            });
-            allProbs.sort((a, b) => {
-                return b.probability - a.probability;
-            });
-            renderTraitProbs(selectedParts, allProbs);
-        }
-        let calcId = setInterval(() => {
-            clearInterval(calcId);
-            offThreadCalc();
-        }, 10);
+        calcWorker.postMessage({selectedParts: selectedParts, axies: axies, ignoreList: ignoreList});
     }
 
     var numToDisplay = 10;
