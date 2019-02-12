@@ -206,7 +206,7 @@
                     var img = $("#" + tag);
                     img.attr('src', data.figure.static.idle);
                     axie.image = data.figure.static.idle;
-                    axie.pendingExp = data.pendingExp;
+                    axie.pendingExp = data.pendingExp ? data.pendingExp : 0;
                     axie.totalSynced = result[0].toNumber();
                     axie.truePending = axie.pendingExp - axie.totalSynced;
                     axie.breedCount = data.breedCount;
