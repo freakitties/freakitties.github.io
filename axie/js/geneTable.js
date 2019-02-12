@@ -667,7 +667,7 @@
                             return;
                         }
                         axies[id].breedCount = data.breedCount;
-                        axies[id].pendingExp = data.pendingExp;
+                        axies[id].pendingExp = data.pendingExp ? data.pendingExp : 0;
                         axies[id].totalSynced = result[0].toNumber();
                         axies[id].truePending = axies[id].pendingExp - axies[id].totalSynced;
                         $("#extraData_" + id).text("Exp: " + axies[id].exp + ", Pending exp: " + axies[id].pendingExp + ", Breeds: " + axies[id].breedCount);
