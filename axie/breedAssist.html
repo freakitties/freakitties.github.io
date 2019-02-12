@@ -186,9 +186,8 @@
             img.attr('src', axie.image);
             var dataTag = $("#" + tag + "_data");
             dataTag.text("Exp: " + axie.exp + " + " + axie.truePending);
-            dataTag.append("<br>Breeds: " + parseInt(axie.breedCount) + ' (' + parseInt(axie.expForBreeding) + ')');
             dataTag.append($("<br>"));
-            let breeds = $("<div/>", {class: "row justify-content-center", text: "Breeds: ("});
+            let breeds = $("<div/>", {class: "row justify-content-center", text: "Breeds: " + axie.breedCount + " ("});
             if (axie.exp + axie.truePending < axie.expForBreeding) {
                  breeds.append($("<div/>", {class: "text-danger", text: axie.expForBreeding}));
             } else {
@@ -213,7 +212,7 @@
                     var dataTag = $("#" + tag + "_data");
                     dataTag.text("Exp: " + axie.exp + " + " + axie.truePending);
                     dataTag.append($("<br>"));
-                    let breeds = $("<div/>", {class: "row justify-content-center", text: "Breeds: ("});
+                    let breeds = $("<div/>", {class: "row justify-content-center", text: "Breeds: " + axie.breedCount + " ("});
                     if (axie.exp + axie.truePending < axie.expForBreeding) {
                          breeds.append($("<div/>", {class: "text-danger", text: axie.expForBreeding}));
                     } else {
