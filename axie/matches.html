@@ -702,42 +702,8 @@ function initTable() {
     });
 
    $('#frm').on('submit', function(e){
-        let signature = localStorage.getItem(storageKey + "_signatureAxieInfinity");
-        if (!signature) {
-            alert("No signature found");
-            return;
-        }
-        let headers = {'Authorization': "Bearer " + signature};
-        var form = this;
-        var rows_selected = teamTable.column(0).checkboxes.selected();
-        var queuedTeams = {};
-        try {
-        //$.each($('input[type="checkbox"]:checked'), function(index, team) {
-        $.each(rows_selected, function(index, team) {
-            let key = team.join("_");
-            if (!(key in battleTeamsDict)) {
-                //frameworks select all adds an extra unselected team for some reason.
-                alert(key + " not in teams dict");
-                return true; //continue;
-            }
-            let teamId = battleTeamsDict[key].teamId;
-
-            $.post({url: "https://api.axieinfinity.com/v1/battle/battle/queue", headers: headers, data: {teamId: teamId}}, function(success) {
-                if (success == "success") {
-                    appendResult("Team " + teamId + " (" + [team[0], team[1], team[2]].join(",") + ") queued successfully");
-                } else {
-                    appendResult("Team " + teamId + " (" + [team[0], team[1], team[2]].join(",") + ") didn't queue properly: " + success);
-                }
-            }).fail(function(jqXHR, textStatus, errorThrown) {
-                appendResult("Team " + teamId + " (" + [team[0], team[1], team[2]].join(",") + ") didn't queue properly: " + jqXHR.responseText);
-            });
-        });
-        } catch (err) {
-            console.log(err);
-            alert(err);
-        }
-      // Prevent actual form submission
-      e.preventDefault();
+        e.preventDefault();
+        queueTeams();
     });
 
     teamTable.columns(1).search("^((?!No active team).)*$", true, false).draw();
@@ -748,6 +714,43 @@ function initTable() {
             teamTable.columns(1).search("").rows().invalidate().draw();
         }
     });
+}
+
+function queueTeams() {
+    let signature = localStorage.getItem(storageKey + "_signatureAxieInfinity");
+    if (!signature) {
+        alert("No signature found");
+        return;
+    }
+    let headers = {'Authorization': "Bearer " + signature};
+    var form = this;
+    var rows_selected = teamTable.column(0).checkboxes.selected();
+    var queuedTeams = {};
+    try {
+    //$.each($('input[type="checkbox"]:checked'), function(index, team) {
+    $.each(rows_selected, function(index, team) {
+        let key = team.join("_");
+        if (!(key in battleTeamsDict)) {
+            //frameworks select all adds an extra unselected team for some reason.
+            alert(key + " not in teams dict");
+            return true; //continue;
+        }
+        let teamId = battleTeamsDict[key].teamId;
+
+        $.post({url: "https://api.axieinfinity.com/v1/battle/battle/queue", headers: headers, data: {teamId: teamId}}, function(success) {
+            if (success == "success") {
+                appendResult("Team " + teamId + " (" + [team[0], team[1], team[2]].join(",") + ") queued successfully");
+            } else {
+                appendResult("Team " + teamId + " (" + [team[0], team[1], team[2]].join(",") + ") didn't queue properly: " + success);
+            }
+        }).fail(function(jqXHR, textStatus, errorThrown) {
+            appendResult("Team " + teamId + " (" + [team[0], team[1], team[2]].join(",") + ") didn't queue properly: " + jqXHR.responseText);
+        });
+    });
+    } catch (err) {
+        console.log(err);
+        alert(err);
+    }
 }
 
 function appendResult(msg) {
