@@ -188,7 +188,7 @@
             dataTag.text("Exp: " + axie.exp + " + " + axie.truePending);
             dataTag.append($("<br>"));
             let breeds = $("<div/>", {class: "row justify-content-center", text: "Breeds: " + axie.breedCount + " ("});
-            if (axie.exp + axie.truePending < axie.expForBreeding) {
+            if (axie.expForBreeding == 0 || axie.exp + axie.truePending < axie.expForBreeding) {
                  breeds.append($("<div/>", {class: "text-danger", text: axie.expForBreeding}));
             } else {
                 breeds.append($("<div/>", {class: "text-success", text: axie.expForBreeding}));
@@ -213,7 +213,7 @@
                     dataTag.text("Exp: " + axie.exp + " + " + axie.truePending);
                     dataTag.append($("<br>"));
                     let breeds = $("<div/>", {class: "row justify-content-center", text: "Breeds: " + axie.breedCount + " ("});
-                    if (axie.exp + axie.truePending < axie.expForBreeding) {
+                    if (axie.expForBreeding == 0 || axie.exp + axie.truePending < axie.expForBreeding) {
                          breeds.append($("<div/>", {class: "text-danger", text: axie.expForBreeding}));
                     } else {
                         breeds.append($("<div/>", {class: "text-success", text: axie.expForBreeding}));
@@ -714,7 +714,7 @@
                     numSkipped++;
                     continue;
                 }
-                axies[data.axies[i].id.toString()] = {"id": data.axies[i].id, "genes": genesToBin(new BigNumber(data.axies[i].genes)), "class": data.axies[i].class, "exp": data.axies[i].exp, "expForBreeding": data.axies[i].expForBreeding, "parts": data.axies[i].parts, "sireId": data.axies[i].sireId, "matronId": data.axies[i].matronId, "auction": data.axies[i].auction};
+                axies[data.axies[i].id.toString()] = {"id": data.axies[i].id, "genes": genesToBin(new BigNumber(data.axies[i].genes)), "class": data.axies[i].class, "exp": data.axies[i].exp, "expForBreeding": data.axies[i].expForBreeding ? data.axies[i].expForBreeding : 0, "parts": data.axies[i].parts, "sireId": data.axies[i].sireId, "matronId": data.axies[i].matronId, "auction": data.axies[i].auction};
                 numAdded++;
             }
             let percentage = numAdded/data.totalAxies * 100;
@@ -731,7 +731,7 @@
                                 numSkipped++;
                                 continue;
                             }
-                            axies[data.axies[i].id.toString()] = {"id": data.axies[i].id, "genes": genesToBin(new BigNumber(data.axies[i].genes)), "class": data.axies[i].class, "exp": data.axies[i].exp, "expForBreeding": data.axies[i].expForBreeding, "parts": data.axies[i].parts, "sireId": data.axies[i].sireId, "matronId": data.axies[i].matronId, "auction": data.axies[i].auction};
+                            axies[data.axies[i].id.toString()] = {"id": data.axies[i].id, "genes": genesToBin(new BigNumber(data.axies[i].genes)), "class": data.axies[i].class, "exp": data.axies[i].exp, "expForBreeding": data.axies[i].expForBreeding ? data.axies[i].expForBreeding : 0, "parts": data.axies[i].parts, "sireId": data.axies[i].sireId, "matronId": data.axies[i].matronId, "auction": data.axies[i].auction};
                             numAdded++;
                         }
                         if (numAdded + numSkipped >= totalAxies) { //fudge incase over for some reason
