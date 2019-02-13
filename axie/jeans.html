@@ -20,6 +20,7 @@
         <script src="traitmapping.js"></script>
         <script src="js/utils.js"></script>
         <script src="js/geneTable.js"></script>
+        <script src="js/axieChainUtils.js"></script>
         <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.0/css/bootstrap.min.css" integrity="sha384-PDle/QlgIONtM1aqA2Qemk5gPOE7wFq8+Em+G/hmo5Iq0CCmYZLv3fVRDJ4MMwEA" crossorigin="anonymous">
         <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.16/css/jquery.dataTables.min.css" integrity="sha384-1UXhfqyOyO+W+XsGhiIFwwD3hsaHRz2XDGMle3b8bXPH5+cMsXVShDoHA3AH/y/p" crossorigin="anonymous">
         <link rel="stylesheet" href="https://cdn.datatables.net/buttons/1.5.2/css/buttons.dataTables.min.css" integrity="sha384-4zgE69bwrfaNYUZPA2TaKwT/mjqMcBEvQmjHf1qkjg3c2JSWfEGflXXz6xXBLGGN" crossorigin="anonymous">
@@ -46,8 +47,6 @@
                 display: inline-block;
                 margin-right: 5px   ;
             }
-
-
             [data-toggle="collapse"] .fa:before {
                 content: "\f139";
             }
@@ -57,6 +56,9 @@
             }
             .pointer {
                 cursor: pointer;
+            }
+            .fa-eye-slash {
+                color: grey;
             }
             .circle-horn-sm, .circle-eyes-sm, .circle-mouth-sm, .circle-ears-sm, .circle-back-sm, .circle-tail-sm {
                 width: 18px !important;
@@ -342,7 +344,6 @@
 
         $("#searchForm").submit(calc);
         $("#calcPartsButton").click(calc);
-        $("#ignoreAxieButton").click(addIgnore);
 
         $("#clearIgnoreAxieButton").click(clearIgnore);
         $("#ignoreForm").submit(clearIgnore);
@@ -358,17 +359,13 @@
     }
 
     var ignoreList = new Set();
-    function addIgnore(e) {
-        if (e) {
-            e.preventDefault();
-        }
-        let axieId = parseInt($("#ignoreAxie").val());
-        $("#ignoreAxie").val('');
-        if (axieId) {
+    function ignoreAxie(axieId) {
+        if (axieId && axieId in axies) {
             if (!ignoreList.has(axieId)) {
                 ignoreList.add(axieId);
                 let ignoreItemId = "ignoreItem" + axieId;
                 $("#ignoreUL").append($("<li/>", {"class": "list-group-item pointer", "text": axieId, "id": ignoreItemId}));
+                $("#" + ignoreItemId).append('<img src="' + axies[axieId].image + '" height="25" class="ml-5">')
                 $("#" + ignoreItemId).click(function () {
                     ignoreList.delete(axieId);
                     $("#" + ignoreItemId).remove();
@@ -433,31 +430,46 @@
             let id2 = "axie" + axieId2 + "_" + i;
             images.push({tagId: id1, axieId: pair[0]})
             images.push({tagId: id2, axieId: pair[1]})
-            out += '<div class="col-4 text-center d-flex justify-content-center flex-column"><a target="_blank" href="https://axieinfinity.com/axie/' + axieId1 + '?r=freak"><img id="' + id1 + '" height="80" data-toggle="tooltip" data-placement="top"><br>#' + axieId1 + '</a></div>';
-            out += '<div class="col-4 text-center d-flex justify-content-center flex-column"><a target="_blank" href="https://axieinfinity.com/axie/' + axieId2 + '?r=freak"><img id="' + id2 + '" height="80" data-toggle="tooltip" data-placement="top"><br>#' + axieId2 + '</a></div>';
+            out += '<div class="col-4 text-center d-flex justify-content-center flex-column"><div class="row justify-content-center"><i id="' + id1 + '_ign" class="fas fa-eye-slash pointer" title="Ignore"></i><a target="_blank" href="https://axieinfinity.com/axie/' + axieId1 + '?r=freak"><img id="' + id1 + '" height="80" data-toggle="tooltip" data-placement="top"><br>#' + axieId1 + '</a></div><div id="' + id1 + '_data"></div></div>';
+            out += '<div class="col-4 text-center d-flex justify-content-center flex-column"><div class="row justify-content-center"><i id="' + id2 + '_ign" class="fas fa-eye-slash pointer" title="Ignore"></i><a target="_blank" href="https://axieinfinity.com/axie/' + axieId2 + '?r=freak"><img id="' + id2 + '" height="80" data-toggle="tooltip" data-placement="top"><br>#' + axieId2 + '</a></div><div id="' + id2 + '_data"></div></div>';
             out += '</div>';
         }
         out += "</div>"
         $("#result").empty();
         $("#result").append(out);
         for (let id in images) {
-            setImage(images[id].tagId, images[id].axieId);
+            setImageAndStats(images[id].tagId, images[id].axieId);
+            $("#" + images[id].tagId + "_ign").click(function() {
+                ignoreAxie(parseInt(images[id].axieId));
+            });
         }
       $('[data-toggle="tooltip"]').tooltip();
     }
 
-    function setImage(tag, axieID) {
+    function genImageStatsHTML(tag, axie) {
+        var img = $("#" + tag);
+        img.attr('src', axie.image);
+        var dataTag = $("#" + tag + "_data");
+        dataTag.text("Exp: " + axie.exp + " + " + axie.truePending);
+        dataTag.append($("<br>"));
+        let breeds = $("<div/>", {class: "row justify-content-center", text: "Breeds: " + axie.breedCount + " ("});
+        if (axie.expForBreeding == 0 || axie.exp + axie.truePending < axie.expForBreeding) {
+             breeds.append($("<div/>", {class: "text-danger", text: axie.expForBreeding}));
+        } else {
+            breeds.append($("<div/>", {class: "text-success", text: axie.expForBreeding}));
+        }
+        breeds.append(")");
+        dataTag.append(breeds);
+    }
+
+    function setImageAndStats(tag, axieID) {
         let axie = axies[axieID.toString()];
         if (axie.hasOwnProperty("image")) {
-            var img = $("#" + tag);
-            img.attr('src', axie.image);
+            genImageStatsHTML(tag, axie);
+
         } else {
-            $.get("https://api.axieinfinity.com/v1/axies/" + axieID, function(data) {
-                var img = $("#" + tag);
-                img.attr('src', data.figure.static.idle);
-                axie.image = data.figure.static.idle;
-            }).fail(() => {
-                console.log("Failed to get axie details: " + axieID);
+            getExtendedAxieData(axie, (axie) => {
+                genImageStatsHTML(tag, axie);
             });
         }
     }
@@ -603,17 +615,16 @@
                             <br>
                         </div>
                         <div class="col-4">
-                            <form class="form-inline col-12" action="" id="ignoreForm">
-                                <input type="number" class="form-control col-6 number" id="ignoreAxie" name="ignoreAxie" placeholder="Ignore axie #">
-                                <button class="btn btn-primary" id="ignoreAxieButton">Ignore</button>
-                                <button class="btn btn-primary ml-1" id="clearIgnoreAxieButton">Clear</button>
-                            </form>
-                            <br>
-                            <div id="ignores" class="col-9">
-                                <div class="card">
-                                    <div class="card-header">Ignoring</div>
-                                    <ul class="list-group list-group-flush" id="ignoreUL">
-                                    </ul>
+                            <div id="ignores" class="col-12 row">
+                                <div class="col-9">
+                                    <div class="card">
+                                        <div class="card-header">Ignore List</div>
+                                        <ul class="list-group list-group-flush" id="ignoreUL">
+                                        </ul>
+                                    </div>
+                                </div>
+                                <div class="">
+                                    <button class="btn btn-primary ml-1" id="clearIgnoreAxieButton">Clear</button>
                                 </div>
                             </div>
                         </div>
