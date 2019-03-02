@@ -214,7 +214,7 @@ function htmlRenderAxie(axieId, divId) {
     let axie = axies[axieId];
     let id = parseInt(axie.axieId);
     let points = parseInt(axie.activityPoint);
-    let out = '<a href="https://axieinfinity.com/axie/' + id + '?r=freak" target="_blank"><img src="' + weakEscape(axie.image) + '" height="50"><br/>#' + id + '</a><br>(Exp: ' + parseInt(axie.exp) + '+' + parseInt(axie.truePending) + ')<br>';
+    let out = '<a href="https://axieinfinity.com/axie/' + id + '?r=freak" target="_blank"><img src="' + weakEscape(axie.image) + '" height="50"><br/>#' + id + '</a><br>Exp: ' + parseInt(axie.exp) + '+' + parseInt(axie.truePending) + '<br>';
     if (points / 720 >= 1) {
         out += "3/3 battles ready";
     } else if (points / 480 >= 1) {
