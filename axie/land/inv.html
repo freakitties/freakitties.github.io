@@ -34,7 +34,7 @@
                             items[x.items[i].id].details = x.items[i];
                         }
                     }
-
+                    let hasChimera = false;
                     for (let i in items) {
                         switch(items[i].details.rarity) {
                             case "common":
@@ -47,14 +47,23 @@
                                 quals.epic.add(items[i].details.id);
                             break;
                             case "mystic":
-                                quals.mystic.add(items[i].details.id);
+                                if ("m14" != items[i].details.id) {
+                                    quals.mystic.add(items[i].details.id);
+                                } else {
+                                    hasChimera = true;
+                                }
                             break;
                         }
                     }
                     let out = [];
                     let missing = {};
                     for (let i in quals) {
-                        out.push(capitalize(i) + ":" + quals[i].size);
+
+                        if (i == "mystic" && hasChimera) {
+                            out.push(capitalize(i) + ":" + quals[i].size + " + 1 Chimera");
+                        } else {
+                            out.push(capitalize(i) + ":" + quals[i].size);
+                        }
 
                         //TODO: inefficient
                         for (let j in allItems) {
