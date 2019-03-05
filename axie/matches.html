@@ -31,6 +31,30 @@
                 color: white;
                 background-color: #6c757d;
             }
+            .notYourAxie {
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                z-index: 10;
+                background-color: rgba(255,0,0,0.5);
+            }
+            .axieOnAuction {
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                z-index: 10;
+                background-color: rgba(249,153,0,0.5);
+            }
+            .rela {
+                position: relative;
+            }
+            .pointer {
+                cursor: pointer;
+            }
         </style>
     </head>
 <script>
@@ -499,7 +523,7 @@ function getMatches(initTable) {
 function getSingleAxieAndStore(id) {
     $.getJSON("https://axieinfinity.com/api/axies/" + id, function(basicAPI) {
         $.getJSON("https://api.axieinfinity.com/v1/axies/" + id, function(data) {
-            axies[id.toString()] = {image: data.figure.static.idle, parts: data.parts, class: data.class, stats: data.stats, exp: basicAPI.exp, pendingExp: data.pendingExp};
+            axies[id.toString()] = {image: data.figure.static.idle, parts: data.parts, class: data.class, stats: data.stats, exp: basicAPI.exp, pendingExp: data.pendingExp, owner: data.owner, auction: basicAPI.auction};
             let url = "https://api.axieinfinity.com/v1/battle/battle/activity-point?axieId=" + id;
             $.getJSON(url, function(points) {
                 for (let i in points) {
@@ -535,7 +559,7 @@ function getAxieDetails(id, callback) {
                 if (!axies.hasOwnProperty(idStr)) {
                     axies[idStr] = {};
                 }
-                Object.assign(axies[id.toString()], {axieId: idStr, image: data.figure.static.idle, parts: data.parts, class: data.class, stats: data.stats, exp: basicAPI.exp, pendingExp: data.pendingExp});
+                Object.assign(axies[id.toString()], {axieId: idStr, image: data.figure.static.idle, parts: data.parts, class: data.class, stats: data.stats, exp: basicAPI.exp, pendingExp: data.pendingExp, owner: data.owner, auction: basicAPI.auction});
                 axies[id].totalSynced = result[0].toNumber();
                 axies[id].truePending = axies[id].pendingExp - axies[id].totalSynced;
                 callback();
@@ -554,7 +578,7 @@ function htmlRenderAxie(axieId, divId) {
     let axie = axies[axieId];
     let id = parseInt(axie.axieId);
     let points = parseInt(axie.activityPoint);
-    let out = '<a href="https://axieinfinity.com/axie/' + id + '?r=freak" target="_blank"><img src="' + weakEscape(axie.image) + '" height="50"><br/>#' + id + '</a><br>(Exp: ' + parseInt(axie.exp) + '+' + parseInt(axie.truePending) + ')<br>';
+    let out = '<a href="https://axieinfinity.com/axie/' + id + '?r=freak" target="_blank"><img src="' + weakEscape(axie.image) + '" height="50"><br/>#' + id + '</a><br>Exp: ' + parseInt(axie.exp) + '+' + parseInt(axie.truePending) + '<br>';
     if (points / 720 >= 1) {
         out += "3/3 battles ready";
     } else if (points / 480 >= 1) {
@@ -569,6 +593,7 @@ function htmlRenderAxie(axieId, divId) {
 }
 
 var axieRenders = {};
+var showAuctions = false;
 function renderAxie(data, type, full) {
     let id = parseInt(data);
 
@@ -581,11 +606,20 @@ function renderAxie(data, type, full) {
     }
 
     if(type === 'display'){
-        if(!axies.hasOwnProperty(data) || !axies[data].image) {
+        //just using 'showAuctions' is inefficient...better to save last refreshed time and compare before pulling API data again
+        if(!axies.hasOwnProperty(data) || !axies[data].image || showAuctions) {
             getAxieDetails(id, () => {
                 let out = htmlRenderAxie(data, divId);
                 $("#" + divId).empty();
                 $("#" + divId).html(out);
+                if (axies[id].owner != web3.eth.accounts[0]) {
+                    $("#" + divId).addClass("rela");
+                    $("#" + divId).append($("<div/>", {class: "notYourAxie pointer"}).on('click', ()=>{window.open('https://axieinfinity.com/axie/' + id + '?r=freak', '_blank');}));
+                }
+                if (showAuctions && axies[id].auction != null) {
+                    $("#" + divId).addClass("rela");
+                    $("#" + divId).append($("<div/>", {class: "axieOnAuction pointer"}).on('click', ()=>{window.open('https://axieinfinity.com/axie/' + id + '?r=freak', '_blank');}));
+                }
             });
             return '<div id="' + divId + '">Axie #' + id  + '</div>';
         } else {
@@ -818,6 +852,9 @@ window.addEventListener('load', async () => {
         $("#clearButton").show();
     } else {
         $("#clearButton").hide();
+    }
+    if (hash.includes("showAuctions")) {
+        showAuctions = true;
     }
     // Modern dapp browsers...
     if (window.ethereum) {

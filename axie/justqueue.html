@@ -40,8 +40,20 @@
                 z-index: 10;
                 background-color: rgba(255,0,0,0.5);
             }
+            .axieOnAuction {
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                z-index: 10;
+                background-color: rgba(249,153,0,0.5);
+            }
             .rela {
                 position: relative;
+            }
+            .pointer {
+                cursor: pointer
             }
         </style>
     </head>
@@ -166,7 +178,7 @@ function getAxieDetails(id, callback) {
                     console.log("Error getting Exp Checkpoint from the contract");
                     return;
                 }
-                Object.assign(axies[id.toString()], {axieId: id.toString(), image: data.figure.static.idle, parts: data.parts, class: data.class, stats: data.stats, exp: basicAPI.exp, pendingExp: data.pendingExp, owner: data.owner});
+                Object.assign(axies[id.toString()], {axieId: id.toString(), image: data.figure.static.idle, parts: data.parts, class: data.class, stats: data.stats, exp: basicAPI.exp, pendingExp: data.pendingExp, owner: data.owner, auction: basicAPI.auction});
                 axies[id].totalSynced = result[0].toNumber();
                 axies[id].truePending = axies[id].pendingExp - axies[id].totalSynced;
                 callback();
@@ -229,6 +241,7 @@ function htmlRenderAxie(axieId, divId) {
 }
 
 var axieRenders = {};
+var showAuctions = false;
 function renderAxie(data, type, full) {
     let id = parseInt(data);
 
@@ -241,14 +254,19 @@ function renderAxie(data, type, full) {
     }
 
     if(type === 'display'){
-        if(!axies[data].image) {
+        //just using 'showAuctions' is inefficient...better to save last refreshed time and compare before pulling API data again
+        if(!axies.hasOwnProperty(data) || !axies[data].image || showAuctions) {
             getAxieDetails(id, () => {
                 let out = htmlRenderAxie(data, divId);
                 $("#" + divId).empty();
                 $("#" + divId).html(out);
                 if (axies[id].owner != web3.eth.accounts[0]) {
                     $("#" + divId).addClass("rela");
-                    $("#" + divId).append($("<div/>", {class: "notYourAxie"}).on('click', ()=>{window.open('https://axieinfinity.com/axie/' + id + '?r=freak', '_blank');}));
+                    $("#" + divId).append($("<div/>", {class: "notYourAxie pointer"}).on('click', ()=>{window.open('https://axieinfinity.com/axie/' + id + '?r=freak', '_blank');}));
+                }
+                if (showAuctions && axies[id].auction != null) {
+                    $("#" + divId).addClass("rela");
+                    $("#" + divId).append($("<div/>", {class: "axieOnAuction pointer"}).on('click', ()=>{window.open('https://axieinfinity.com/axie/' + id + '?r=freak', '_blank');}));
                 }
             });
             return '<div id="' + divId + '">Axie #' + id  + '</div>';
@@ -430,6 +448,9 @@ window.addEventListener('load', async () => {
         $("#clearButton").show();
     } else {
         $("#clearButton").hide();
+    }
+    if (hash.includes("showAuctions")) {
+        showAuctions = true;
     }
     // Modern dapp browsers...
     if (window.ethereum) {
