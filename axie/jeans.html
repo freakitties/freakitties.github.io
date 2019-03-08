@@ -171,8 +171,13 @@
     }
 
     function getAxies(offset, address) {
-        let url = "https://axieinfinity.com/api/addresses/" + address + "/axies?stage=3&stage=4&offset=" + offset;
-
+        let baseUrl = "https://axieinfinity.com/api/addresses/" + address + "/axies?stage=3&stage=4";
+        let part = getQueryParameter("part");
+        if (part) {
+            baseUrl += "&part=" + part.replace(/[^a-zA-Z0-9\-]/g, "");
+        }
+        baseUrl += "&offset=";
+        let url = baseUrl + offset;
         var numSkipped = 0;
         $.get(url, function(data, status, xhr) {
             let percentage = (offset + 12)/data.totalAxies * 100;
@@ -190,7 +195,7 @@
             let totalAxies = data.totalAxies;
             if (totalAxies > 12) {
                 for (let i = 12; i < totalAxies; i+=12) {
-                    let url = "https://axieinfinity.com/api/addresses/" + address + "/axies?stage=3&stage=4&offset=" + i;
+                    let url = baseUrl + i;
                     $.get(url, function(data, status, xhr) {
                         let percentage = (Object.keys(axies).length + 12)/data.totalAxies * 100;
                         $("#loading").text("Loading..." + Math.round(percentage) + "%");

@@ -32,9 +32,15 @@
 <script>
     var axies = {};
     var MAX_AXIES = 100;
-    var marketURL = "https://axieinfinity.com/api/axies?sale=1&sorting=lowest_price&offset=";
+    var baseURL = "https://axieinfinity.com/api/axies?sale=1&sorting=lowest_price";
+    var marketURL = baseURL;
     function getMarketAxies(offset) {
-        let url = marketURL + offset;
+        let url = marketURL;
+        let part = getQueryParameter("part");
+        if (part) {
+            url += "&part=" + part.replace(/[^a-zA-Z0-9\-]/g, "");
+        }
+        url += "&offset=" + offset;
         $.get(url, function(data, status, xhr) {
             let percentage = (offset + 12)/MAX_AXIES * 100;
             $("#loading").text("Loading..." + Math.round(percentage) + "%");
@@ -131,9 +137,7 @@
 
     function toggleBreedable() {
         if ($('#breedableToggle').is(":checked")) {
-            marketURL = "https://axieinfinity.com/api/axies?breedable=yes&sale=1&sorting=lowest_price&offset=";
-        } else {
-            marketURL = "https://axieinfinity.com/api/axies?sale=1&sorting=lowest_price&offset=";
+            marketURL = "&breedable=yes";
         }
         if (axieTable) {
             axieTable.clear();

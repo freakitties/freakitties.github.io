@@ -1,5 +1,4 @@
 onmessage = function(e) {
-    console.log("Calculating in web worker");
     if ("selectedParts" in e.data) {
         offThreadCalc(e.data.selectedParts, e.data.axies, e.data.ignoreList);
     }
