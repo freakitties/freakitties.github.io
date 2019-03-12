@@ -225,7 +225,7 @@
     }
 
     function getPartFromName(traitType, partName) {
-        let traitId = traitType.toLowerCase() + "-" + partName.toLowerCase().replace(/\s/g, "-").replace(/[\?']/g, "");
+        let traitId = traitType.toLowerCase() + "-" + partName.toLowerCase().replace(/\s/g, "-").replace(/[\?'\.]/g, "");
         return bodyPartsMap[traitId];
     }
 
