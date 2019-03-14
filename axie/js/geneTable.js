@@ -655,9 +655,9 @@
         let axie = axies[id];
         if (!("breedCount" in axies[id])) {
             getExtendedAxieData(axie, () => {
-                $("#extraData_" + axie.id).text("Exp: " + axie.exp + ", Pending exp: " + axie.pendingExp + ", Breeds: " + axie.breedCount);
+                $("#extraData_" + axie.id).text("Exp: " + axie.exp + ", Pending exp: " + axie.truePending + ", Breeds: " + axie.breedCount);
             });
         } else {
-            $("#extraData_" + axie.id).text("Exp: " + axie.exp + ", Pending exp: " + axie.pendingExp + ", Breeds: " + axie.breedCount);
+            $("#extraData_" + axie.id).text("Exp: " + axie.exp + ", Pending exp: " + axie.truePending + ", Breeds: " + axie.breedCount);
         }
     }
