@@ -242,7 +242,7 @@ function htmlRenderAxie(axieId, divId) {
 
 var axieRenders = {};
 var showAuctions = false;
-function renderAxie(data, type, full) {
+function renderAxie(data, type, full, meta) {
     let id = parseInt(data);
 
     let divId = "axie" + id;
@@ -262,7 +262,37 @@ function renderAxie(data, type, full) {
                 $("#" + divId).html(out);
                 if (axies[id].owner != web3.eth.accounts[0]) {
                     $("#" + divId).addClass("rela");
-                    $("#" + divId).append($("<div/>", {class: "notYourAxie pointer"}).on('click', ()=>{window.open('https://axieinfinity.com/axie/' + id + '?r=freak', '_blank');}));
+                    $("#" + divId).append($("<div/>", {class: "notYourAxie pointer"}).on('click', () => {window.open('https://axieinfinity.com/axie/' + id + '?r=freak', '_blank');}));
+                    let hash = window.location.hash.substr(1);
+                    if (hash.includes("showDeleteOption")) {
+                        let del = $("<div/>", {class: "deleteDiv"});
+                        let delButton = $("<button/>", {text: "Delete Team", class: "btn btn-warning"});
+                        delButton.on('click', () => {
+                            let team = full.members;
+                            let key = team.join("_");
+                            let teamId = battleTeamsDict[key].teamId;
+                            let signature = localStorage.getItem(storageKey + "_signatureAxieInfinity");
+                            if (!signature) {
+                                alert("No signature found");
+                                return;
+                            }
+                            let headers = {'Authorization': "Bearer " + signature};
+                            $.post({url: "https://api.axieinfinity.com/v1/battle/teams/delete/" + teamId, headers: headers}, function(response) {
+                                let success = jQuery.parseJSON(response);
+                                if (success["successful"] === true) {
+                                    appendResult("Team " + teamId + " (" + [team[0], team[1], team[2]].join(",") + ") deleted!");
+                                    teamTable.row(meta.row).remove().draw();
+                                } else {
+                                    appendResult("Team " + teamId + " (" + [team[0], team[1], team[2]].join(",") + ") didn't delete properly: " + success);
+                                }
+                            }).fail(function(jqXHR, textStatus, errorThrown) {
+                                appendResult("Team " + teamId + " (" + [team[0], team[1], team[2]].join(",") + ") didn't delete properly: " + jqXHR.responseText);
+                            });
+                        });
+                        del.append(delButton);
+                        del.css({"position": "absolute", "z-index": "9999", "top": "-40px"});
+                        $("#" + divId).append(del);
+                    }
                 }
                 if (showAuctions && axies[id].auction != null) {
                     $("#" + divId).addClass("rela");
