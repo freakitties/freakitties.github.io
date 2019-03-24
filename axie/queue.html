@@ -1,0 +1,662 @@
+<!--
+    Copyright 2018 freakitties@gmail.com
+    You can copy and use this code if you agree to pay $1 per page load.
+-->
+<html>
+    <head>
+        <title>Axie Team Queue and Win Rate</title>
+        <script async src="https://www.googletagmanager.com/gtag/js?id=UA-116189657-1"></script>
+        <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'UA-116189657-1');
+        </script>
+        <!--web3 v0.20.6-->
+        <script src="/js/web3.min.js" integrity="sha384-rXHfd7f1o1jpr3t+dYI17CkzUY3Wswo1OGbiXPGSbg4s2E42+jkRgllwt7ss2Vlq"></script>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+        <style>
+            body {background-color: #efefef;}
+        </style>
+        <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.16/css/jquery.dataTables.min.css" integrity="sha384-1UXhfqyOyO+W+XsGhiIFwwD3hsaHRz2XDGMle3b8bXPH5+cMsXVShDoHA3AH/y/p" crossorigin="anonymous">
+        <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js" integrity="sha384-Z9D45cp3elqajO+xEyjRTIK1Gr3eYsXiyCPIKNog1sIQzpo2fqFDqFdADGiJjzOv" crossorigin="anonymous"></script>
+
+        <link type="text/css" href="https://gyrocode.github.io/jquery-datatables-checkboxes/1.2.11/css/dataTables.checkboxes.css" rel="stylesheet" integrity="sha384-OfMcw8qH7HMnF4am2M2GaX6mqj8uJCssdsbz4eRq0p8ns7EkZpcQ0x1eihWP2KUA" crossorigin="anonymous"/>
+        <script type="text/javascript" src="https://gyrocode.github.io/jquery-datatables-checkboxes/1.2.11/js/dataTables.checkboxes.min.js" integrity="sha384-vSOUjvfg1V/jcelw8tVqGjo1N6t3iUvP2GQeYHGR3pphkc5unpcUNAohKqBEmgzB" crossorigin="anonymous"></script>
+
+        <style>
+            .dropdown-menu>li>a, .dropdown-menu {
+                color: white;
+                background-color: #6c757d;
+            }
+            .notYourAxie {
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                z-index: 10;
+                background-color: rgba(255,0,0,0.5);
+            }
+            .axieOnAuction {
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                z-index: 10;
+                background-color: rgba(249,153,0,0.5);
+            }
+            .rela {
+                position: relative;
+            }
+            .pointer {
+                cursor: pointer
+            }
+        </style>
+    </head>
+<script>
+
+var allTeams = {};
+var axies = {};
+
+const TEAM_COUNT = 60;
+const TEAM_COUNT_PARAM = "&count=" + TEAM_COUNT;
+var storageKey;
+var db;
+
+var expCheckpointABI = [{"constant":false,"inputs":[],"name":"unpause","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[{"name":"account","type":"address"}],"name":"isPauser","outputs":[{"name":"","type":"bool"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"dailyExpLimit","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"paused","outputs":[{"name":"","type":"bool"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[],"name":"renouncePauser","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[],"name":"coreExtraContract","outputs":[{"name":"","type":"address"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[],"name":"renounceOwnership","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":false,"inputs":[{"name":"account","type":"address"}],"name":"addPauser","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":false,"inputs":[],"name":"pause","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[],"name":"owner","outputs":[{"name":"","type":"address"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"isOwner","outputs":[{"name":"","type":"bool"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[{"name":"account","type":"address"}],"name":"addMinter","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":false,"inputs":[],"name":"renounceMinter","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[{"name":"account","type":"address"}],"name":"isMinter","outputs":[{"name":"","type":"bool"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"coreContract","outputs":[{"name":"","type":"address"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[{"name":"newOwner","type":"address"}],"name":"transferOwnership","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"inputs":[{"name":"_coreContract","type":"address"},{"name":"_coreExtraContract","type":"address"},{"name":"_dailyExpLimit","type":"uint256"}],"payable":false,"stateMutability":"nonpayable","type":"constructor"},{"anonymous":false,"inputs":[{"indexed":true,"name":"_axieId","type":"uint256"},{"indexed":false,"name":"_exp","type":"uint256"}],"name":"ExpCheckpoint","type":"event"},{"anonymous":false,"inputs":[],"name":"Paused","type":"event"},{"anonymous":false,"inputs":[],"name":"Unpaused","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"name":"account","type":"address"}],"name":"PauserAdded","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"name":"account","type":"address"}],"name":"PauserRemoved","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"name":"previousOwner","type":"address"}],"name":"OwnershipRenounced","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"name":"previousOwner","type":"address"},{"indexed":true,"name":"newOwner","type":"address"}],"name":"OwnershipTransferred","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"name":"account","type":"address"}],"name":"MinterAdded","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"name":"account","type":"address"}],"name":"MinterRemoved","type":"event"},{"constant":true,"inputs":[{"name":"_axieId","type":"uint256"}],"name":"getCheckpoint","outputs":[{"name":"_exp","type":"uint256"},{"name":"_createdAt","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[{"name":"_axieId","type":"uint256"},{"name":"_exp","type":"uint256"},{"name":"_createdAt","type":"uint256"},{"name":"_signature","type":"bytes"},{"name":"_subscriber","type":"address"},{"name":"_data","type":"bytes"}],"name":"checkpointAndCall","outputs":[{"name":"_axieExp","type":"uint256"}],"payable":true,"stateMutability":"payable","type":"function"},{"constant":false,"inputs":[{"name":"_axieIds","type":"uint256[]"},{"name":"_expList","type":"uint256[]"},{"name":"_createdAtList","type":"uint256[]"},{"name":"_signatures","type":"bytes"},{"name":"_subscriber","type":"address"},{"name":"_data","type":"bytes"}],"name":"checkpointForMultiAndCall","outputs":[],"payable":true,"stateMutability":"payable","type":"function"},{"constant":false,"inputs":[{"name":"_axieId","type":"uint256"},{"name":"_exp","type":"uint256"},{"name":"_createdAt","type":"uint256"},{"name":"_signature","type":"bytes"}],"name":"checkpoint","outputs":[{"name":"_axieExp","type":"uint256"}],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":false,"inputs":[{"name":"_axieIds","type":"uint256[]"},{"name":"_expList","type":"uint256[]"},{"name":"_createdAtList","type":"uint256[]"},{"name":"_signatures","type":"bytes"}],"name":"checkpointForMulti","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":false,"inputs":[{"name":"_dailyExpLimit","type":"uint256"}],"name":"setDailyExpLimit","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"}];
+var expCheckpointAddress = "0x71FfC95Ca3BcEbF26024f689F40006182916167f";
+var expCheckpointContract;
+var expCheckpointInstance;
+
+
+function setLocalStorageObject(obj) {
+    let stored;
+    if (typeof(ob) != "string") {
+        stored = JSON.stringify(obj);
+    } else {
+        stored = obj;
+    }
+    localStorage.setItem(storageKey, stored);
+}
+
+function getLocalStorageObject() {
+    let local = localStorage.getItem(storageKey);
+    if (local) return JSON.parse(localStorage.getItem(storageKey));
+    return null;
+}
+
+
+function addAxies(arr) {
+    for (let i in arr) {
+        let id = arr[i].toString();
+        if (!(id in axies)) {
+            axies[id] = {};
+        }
+    }
+}
+
+var battleTeams = [];
+var battleTeamsDict = {};
+
+function populateBattleTeamsDict() {
+    for (let i in battleTeams) {
+        let members = [battleTeams[i].teamMembers[0].axieId, battleTeams[i].teamMembers[1].axieId, battleTeams[i].teamMembers[2].axieId];
+        members.sort((a, b) => a - b);
+        let key = members.join("_");
+        battleTeamsDict[key] = battleTeams[i];
+    }
+}
+
+function getBattleTeams(callback) {
+    var address = web3.eth.accounts[0];
+    //var address = $("#address").val();
+    if (!web3.isAddress(address)) {
+        alert("not a valid address");
+        return;
+    }
+    $("#loading").text("Loading teams...");
+    $.getJSON("https://api.axieinfinity.com/v1/battle/teams?no_limit=1&address=" + address + "&offset=0" + TEAM_COUNT_PARAM, function(teams) {
+        Array.prototype.push.apply(battleTeams, teams.teams);
+        var numPages = Math.ceil(teams.total / TEAM_COUNT);
+        if (numPages > 1) {
+            //slow synchronous requests
+            function loop(page, numPages) {
+            //for (var i=1; i < numPages; i++) {
+                if (page <= numPages) {
+                    $.getJSON("https://api.axieinfinity.com/v1/battle/teams?no_limit=1&address=" + address + TEAM_COUNT_PARAM + "&offset=" + page * TEAM_COUNT , function(moreTeams) {
+                        Array.prototype.push.apply(battleTeams, moreTeams.teams);
+                        $("#loading").text("Loading teams..." + Math.round( (battleTeams.length/teams.total) * 100) + "%");
+                        if (battleTeams.length == teams.total) {
+                            for (let t in battleTeams) {
+                                for (let a in battleTeams[t].teamMembers) {
+                                    let id = battleTeams[t].teamMembers[a].axieId.toString();
+                                    if (!(id in axies)) {
+                                        axies[id] = {};
+                                    }
+                                }
+                            }
+                            populateBattleTeamsDict();
+                            callback();
+                        } else {
+                            loop(page + 1, numPages);
+                        }
+                    });
+                } else {
+                    populateBattleTeamsDict();
+                    callback();
+                }
+            }
+            loop(1, numPages);
+        } else {
+            for (let t in battleTeams) {
+                for (let a in battleTeams[t].teamMembers) {
+                    let id = battleTeams[t].teamMembers[a].axieId.toString();
+                    if (!(id in axies)) {
+                        axies[id] = {};
+                    }
+                }
+            }
+            populateBattleTeamsDict();
+            callback();
+        }
+    }).fail((jqxhr, textStatus, error) => {
+        var err = textStatus + ", " + error;
+        console.log("Failed to get teams: " + err);
+    });
+}
+
+const ACTIVITY_POINT_BATCH_SIZE = 200;
+function getAxieDetails(id, callback) {
+    $.getJSON("https://axieinfinity.com/api/axies/" + id, function(basicAPI) {
+        $.getJSON("https://api.axieinfinity.com/v1/axies/" + id, function(data) {
+            expCheckpointInstance.getCheckpoint(id, (error, result) => {
+                if (error) {
+                    console.log("Error getting Exp Checkpoint from the contract");
+                    return;
+                }
+                Object.assign(axies[id.toString()], {axieId: id.toString(), image: data.figure.static.idle, parts: data.parts, class: data.class, stats: data.stats, exp: basicAPI.exp, pendingExp: data.pendingExp, owner: data.owner, auction: basicAPI.auction});
+                axies[id].totalSynced = result[0].toNumber();
+                axies[id].truePending = axies[id].pendingExp - axies[id].totalSynced;
+                callback();
+            });
+        }).fail((jqxhr, textStatus, error) => {
+            var err = textStatus + ", " + error;
+            console.log("Failed to get axie: " + err);
+        });
+    }).fail((jqxhr, textStatus, error) => {
+        var err = textStatus + ", " + error;
+        console.log("Failed to get axie deets: " + err);
+    });
+}
+
+function getBattleTeamsAndActivity(callback) {
+    getBattleTeams(() => {
+        //batch. limit is around 600
+        let axieIds = Object.keys(axies);
+        let batches = Math.ceil(axieIds.length/ACTIVITY_POINT_BATCH_SIZE);
+        let axiesUpdated = 0;
+        for (let i = 0; i < batches; i++) {
+            let start = i  * ACTIVITY_POINT_BATCH_SIZE;
+            let end = start + ACTIVITY_POINT_BATCH_SIZE > axieIds.length ? axieIds.length : start + ACTIVITY_POINT_BATCH_SIZE;
+            let slice = axieIds.slice(start, end);
+            let params = slice.join("&axieId=");
+            let url = "https://api.axieinfinity.com/v1/battle/battle/activity-point?axieId=" + params;
+            $.getJSON(url, function(points) {
+                for (let i in points) {
+                    let id = points[i].axieId.toString();
+                    axies[id].activityPoint = points[i].activityPoint;
+                    axiesUpdated++;
+                }
+                if (axiesUpdated == axieIds.length) {
+                    getBattleStats(callback);
+                }
+            });
+        }
+    });
+}
+
+const STATS_BATCH_SIZE = 10;
+function getBattleStats(callback) {
+    $("#loading").text("Loading win rates...");
+    let statsReceived = 0;
+
+    let numTeams = Object.keys(battleTeamsDict).length;
+    let batchCount = 0;
+    let batch = [];
+    let numQueried = 0;
+    for (let team in battleTeamsDict) {
+        let owner = battleTeamsDict[team].owner;
+        batch.push(team)
+        batchCount++;
+        numQueried++;
+        if (batchCount % STATS_BATCH_SIZE == 0 || numQueried == numTeams) {
+            let teams = encodeURIComponent(JSON.stringify(batch));
+            batchCount = 0;
+            batch = [];
+            let host = "https://api.axie.io";
+            $.getJSON(host + "/battles/" + owner + "/?teams=" + teams, function(stats) {
+                for (let key in stats) {
+                    statsReceived++;
+                    if (battleTeamsDict.hasOwnProperty(key)) {
+                        $("#loading").text("Loading win rates..." + Math.round( (statsReceived/numTeams) * 100) + "%");
+                        battleTeamsDict[key].wins = stats[key].wins;
+                        battleTeamsDict[key].losses = stats[key].losses;
+                        battleTeamsDict[key].last = stats[key].last;
+                        if (statsReceived == numTeams) {
+                            $("#loading").text("Done.")
+                            $("#loading").fadeOut(2000);
+                            callback();
+                        }
+                    } else {
+                        console.log("Got unknown team stats from the server");
+                    }
+                }
+            });
+        }
+    }
+}
+
+function htmlRenderAxie(axieId, divId) {
+    let axie = axies[axieId];
+    let id = parseInt(axie.axieId);
+    let points = parseInt(axie.activityPoint);
+    let out = '<a href="https://axieinfinity.com/axie/' + id + '?r=freak" target="_blank"><img src="' + weakEscape(axie.image) + '" height="50"><br/>#' + id + '</a><br>Exp: ' + parseInt(axie.exp) + '+' + parseInt(axie.truePending) + '<br>';
+    if (points / 720 >= 1) {
+        out += "3/3 battles ready";
+    } else if (points / 480 >= 1) {
+        out += "2/3 battles ready";
+    } else if (points / 240 >= 1) {
+        out += "1/3 battles ready";
+    } else {
+        out += "0/3 battles ready";
+    }
+    out += " (" + points +")";
+    return out;
+}
+
+var axieRenders = {};
+var showAuctions = false;
+function renderAxie(data, type, full, meta) {
+    let id = parseInt(data);
+
+    let divId = "axie" + id;
+    if (axieRenders.hasOwnProperty(divId)) {
+        axieRenders[divId]++;
+        divId += "-" + axieRenders[divId];
+    } else {
+        axieRenders[divId] = 0;
+    }
+
+    if(type === 'display'){
+        //just using 'showAuctions' is inefficient...better to save last refreshed time and compare before pulling API data again
+        if(!axies.hasOwnProperty(data) || !axies[data].image || showAuctions) {
+            getAxieDetails(id, () => {
+                let out = htmlRenderAxie(data, divId);
+                $("#" + divId).empty();
+                $("#" + divId).html(out);
+                if (axies[id].owner != web3.eth.accounts[0]) {
+                    $("#" + divId).addClass("rela");
+                    $("#" + divId).append($("<div/>", {class: "notYourAxie pointer"}).on('click', () => {window.open('https://axieinfinity.com/axie/' + id + '?r=freak', '_blank');}));
+                    let hash = window.location.hash.substr(1);
+                    if (hash.includes("showDeleteOption")) {
+                        let del = $("<div/>", {class: "deleteDiv"});
+                        let delButton = $("<button/>", {text: "Delete Team", class: "btn btn-warning"});
+                        delButton.on('click', () => {
+                            let team = full.members;
+                            let key = team.join("_");
+                            let teamId = battleTeamsDict[key].teamId;
+                            let signature = localStorage.getItem(storageKey + "_signatureAxieInfinity");
+                            if (!signature) {
+                                alert("No signature found");
+                                return;
+                            }
+                            let headers = {'Authorization': "Bearer " + signature};
+                            $.post({url: "https://api.axieinfinity.com/v1/battle/teams/delete/" + teamId, headers: headers}, function(response) {
+                                let success = jQuery.parseJSON(response);
+                                if (success["successful"] === true) {
+                                    appendResult("Team " + teamId + " (" + [team[0], team[1], team[2]].join(",") + ") deleted!");
+                                    teamTable.row(meta.row).remove().draw();
+                                } else {
+                                    appendResult("Team " + teamId + " (" + [team[0], team[1], team[2]].join(",") + ") didn't delete properly: " + success);
+                                }
+                            }).fail(function(jqXHR, textStatus, errorThrown) {
+                                appendResult("Team " + teamId + " (" + [team[0], team[1], team[2]].join(",") + ") didn't delete properly: " + jqXHR.responseText);
+                            });
+                        });
+                        del.append(delButton);
+                        del.css({"position": "absolute", "z-index": "9999", "top": "-40px"});
+                        $("#" + divId).append(del);
+                    }
+                }
+                if (showAuctions && axies[id].auction != null) {
+                    $("#" + divId).addClass("rela");
+                    $("#" + divId).append($("<div/>", {class: "axieOnAuction pointer"}).on('click', ()=>{window.open('https://axieinfinity.com/axie/' + id + '?r=freak', '_blank');}));
+                }
+            });
+            return '<div id="' + divId + '">Axie #' + id  + '</div>';
+        } else {
+            let out = htmlRenderAxie(data, divId);
+            return '<div id="' + divId + '">' + out + '</div>';
+        }
+    }
+    return id;
+}
+
+
+function weakEscape(str) {
+    return str.replace(/'/g, "&apos;").replace(/"/g, "&quot;").replace(/</g, '&lt;').replace(/>/g, "&gt;");
+}
+
+function renderTeam(data, type, full) {
+    let key = data.join("_");
+    let out;
+    if (key in battleTeamsDict) {
+        out = '<a target="_blank" href="https://axieinfinity.com/team/' + weakEscape(battleTeamsDict[key].teamId) + '">';
+        if (battleTeamsDict[key].name.trim() != "") {
+            out += weakEscape(battleTeamsDict[key].name);
+        } else {
+            out += "&lt;EMPTY NAME&gt;";
+        }
+        out += "</a>";
+        return out;
+    }
+    return "No active team";
+
+}
+
+function renderWinsLosses(data, type, full) {
+    if (full.wins == 0 && full.losses == 0) {
+        return "N/A";
+    }
+    let wl = (full.wins / full.losses).toFixed(4);
+    let percentage = full.wins/(full.wins + full.losses) * 100;
+    if (type == "display") {
+        //return full.wins + "/" + full.losses;
+        return wl + "<br>(" + percentage.toFixed(2) + "%)";
+    }
+    return percentage;
+}
+
+function renderReplays(data, type, full) {
+    let key = full.members.join("_");
+    let out = '<p><a class="btn btn-primary" data-toggle="collapse" href="#collapseReplays' + key + '" role="button" aria-expanded="false" aria-controls="collapseReplays' + key + '">Replays</a></p><div class="collapse" id="collapseReplays' + key + '"><div class="card card-body">';
+    let links = [];
+    for (let i in data) {
+        let num = parseInt(data[i]);
+        links.push('<a href="https://axieinfinity.com/battle/' + num + '" target="_blank">' + num + '</a>');
+    }
+    out += links.join(" ");
+    out += '</div></div>';
+    return out;
+}
+
+var teamTable;
+function initTable() {
+    var teams = Object.keys(battleTeamsDict).map((key)=>{
+        return {members: [battleTeamsDict[key].teamMembers[0].axieId, battleTeamsDict[key].teamMembers[1].axieId, battleTeamsDict[key].teamMembers[2].axieId], wins: battleTeamsDict[key].wins, losses: battleTeamsDict[key].losses, last: battleTeamsDict[key].last};
+    });
+
+    teamTable = $('#teamTable').DataTable({
+        //order: [[ 0, "desc" ]],
+        data: teams,
+        initComplete: function(settings){
+            var api = this.api();
+             api.cells(
+                api.rows(function(idx, data, node){
+                    return axies[data.members[0]].activityPoint >= 240 && axies[data.members[1]].activityPoint >= 240 && axies[data.members[2]].activityPoint >= 240 ? false : true;
+                }).indexes(), 0).checkboxes.disable();
+        },
+        columnDefs: [
+            {
+                orderable: false,
+                checkboxes: {selectRow: true},
+                targets: 0
+            },
+            {
+                className: "text-center", "targets": [ "_all" ]
+            }
+        ],
+        deferRender: true,
+        select: {
+            style: 'multi'
+        },
+        autoWidth: false,
+        columns: [
+            {title: "Queue", data: "members"},
+            {title: "Team", data: "members", render: renderTeam},
+            {title: "Axie #1", data: "members.0", render: renderAxie},
+            {title: "Axie #2", data: "members.1", render: renderAxie},
+            {title: "Axie #3", data: "members.2", render: renderAxie},
+            {title: "Win/Loss", render: renderWinsLosses, searchable: false},
+            {title: "Wins", data: "wins", searchable: false},
+            {title: "Losses", data: "losses", searchable: false},
+            {title: "Replays", data: "last", render: renderReplays, searchable: false},
+        ],
+        //order: [[ 5, 'desc' ]],
+        pageLength: 25
+    });
+
+   $('#frm').on('submit', function(e){
+        let signature = localStorage.getItem(storageKey + "_signatureAxieInfinity");
+        if (!signature) {
+            alert("No signature found");
+            return;
+        }
+        let headers = {'Authorization': "Bearer " + signature};
+        var form = this;
+        var rows_selected = teamTable.column(0).checkboxes.selected();
+        var queuedTeams = {};
+        try {
+        //$.each($('input[type="checkbox"]:checked'), function(index, team) {
+        $.each(rows_selected, function(index, team) {
+            let key = team.join("_");
+            if (!(key in battleTeamsDict)) {
+                //frameworks select all adds an extra unselected team for some reason.
+                alert(key + " not in teams dict");
+                return true; //continue;
+            }
+            let teamId = battleTeamsDict[key].teamId;
+
+            $.post({url: "https://api.axieinfinity.com/v1/battle/battle/queue", headers: headers, data: {teamId: teamId}}, function(success) {
+                if (success == "success") {
+                    appendResult("Team " + teamId + " (" + [team[0], team[1], team[2]].join(",") + ") queued successfully");
+                } else {
+                    appendResult("Team " + teamId + " (" + [team[0], team[1], team[2]].join(",") + ") didn't queue properly: " + success);
+                }
+            }).fail(function(jqXHR, textStatus, errorThrown) {
+                appendResult("Team " + teamId + " (" + [team[0], team[1], team[2]].join(",") + ") didn't queue properly: " + jqXHR.responseText);
+            });
+        });
+        } catch (err) {
+            console.log(err);
+            alert(err);
+        }
+      // Prevent actual form submission
+      e.preventDefault();
+    });
+
+}
+
+function appendResult(msg) {
+    let newDiv = $("<div>");
+    newDiv.text(msg);
+    $("#result").append(newDiv);
+    $("#result").append("<br/>");
+}
+
+
+function init(){
+    $.ajax({
+        url: "../../header.html",
+        cache: false,
+        dataType: "html",
+        success: function(data) {
+            $("#headerDiv").html(data);
+        }
+    });
+
+    if (typeof web3 == 'undefined') {
+        $("#account").text("Web3 enabled browser not detected.");
+        return;
+    } else {
+        if (typeof web3.eth.accounts[0] == "undefined") {
+            $("#account").text("Can't detect your account. Unlock your wallet or try reloading the page and waiting a few seconds.");
+            return;
+        } else {
+            $("#account").text("Your Account: " + web3.eth.accounts[0]);
+        }
+    }
+
+    expCheckpointContract = web3query.eth.contract(expCheckpointABI);
+    expCheckpointInstance = expCheckpointContract.at(expCheckpointAddress);
+
+    storageKey = "freakitties.github.io" + "_MATCHES_" + web3.eth.accounts[0];
+    let sig = localStorage.getItem(storageKey + "_signatureAxieInfinity");
+    if (!sig) {
+        let ok = confirm("This page will ask you to sign some text. By authorizing this signature, you are allowing the page to make requests to the Axie Infinity website on your behalf. This signature can be used to queue/edit/create teams or change axie/profile names. Don't get into a habit of arbitrarily authorizing signatures!");
+
+        if (ok === true) {
+            //Sign "Axie Infinity"
+            //basically Session hijacking or phishing vuln if a unique nonce is not included
+            web3.personal.sign("0x4178696520496e66696e697479", web3.eth.accounts[0], function(e,r) {
+                if (e) {
+                    alert("No signature found");
+                    return;
+                }
+                localStorage.setItem(storageKey + "_signatureAxieInfinity", r);
+                getBattleTeamsAndActivity(initTable);
+            });
+        } else {
+            $("#loading").text("Signature not authorized.");
+        }
+
+    } else {
+        getBattleTeamsAndActivity(initTable);
+    }
+    checkBlessing();
+}
+
+window.addEventListener('load', async () => {
+    var hash = window.location.hash.substr(1);
+    if (hash == "showClear") {
+        $("#clearButton").show();
+    } else {
+        $("#clearButton").hide();
+    }
+    if (hash.includes("showAuctions")) {
+        showAuctions = true;
+    }
+    // Modern dapp browsers...
+    if (window.ethereum) {
+        window.web3 = new Web3(ethereum);
+        window.web3query = new Web3(new Web3.providers.HttpProvider('https://mainnet.infura.io/mew'));
+        BigNumber = web3.BigNumber;
+        try {
+            // Request account access if needed
+            await ethereum.enable();
+            console.log("modern dapp browser");
+        } catch (error) {
+            // User denied account access...
+            console.log("User denied ethereum account access.")
+        }
+    }
+    // Legacy dapp browsers...
+    else if (window.web3) {
+        window.web3 = await new Web3(web3.currentProvider);
+        window.web3query = await new Web3(new Web3.providers.HttpProvider('https://mainnet.infura.io/mew'));
+        BigNumber = web3.BigNumber;
+        // Acccounts always exposed
+        console.log("legacy dapp browser");
+    }
+    // Non-dapp browsers...
+    else {
+        console.log('Non-Ethereum browser detected.');
+        //since we are using our own web3.min.js
+        let w3 = new Web3();
+        BigNumber = w3.BigNumber;
+    }
+    //defer init until accounts are loaded
+    web3.eth.getAccounts(accounts => {
+        init();
+    })
+    //init();
+   $("#overrideBeans").change(function() {
+        if ($(this).is(':checked')) {
+            $("#submitButton").prop("disabled", false);
+            $("#submitButton").text("Bean's blessing is not active! Submit anyway");
+        } else if (!beansActive) {
+            $("#submitButton").prop("disabled", true);
+            $("#submitButton").text("Bean's blessing is not active!");
+        }
+    });
+
+});
+
+var beansActive = false;
+function checkBlessing() {
+    let url = "https://api.axieinfinity.com/v1/battle/battle/check-charm/" + web3.eth.accounts[0];
+    $.getJSON(url, function(data) {
+
+        if (!data.isCharmActivated) {
+            $("#submitButton").prop("disabled", true);
+            $("#submitButton").text("Bean's blessing is not active!");
+            $("#overrideBeans").prop("disabled", false);
+        } else {
+            beansActive = true;
+            $("#overrideBeans").prop("disabled", true);
+        }
+    }).fail((jqxhr, textStatus, error) => {
+        var err = textStatus + ", " + error;
+        console.log("Failed to get check bean's charm: " + err);
+    });
+}
+</script>
+
+    <!-- header -->
+    <div id="headerDiv"></div><br/>
+
+    <div class="container">
+        <div  class="text-left col-6" id="account"></div><br/>
+        <div id="loading">Loading...</div>
+        <form id="frm" method="GET">
+            <table class="table" id="teamTable">
+                <thead>
+                  <tr>
+                    <th scope="col">Queue</th>
+                    <th scope="col">Team</th>
+                    <th scope="col">Axie #1</th>
+                    <th scope="col">Axie #2</th>
+                    <th scope="col">Axie #3</th>
+                    <th scope="col">Wins/Losses</th>
+                    <th scope="col">Wins</th>
+                    <th scope="col">Losses</th>
+                    <th scope="col">Replays</th>
+                  </tr>
+                </thead>
+                <tbody id="tableBody">
+                  <tr>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                  </tr>
+                </tbody>
+            </table>
+            <p><button class="btn btn-primary" id="submitButton">Queue Teams</button>
+                <input type="checkbox" name="overrideBeans" id="overrideBeans"">&nbsp;Submit without Bean's blessing (if not active)
+            </p>
+        </form>
+        <button id="clearButton" onclick="clearCache()" class="btn btn-primary">Clear Cache</button><br>
+        <div id="result" class="jumbotron"/>
+
+    </div>
+</html>
