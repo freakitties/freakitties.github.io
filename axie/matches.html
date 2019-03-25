@@ -559,7 +559,7 @@ function getAxieDetails(id, callback) {
                 if (!axies.hasOwnProperty(idStr)) {
                     axies[idStr] = {};
                 }
-                Object.assign(axies[id.toString()], {axieId: idStr, image: data.figure.static.idle, parts: data.parts, class: data.class, stats: data.stats, exp: basicAPI.exp, pendingExp: data.pendingExp, owner: data.owner, auction: basicAPI.auction});
+                Object.assign(axies[id.toString()], {axieId: idStr, image: data.figure.static.idle, parts: data.parts, class: data.class, stats: data.stats, exp: basicAPI.exp, pendingExp: data.pendingExp ? data.pendingExp : 0, owner: data.owner, auction: basicAPI.auction});
                 axies[id].totalSynced = result[0].toNumber();
                 axies[id].truePending = axies[id].pendingExp - axies[id].totalSynced;
                 callback();
