@@ -544,6 +544,7 @@
 
     }
 
+    var lastUttered = new Date().getTime() / 1000;
     alerted = false;
     function processEvents(error, result, sound = true) {
         if (error) {
@@ -584,7 +585,10 @@
                 return;
             }
 
-            if (window.speechSynthesis) {
+            let now = new Date().getTime() / 1000;
+            console.log(now, lastUttered + 3);
+            if (window.speechSynthesis && now > lastUttered + 3) {
+                lastUttered = now;
                 synth.speak(utterThis);
             } else {
                 let audio = new Audio('/sounds/droplet.mp3');
