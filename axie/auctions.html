@@ -444,12 +444,14 @@
             }
 
             let now = new Date().getTime() / 1000;
-            if (window.speechSynthesis && now > lastUttered + 3) {
-                lastUttered = now;
-                synth.speak(utterThis);
-            } else {
-                let audio = new Audio('/sounds/droplet.mp3');
-                audio.play();
+            if (now > lastUttered + 3) {
+                if (window.speechSynthesis) {
+                    lastUttered = now;
+                    synth.speak(utterThis);
+                } else {
+                    let audio = new Audio('/sounds/droplet.mp3');
+                    audio.play();
+                }
             }
         });
     }
