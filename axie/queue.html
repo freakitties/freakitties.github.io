@@ -370,7 +370,10 @@ function renderTeam(data, type, full) {
 
 function renderWinsLosses(data, type, full) {
     if (full.wins == 0 && full.losses == 0) {
-        return "N/A";
+        if (type == "display") {
+            return "N/A";
+        }
+        return 101;
     }
     let wl = (full.wins / full.losses).toFixed(4);
     let percentage = full.wins/(full.wins + full.losses) * 100;
@@ -407,7 +410,12 @@ function initTable() {
             var api = this.api();
              api.cells(
                 api.rows(function(idx, data, node){
-                    return axies[data.members[0]].activityPoint >= 240 && axies[data.members[1]].activityPoint >= 240 && axies[data.members[2]].activityPoint >= 240 ? false : true;
+                    let enoughPoints = axies[data.members[0]].activityPoint >= 240 && axies[data.members[1]].activityPoint >= 240 && axies[data.members[2]].activityPoint;
+                    let key = data.members.join("_");
+                    if (battleTeamsDict[key].name.includes("NOQUEUE") || !enoughPoints) {
+                        return true;
+                    }
+                    return false;
                 }).indexes(), 0).checkboxes.disable();
         },
         columnDefs: [
