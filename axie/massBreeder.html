@@ -168,7 +168,7 @@ function isBreedable(axie1, axie2) {
 }
 
 
-const omitMystics = false;
+const omitMystics = true;
 var classMap = {"beast": [], "bug": [], "bird": [], "plant": [], "aquatic": [], "reptile": [], "hidden_1": [], "hidden_2": [], "hidden_3": []}; //hidden 1: nut, 2, star, 3 moon
 var breedingPairs = [];
 function getBreeders() {
@@ -204,6 +204,60 @@ function getBreeders() {
                 }
             }
             //XXX: could sort classMap based on some breeding criteria. make this better
+            for (let c in classMap) {
+                if (['plant', 'aquatic'].includes(c)) {
+                    //sort by hp+def. TODO: refine by parts hp
+                    classMap[c].sort((a, b) => {
+                        let hpA = a.stats.hp;
+                        let hpB = b.stats.hp;
+
+                        let defA = 0;
+                        let defB = 0;
+                        for (let i in a.parts) {
+                            if (a.parts[i].id == "horn-strawberry-shortcake") {
+                                defA = -99999;
+                            }
+                            for (let j in a.parts[i].moves) {
+                                defA += a.parts[i].moves[j].defense
+                            }
+                        }
+                        for (let i in b.parts) {
+                            if (b.parts[i].id == "horn-strawberry-shortcake") {
+                                defB = -99999;
+                            }
+                            for (let j in b.parts[i].moves) {
+                                defB += b.parts[i].moves[j].defense
+                            }
+                        }
+                        return hpB + defB - hpA - defA;
+                    });
+
+                } else if (['bug', 'beast'].includes(c)) {
+                    //sort by morale
+                    classMap[c].sort((a, b) => {
+                        return b.stats.morale - a.stats.morale;
+                    });
+
+                } else if (['bird', 'reptile'].includes(c)) {
+                    //sort by pureness. TODO: calc purebred
+                    let numClassPartsA = 0;
+                    let numClassPartsB = 0;
+                    classMap[c].sort((a, b) => {
+                        for (let i in a.parts) {
+                            if (a.parts[i].class == c) {
+                                numClassPartsA++;
+                            }
+                        }
+                        for (let i in b.parts) {
+                            if (b.parts[i].class == c) {
+                                numClassPartsB++;
+                            }
+                        }
+                        return numClassPartsB - numClassPartsA;
+                    });
+                }
+            }
+
             for (let cls in classMap) {
                 let len = Math.floor(classMap[cls].length/2);
                 for (let i = 0; i < len; i += 2) {
@@ -332,7 +386,7 @@ window.addEventListener('load', async () => {
     // Modern dapp browsers...
     if (window.ethereum) {
         window.web3 = new Web3(ethereum);
-        window.web3query = new Web3(new Web3.providers.HttpProvider('https://mainnet.infura.io/mew'));
+        window.web3query = new Web3(new Web3.providers.HttpProvider('https://mainnet.infura.io/v3/e9394133a3824a4d8ececb4384c3b1a2'));
         BigNumber = web3.BigNumber;
         try {
             // Request account access if needed
@@ -346,7 +400,7 @@ window.addEventListener('load', async () => {
     // Legacy dapp browsers...
     else if (window.web3) {
         window.web3 = await new Web3(web3.currentProvider);
-        window.web3query = await new Web3(new Web3.providers.HttpProvider('https://mainnet.infura.io/mew'));
+        window.web3query = await new Web3(new Web3.providers.HttpProvider('https://mainnet.infura.io/v3/e9394133a3824a4d8ececb4384c3b1a2'));
         BigNumber = web3.BigNumber;
         // Acccounts always exposed
         console.log("legacy dapp browser");

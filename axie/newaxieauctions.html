@@ -168,8 +168,8 @@
         } );
     }
 
-    function bidOnSale(kittyId) {
-        auctionInstance.getCurrentPrice(coreAddress, kittyId, function(error, result) {
+    function bidOnSale(axieId) {
+        auctionInstance.getCurrentPrice(coreAddress, axieId, function(error, result) {
             if (error) {
                 console.log("Error getting price: " + error);
                 alert(error);
@@ -181,7 +181,8 @@
                 return;
             }
             //currentPrice = currentPrice.div(1e18).round(4).mul(1e18);
-            auctionInstance.bid(coreAddress, kittyId, {from: web3.eth.accounts[0], value: currentPrice, gas: 235655}, (error, result) => {
+            bidPrice = currentPrice.add(500000000000000); //0.0005. Lazy way to account for potential increasing auction. Overbids get refunded
+            auctionInstance.bid(coreAddress, axieId, {from: web3.eth.accounts[0], value: bidPrice, gas: 235655}, (error, result) => {
                 if (error) {
                     console.log("Error bidding: " + error);
                     //alert("Error bidding: " + error);
@@ -320,6 +321,9 @@
     function renderSeller(data, type, row, meta) {
         try {
             let account = JSON.parse(data);
+            if(web3.isAddress(account) && accounts.hasOwnProperty(account)) {
+                account = JSON.parse(accounts[account]);
+            }
             return '<a href="https://axieinfinity.com/profile/' + weakEscape(account.address) + '?r=freak" target="_blank">' + weakEscape(account.name) + '</a>';
         } catch(e) {
             let trunc = data.slice(0, 12);
@@ -536,7 +540,10 @@
                             addRow(id, axie.title, axie.exp, axie.breedCount, axie.stage, axie.parts, startPrice/1e18, endPrice/1e18, duration, seller, date, blockNumber, axie);
                         })
                     } else {
-                        addRow(id, axie.title, axie.exp, axie.breedCount, axie.stage, axie.parts, startPrice/1e18, endPrice/1e18, duration, accounts[seller], date, blockNumber, axie);
+                        let addInt = setInterval(function() {
+                            clearInterval(addInt);
+                            addRow(id, axie.title, axie.exp, axie.breedCount, axie.stage, axie.parts, startPrice/1e18, endPrice/1e18, duration, accounts[seller], date, blockNumber, axie);
+                        }, 1000);
                     }
                 });
             });
