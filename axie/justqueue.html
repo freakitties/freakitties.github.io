@@ -72,6 +72,7 @@ var expCheckpointAddress = "0x71FfC95Ca3BcEbF26024f689F40006182916167f";
 var expCheckpointContract;
 var expCheckpointInstance;
 
+var pageLength = 25;
 
 function setLocalStorageObject(obj) {
     let stored;
@@ -369,7 +370,7 @@ function initTable() {
             {title: "Axie #3", data: "members.2", render: renderAxie},
         ],
         //order: [[ 5, 'desc' ]],
-        pageLength: 25
+        pageLength: pageLength
     });
 
    $('#frm').on('submit', function(e){
@@ -442,8 +443,15 @@ function init(){
             $("#account").text("Your Account: " + web3.eth.accounts[0]);
         }
     }
-
-    expCheckpointContract = web3query.eth.contract(expCheckpointABI);
+    if (navigator.userAgent.match(/Android/i)) {
+        pageLength = 10;
+    }
+    if (navigator.userAgent.match(/iPhone|iPad|iPod/i)) {
+        pageLength = 10;
+        expCheckpointContract = web3.eth.contract(expCheckpointABI);
+    } else {
+        expCheckpointContract = web3query.eth.contract(expCheckpointABI);
+    }
     expCheckpointInstance = expCheckpointContract.at(expCheckpointAddress);
 
     storageKey = "freakitties.github.io" + "_MATCHES_" + web3.eth.accounts[0];
