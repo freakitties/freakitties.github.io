@@ -254,7 +254,7 @@
     }
 
     function getAxie(id, callback) {
-        $.get({url: "https://axieinfinity.com/api/axies/" + parseInt(id)}, function(data, status, xhr) {
+        $.get({url: "https://axieinfinity.com/api/v2/axies/" + parseInt(id)}, function(data, status, xhr) {
             if (data.stage < 3) {
                 callback(null);
                 return;
@@ -285,9 +285,10 @@
 
     var bodyPartsMap = {};
     function getBodyParts(callback) {
+        //TODO: move to v2 API when part details are exposed
         $.getJSON("https://axieinfinity.com/api/body-parts", (parts) => {
             for (let i in parts) {
-                bodyPartsMap[parts[i].id] = parts[i];
+                bodyPartsMap[parts[i].partId] = parts[i];
             }
         }).done(() => {
             callback();
