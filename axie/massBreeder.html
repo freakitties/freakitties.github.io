@@ -22,7 +22,7 @@
         </style>
         <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.16/css/jquery.dataTables.min.css" integrity="sha384-1UXhfqyOyO+W+XsGhiIFwwD3hsaHRz2XDGMle3b8bXPH5+cMsXVShDoHA3AH/y/p" crossorigin="anonymous">
         <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js" integrity="sha384-Z9D45cp3elqajO+xEyjRTIK1Gr3eYsXiyCPIKNog1sIQzpo2fqFDqFdADGiJjzOv" crossorigin="anonymous"></script>
-
+        <script src="js/constants.js"></script>
         <link type="text/css" href="https://gyrocode.github.io/jquery-datatables-checkboxes/1.2.11/css/dataTables.checkboxes.css" rel="stylesheet" integrity="sha384-OfMcw8qH7HMnF4am2M2GaX6mqj8uJCssdsbz4eRq0p8ns7EkZpcQ0x1eihWP2KUA" crossorigin="anonymous"/>
         <script type="text/javascript" src="https://gyrocode.github.io/jquery-datatables-checkboxes/1.2.11/js/dataTables.checkboxes.min.js" integrity="sha384-vSOUjvfg1V/jcelw8tVqGjo1N6t3iUvP2GQeYHGR3pphkc5unpcUNAohKqBEmgzB" crossorigin="anonymous"></script>
 
@@ -70,7 +70,7 @@ function getAxies(address, callback) {
                 numSkipped++;
                 continue;
             }
-            axies[data.axies[i].id.toString()] = {"id": data.axies[i].id, "class": data.axies[i].class, "exp": data.axies[i].exp, "expForBreeding": data.axies[i].expForBreeding, "stats": data.axies[i].stats, "parts": data.axies[i].parts, "sireId": data.axies[i].sireId, "matronId": data.axies[i].matronId, "auction": data.axies[i].auction};
+            axies[data.axies[i].id.toString()] = {"id": data.axies[i].id, "class": data.axies[i].class, "exp": data.axies[i].exp, "stage": data.axies[i].stage, "breedCount": data.axies[i].breedCount, "expForBreeding": expForBreeding[data.axies[i].breedCount] , "stats": data.axies[i].stats, "parts": data.axies[i].parts, "sireId": data.axies[i].sireId, "matronId": data.axies[i].matronId, "auction": data.axies[i].auction};
         }
         let totalAxies = data.totalAxies;
         if (totalAxies > 12) {
@@ -84,7 +84,7 @@ function getAxies(address, callback) {
                             numSkipped++;
                             continue;
                         }
-                        axies[data.axies[i].id.toString()] = {"id": data.axies[i].id, "class": data.axies[i].class, "exp": data.axies[i].exp, "expForBreeding": data.axies[i].expForBreeding, "stats": data.axies[i].stats, "parts": data.axies[i].parts, "sireId": data.axies[i].sireId, "matronId": data.axies[i].matronId, "auction": data.axies[i].auction};
+                        axies[data.axies[i].id.toString()] = {"id": data.axies[i].id, "class": data.axies[i].class, "exp": data.axies[i].exp, "stage": data.axies[i].stage, "breedCount": data.axies[i].breedCount, "expForBreeding": expForBreeding[data.axies[i].breedCount] , "stats": data.axies[i].stats, "parts": data.axies[i].parts, "sireId": data.axies[i].sireId, "matronId": data.axies[i].matronId, "auction": data.axies[i].auction};
                     }
                     if (Object.keys(axies).length + numSkipped >= totalAxies) { //fudge incase over for some reason
                         if (callback != null) {
@@ -177,7 +177,7 @@ function getBreeders() {
         getAxiesDetails(axieList, () => {
             for (let id in axies) {
                 let axie = axies[id];
-                if (axie.exp + axie.truePending >= axie.expForBreeding && axie.breedCount < 7 && axie.auction == null) {
+                if (axie.breedCount < 7 && axie.exp + axie.truePending >= axie.expForBreeding && axie.auction == null) {
                     if (omitMystics) {
                         if (Array.isArray(axie.parts)) {
                             //fail closed
@@ -286,13 +286,12 @@ function renderAxie(axie, type, full) {
         let out = '<a href="https://axieinfinity.com/axie/' + id + '?r=freak" target="_blank"><img src="' + weakEscape(axie.image) + '" height="50"><br/>#' + id + '</a>';
         let exp = parseInt(axie.exp);
         let truePending = parseInt(axie.truePending);
-        let expForBreeding = parseInt(axie.expForBreeding);
         let count = parseInt(axie.breedCount);
         let expOut = exp.toString();
-        if (exp < expForBreeding) {
+        if (exp < axie.expForBreeding) {
             expOut = '<span class="text-danger">' + exp + '</span>';
         }
-        out += "<br>Exp: " + expOut + " (Pending: " + truePending + ")<br>Exp to breed: " + expForBreeding + ", count: " + count + "<br>";
+        out += "<br>Exp: " + expOut + " (Pending: " + truePending + ")<br>Exp to breed: " + axie.expForBreeding + ", count: " + count + "<br>";
         return out;
     }
     return id;
@@ -495,7 +494,7 @@ function breed(gasPrice) {
 }
 
 function syncAxie(axie, gasPrice) {
-    if (axie.exp >= axie.expForBreeding) {
+    if (axie.exp >= expForBreeding[axie.breedCount]) {
         appendResult("Not syncing axie #" + axie.id + " since it has enough exp to breed");
     } else {
         console.log("Syncing " + axie.id);

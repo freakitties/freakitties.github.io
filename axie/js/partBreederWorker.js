@@ -90,7 +90,7 @@ function isBreedable(axie1, axie2) {
         return false;
     }
     //sterile check
-    if(axie1.expForBreeding > 10000 || axie2.expForBreeding > 10000){
+    if(axie1.breedCount == 7 || axie2.breedCount == 7){
         return false;
     }
     //parents check

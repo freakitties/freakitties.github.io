@@ -21,6 +21,7 @@
         <script src="js/utils.js"></script>
         <script src="js/geneTable.js"></script>
         <script src="js/axieChainUtils.js"></script>
+        <script src="js/constants.js"></script>
         <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.0/css/bootstrap.min.css" integrity="sha384-PDle/QlgIONtM1aqA2Qemk5gPOE7wFq8+Em+G/hmo5Iq0CCmYZLv3fVRDJ4MMwEA" crossorigin="anonymous">
         <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.16/css/jquery.dataTables.min.css" integrity="sha384-1UXhfqyOyO+W+XsGhiIFwwD3hsaHRz2XDGMle3b8bXPH5+cMsXVShDoHA3AH/y/p" crossorigin="anonymous">
         <link rel="stylesheet" href="https://cdn.datatables.net/buttons/1.5.2/css/buttons.dataTables.min.css" integrity="sha384-4zgE69bwrfaNYUZPA2TaKwT/mjqMcBEvQmjHf1qkjg3c2JSWfEGflXXz6xXBLGGN" crossorigin="anonymous">
@@ -187,7 +188,7 @@
                     numSkipped++;
                     continue;
                 }
-                axies[data.axies[i].id] = {"id": data.axies[i].id, "genes": genesToBin(new BigNumber(data.axies[i].genes)), "owner": data.axies[i].owner, "class": data.axies[i].class, "exp": data.axies[i].exp, "sireId": data.axies[i].sireId, "matronId": data.axies[i].matronId, "stats": data.axies[i].stats, "name": data.axies[i].name, "expForBreeding": data.axies[i].expForBreeding};    //update 3 places
+                axies[data.axies[i].id] = {"id": data.axies[i].id, "genes": genesToBin(new BigNumber(data.axies[i].genes)), "owner": data.axies[i].owner, "class": data.axies[i].class, "exp": data.axies[i].exp, "sireId": data.axies[i].sireId, "matronId": data.axies[i].matronId, "stats": data.axies[i].stats, "name": data.axies[i].name, "breedCount": data.axies[i].breedCount, "expForBreeding": expForBreeding[data.axies[i].breedCount], "stage": data.axies[i].stage};    //update 3 places
                 let axie = axies[data.axies[i].id];
                 axie.traits = getTraits(axie.genes);
                 addRow(axies[data.axies[i].id]);
@@ -204,7 +205,7 @@
                                 numSkipped++;
                                 continue;
                             }
-                            axies[data.axies[i].id] = {"id": data.axies[i].id, "genes": genesToBin(new BigNumber(data.axies[i].genes)), "owner": data.axies[i].owner, "class": data.axies[i].class, "exp": data.axies[i].exp, "sireId": data.axies[i].sireId, "matronId": data.axies[i].matronId, "stats": data.axies[i].stats, "name": data.axies[i].name, "expForBreeding": data.axies[i].expForBreeding};    //update 3 places
+                            axies[data.axies[i].id] = {"id": data.axies[i].id, "genes": genesToBin(new BigNumber(data.axies[i].genes)), "owner": data.axies[i].owner, "class": data.axies[i].class, "exp": data.axies[i].exp, "sireId": data.axies[i].sireId, "matronId": data.axies[i].matronId, "stats": data.axies[i].stats, "name": data.axies[i].name, "breedCount": data.axies[i].breedCount, "expForBreeding": expForBreeding[data.axies[i].breedCount], "stage": data.axies[i].stage};    //update 3 places
                             let axie = axies[data.axies[i].id];
                             axie.traits = getTraits(axie.genes);
                             addRow(axies[data.axies[i].id]);
@@ -227,7 +228,7 @@
             if (data.stage < 3) {
                 return;
             }
-            axies[data.id] = {"id": data.id, "genes": genesToBin(new BigNumber(data.genes)), "owner": data.owner, "class": data.class, "exp": data.exp, "sireId": data.sireId, "matronId": data.matronId, "stats": data.stats, "name": data.name, "expForBreeding": data.expForBreeding}; //update 3 places
+            axies[data.id] = {"id": data.id, "genes": genesToBin(new BigNumber(data.genes)), "owner": data.owner, "class": data.class, "exp": data.exp, "sireId": data.sireId, "matronId": data.matronId, "stats": data.stats, "name": data.name, "breedCount": data.breedCount, "expForBreeding": expForBreeding[data.breedCount], "stage": data.stage}; //update 3 places
             let axie = axies[data.id];
             axie.traits = getTraits(axie.genes);
             addRow(axies[data.id]);
@@ -458,7 +459,7 @@
         dataTag.text("Exp: " + axie.exp + " + " + axie.truePending);
         dataTag.append($("<br>"));
         let breeds = $("<div/>", {class: "row justify-content-center", text: "Breeds: " + axie.breedCount + " ("});
-        if (axie.expForBreeding == 0 || axie.exp + axie.truePending < axie.expForBreeding) {
+        if (axie.stage < 4 || axie.exp + axie.truePending < axie.expForBreeding) {
              breeds.append($("<div/>", {class: "text-danger", text: axie.expForBreeding}));
         } else {
             breeds.append($("<div/>", {class: "text-success", text: axie.expForBreeding}));
