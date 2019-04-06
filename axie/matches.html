@@ -522,7 +522,7 @@ function getMatches(initTable) {
 }
 
 function getSingleAxieAndStore(id) {
-    $.getJSON("https://axieinfinity.com/api/axies/" + id, function(basicAPI) {
+    $.getJSON("https://axieinfinity.com/api/v2/axies/" + id, function(basicAPI) {
         $.getJSON("https://api.axieinfinity.com/v1/axies/" + id, function(data) {
             axies[id.toString()] = {image: data.figure.static.idle, parts: data.parts, class: data.class, stats: data.stats, exp: basicAPI.exp, pendingExp: data.pendingExp, owner: data.owner, auction: basicAPI.auction};
             let url = "https://api.axieinfinity.com/v1/battle/battle/activity-point?axieId=" + id;
@@ -549,7 +549,7 @@ function getSingleAxieAndStore(id) {
 
 const ACTIVITY_POINT_BATCH_SIZE = 200;
 function getAxieDetails(id, callback) {
-    $.getJSON("https://axieinfinity.com/api/axies/" + id, function(basicAPI) {
+    $.getJSON("https://axieinfinity.com/api/v2/axies/" + id, function(basicAPI) {
         $.getJSON("https://api.axieinfinity.com/v1/axies/" + id, function(data) {
             expCheckpointInstance.getCheckpoint(id, (error, result) => {
                 if (error) {

@@ -18,7 +18,7 @@ function offThreadCalc(selectedParts, axies, ignoreList) {
         if (ignoreList.has(parseInt(id))) continue;
         let axie = axies[id];
         for (let typ in typePartMap) {
-            if (selectedIds.includes(axie.traits[typ].d.id) || selectedIds.includes(axie.traits[typ].r1.id) || selectedIds.includes(axie.traits[typ].r2.id)) {
+            if (selectedIds.includes(axie.traits[typ].d.partId) || selectedIds.includes(axie.traits[typ].r1.partId) || selectedIds.includes(axie.traits[typ].r2.partId)) {
                 matchingParts[axie.id] = axie;
                 break;
             }
@@ -67,18 +67,18 @@ function sumProbs(sireTraits, matronTraits) {
     let probs = {};
     for (let place in sireTraits) {
         if (place == "mystic") continue;
-        if (sireTraits[place].id in probs) {
-            probs[sireTraits[place].id] += PROBABILITIES[place];
+        if (sireTraits[place].partId in probs) {
+            probs[sireTraits[place].partId] += PROBABILITIES[place];
         } else {
-            probs[sireTraits[place].id] = PROBABILITIES[place];
+            probs[sireTraits[place].partId] = PROBABILITIES[place];
         }
     }
     for (let place in matronTraits) {
         if (place == "mystic") continue;
-        if (matronTraits[place].id in probs) {
-            probs[matronTraits[place].id] += PROBABILITIES[place];
+        if (matronTraits[place].partId in probs) {
+            probs[matronTraits[place].partId] += PROBABILITIES[place];
         } else {
-            probs[matronTraits[place].id] = PROBABILITIES[place];
+            probs[matronTraits[place].partId] = PROBABILITIES[place];
         }
     }
     return probs;

@@ -205,16 +205,16 @@
 
     var bodyPartsMap = {};
     function getBodyParts(callback) {
-        $.getJSON("https://axieinfinity.com/api/body-parts", (parts) => {
+        $.getJSON("https://axieinfinity.com/api/v2/body-parts", (parts) => {
             for (let i in parts) {
-                bodyPartsMap[parts[i].id] = parts[i];
+                bodyPartsMap[parts[i].partId] = parts[i];
             }
         }).fail(() => {
             console.log("Failed to get body parts from the API");
             //API is unreliable. fall back to hard-coded local copy.
             $.getJSON("/axie/js/body-parts.json", (parts) => {
                 for (let i in parts) {
-                    bodyPartsMap[parts[i].id] = parts[i];
+                    bodyPartsMap[parts[i].partId] = parts[i];
                 }
             });
         }).always(() => {
@@ -234,18 +234,18 @@
         let probs = {};
         for (let place in sireTraits) {
             if (place == "mystic") continue;
-            if (sireTraits[place].id in probs) {
-                probs[sireTraits[place].id] += PROBABILITIES[place];
+            if (sireTraits[place].partId in probs) {
+                probs[sireTraits[place].partId] += PROBABILITIES[place];
             } else {
-                probs[sireTraits[place].id] = PROBABILITIES[place];
+                probs[sireTraits[place].partId] = PROBABILITIES[place];
             }
         }
         for (let place in matronTraits) {
             if (place == "mystic") continue;
-            if (matronTraits[place].id in probs) {
-                probs[matronTraits[place].id] += PROBABILITIES[place];
+            if (matronTraits[place].partId in probs) {
+                probs[matronTraits[place].partId] += PROBABILITIES[place];
             } else {
-                probs[matronTraits[place].id] = PROBABILITIES[place];
+                probs[matronTraits[place].partId] = PROBABILITIES[place];
             }
         }
         return probs;
@@ -325,6 +325,9 @@
             if (traits[parts[i]].d.class == cls) {
                 quality += PROBABILITIES.d;
                 dPureness++;
+            }
+            if (!traits[parts[i]].r1) {
+                console.log("undef");
             }
             if (traits[parts[i]].r1.class == cls) {
                 quality += PROBABILITIES.r1;
@@ -667,7 +670,7 @@
 
         }
         let numAdded = 0;
-        let url = "https://axieinfinity.com/api/addresses/" + address + "/axies?" + options.join("&") + "&offset=0";
+        let url = "https://axieinfinity.com/api/v2/addresses/" + address + "/axies?" + options.join("&") + "&offset=0";
         let numSkipped = 0;
         $("#loading").text("Loading axies for " + address + "...");
         $.get(url, function(data, status, xhr) {
@@ -685,7 +688,7 @@
             let totalAxies = data.totalAxies;
             if (totalAxies > 12) {
                 for (let i = 12; i < totalAxies; i+=12) {
-                    let url = "https://axieinfinity.com/api/addresses/" + address + "/axies?" + options.join("&") + "&offset=" + i;
+                    let url = "https://axieinfinity.com/api/v2/addresses/" + address + "/axies?" + options.join("&") + "&offset=" + i;
                     $.get(url, function(data, status, xhr) {
                         let percentage = numAdded/data.totalAxies * 100;
                         $("#loading").text("Loading axies for " + address + "..." + Math.round(percentage) + "%");

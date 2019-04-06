@@ -527,7 +527,7 @@
         added.push({id: id, blockNumber: blockNumber, date: date, startPrice: startPrice});
         if (!axies.has(id) || blockNumber > startingBlock) {    //refresh axies after startingBlock
             axies.add(id);
-            $.get("https://axieinfinity.com/api/axies/" + id, function(oldAPI) {
+            $.get("https://axieinfinity.com/api/v2/axies/" + id, function(oldAPI) {
                 $.getJSON("https://api.axieinfinity.com/v1/axies/" + id, function(newAPI) {
                     let axie = oldAPI;
                     axie.breedCount = parseInt(newAPI.breedCount);

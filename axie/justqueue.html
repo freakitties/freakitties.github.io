@@ -172,7 +172,7 @@ function getBattleTeams(callback) {
 
 const ACTIVITY_POINT_BATCH_SIZE = 200;
 function getAxieDetails(id, callback) {
-    $.getJSON("https://axieinfinity.com/api/axies/" + id, function(basicAPI) {
+    $.getJSON("https://axieinfinity.com/api/v2/axies/" + id, function(basicAPI) {
         $.getJSON("https://api.axieinfinity.com/v1/axies/" + id, function(data) {
             expCheckpointInstance.getCheckpoint(id, (error, result) => {
                 if (error) {

@@ -171,7 +171,7 @@
     }
 
     function getAxies(offset, address) {
-        let baseUrl = "https://axieinfinity.com/api/addresses/" + address + "/axies?stage=3&stage=4";
+        let baseUrl = "https://axieinfinity.com/api/v2/addresses/" + address + "/axies?stage=3&stage=4";
         let part = getQueryParameter("part");
         if (part) {
             baseUrl += "&part=" + part.replace(/[^a-zA-Z0-9\-]/g, "");
@@ -223,7 +223,7 @@
     }
 
     function getAxie(id) {
-        $.get("https://axieinfinity.com/api/axies/" + parseInt(id), function(data, status, xhr) {
+        $.get("https://axieinfinity.com/api/v2/axies/" + parseInt(id), function(data, status, xhr) {
             if (data.stage < 3) {
                 return;
             }
@@ -277,8 +277,8 @@
     function initBodyParts(parts) {
         bodyParts = parts;
         for (let i in parts) {
-            bodyPartsMap[parts[i].id] = parts[i];
-            bodyParts[i].value = bodyParts[i].id;
+            bodyPartsMap[parts[i].partId] = parts[i];
+            bodyParts[i].value = bodyParts[i].partId;
             bodyParts[i].label = bodyParts[i].name;
         }
         $("#searchParts").autocomplete({
@@ -291,7 +291,7 @@
     var bodyPartsMap = {};
     var bodyParts;
     function getBodyParts(callback) {
-        $.getJSON("https://axieinfinity.com/api/body-parts", (parts) => {
+        $.getJSON("https://axieinfinity.com/api/v2/body-parts", (parts) => {
             initBodyParts(parts);
         }).always(() => {
             $("#search").prop("disabled", false);
@@ -483,13 +483,13 @@
     function partSelected(event, ui) {
         $("#searchParts").val("");
         event.preventDefault();
-        if (selectedParts.hasOwnProperty(ui.item.id)) {
+        if (selectedParts.hasOwnProperty(ui.item.partId)) {
             return true;
         }
-        let id = ui.item.id + "-selected";
-        selectedParts[ui.item.id] = bodyPartsMap[ui.item.id];
+        let id = ui.item.partId + "-selected";
+        selectedParts[ui.item.partId] = bodyPartsMap[ui.item.partId];
         $("#calcPartsButton").show();
-        $("<div/>", {"class": "selected", "id": ui.item.id + "-parent"})
+        $("<div/>", {"class": "selected", "id": ui.item.partId + "-parent"})
         .append($('<div/>', {"class": "selected-box", "text": ui.item.name}))
         .prepend($("<div> ").prop('class', 'align-middle mr-1 ib circle-' + ui.item.type + ' circle-' + ui.item.type + '-sm btn-' + ui.item.class))
         .append($("<span/>", {"id": id, "text": "x", "class": "pointer text-secondary"}))
