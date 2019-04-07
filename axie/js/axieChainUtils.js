@@ -9,7 +9,6 @@ function getExtendedAxieData(axie, callback) {
     $.get("https://api.axieinfinity.com/v1/axies/" + axie.id, function(data) {
 
         axie.image = data.figure.static.idle;
-        axie.breedCount = data.breedCount;
         axie.pendingExp = data.pendingExp ? data.pendingExp : 0;
 
         expCheckpointInstance.getCheckpoint(axie.id, (error, result) => {

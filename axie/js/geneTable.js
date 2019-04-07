@@ -588,15 +588,13 @@
     function initTable() {
         axieTable = $('#axieTable').DataTable({
 //                dom: 'lfrBtip',
-            buttons: [{
-                extend: 'copy',
-                text: 'Copy table to clipboard'
-            }],
+
             data: data,
             order: [[ 0, "desc" ]],
             columns: columns,
+            deferRender: true,
             "language": {"search": "Filter (ID,owner or trait):"},
-            pageLength: 100,
+            pageLength: 50,
             "columnDefs": [
                 { className: "text-center", "targets": [ "_all" ] }
             ]
@@ -653,7 +651,7 @@
 
     function setExtraData(id) {
         let axie = axies[id];
-        if (!("breedCount" in axies[id])) {
+        if (!(axies[id].hasOwnProperty("totalSynced"))) {
             getExtendedAxieData(axie, () => {
                 $("#extraData_" + axie.id).text("Exp: " + axie.exp + ", Pending exp: " + axie.truePending + ", Breeds: " + axie.breedCount);
             });
