@@ -100,13 +100,10 @@
                 axieStats[id].defense = 0;
             }
             axieStats[id].parts.push({"name": traits[t].name, "type": traits[t].type});
-            if (traits[t].moves.length > 0) {
-                for (let move in traits[t].moves) {
-                    axieStats[id].attack += traits[t].moves[move].attack;
-                    axieStats[id].defense += traits[t].moves[move].defense;
-                }
+            if (traits[t].hasOwnProperty("move")) {
+                axieStats[id].attack += traits[t].move.attack;
+                axieStats[id].defense += traits[t].move.defense;
             }
-
             for (let b in bonus[c]) {
                 axieStats[id][b] += bonus[c][b];
             }
@@ -167,14 +164,21 @@
             });
             part = parts[0];
             let title = "";
-            if (part.moves.length > 0) {
-                title += "Type: " + part.moves[0].type.replace(/"/g, "&quot;").replace(/</g, '&lt;') + ", Atk: " + parseInt(part.moves[0].attack) + ", Def: " + parseInt(part.moves[0].defense) + ", Acc: " + parseInt(part.moves[0].accuracy);
-                if (part.moves[0].effects.length > 0) {
-                    title += ", " + part.moves[0].effects[0].name.replace(/"/g, "&quot;").replace(/</g, '&lt;');
-                    if (part.moves[0].effects[0].type == "passive") {
+            if (part.hasOwnProperty("move")) {
+                title += "Type: " + part.move.type.replace(/"/g, "&quot;").replace(/</g, '&lt;') + ", Atk: " + parseInt(part.move.attack) + ", Def: " + parseInt(part.move.defense) + ", Acc: " + parseInt(part.move.accuracy);
+                //temp fix for missing attributes
+                if (!part.move.name) {
+                    part.move.name = "";
+                }
+                if (!part.move.effects) {
+                    part.move.effects = [];
+                }
+                if (part.move.effects.length > 0) {
+                    title += ", " + part.move.effects[0].name.replace(/"/g, "&quot;").replace(/</g, '&lt;');
+                    if (part.move.effects[0].type == "passive") {
                         title += "(passive)";
                     }
-                    title += ": " + part.moves[0].effects[0].description.replace(/"/g, "&quot;").replace(/</g, '&lt;');
+                    title += ": " + part.move.effects[0].description.replace(/"/g, "&quot;").replace(/</g, '&lt;');
                 }
             }
             if (part.mystic) {
@@ -200,7 +204,7 @@ $(document).ready(function(){
         }
     });
 
-    $.get("https://axieinfinity.com/api/body-parts", function(data) {
+    $.get("https://axieinfinity.com/api/v2/body-parts?withMoveDetails=true", function(data) {
         bodyParts = data;
 
         //TODO: don't keep duplicating this data structure

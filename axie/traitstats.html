@@ -57,25 +57,31 @@ function processPartsInitTable(parts) {
         } else {
             row = {image: traits[key].image.replace(/"/g, "&quot;").replace(/</g, '&lt;'), name: part.name.replace(/"/g, "&quot;").replace(/</g, '&lt;'), type: part.type.replace(/"/g, "&quot;").replace(/</g, '&lt;'), class: part.class.replace(/"/g, "&quot;").replace(/</g, '&lt;')};
         }
-        if (part.moves.length > 0) {
-            row.moveType = part.moves[0].type.replace(/"/g, "&quot;").replace(/</g, '&lt;');
-            row.moveName = part.moves[0].name.replace(/"/g, "&quot;").replace(/</g, '&lt;');
-            row.attack = parseInt(part.moves[0].attack);
-            row.defense = parseInt(part.moves[0].defense);
-            row.accuracy = parseInt(part.moves[0].accuracy);
+        if (part.hasOwnProperty("move")) {
+            row.moveType = part.move.type.replace(/"/g, "&quot;").replace(/</g, '&lt;');
+            //temp fix for missing attributes
+            if (!part.move.name) {
+                part.move.name = "";
+            }
+            if (!part.move.effects) {
+                part.move.effects = [];
+            }
+            row.moveName = part.move.name.replace(/"/g, "&quot;").replace(/</g, '&lt;');
+            row.attack = parseInt(part.move.attack);
+            row.defense = parseInt(part.move.defense);
+            row.accuracy = parseInt(part.move.accuracy);
             row.effectiveAttack = row.attack * (row.accuracy/100);
             row.adRatio = row.effectiveAttack / row.defense;
             row.adMultiple = row.effectiveAttack * row.defense;
             row.effects = "";
-            if (part.moves[0].effects.length > 0) {
-
+            if (part.move.effects.length > 0) {
                 let text = "";
-                for (let i in part.moves[0].effects) {
-                    text += part.moves[0].effects[i].name.replace(/"/g, "&quot;").replace(/</g, '&lt;');
-                    if (part.moves[0].effects[i].type == "passive") {
+                for (let i in part.move.effects) {
+                    text += part.move.effects[i].name.replace(/"/g, "&quot;").replace(/</g, '&lt;');
+                    if (part.move.effects[i].type == "passive") {
                         text += " (passive)";
                     }
-                    text += ": " + part.moves[0].effects[i].description.replace(/"/g, "&quot;").replace(/</g, '&lt;') + "<br/>\n";
+                    text += ": " + part.move.effects[i].description.replace(/"/g, "&quot;").replace(/</g, '&lt;') + "<br/>\n";
                 }
                 row.effects = text;
             }
@@ -124,12 +130,12 @@ $(document).ready(function(){
             $("#headerDiv").html(data);
         }
     });
-    $.get("https://axieinfinity.com/api/body-parts", function(parts) {
+    $.get("https://axieinfinity.com/api/v2/body-parts?withMoveDetails=true", function(parts) {
         processPartsInitTable(parts);
     }).fail(() => {
         console.log("Failed to get body parts from the API");
         //API is unreliable. fall back to hard-coded local copy.
-        $.getJSON("/axie/js/body-parts.json", (parts) => {
+        $.getJSON("/axie/js/body-parts-details.json", (parts) => {
             console.log("Falling back to local parts list.");
             processPartsInitTable(parts);
         });

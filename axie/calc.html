@@ -285,8 +285,7 @@
 
     var bodyPartsMap = {};
     function getBodyParts(callback) {
-        //TODO: move to v2 API when part details are exposed
-        $.getJSON("https://axieinfinity.com/api/body-parts", (parts) => {
+        $.getJSON("https://axieinfinity.com/api/v2/body-parts?withMoveDetails=true", (parts) => {
             for (let i in parts) {
                 bodyPartsMap[parts[i].partId] = parts[i];
             }
@@ -316,7 +315,6 @@
         }
     }
 
-    var details = false;
     function init() {
         $.ajax({
             url: "../header.html",
@@ -326,16 +324,9 @@
                 $("#headerDiv").html(data);
             }
         });
-        let showDetails = getQueryParameter("showDetails");
-        if (showDetails === "true") {
-            $("#showDetails").prop( "checked", true );
-            details = true;
-            getBodyParts(() => {
-                doIt();
-            });
-        } else {
+        getBodyParts(() => {
             doIt();
-        }
+        });
     }
 
     function getQueryParameter(name) {
@@ -411,20 +402,16 @@
                 out += '<div class="col-7 col-lg-6 mt-1 mb-1"><img width="35" src="colors/' + color + '-body.png"></div><div class="col-5 col-lg-6">' + percentage + (parseInt(percentage) ? "%" : "") + "</div>";
             } else {
                 out += '<div class="col-7 col-lg-6 mt-1 mb-1" ';
-                if (details) {
-                    let traitId = trait.toLowerCase() + "-" + partName.toLowerCase().replace(/\s/g, "-").replace(/\?/g, "");
-                    let part = bodyPartsMap[traitId];
-                    let tipText = "";
-                    for (let i in part.moves) {
-                        tipText += "Atk: " + parseInt(part.moves[i].attack) + ", Def: " + parseInt(part.moves[i].defense) + ", Acc: " + parseInt(part.moves[i].accuracy);// + "<br>";
-                        for (let j in part.moves[i].effects) {
-                            tipText += " " + weakEscape(part.moves[i].effects[j].description) + " ";
-                        }
+                let traitId = trait.toLowerCase() + "-" + partName.toLowerCase().replace(/\s/g, "-").replace(/\?/g, "");
+                let part = bodyPartsMap[traitId];
+                let tipText = "";
+                if (part.hasOwnProperty("move")) {
+                    tipText += "Atk: " + parseInt(part.move.attack) + ", Def: " + parseInt(part.move.defense) + ", Acc: " + parseInt(part.move.accuracy);// + "<br>";
+                    for (let i in part.move.effects) {
+                        tipText += " " + weakEscape(part.move.effects[i].description) + " ";
                     }
-                    out += 'data-toggle="tooltip" title="' + tipText + '"' + ">";
-                } else {
-                    out += ">";
                 }
+                out += 'data-toggle="tooltip" title="' + tipText + '"' + ">";
                 out += '<img width="18" src="' + images[partsClassMap[sorted[i][0] + " " + trait]] + '"> &nbsp;' + partName + '</div><div class="col-5 col-lg-6">' + percentage + (parseInt(percentage) ? "%" : "") + "</div>";
 
             }
@@ -526,9 +513,7 @@
                 $("#row4").append('<div class="col-1"></div>');
                 renderProbs("color", colorProbs, "row4");
 
-                if (details) {
-                    $('[data-toggle="tooltip"]').tooltip();
-                }
+                $('[data-toggle="tooltip"]').tooltip();
             });
         })
     }
@@ -552,12 +537,6 @@
             </div>
             <div class="">
                 <input type="submit" value="Calculate" class="btn btn-primary" id="calcButton"></input>
-                <div class="form-check">
-                    <input class="form-check-input" type="checkbox" value="true" name="showDetails" id="showDetails">
-                    <label class="form-check-label" for="showDetails">
-                    Show move details
-                    </label>
-                </div>
             </div>
 
         </form>
