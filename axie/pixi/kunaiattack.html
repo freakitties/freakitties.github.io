@@ -49,7 +49,7 @@
 
     </body>
     <script>
-        const debug = false;
+        const debug = true;
         var spine;
         var axieID = -1;
         var oldID;
@@ -117,7 +117,7 @@
                 let imageName = axieID + ".png";
                 //prevent using cache...AI servers have wonky CORS config.
                 atlasURL = data["figure"]["atlas"];
-                imageURL =  data["figure"]["images"][imageName];
+                imageURL =  data["figure"]["images"]["axie.png"];
                 modelURL = data["figure"]["model"];
 
 //atlasURL = "https://axieinfinity.com/assets/models/ab19de2b119e811ae576b581ebb8d60d.atlas"
@@ -169,17 +169,13 @@
 
                             axie.position.set(app.view.width/8 , app.view.height * 0.6);
 
-                            axie.stateData.setMix("walking", "appearing", 0.2);
-                            axie.stateData.setMix("appearing", "walking", 0.2);
+                            axie.stateData.setMix("action/idle", "action/appear", 0.2);
+                            axie.stateData.setMix("action/appear", "action/idle", 0.2);
 
-                            axie.stateData.setMix("bite", "walking", 0.2);
-                            axie.stateData.setMix("walking", "bite", 0.2);
+                            axie.stateData.setMix("attack/melee/mouth-bite", "action/idle", 0.2);
+                            axie.stateData.setMix("action/idle", "attack/melee/mouth-bite", 0.2);
 
-                            if (axie.state.hasAnimation('idle')) {
-                                axie.state.setAnimation(0, 'idle', true);
-                            } else if (axie.state.hasAnimation('walking')) {
-                                axie.state.setAnimation(0, 'walking', true);
-                            }
+                            axie.state.setAnimation(0, 'action/idle', true);
 //axie.alpha = 0.3;
                             app.stage.removeChildren();
 
@@ -336,8 +332,8 @@
                 tickerDown.start();
                 break;
             case 32:
-                axie.state.setAnimation(0, 'appearing', false);
-                entry = axie.state.addAnimation(0, 'walking', true, 0);
+                axie.state.setAnimation(0, 'action/appear', false);
+                entry = axie.state.addAnimation(0, 'action/idle', true, 0);
                 /*
                 let startingPositionSpace = axie.position.y;
                 let tickerSpace  =  new PIXI.ticker.Ticker();
@@ -355,8 +351,8 @@
                 */
                 break;
             case 88:
-                axie.state.setAnimation(0, 'bite', false);
-                axie.state.addAnimation(0, 'walking', true, 0);
+                axie.state.setAnimation(0, 'attack/melee/mouth-bite', false);
+                axie.state.addAnimation(0, 'action/idle', true, 0);
                 break;
             case 221:
                 difficulty++;
@@ -448,12 +444,13 @@
     }
 
     const fuzzX = 40;
+    const fuzzY = 40;
     function intersects(ab, bb)
     {
         abx = ab.x + ab.width * AXIEBB_X_REDUCTION / 2 + fuzzX;
         aby = ab.y + ab.height * AXIEBB_Y_REDUCTION / 2;
         abw = ab.width * (1 - AXIEBB_X_REDUCTION) - fuzzX;
-        abh = ab.height * (1 - AXIEBB_Y_REDUCTION);
+        abh = ab.height * (1 - AXIEBB_Y_REDUCTION) - fuzzY;
 
         bbx = bb.x + bb.width/4;
         bby = bb.y;
@@ -484,8 +481,8 @@
                 GOText.position.y = app.view.height/2 - GOText.height/2;
                 app.stage.addChild(GOText);
 
-                axie.state.setAnimation(0, 'appearing', false);
-                entry = axie.state.addAnimation(0, 'walking', true, 0);
+                axie.state.setAnimation(0, 'action/appear', false);
+                entry = axie.state.addAnimation(0, 'action/idle', true, 0);
                 axie.state.addListener({complete: function(entry) {
                     console.log('track '+entry.trackIndex+' completed '+entry.loopsCount()+' times');
                     app.stop();
@@ -515,7 +512,7 @@
                 app.stage.removeChild(g);
             }
             g = new PIXI.Graphics();
-            g.drawRect(b.x + (b.width * AXIEBB_X_REDUCTION / 2) + fuzzX, b.y + (b.height * AXIEBB_Y_REDUCTION / 2), b.width * (1 - AXIEBB_X_REDUCTION) - fuzzX, b.height * (1 - AXIEBB_Y_REDUCTION));
+            g.drawRect(b.x + (b.width * AXIEBB_X_REDUCTION / 2) + fuzzX, b.y + (b.height * AXIEBB_Y_REDUCTION / 2), b.width * (1 - AXIEBB_X_REDUCTION) - fuzzX, b.height * (1 - AXIEBB_Y_REDUCTION) - fuzzY);
             g.alpha = 0.3;
             app.stage.addChild(g);
         }
