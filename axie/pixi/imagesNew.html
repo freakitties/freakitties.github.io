@@ -128,8 +128,8 @@
                             animation.stateData.setMix("action/idle", "action/appear", 0.2);
                             animation.stateData.setMix("action/appear", "action/idle", 0.2);
 
-                            animation.stateData.setMix("activity/eat-bite", "action/idle", 0.2);
-                            animation.stateData.setMix("action/idle", "activity/eat-bite", 0.2);
+                            animation.stateData.setMix("attack/melee/mouth-bite", "action/idle", 0.2);
+                            animation.stateData.setMix("action/idle", "attack/melee/mouth-bite", 0.2);
 
                             if (animation.state.hasAnimation('action/idle')) {
                                 animation.state.setAnimation(0, 'action/idle', true);
