@@ -180,7 +180,7 @@
         var img = $("#" + tag);
         img.attr('src', axie.image);
         var dataTag = $("#" + tag + "_data");
-        dataTag.text("Exp: " + axie.exp + " + " + axie.truePending);
+        dataTag.text("Exp: " + (axie.exp ? axie.exp : 0) + " + " + axie.truePending);
         dataTag.append($("<br>"));
         let breeds = $("<div/>", {class: "row justify-content-center", text: "Breeds: " + axie.breedCount + " ("});
         if (axie.stage < 4 || axie.exp + axie.truePending < axie.expForBreeding) {

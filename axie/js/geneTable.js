@@ -653,9 +653,9 @@
         let axie = axies[id];
         if (!(axies[id].hasOwnProperty("totalSynced"))) {
             getExtendedAxieData(axie, () => {
-                $("#extraData_" + axie.id).text("Exp: " + axie.exp + ", Pending exp: " + axie.truePending + ", Breeds: " + axie.breedCount);
+                $("#extraData_" + axie.id).text("Exp: " + (axie.exp ? axie.exp : 0) + ", Pending exp: " + axie.truePending + ", Breeds: " + axie.breedCount);
             });
         } else {
-            $("#extraData_" + axie.id).text("Exp: " + axie.exp + ", Pending exp: " + axie.truePending + ", Breeds: " + axie.breedCount);
+            $("#extraData_" + axie.id).text("Exp: " + (axie.exp ? axie.exp : 0) + ", Pending exp: " + axie.truePending + ", Breeds: " + axie.breedCount);
         }
     }

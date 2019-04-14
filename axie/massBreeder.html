@@ -284,7 +284,7 @@ function renderAxie(axie, type, full) {
     let id = parseInt(axie.id);
     if(type === 'display'){
         let out = '<a href="https://axieinfinity.com/axie/' + id + '?r=freak" target="_blank"><img src="' + weakEscape(axie.image) + '" height="50"><br/>#' + id + '</a>';
-        let exp = parseInt(axie.exp);
+        let exp = parseInt(axie.exp ? axie.exp : 0);
         let truePending = parseInt(axie.truePending);
         let count = parseInt(axie.breedCount);
         let expOut = exp.toString();

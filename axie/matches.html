@@ -521,53 +521,22 @@ function getMatches(initTable) {
     }
 }
 
-function getSingleAxieAndStore(id) {
-    $.getJSON("https://axieinfinity.com/api/v2/axies/" + id, function(basicAPI) {
-        $.getJSON("https://api.axieinfinity.com/v1/axies/" + id, function(data) {
-            axies[id.toString()] = {image: data.figure.static.idle, parts: data.parts, class: data.class, stats: data.stats, exp: basicAPI.exp, pendingExp: data.pendingExp, owner: data.owner, auction: basicAPI.auction};
-            let url = "https://api.axieinfinity.com/v1/battle/battle/activity-point?axieId=" + id;
-            $.getJSON(url, function(points) {
-                for (let i in points) {
-                    let id = points[i].axieId.toString();
-                    axies[id].activityPoint = points[i].activityPoint;
-                }
-                axies[id].axieId = id;
-                storeAxie(axies[id]);
-            }).fail((jqxhr, textStatus, error) => {
-                var err = textStatus + ", " + error;
-                console.log("Failed to get activity points: " + err);
-            });
-        }).fail((jqxhr, textStatus, error) => {
-            var err = textStatus + ", " + error;
-            console.log("1Failed to get axie deets: " + err);
-        });;
-    }).fail((jqxhr, textStatus, error) => {
-        var err = textStatus + ", " + error;
-        console.log("2Failed to get axie deets: " + err);
-    });;
-}
-
 const ACTIVITY_POINT_BATCH_SIZE = 200;
 function getAxieDetails(id, callback) {
-    $.getJSON("https://axieinfinity.com/api/v2/axies/" + id, function(basicAPI) {
-        $.getJSON("https://api.axieinfinity.com/v1/axies/" + id, function(data) {
-            expCheckpointInstance.getCheckpoint(id, (error, result) => {
-                if (error) {
-                    console.log("Error getting Exp Checkpoint from the contract");
-                    return;
-                }
-                let idStr = id.toString();
-                if (!axies.hasOwnProperty(idStr)) {
-                    axies[idStr] = {};
-                }
-                Object.assign(axies[id.toString()], {axieId: idStr, image: data.figure.static.idle, parts: data.parts, class: data.class, stats: data.stats, exp: basicAPI.exp, pendingExp: data.pendingExp ? data.pendingExp : 0, owner: data.owner, auction: basicAPI.auction});
-                axies[id].totalSynced = result[0].toNumber();
-                axies[id].truePending = axies[id].pendingExp - axies[id].totalSynced;
-                callback();
-            });
-        }).fail((jqxhr, textStatus, error) => {
-            var err = textStatus + ", " + error;
-            console.log("Failed to get axie: " + err);
+    $.getJSON("https://axieinfinity.com/api/v2/axies/" + id, function(data) {
+        expCheckpointInstance.getCheckpoint(id, (error, result) => {
+            if (error) {
+                console.log("Error getting Exp Checkpoint from the contract");
+                return;
+            }
+            let idStr = id.toString();
+            if (!axies.hasOwnProperty(idStr)) {
+                axies[idStr] = {};
+            }
+            Object.assign(axies[id.toString()], {axieId: idStr, image: 'http://assets.axieinfinity.com/axies/' + id + '/axie/axie-full.png', parts: data.parts, class: data.class, stats: data.stats, exp: data.exp, pendingExp: data.pendingExp ? data.pendingExp : 0, owner: data.owner, auction: data.auction});
+            axies[id].totalSynced = result[0].toNumber();
+            axies[id].truePending = axies[id].pendingExp - axies[id].totalSynced;
+            callback();
         });
     }).fail((jqxhr, textStatus, error) => {
         var err = textStatus + ", " + error;

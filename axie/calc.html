@@ -271,16 +271,14 @@
     }
 
     function setImage(breeder, axieID) {
-        $.get("https://api.axieinfinity.com/v1/axies/" + axieID, function(data) {
-            let link = $("<a/>");
-            link.prop('href', 'https://axieinfinity.com/axie/' + axieID + '?r=freak');
-            link.prop('target', '_blank');
-            var img = $("#" + breeder + "Img");
-            img.attr('src', data.figure.static.idle);
-            img.height = 100;
-            link.append(img);
-            $("#" + breeder + "Link").append(link); //a little funky but ok
-        });
+        let link = $("<a/>");
+        link.prop('href', 'https://axieinfinity.com/axie/' + axieID + '?r=freak');
+        link.prop('target', '_blank');
+        var img = $("#" + breeder + "Img");
+        img.attr('src', 'http://assets.axieinfinity.com/axies/' + axieID + '/axie/axie-full.png');
+        img.height = 100;
+        link.append(img);
+        $("#" + breeder + "Link").append(link); //a little funky but ok
     }
 
     var bodyPartsMap = {};

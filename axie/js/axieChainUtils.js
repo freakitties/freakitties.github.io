@@ -6,11 +6,9 @@ var expCheckpointContract = web3query.eth.contract(expCheckpointABI);
 var expCheckpointInstance = expCheckpointContract.at(expCheckpointAddress);
 
 function getExtendedAxieData(axie, callback) {
-    $.get("https://api.axieinfinity.com/v1/axies/" + axie.id, function(data) {
-
-        axie.image = data.figure.static.idle;
+    $.get("https://axieinfinity.com/api/axies/" + axie.id, function(data) {
+        axie.image = 'http://assets.axieinfinity.com/axies/' + parseInt(axie.id) + '/axie/axie-full.png';
         axie.pendingExp = data.pendingExp ? data.pendingExp : 0;
-
         expCheckpointInstance.getCheckpoint(axie.id, (error, result) => {
             if (error) {
                 console.log("Error getting Exp Checkpoint from the contract");

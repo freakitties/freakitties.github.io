@@ -55,7 +55,7 @@ function getAxies(address, callback) {
                 numSkipped++;
                 continue;
             }
-            axies[data.axies[i].id.toString()] = {"class": data.axies[i].class, "parts": data.axies[i].parts, "stats": data.axies[i].stats};
+            axies[data.axies[i].id.toString()] = {"class": data.axies[i].class, "parts": data.axies[i].parts, "stats": data.axies[i].stats, "image": 'http://assets.axieinfinity.com/axies/' + parseInt(data.axies[i].id) + '/axie/axie-full.png'};
         }
         let totalAxies = data.totalAxies;
         if (totalAxies > 12) {
@@ -69,7 +69,7 @@ function getAxies(address, callback) {
                             numSkipped++;
                             continue;
                         }
-                        axies[data.axies[i].id.toString()] = {"class": data.axies[i].class, "parts": data.axies[i].parts, "stats": data.axies[i].stats};
+                        axies[data.axies[i].id.toString()] = {"class": data.axies[i].class, "parts": data.axies[i].parts, "stats": data.axies[i].stats, "image": 'http://assets.axieinfinity.com/axies/' + parseInt(data.axies[i].id) + '/axie/axie-full.png'};
                     }
                     if (Object.keys(axies).length + numSkipped >= totalAxies) { //fudge incase over for some reason
                         if (callback != null) {
@@ -120,24 +120,6 @@ function getBattleTeams(address, callback) {
         var err = textStatus + ", " + error;
         console.log("Failed to get teams: " + err);
     });
-}
-
-function getAxiesDetails(axieList, cb) {
-    for (let id in axieList) {
-        let axieId = axieList[id];
-        var count = 0;
-        //if ("image" in axies[id]) continue;
-        $.getJSON("https://api.axieinfinity.com/v1/axies/" + axieId, function(data) {
-            count++;
-            axies[axieId].image = data.figure.static.idle;
-            if (count == axieList.length) {
-                cb();
-            }
-        }).fail((jqxhr, textStatus, error) => {
-            var err = textStatus + ", " + error;
-            console.log("Failed to get axie: " + err);
-        });;
-    }
 }
 
 function renderAxie(data, type, full) {
@@ -337,7 +319,7 @@ function createTeams() {
             }
             $("#loading").text("Teams formed");
             $("#loading").fadeOut(3500);
-            getAxiesDetails(usedIds, initTable);
+            initTable();
         });
     });
 }
