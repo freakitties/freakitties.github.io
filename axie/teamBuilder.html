@@ -55,7 +55,7 @@ function getAxies(address, callback) {
                 numSkipped++;
                 continue;
             }
-            axies[data.axies[i].id.toString()] = {"class": data.axies[i].class, "parts": data.axies[i].parts, "stats": data.axies[i].stats, "image": 'http://assets.axieinfinity.com/axies/' + parseInt(data.axies[i].id) + '/axie/axie-full.png'};
+            axies[data.axies[i].id.toString()] = {"class": data.axies[i].class, "parts": data.axies[i].parts, "stats": data.axies[i].stats, "image": 'https://storage.googleapis.com/assets.axieinfinity.com/axies/' + parseInt(data.axies[i].id) + '/axie/axie-full.png'};
         }
         let totalAxies = data.totalAxies;
         if (totalAxies > 12) {
@@ -69,7 +69,7 @@ function getAxies(address, callback) {
                             numSkipped++;
                             continue;
                         }
-                        axies[data.axies[i].id.toString()] = {"class": data.axies[i].class, "parts": data.axies[i].parts, "stats": data.axies[i].stats, "image": 'http://assets.axieinfinity.com/axies/' + parseInt(data.axies[i].id) + '/axie/axie-full.png'};
+                        axies[data.axies[i].id.toString()] = {"class": data.axies[i].class, "parts": data.axies[i].parts, "stats": data.axies[i].stats, "image": 'https://storage.googleapis.com/assets.axieinfinity.com/axies/' + parseInt(data.axies[i].id) + '/axie/axie-full.png'};
                     }
                     if (Object.keys(axies).length + numSkipped >= totalAxies) { //fudge incase over for some reason
                         if (callback != null) {
