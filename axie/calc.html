@@ -386,7 +386,7 @@
         }
         for(let i in sorted) {
             out += '<div class="row mb-2">';
-            let partName = weakEscape(sorted[i][0]);
+            let partName = sorted[i][0];
             let percentage = sorted[i][1];
             if (trait == "pattern") {
                 let pattern = patternMap[sorted[i][0]];
@@ -400,7 +400,7 @@
                 out += '<div class="col-7 col-lg-6 mt-1 mb-1"><img width="35" src="colors/' + color + '-body.png"></div><div class="col-5 col-lg-6">' + percentage + (parseInt(percentage) ? "%" : "") + "</div>";
             } else {
                 out += '<div class="col-7 col-lg-6 mt-1 mb-1" ';
-                let traitId = trait.toLowerCase() + "-" + partName.toLowerCase().replace(/\s/g, "-").replace(/\?/g, "");
+                let traitId = trait.toLowerCase() + "-" + partName.toLowerCase().replace(/\s/g, "-").replace(/[\?']/g, "");
                 let part = bodyPartsMap[traitId];
                 let tipText = "";
                 if (part.hasOwnProperty("move")) {
@@ -410,7 +410,7 @@
                     }
                 }
                 out += 'data-toggle="tooltip" title="' + tipText + '"' + ">";
-                out += '<img width="18" src="' + images[partsClassMap[sorted[i][0] + " " + trait]] + '"> &nbsp;' + partName + '</div><div class="col-5 col-lg-6">' + percentage + (parseInt(percentage) ? "%" : "") + "</div>";
+                out += '<img width="18" src="' + images[partsClassMap[sorted[i][0] + " " + trait]] + '"> &nbsp;' + weakEscape(partName) + '</div><div class="col-5 col-lg-6">' + percentage + (parseInt(percentage) ? "%" : "") + "</div>";
 
             }
             out += '</div>';
