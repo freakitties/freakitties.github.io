@@ -150,7 +150,7 @@
                     .load(function (loader, resources) {
                         //cache false to circumvent server's CORS caching. Server should use Vary: Origin ? or Access-Control-Allow-Origin: *
                         $.get({url: modelURL, dataType: "json"}, function(rawSkeletonData) {
-                            const rawAtlasData = resources['axie_atlas'].data; //your atlas file
+                            const rawAtlasData = resources['axie_atlas'].data.replace(/(shadow\s*\n.*?size: )(.*?)(\n.*?\n\s*tail)/s, "$1" + "1, 1" + "$3"); //replace shadow with 1x1 pixel
                             const spineAtlas = new PIXI.spine.core.TextureAtlas(rawAtlasData, function (line, callback) {
                                 //use hash name instead of name from file
                                 callback(PIXI.BaseTexture.from('axie_png'));
