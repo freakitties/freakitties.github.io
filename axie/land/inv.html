@@ -18,6 +18,9 @@
         <script>
             var quals;
             var items;
+            const CRYPTON = "CyptoTon";
+            const COINGECKO = "CoinGecko";
+            const CHIMERA = "Chimera";
             function getInv(e) {
                 e.preventDefault();
 
@@ -34,7 +37,7 @@
                             items[x.items[i].id].details = x.items[i];
                         }
                     }
-                    let hasChimera = false;
+                    let otherItems = {"common": new Set(), "rare": new Set(), "epic": new Set(), "mystic": new Set()};
                     for (let i in items) {
                         switch(items[i].details.rarity) {
                             case "common":
@@ -44,13 +47,20 @@
                                 quals.rare.add(items[i].details.id);
                             break;
                             case "epic":
-                                quals.epic.add(items[i].details.id);
+
+                                if ("p1" == items[i].details.id) {
+                                    otherItems.epic.add(COINGECKO);
+                                } else if ("p2" == items[i].details.id) {
+                                    otherItems.epic.add(CRYPTON);
+                                } else {
+                                    quals.epic.add(items[i].details.id);
+                                }
                             break;
                             case "mystic":
                                 if ("m14" != items[i].details.id) {
                                     quals.mystic.add(items[i].details.id);
                                 } else {
-                                    hasChimera = true;
+                                    otherItems.mystic.add(CHIMERA);
                                 }
                             break;
                         }
@@ -59,8 +69,17 @@
                     let missing = {};
                     for (let i in quals) {
 
-                        if (i == "mystic" && hasChimera) {
-                            out.push(capitalize(i) + ":" + quals[i].size + " + 1 Chimera");
+                        if (i == "mystic" && otherItems.mystic.size > 0) {
+                            out.push(capitalize(i) + ":" + quals[i].size + " + 1 " + CHIMERA);
+                        } else if (i == "epic" && otherItems.epic.size > 0) {
+                            let str = capitalize(i) + ":" + quals[i].size;
+                            if (otherItems.epic.has(COINGECKO)) {
+                                str += " + 1 " + COINGECKO;
+                            }
+                            if (otherItems.epic.has(CRYPTON)) {
+                                str += " + 1 " + CRYPTON;
+                            }
+                            out.push(str);
                         } else {
                             out.push(capitalize(i) + ":" + quals[i].size);
                         }
@@ -72,7 +91,12 @@
                             }
                         }
                     }
-                    $("#output").text(out.join(", "));
+
+                    $("#output").text("");
+                    for (let i = 0; i < out.length; i++) {
+                        $("#output").append(out[i] + "<br>");
+                    }
+                    //$("#output").text(out.join(", "));
                     $("#missing").text("Missing: ").append("<br>");
                     if (Object.keys(missing).length == 0) {
                         $("#missing").append("None");
