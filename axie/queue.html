@@ -393,6 +393,22 @@ function renderReplays(data, type, full) {
     return out;
 }
 
+var delay = 4;
+var intID;
+function clearButtonWithDelay() {
+    intID = setInterval(function() {
+        clearInterval(intID);
+        delay--;
+        $("#submitButton").text("Queue Teams " + delay);
+        if (delay > 0) {
+            clearButtonWithDelay();
+            return;
+        }
+        $("#submitButton").text("Queue Teams");
+        $("#submitButton").prop("disabled", false);
+    }, 1000);
+}
+
 var teamTable;
 function initTable() {
     var teams = Object.keys(battleTeamsDict).map((key)=>{
@@ -455,29 +471,45 @@ function initTable() {
         var rows_selected = teamTable.column(0).checkboxes.selected();
         var queuedTeams = {};
         try {
-        //$.each($('input[type="checkbox"]:checked'), function(index, team) {
-        $.each(rows_selected, function(index, team) {
-            let key = team.join("_");
-            if (!(key in battleTeamsDict)) {
-                //frameworks select all adds an extra unselected team for some reason.
-                alert(key + " not in teams dict");
-                return true; //continue;
-            }
-            let teamId = battleTeamsDict[key].teamId;
-
-            $.post({url: "https://api.axieinfinity.com/v1/battle/battle/queue", headers: headers, data: {teamId: teamId}}, function(success) {
-                if (success == "success") {
-                    appendResult("Team " + teamId + " (" + [team[0], team[1], team[2]].join(",") + ") queued successfully");
-                } else {
-                    appendResult("Team " + teamId + " (" + [team[0], team[1], team[2]].join(",") + ") didn't queue properly: " + success);
+            $("#submitButton").prop("disabled", true);
+            let numToQueue = rows_selected.length;
+            let goodQueues = 0;
+            let badQueues = 0;
+            appendResult("Queuing " + numToQueue + " teams");
+            $.each(rows_selected, function(index, team) {
+                let key = team.join("_");
+                if (!(key in battleTeamsDict)) {
+                    //frameworks select all adds an extra unselected team for some reason.
+                    alert(key + " not in teams dict");
+                    return true; //continue;
                 }
-            }).fail(function(jqXHR, textStatus, errorThrown) {
-                appendResult("Team " + teamId + " (" + [team[0], team[1], team[2]].join(",") + ") didn't queue properly: " + jqXHR.responseText);
+                let teamId = battleTeamsDict[key].teamId;
+
+                $.post({url: "https://api.axieinfinity.com/v1/battle/battle/queue", headers: headers, data: {teamId: teamId}}, function(success) {
+                    if (success == "success") {
+                        appendResult("Team " + teamId + " (" + [team[0], team[1], team[2]].join(",") + ") queued successfully");
+                        goodQueues++;
+                    } else {
+                        appendResult("Team " + teamId + " (" + [team[0], team[1], team[2]].join(",") + ") didn't queue properly: " + success);
+                        badQueues++;
+                    }
+                    $("#status").text("Successfully queued: " + goodQueues +", Failed queues: " + badQueues);
+                    if (goodQueues + badQueues == numToQueue) {
+                        clearButtonWithDelay();
+                    }
+                }).fail(function(jqXHR, textStatus, errorThrown) {
+                    appendResult("Team " + teamId + " (" + [team[0], team[1], team[2]].join(",") + ") didn't queue properly: " + jqXHR.responseText);
+                    badQueues++;
+                    $("#status").text("Successfully queued: " + goodQueues +", Failed queues: " + badQueues);
+                    if (goodQueues + badQueues == numToQueue) {
+                        clearButtonWithDelay();
+                    }
+                });
             });
-        });
         } catch (err) {
             console.log(err);
             alert(err);
+            $("#submitButton").prop("disabled", false);
         }
       // Prevent actual form submission
       e.preventDefault();
@@ -667,7 +699,8 @@ function checkBlessing() {
             </p>
         </form>
         <button id="clearButton" onclick="clearCache()" class="btn btn-primary">Clear Cache</button><br>
-        <div id="result" class="jumbotron"/>
+        <div id="status" ></div>
+        <div id="result" class="jumbotron"></div>
 
     </div>
 </html>
