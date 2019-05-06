@@ -326,22 +326,24 @@ function renderTeam(data, type, full) {
 
 }
 
-var delay = 4;
 var intID;
-function clearButtonWithDelay() {
+function clearButtonWithDelay(delay) {
+    let timeout = 0;
+    if (delay > 0) {
+        timeout = 1000;
+    }
     intID = setInterval(function() {
         clearInterval(intID);
-        delay--;
         $("#submitButton").text("Queue Teams " + delay);
         if (delay > 0) {
-            clearButtonWithDelay();
+            clearButtonWithDelay(delay - 1);
             return;
         }
         $("#submitButton").text("Queue Teams");
         $("#submitButton").prop("disabled", false);
-        delay = 4;
-    }, 1000);
+    }, timeout);
 }
+
 
 var teamTable;
 function initTable() {
@@ -420,14 +422,22 @@ function initTable() {
                     }
                     $("#status").text("Successfully queued: " + goodQueues +", Failed queues: " + badQueues);
                     if (goodQueues + badQueues == numToQueue) {
-                        clearButtonWithDelay();
+                        if (numToQueue > 200) {
+                            clearButtonWithDelay(4);
+                        } else {
+                            clearButtonWithDelay(0);
+                        }
                     }
                 }).fail(function(jqXHR, textStatus, errorThrown) {
                     appendResult("Team " + teamId + " (" + [team[0], team[1], team[2]].join(",") + ") didn't queue properly: " + jqXHR.responseText);
                     badQueues++;
                     $("#status").text("Successfully queued: " + goodQueues +", Failed queues: " + badQueues);
                     if (goodQueues + badQueues == numToQueue) {
-                        clearButtonWithDelay();
+                        if (numToQueue > 200) {
+                            clearButtonWithDelay(4);
+                        } else {
+                            clearButtonWithDelay(0);
+                        }
                     }
                 });
             });
