@@ -7,7 +7,7 @@ var expCheckpointInstance = expCheckpointContract.at(expCheckpointAddress);
 
 function getExtendedAxieData(axie, callback) {
     $.get("https://axieinfinity.com/api/axies/" + axie.id, function(data) {
-        axie.image = 'http://assets.axieinfinity.com/axies/' + parseInt(axie.id) + '/axie/axie-full.png';
+        axie.image = 'https://storage.googleapis.com/assets.axieinfinity.com/axies/' + parseInt(axie.id) + '/axie/axie-full.png';
         axie.pendingExp = data.pendingExp ? data.pendingExp : 0;
         expCheckpointInstance.getCheckpoint(axie.id, (error, result) => {
             if (error) {
