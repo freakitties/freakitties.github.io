@@ -86,7 +86,7 @@
 
                         //TODO: inefficient
                         for (let j in allItems) {
-                            if (i == allItems[j].rarity && !quals[i].has(j)) {
+                            if (i == allItems[j].rarity && !quals[i].has(allItems[j].name)) {
                                 missing[j] = allItems[j];
                             }
                         }
