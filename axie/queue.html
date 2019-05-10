@@ -411,6 +411,82 @@ function clearButtonWithDelay(delay) {
     }, timeout);
 }
 
+var batchIntID;
+var resolveIntID;
+const FINAL_QUEUE_DELAY = 4;    //seconds
+const BATCH_DELAY = 2;          //seconds
+const REQUEST_BATCH_SIZE = 400;
+var numToQueue = 0;
+var goodQueues = 0;
+var badQueues = 0;
+
+function resolveQueued(callback) {
+    resolveIntID = setInterval(function() {
+        clearInterval(resolveIntID);
+        //console.log("resolved: " + (goodQueues + badQueues));
+        if (goodQueues + badQueues == REQUEST_BATCH_SIZE) {
+            console.log("Previous batch of requests has been resolved");
+            callback();
+        } else {
+            resolveQueued(callback);
+        }
+    }, 1000);
+}
+
+function setStatus(index) {
+    $("#status").text("Successfully queued: " + goodQueues +", Failed queues: " + badQueues);
+    if ((index + 1) % REQUEST_BATCH_SIZE == 0) {
+        console.log("taking a break...");
+        $("#status").text($("#status").text() + ". Taking a short break...");
+    }
+    if (goodQueues + badQueues == numToQueue) {
+        if (numToQueue > 200) {
+            clearButtonWithDelay(FINAL_QUEUE_DELAY);
+        } else {
+            clearButtonWithDelay(0);
+        }
+    }
+}
+
+function sendBatch(teams, index, signature) {
+    if (index >= teams.length) {
+        return;
+    }
+    let headers = {'Authorization': "Bearer " + signature};
+    let team = teams[index];
+    let key = team.join("_");
+    let teamId = battleTeamsDict[key].teamId;
+    $.post({url: "https://api.axieinfinity.com/v1/battle/battle/queue", headers: headers, data: {teamId: teamId}}, function(success) {
+        if (success == "success") {
+            appendResult("Team " + teamId + " (" + [team[0], team[1], team[2]].join(",") + ") queued successfully");
+            goodQueues++;
+        } else {
+            appendResult("Team " + teamId + " (" + [team[0], team[1], team[2]].join(",") + ") didn't queue properly: " + success);
+            badQueues++;
+        }
+        setStatus(index);
+    }).fail(function(jqXHR, textStatus, errorThrown) {
+        appendResult("Team " + teamId + " (" + [team[0], team[1], team[2]].join(",") + ") didn't queue properly: " + jqXHR.responseText);
+        badQueues++;
+        setStatus(index);
+    });
+
+    if ((index + 1) % REQUEST_BATCH_SIZE == 0) {
+        console.log("waiting for batch");
+        //wait for queued requests to resolve, then wait again
+        resolveQueued(function() {
+            batchIntID = setInterval(function() {
+                clearInterval(batchIntID);
+                $("#status").text("Successfully queued: " + goodQueues +", Failed queues: " + badQueues);
+                sendBatch(teams, index + 1, signature);
+            }, BATCH_DELAY * 1000);
+        });
+        return;
+    } else {
+        sendBatch(teams, index + 1, signature);
+    }
+}
+
 var teamTable;
 function initTable() {
     var teams = Object.keys(battleTeamsDict).map((key)=>{
@@ -468,16 +544,16 @@ function initTable() {
             alert("No signature found");
             return;
         }
-        let headers = {'Authorization': "Bearer " + signature};
         var form = this;
         var rows_selected = teamTable.column(0).checkboxes.selected();
         var queuedTeams = {};
         try {
             $("#submitButton").prop("disabled", true);
-            let numToQueue = rows_selected.length;
-            let goodQueues = 0;
-            let badQueues = 0;
+            numToQueue = rows_selected.length;
+            goodQueues = 0;
+            badQueues = 0;
             appendResult("Queuing " + numToQueue + " teams");
+            let selectedTeams = [];
             $.each(rows_selected, function(index, team) {
                 let key = team.join("_");
                 if (!(key in battleTeamsDict)) {
@@ -485,37 +561,9 @@ function initTable() {
                     alert(key + " not in teams dict");
                     return true; //continue;
                 }
-                let teamId = battleTeamsDict[key].teamId;
-
-                $.post({url: "https://api.axieinfinity.com/v1/battle/battle/queue", headers: headers, data: {teamId: teamId}}, function(success) {
-                    if (success == "success") {
-                        appendResult("Team " + teamId + " (" + [team[0], team[1], team[2]].join(",") + ") queued successfully");
-                        goodQueues++;
-                    } else {
-                        appendResult("Team " + teamId + " (" + [team[0], team[1], team[2]].join(",") + ") didn't queue properly: " + success);
-                        badQueues++;
-                    }
-                    $("#status").text("Successfully queued: " + goodQueues +", Failed queues: " + badQueues);
-                    if (goodQueues + badQueues == numToQueue) {
-                        if (numToQueue > 200) {
-                            clearButtonWithDelay(4);
-                        } else {
-                            clearButtonWithDelay(0);
-                        }
-                    }
-                }).fail(function(jqXHR, textStatus, errorThrown) {
-                    appendResult("Team " + teamId + " (" + [team[0], team[1], team[2]].join(",") + ") didn't queue properly: " + jqXHR.responseText);
-                    badQueues++;
-                    $("#status").text("Successfully queued: " + goodQueues +", Failed queues: " + badQueues);
-                    if (goodQueues + badQueues == numToQueue) {
-                        if (numToQueue > 200) {
-                            clearButtonWithDelay(4);
-                        } else {
-                            clearButtonWithDelay(0);
-                        }
-                    }
-                });
+                selectedTeams.push(team);
             });
+            sendBatch(selectedTeams, 0, signature);
         } catch (err) {
             console.log(err);
             alert(err);
