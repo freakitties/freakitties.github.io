@@ -29,36 +29,36 @@
                 let address = $("#address").val();
                 $.getJSON("https://axieinfinity.com/land-api/profile/" + address + "/inventory", (x) => {
                     for (let i in x.items) {
-                        if (items.hasOwnProperty(x.items[i].id)) {
-                            items[x.items[i].id].count++;
+                        if (items.hasOwnProperty(x.items[i].name)) {
+                            items[x.items[i].name].count++;
                         } else {
-                            items[x.items[i].id] = {};
-                            items[x.items[i].id].count = 1;
-                            items[x.items[i].id].details = x.items[i];
+                            items[x.items[i].name] = {};
+                            items[x.items[i].name].count = 1;
+                            items[x.items[i].name].details = x.items[i];
                         }
                     }
                     let otherItems = {"common": new Set(), "rare": new Set(), "epic": new Set(), "mystic": new Set()};
                     for (let i in items) {
                         switch(items[i].details.rarity) {
                             case "common":
-                                quals.common.add(items[i].details.id);
+                                quals.common.add(items[i].details.name);
                             break;
                             case "rare":
-                                quals.rare.add(items[i].details.id);
+                                quals.rare.add(items[i].details.name);
                             break;
                             case "epic":
 
-                                if ("p1" == items[i].details.id) {
+                                if ("CoinGecko" == items[i].details.name) {
                                     otherItems.epic.add(COINGECKO);
-                                } else if ("p2" == items[i].details.id) {
+                                } else if ("Ganbaru CrypTon" == items[i].details.name) {
                                     otherItems.epic.add(CRYPTON);
                                 } else {
-                                    quals.epic.add(items[i].details.id);
+                                    quals.epic.add(items[i].details.name);
                                 }
                             break;
                             case "mystic":
-                                if ("m14" != items[i].details.id) {
-                                    quals.mystic.add(items[i].details.id);
+                                if ("Chimera" != items[i].details.name) {
+                                    quals.mystic.add(items[i].details.name);
                                 } else {
                                     otherItems.mystic.add(CHIMERA);
                                 }
