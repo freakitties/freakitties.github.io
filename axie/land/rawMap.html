@@ -51,9 +51,11 @@
 function plot(x, y) {
     plotx = x*4 -1;
     ploty = y*4 - 1;
-    $(".plot" ).css({ top: ploty });
-    $(".plot" ).css({ left: plotx });;
-    $(".plot" ).css({"display" : "block" } );
+    let spot = $("<div/>", {class: "plot blink"});
+    spot.css({ top: ploty });
+    spot.css({ left: plotx });;
+    spot.css({"display" : "block" } );
+    $("#map").append(spot);
 }
 
 allItems = {};
