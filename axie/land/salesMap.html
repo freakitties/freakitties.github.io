@@ -1,123 +1,44 @@
-<!DOCTYPE html>
 <html>
-<head>
-    <title>Axie Map</title>
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
-<script src="/axie/js/utils.js"></script>
-<script src="/axie/js/landUtils.js"></script>
+    <head>
+        <title>Axie Sales Map</title>
+        <script async src="https://www.googletagmanager.com/gtag/js?id=UA-116189657-1"></script>
+        <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'UA-116189657-1');
+        </script>
+        <!--web3 v0.20.6-->
+        <script src="/js/web3.min.js" integrity="sha384-rXHfd7f1o1jpr3t+dYI17CkzUY3Wswo1OGbiXPGSbg4s2E42+jkRgllwt7ss2Vlq"></script>
+        <script src="/js/jquery.min.js" integrity="sha384-tsQFqpEReu7ZLhBV2VZlAu7zcOV+rXbYlF2cqB8txI/8aZajjp4Bqd+V6D5IgvKT"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+        <style>
+            .noborder {
+                border: none;
+            }
+        </style>
+    </head>
+    <script>
 
-<style>
-.axieMap img{width:1200px;height:1200px;position:absolute;}
-.plot{width:4px; height:4px;position:absolute;display:none; z-index:100;background:#333}
-.plot2{width:4px; height:4px;position:absolute;display:none; z-index:100;background:#5c1cd9}
-
-.plot-wraper{position:relative; width:4px; height:4px; left:600px; top:600px;}
-.xy{padding:10px;}
-.blink {
-  animation: blink-animation 1s steps(5, start) infinite;
-  -webkit-animation: blink-animation 1s steps(5, start) infinite;
-}
-@keyframes blink-animation {
-  to {
-    visibility: hidden;
-  }
-}
-@-webkit-keyframes blink-animation {
-  to {
-    visibility: hidden;
-  }
-}
-</style>
-
-</head>
-<body >
-<div class="xy">
-    <form>
-        <input placeholder="X cords" id="x" name="x" />
-        <input placeholder="Y cords" id="y" name="y"/>
-        <input placeholder="Account ID" id="accountId" name="accountId"/>
-        <input type="submit" value="go" id="Go" />
-    </form>
-</div>
-<div class="axieMap">
-<img src="/axie/images/lunacia_map.png"></img>
-<div class="plot-wraper" id="map">
-<!--<div class="plot blink"></div>-->
-
-</div>
-</div>
-
-<script>
-function plot(x, y) {
-    plotx = x*4 -1;
-    ploty = y*4 - 1;
-    $(".plot" ).css({ top: ploty });
-    $(".plot" ).css({ left: plotx });;
-    $(".plot" ).css({"display" : "block" } );
-}
-
-allItems = {};
-
-async function getLands(accountId) {
-    r = await fetch("https://axieinfinity.com/land-api/profile/land/" + accountId);
-    lands = await r.json();
-    return lands;
-}
-
-async function plotAddr(lands) {
-    for (let i in lands) {
-        let x = lands[i].col;
-        let y = lands[i].row;
-
-        let plotx = x*4 - 1;
-        let ploty = y*4 - 2;
-        let spot = $("<div/>", {class: "plot2"});
-        spot.css({ top: ploty });
-        spot.css({ left: plotx });
-        spot.css({"display" : "block" } );
-        $("#map").append(spot);
-    }
-}
-
-function plotSales() {
-    for (let i in allItems) {
-        let land = allItems[i];
-        let x = land.col;
-        let y = land.row;
-
-        let plotx = x*4 - 1;
-        let ploty = y*4 - 2;
-        let url = "https://land.axieinfinity.com/land/" + land.col + "/" + land.row;
-        let spot = $("<div/>", {class: "plot"});
-        spot.on("click", () => {
-            window.open(url, "_blank");
+        function init() {
+            clearInterval(intID);
+            $.ajax({
+                url: "../../header.html",
+                cache: false,
+                dataType: "html",
+                success: function(data) {
+                    $("#headerDiv").html(data);
+                }
+            });
+        }
+        var intID;
+        $( document ).ready(async function() {
+            intID = setInterval(init, 100);
         });
-        spot.css({ top: ploty });
-        spot.css({ left: plotx });
-        spot.css({"display" : "block" } );
-        $("#map").append(spot);
-    }
-}
-
-$( document ).ready(async function() {
-    x = parseInt(getQueryParameter("x"));
-    y = parseInt(getQueryParameter("y"));
-    if (x && y) {
-        $("#x").val(x);
-        $("#y").val(y);
-        plot(x, y);
-    } else {
-        await getItems();
-        plotSales();
-    }
-    var accountId = parseInt(getQueryParameter("accountId"));
-    if (accountId) {
-        $("#accountId").val(accountId);
-        let lands = await getLands(accountId);
-        plotAddr(lands);
-    }
-});
-</script>
-
-</body>
+    </script>
+    <body>
+        <div id="headerDiv"></div>
+        <iframe class="noborder" width="100%" height="100%" src="rawMap.html"></iframe>
+    </body>
 </html>
