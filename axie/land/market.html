@@ -1,0 +1,174 @@
+<html>
+    <head>
+        <title>Axie Items</title>
+        <script async src="https://www.googletagmanager.com/gtag/js?id=UA-116189657-1"></script>
+        <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'UA-116189657-1');
+        </script>
+        <!--web3 v0.20.6-->
+        <script src="/js/web3.min.js" integrity="sha384-rXHfd7f1o1jpr3t+dYI17CkzUY3Wswo1OGbiXPGSbg4s2E42+jkRgllwt7ss2Vlq"></script>
+        <script src="/js/jquery.min.js" integrity="sha384-tsQFqpEReu7ZLhBV2VZlAu7zcOV+rXbYlF2cqB8txI/8aZajjp4Bqd+V6D5IgvKT"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+
+        <script src="/axie/js/utils.js"></script>
+        <script src="/axie/js/landUtils.js"></script>
+        <style>
+            .item-image {
+                width: auto;
+                max-width: 140px;
+                max-height: 140px;
+                display: block;
+                margin: 0 auto;
+            }
+            .highlight {
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                z-index: 10;
+                background-color: rgba(255,0,0,0.5);
+            }
+        </style>
+    </head>
+
+    <script>
+
+        function cap(string)
+        {
+            return string.charAt(0).toUpperCase() + string.slice(1);
+        }
+
+        function init() {
+            clearInterval(intID);
+            $.ajax({
+                url: "../../header.html",
+                cache: false,
+                dataType: "html",
+                success: function(data) {
+                    $("#headerDiv").html(data);
+                }
+            });
+        }
+
+        allItems = {};
+
+        var intID;
+        $( document ).ready(async function() {
+            intID = setInterval(init, 250);
+            await getItems("");
+            //await getItems("arctic");
+            //await getItems("forest");
+            //await getItems("savannah");
+            //let byRarity = {"mystic": [], "epic": [], "rare": [], "common": []};
+            let byType = {"mystic": [], "arctic": [], "forest": [], "savannah": []};
+            for (let i in allItems) {
+                switch (allItems[i].landType) {
+                    case "mystic":
+                        byType.mystic.push(allItems[i]);
+                        break;
+                    case "arctic":
+                        byType.arctic.push(allItems[i]);
+                        break;
+                    case "forest":
+                        byType.forest.push(allItems[i]);
+                        break;
+                    case "savannah":
+                        byType.savannah.push(allItems[i]);
+                        break;
+                    default:
+                        break;
+                }
+            }
+
+            var deck;
+            //TODO: maybe lazy load
+            for (let r in byType) {
+                let tab = $("#" + r);
+                //let tab = $("#mystic");
+
+                let count = 0;
+                for (let i in byType[r]) {
+                    let asset = byType[r][i];
+                    if (asset.assetType != "land") {
+                        continue;
+                    }
+                    if (asset.landType != r) {
+                        continue;
+                    }
+                    if (count % 5 == 0) {
+                        deck = $("<div/>", {"class": "card-deck"});
+                        tab.append(deck).append("<br>");
+                    }
+                    count++;
+                    let card = $("<div/>", {"class": "card"});
+
+                    let imgAddr = "";
+                    if (asset.assetType == "land" && asset.landType == "arctic") {
+                        imgAddr = "https://cdn.axieinfinity.com/assets/images/64f983476f1719cb92a97a49861cecd6.png";
+                    } else if (asset.assetType == "land" && asset.landType == "mystic") {
+                        imgAddr = "https://cdn.axieinfinity.com/assets/images/944f063bcc1784b7883a6caadc965db1.png";
+                    } else if (asset.assetType == "land" && asset.landType == "forest") {
+                        imgAddr = "https://cdn.axieinfinity.com/assets/images/fd37ba3fc9caada66e6023b9e0ce4af2.png";
+                    } else if (asset.assetType == "land" && asset.landType == "savannah") {
+                        imgAddr = "https://cdn.axieinfinity.com/assets/images/4e74bbb3513d4894e54469444b4d7c76.png";
+                    }
+
+                    let anchor = $("<a/>", {"href": "https://land.axieinfinity.com/land/" + asset.col + "/" + asset.row, "target": "_blank"});
+                    let img = $("<img/>", {"src": imgAddr, "class": "item-image card-img-top mt-2", "height": 100});
+                    anchor.append(img);
+                    //let img = $("<img/>", {"src": asset.figureUrl, "class": "item-image card-img-top mt-2"});
+                    let body = $("<div/>", {"class": "card-body"});
+                    body.append($("<h5/>", {"class": "card-title", "text": asset.name}));
+                    body.append($("<div/>", {"class": "card-text", "text": "Current: " + Number((asset.currentPrice/1e18).toFixed(3)) + " ETH"}));
+                    body.append($("<div/>", {"class": "card-text", "text": "Starting: " + Number((asset.startingPrice/1e18).toFixed(3)) + " ETH"}));
+                    body.append($("<div/>", {"class": "card-text", "text": "Ending: " + Number((asset.endingPrice/1e18).toFixed(3)) + " ETH"}));
+                    body.append($("<div/>", {"class": "card-text", "text": "Duration(h): " + asset.duration/3600}));
+                    if (asset.assetType == "land") {
+                        let x = parseInt(asset.col);
+                        let y = parseInt(asset.row);
+                        let position = "(" + x + ", " + y + ")";
+                        let locAnchor = $("<a/>", {"href": "salesMap.html?x=" + x + "&y=" + y, "target": "_blank"});
+                        locAnchor.append($("<div/>", {"class": "card-text", "text": "Loc: " + position}));
+                        body.append(locAnchor);
+                    }
+
+                    card.append(anchor).append(body);
+                    deck.append(card);
+                }
+            }
+
+        });
+
+    </script>
+    <body>
+        <div id="headerDiv"></div><br/>
+        <br>
+        <div id="items" class="container">
+            <ul class="nav nav-tabs" id="myTab" role="tablist">
+                <li class="nav-item">
+                    <a class="nav-link active" id="mystic-tab" data-toggle="tab" href="#mystic" role="tab" aria-controls="mystic" aria-selected="true">Mystic</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" id="arctic-tab" data-toggle="tab" href="#arctic" role="tab" aria-controls="arctic" aria-selected="false">Arctic</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" id="forest-tab" data-toggle="tab" href="#forest" role="tab" aria-controls="forest" aria-selected="false">Forest</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" id="savannah-tab" data-toggle="tab" href="#savannah" role="tab" aria-controls="savannah" aria-selected="false">Savannah</a>
+                </li>
+            </ul>
+        <div class="tab-content" id="myTabContent">
+          <div class="tab-pane fade show active" id="mystic" role="tabpanel" aria-labelledby="mystic-tab"></div>
+          <div class="tab-pane fade" id="arctic" role="tabpanel" aria-labelledby="arctic-tab"></div>
+          <div class="tab-pane fade" id="forest" role="tabpanel" aria-labelledby="forest-tab"></div>
+          <div class="tab-pane fade" id="savannah" role="tabpanel" aria-labelledby="common-tab"></div>
+        </div>
+        </div>
+        <br>
+    </body>
+</html
