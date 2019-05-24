@@ -38,14 +38,32 @@
             intID = setInterval(init, 100);
             x = parseInt(getQueryParameter("x"));
             y = parseInt(getQueryParameter("y"));
-            accountId = parseInt(getQueryParameter("accountId"));
+            let rawAcct1 = getQueryParameter("accountId");
+            let rawAcct2 = getQueryParameter("accountId2")
+            accountId = parseInt(rawAcct1);
+            accountId2 = parseInt(rawAcct2);
             let page = "rawMap.html?";
             if (x && y) {
                 page += "x=" + x + "&";
                 page += "y=" + y + "&";
             }
             if (accountId) {
-                page += "accountId=" + accountId;
+                let repl;
+                if (rawAcct1.startsWith("0x")) {
+                    repl = rawAcct1;
+                } else {
+                    repl = accountId1;
+                }
+                page += "accountId=" + repl + "&";
+            }
+            if (accountId2) {
+                let repl;
+                if (rawAcct1.startsWith("0x")) {
+                    repl = rawAcct2;
+                } else {
+                    repl = accountId2;
+                }
+                page += "accountId2=" + repl;
             }
             $("#mapFrame").prop("src", page);
 
