@@ -10,6 +10,7 @@
 .axieMap img{width:1200px;height:1200px;position:absolute;}
 .plot{width:4px; height:4px;position:absolute;display:none; z-index:100;background:#333}
 .plot2{width:4px; height:4px;position:absolute;display:none; z-index:100;background:#5c1cd9}
+.plot3{width:4px; height:4px;position:absolute;display:none; z-index:100;background:#1cd99c}
 
 .plot-wraper{position:relative; width:4px; height:4px; left:600px; top:600px;}
 .xy{padding:10px;}
@@ -36,6 +37,7 @@
         <input placeholder="X cords" id="x" name="x" />
         <input placeholder="Y cords" id="y" name="y"/>
         <input placeholder="Account ID" id="accountId" name="accountId"/>
+        <input placeholder="Account ID2" id="accountId2" name="accountId2"/>
         <input type="submit" value="go" id="Go" />
     </form>
 </div>
@@ -66,14 +68,14 @@ async function getLands(accountId) {
     return lands;
 }
 
-async function plotAddr(lands) {
+async function plotAddr(lands, style="plot2") {
     for (let i in lands) {
         let x = lands[i].col;
         let y = lands[i].row;
 
         let plotx = x*4 - 1;
         let ploty = y*4 - 2;
-        let spot = $("<div/>", {class: "plot2"});
+        let spot = $("<div/>", {class: style});
         spot.css({ top: ploty });
         spot.css({ left: plotx });
         spot.css({"display" : "block" } );
@@ -101,6 +103,15 @@ function plotSales() {
     }
 }
 
+async function doAccount(accountParam, style="plot2") {
+    var account = parseInt(getQueryParameter(accountParam));
+    if (account) {
+        $("#" + accountParam).val(account);
+        let lands = await getLands(account);
+        plotAddr(lands, style);
+    }
+}
+
 $( document ).ready(async function() {
     x = parseInt(getQueryParameter("x"));
     y = parseInt(getQueryParameter("y"));
@@ -112,12 +123,8 @@ $( document ).ready(async function() {
         await getItems();
         plotSales();
     }
-    var accountId = parseInt(getQueryParameter("accountId"));
-    if (accountId) {
-        $("#accountId").val(accountId);
-        let lands = await getLands(accountId);
-        plotAddr(lands);
-    }
+    await doAccount("accountId");
+    await doAccount("accountId2", "plot3");
 });
 </script>
 
