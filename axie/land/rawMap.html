@@ -53,10 +53,15 @@
 
 <script>
 
-function makeSpot(x, y, cls) {
-    plotx = x*4 -1;
-    ploty = y*4 - 1;
-    let spot = $("<div/>", {class: cls, title: x + ", " + y, "data-toggle": "tooltip"});
+function makeSpot(x, y, cls, price) {
+    plotx = x*4 - 1;
+    ploty = y*4 - 2;
+    let tip = x + ", " + y;
+    if (price) {
+        tip += "<br>" + Number((parseFloat(price)/1e18).toFixed(3)) + " ETH";
+    }
+
+    let spot = $("<div/>", {class: cls, title: tip, "data-toggle": "tooltip", "data-html": "true"});
     spot.css({ top: ploty });
     spot.css({ left: plotx });;
     spot.css({"display" : "block" } );
@@ -76,7 +81,7 @@ async function getLands(accountId) {
     return lands;
 }
 
-async function plotAddr(lands, style="plot2") {
+function plotAddr(lands, style="plot2") {
     for (let i in lands) {
         let x = lands[i].col;
         let y = lands[i].row;
@@ -89,7 +94,7 @@ function plotSales() {
         let land = allItems[i];
         let x = land.col;
         let y = land.row;
-        let spot = makeSpot(x, y, "plot pointer");
+        let spot = makeSpot(x, y, "plot pointer", land.currentPrice);
         let url = "https://land.axieinfinity.com/land/" + land.col + "/" + land.row;
         spot.on("click", () => {
             window.open(url, "_blank");
