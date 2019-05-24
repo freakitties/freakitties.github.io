@@ -66,14 +66,15 @@
                 page += "accountId2=" + repl;
             }
             $("#mapFrame").prop("src", page);
-
-            $("#mapFrame").on("load", (frm)=>{
-                console.log("loaded " + this);
-                window.location
-            });
         });
 
+        var fresh = true;
         function updateFrame(url) {
+            console.log("url: "+ url.search);
+            if (fresh) {
+                fresh false;
+                return;
+            }
             let newUrl = window.location.origin + window.location.pathname + url.search;
             history.pushState({}, "Axie Sales Map", newUrl);
         }
