@@ -72,7 +72,7 @@
         function updateFrame(url) {
             console.log("url: "+ url.search);
             if (fresh) {
-                fresh false;
+                fresh = false;
                 return;
             }
             let newUrl = window.location.origin + window.location.pathname + url.search;
