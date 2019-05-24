@@ -5,13 +5,15 @@
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
 <script src="/axie/js/utils.js"></script>
 <script src="/axie/js/landUtils.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.bundle.min.js" integrity="sha384-xrRywqdh3PHs8keKZN+8zzc5TX0GRTLCcmivcbNJWm2rs5C8PRhcEn3czEjhAO9o" crossorigin="anonymous"></script>
+<link href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
 
 <style>
 .axieMap img{width:1200px;height:1200px;position:absolute;}
 .plot{width:4px; height:4px;position:absolute;display:none; z-index:100;background:#333}
 .plot2{width:4px; height:4px;position:absolute;display:none; z-index:100;background:#5c1cd9}
 .plot3{width:4px; height:4px;position:absolute;display:none; z-index:100;background:#1cd99c}
-
+.pointer{cursor: pointer;}
 .plot-wraper{position:relative; width:4px; height:4px; left:600px; top:600px;}
 .xy{padding:10px;}
 .blink {
@@ -50,14 +52,20 @@
 </div>
 
 <script>
-function plot(x, y) {
+
+function makeSpot(x, y, cls) {
     plotx = x*4 -1;
     ploty = y*4 - 1;
-    let spot = $("<div/>", {class: "plot blink"});
+    let spot = $("<div/>", {class: cls, title: x + ", " + y, "data-toggle": "tooltip"});
     spot.css({ top: ploty });
     spot.css({ left: plotx });;
     spot.css({"display" : "block" } );
     $("#map").append(spot);
+    return spot;
+}
+
+function plot(x, y) {
+    makeSpot(x, y, "plot blink");
 }
 
 allItems = {};
@@ -72,14 +80,7 @@ async function plotAddr(lands, style="plot2") {
     for (let i in lands) {
         let x = lands[i].col;
         let y = lands[i].row;
-
-        let plotx = x*4 - 1;
-        let ploty = y*4 - 2;
-        let spot = $("<div/>", {class: style});
-        spot.css({ top: ploty });
-        spot.css({ left: plotx });
-        spot.css({"display" : "block" } );
-        $("#map").append(spot);
+        makeSpot(x, y, style);
     }
 }
 
@@ -88,18 +89,11 @@ function plotSales() {
         let land = allItems[i];
         let x = land.col;
         let y = land.row;
-
-        let plotx = x*4 - 1;
-        let ploty = y*4 - 2;
+        let spot = makeSpot(x, y, "plot pointer");
         let url = "https://land.axieinfinity.com/land/" + land.col + "/" + land.row;
-        let spot = $("<div/>", {class: "plot"});
         spot.on("click", () => {
             window.open(url, "_blank");
         });
-        spot.css({ top: ploty });
-        spot.css({ left: plotx });
-        spot.css({"display" : "block" } );
-        $("#map").append(spot);
     }
 }
 
@@ -125,6 +119,7 @@ $( document ).ready(async function() {
     }
     await doAccount("accountId");
     await doAccount("accountId2", "plot3");
+    $('[data-toggle="tooltip"]').tooltip();
 });
 </script>
 
