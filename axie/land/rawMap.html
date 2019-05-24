@@ -38,8 +38,8 @@
     <form>
         <input placeholder="X cords" id="x" name="x" />
         <input placeholder="Y cords" id="y" name="y"/>
-        <input placeholder="Account ID" id="accountId" name="accountId"/>
-        <input placeholder="Account ID2" id="accountId2" name="accountId2"/>
+        <input placeholder="ETH Addr/Account ID" id="accountId" name="accountId"/>
+        <input placeholder="ETH Addr/Account ID2" id="accountId2" name="accountId2"/>
         <input type="submit" value="go" id="Go" />
     </form>
 </div>
@@ -75,11 +75,18 @@ function plot(x, y) {
 
 allItems = {};
 
-async function getLands(accountId) {
+async function getLandsByAccountId(accountId) {
     r = await fetch("https://axieinfinity.com/land-api/profile/land/" + accountId);
     lands = await r.json();
     return lands;
 }
+
+async function getLandsByETHAddr(address) {
+    r = await fetch("https://axieinfinity.com/land-api/profile/" + address + "/land");
+    lands = await r.json();
+    return lands;
+}
+
 
 function plotAddr(lands, style="plot2") {
     for (let i in lands) {
@@ -103,10 +110,17 @@ function plotSales() {
 }
 
 async function doAccount(accountParam, style="plot2") {
-    var account = parseInt(getQueryParameter(accountParam));
+    let raw = getQueryParameter(accountParam).trim();
+    var account = parseInt(raw);
     if (account) {
-        $("#" + accountParam).val(account);
-        let lands = await getLands(account);
+        let lands;
+        if (raw.startsWith("0x")) {
+            $("#" + accountParam).val(raw);
+            lands = await getLandsByETHAddr(raw);
+        } else {
+            $("#" + accountParam).val(account);
+            lands = await getLandsByAccountId(account);
+        }
         plotAddr(lands, style);
     }
 }
