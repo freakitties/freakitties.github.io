@@ -60,11 +60,7 @@
         $( document ).ready(async function() {
             intID = setInterval(init, 250);
             await getItems("");
-            //await getItems("arctic");
-            //await getItems("forest");
-            //await getItems("savannah");
-            //let byRarity = {"mystic": [], "epic": [], "rare": [], "common": []};
-            let byType = {"mystic": [], "arctic": [], "forest": [], "savannah": []};
+            let byType = {"genesis": [], "mystic": [], "arctic": [], "forest": [], "savannah": []};
             for (let i in allItems) {
                 switch (allItems[i].landType) {
                     case "mystic":
@@ -79,6 +75,9 @@
                     case "savannah":
                         byType.savannah.push(allItems[i]);
                         break;
+                    case "genesis":
+                        byType.genesis.push(allItems[i]);
+                        break;
                     default:
                         break;
                 }
@@ -88,7 +87,6 @@
             //TODO: maybe lazy load
             for (let r in byType) {
                 let tab = $("#" + r);
-                //let tab = $("#mystic");
 
                 let count = 0;
                 for (let i in byType[r]) {
@@ -115,6 +113,8 @@
                         imgAddr = "https://cdn.axieinfinity.com/assets/images/fd37ba3fc9caada66e6023b9e0ce4af2.png";
                     } else if (asset.assetType == "land" && asset.landType == "savannah") {
                         imgAddr = "https://cdn.axieinfinity.com/assets/images/4e74bbb3513d4894e54469444b4d7c76.png";
+                    } else if (asset.assetType == "land" && asset.landType == "genesis") {
+                        imgAddr = "https://cdn.axieinfinity.com/assets/images/7f5dd3f37b64af3f9c2ca760e27a3633.png";
                     }
 
                     let anchor = $("<a/>", {"href": "https://land.axieinfinity.com/land/" + asset.col + "/" + asset.row, "target": "_blank"});
@@ -161,12 +161,16 @@
                 <li class="nav-item">
                     <a class="nav-link" id="savannah-tab" data-toggle="tab" href="#savannah" role="tab" aria-controls="savannah" aria-selected="false">Savannah</a>
                 </li>
+                <li class="nav-item">
+                    <a class="nav-link" id="genesis-tab" data-toggle="tab" href="#genesis" role="tab" aria-controls="genesis" aria-selected="false">Genesis</a>
+                </li>
             </ul>
         <div class="tab-content" id="myTabContent">
           <div class="tab-pane fade show active" id="mystic" role="tabpanel" aria-labelledby="mystic-tab"></div>
           <div class="tab-pane fade" id="arctic" role="tabpanel" aria-labelledby="arctic-tab"></div>
           <div class="tab-pane fade" id="forest" role="tabpanel" aria-labelledby="forest-tab"></div>
           <div class="tab-pane fade" id="savannah" role="tabpanel" aria-labelledby="common-tab"></div>
+          <div class="tab-pane fade" id="genesis" role="tabpanel" aria-labelledby="genesis-tab"></div>
         </div>
         </div>
         <br>
