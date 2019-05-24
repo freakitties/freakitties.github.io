@@ -52,7 +52,7 @@
                 if (rawAcct1.startsWith("0x")) {
                     repl = rawAcct1;
                 } else {
-                    repl = accountId1;
+                    repl = accountId;
                 }
                 page += "accountId=" + repl + "&";
             }
@@ -67,10 +67,19 @@
             }
             $("#mapFrame").prop("src", page);
 
+            $("#mapFrame").on("load", (frm)=>{
+                console.log("loaded " + this);
+                window.location
+            });
         });
+
+        function updateFrame(url) {
+            let newUrl = window.location.origin + window.location.pathname + url.search;
+            history.pushState({}, "Axie Sales Map", newUrl);
+        }
     </script>
     <body>
         <div id="headerDiv"></div>
-        <iframe class="noborder" width="100%" height="100%" src="" id="mapFrame"></iframe>
+        <iframe class="noborder" width="100%" height="100%" src="" id="mapFrame" onLoad="updateFrame(this.contentWindow.location);"></iframe>
     </body>
 </html>

@@ -110,7 +110,7 @@ function plotSales() {
 }
 
 async function doAccount(accountParam, style="plot2") {
-    let raw = getQueryParameter(accountParam).trim();
+    let raw = getQueryParameter(accountParam);
     var account = parseInt(raw);
     if (account) {
         let lands;
