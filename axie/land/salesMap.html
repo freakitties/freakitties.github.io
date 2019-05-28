@@ -36,35 +36,7 @@
         var intID;
         $( document ).ready(async function() {
             intID = setInterval(init, 100);
-            x = parseInt(getQueryParameter("x"));
-            y = parseInt(getQueryParameter("y"));
-            let rawAcct1 = getQueryParameter("accountId");
-            let rawAcct2 = getQueryParameter("accountId2")
-            accountId = parseInt(rawAcct1);
-            accountId2 = parseInt(rawAcct2);
-            let page = "rawMap.html?";
-            if (x && y) {
-                page += "x=" + x + "&";
-                page += "y=" + y + "&";
-            }
-            if (accountId) {
-                let repl;
-                if (rawAcct1.startsWith("0x")) {
-                    repl = rawAcct1;
-                } else {
-                    repl = accountId;
-                }
-                page += "accountId=" + repl + "&";
-            }
-            if (accountId2) {
-                let repl;
-                if (rawAcct2.startsWith("0x")) {
-                    repl = rawAcct2;
-                } else {
-                    repl = accountId2;
-                }
-                page += "accountId2=" + repl;
-            }
+            let page = "rawMap.html" + window.location.search;
             $("#mapFrame").prop("src", page);
         });
 
