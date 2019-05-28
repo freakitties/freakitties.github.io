@@ -12,7 +12,9 @@
 .axieMap img{width:1200px;height:1200px;position:absolute;}
 .plot{width:4px; height:4px;position:absolute;display:none; z-index:100;background:#90610c; border:1px solid #968566;}
 .plot2{width:4px; height:4px;position:absolute;display:none; z-index:100;background:#5c1cd9; border:1px solid #916cd8;}
+.plot2_white{width:4px; height:4px;position:absolute;display:none; z-index:100;background:#5c1cd9; border:1px solid #ffffff;}
 .plot3{width:4px; height:4px;position:absolute;display:none; z-index:100;background:#33f5b6; border:1px solid #2cdca3;}
+.plot3_white{width:4px; height:4px;position:absolute;display:none; z-index:100;background:#33f5b6; border:1px solid #ffffff;}
 .pointer{cursor: pointer;}
 .plot-wraper{position:relative; width:4px; height:4px; left:600px; top:600px;}
 .xy{padding:10px;}
@@ -92,15 +94,26 @@ function plotAddr(lands, style="plot2") {
     for (let i in lands) {
         let x = lands[i].col;
         let y = lands[i].row;
-        makeSpot(x, y, style);
+        let key = x + "_" + y;
+        if (key in forSale) {
+            let spot = makeSpot(x, y, style + "_white blink pointer");
+            let url = "https://land.axieinfinity.com/land/" + x + "/" + y;
+            spot.on("click", () => {
+                window.open(url, "_blank");
+            });
+        } else {
+            makeSpot(x, y, style);
+        }
     }
 }
 
+var forSale = {};
 function plotSales() {
     for (let i in allItems) {
         let land = allItems[i];
         let x = land.col;
         let y = land.row;
+        forSale[x + "_" + y] = land;
         let spot = makeSpot(x, y, "plot pointer", land.currentPrice);
         let url = "https://land.axieinfinity.com/land/" + land.col + "/" + land.row;
         spot.on("click", () => {
@@ -138,6 +151,7 @@ $( document ).ready(async function() {
         $("#x").val(x);
         $("#y").val(y);
         plot(x, y);
+        forSale[x + "_" + "y"] = {};    //hack to make single plot blink if owned by accounts
     } else {
         await getItems();
         plotSales();
