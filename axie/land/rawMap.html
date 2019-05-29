@@ -97,7 +97,7 @@ function plotAddr(lands, style="plot2") {
         let y = lands[i].row;
         let key = x + "_" + y;
         if (key in forSale) {
-            spot = makeSpot(x, y, style + "_white blink");
+            spot = makeSpot(x, y, style + "_white blink", forSale[key].currentPrice);
         } else {
             makeSpot(x, y, style);
         }
