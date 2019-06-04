@@ -29,6 +29,10 @@ Live site: [https://freakitties.github.io/](https://freakitties.github.io/)
 ## Axie Infinity Tools
 <!-- [Adopt an Axie!](https://axieinfinity.com/adopt-axies?r=CHl5UkYrgttjndv97yqxcY_6dnY) -->
 
+[Auto queue all teams at once](/axie/justqueue.html)
+
+[Tool for viewing your land and land sales](/axie/land/salesMap.html)
+
 [List of items from the land auction](/axie/land/items.html)
 
 [Kunai Attack! (minigame)](/axie/pixi/kunaiattack.html)
