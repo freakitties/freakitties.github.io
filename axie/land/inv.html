@@ -21,6 +21,8 @@
             const CRYPTON = "CyptoTon";
             const COINGECKO = "CoinGecko";
             const CHIMERA = "Chimera";
+            const TANUKI = "Tanuki";
+            const KITSUNE = "Kitsune";
             function getInv(e) {
                 e.preventDefault();
 
@@ -57,10 +59,10 @@
                                 }
                             break;
                             case "mystic":
-                                if ("Chimera" != items[i].details.name) {
-                                    quals.mystic.add(items[i].details.name);
+                                if ([CHIMERA, TANUKI, KITSUNE].includes(items[i].details.name)) {
+                                    otherItems.mystic.add(items[i].details.name);
                                 } else {
-                                    otherItems.mystic.add(CHIMERA);
+                                    quals.mystic.add(items[i].details.name);
                                 }
                             break;
                         }
@@ -70,7 +72,15 @@
                     for (let i in quals) {
 
                         if (i == "mystic" && otherItems.mystic.size > 0) {
-                            out.push(capitalize(i) + ":" + quals[i].size + " + 1 " + CHIMERA);
+                            let str = capitalize(i) + ":" + quals[i].size;
+                            if (otherItems.mystic.has(CHIMERA)) {
+                                str += " + 1 " + CHIMERA;
+                            } else if (otherItems.mystic.has(TANUKI)) {
+                                str += " + 1 " + TANUKI;
+                            } else if (otherItems.mystic.has(KITSUNE)) {
+                                str += " + 1 " + KITSUNE;
+                            }
+                            out.push(str);
                         } else if (i == "epic" && otherItems.epic.size > 0) {
                             let str = capitalize(i) + ":" + quals[i].size;
                             if (otherItems.epic.has(COINGECKO)) {
