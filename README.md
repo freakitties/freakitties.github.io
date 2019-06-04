@@ -33,6 +33,8 @@ Live site: [https://freakitties.github.io/](https://freakitties.github.io/)
 
 [Tool for viewing your land and land sales](/axie/land/salesMap.html)
 
+[Check how close you are to a full set of items](/axie/land/inv.html)
+
 [List of items from the land auction](/axie/land/items.html)
 
 [Kunai Attack! (minigame)](/axie/pixi/kunaiattack.html)
