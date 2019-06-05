@@ -36,18 +36,17 @@
         var intID;
         $( document ).ready(async function() {
             intID = setInterval(init, 100);
-            let page = "rawMap.html" + window.location.search;
+            let page = "rawMap.html" + window.location.search + window.location.hash;
             $("#mapFrame").prop("src", page);
         });
 
         var fresh = true;
         function updateFrame(url) {
-            console.log("url: "+ url.search);
             if (fresh) {
                 fresh = false;
                 return;
             }
-            let newUrl = window.location.origin + window.location.pathname + url.search;
+            let newUrl = window.location.origin + window.location.pathname + url.search + window.location.hash;
             history.pushState({}, "Axie Sales Map", newUrl);
         }
     </script>

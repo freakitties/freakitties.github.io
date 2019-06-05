@@ -21,6 +21,34 @@
   animation: blink-animation 1s steps(5, start) infinite;
   -webkit-animation: blink-animation 1s steps(5, start) infinite;
 }
+.color1 {background:#FF0000;border:none;}
+.color2 {background:#FF8000;border:none;}
+.color3 {background:#FFFF00;border:none;}
+.color4 {background:#80FF00;border:none;}
+.color5 {background:#00FF00;border:none;}
+.color6 {background:#00FF80;border:none;}
+.color7 {background:#00FFFF;border:none;}
+.color8 {background:#0080FF;border:none;}
+.color9 {background:#0000FF;border:none;}
+.color10 {background:#7F00FF;border:none;}
+.color11 {background:#FF00FF;border:none;}
+.color12 {background:#FF007F;border:none;}
+.color13 {background:#808080;border:none;}
+.color14 {background:#FF6666;border:none;}
+.color15 {background:#FFB266;border:none;}
+.color16 {background:#FFFF66;border:none;}
+.color17 {background:#B2FF66;border:none;}
+.color18 {background:#66FF66;border:none;}
+.color19 {background:#66FFB2;border:none;}
+.color20 {background:#66FFFF;border:none;}
+.color21 {background:#66B2FF;border:none;}
+.color22 {background:#6666FF;border:none;}
+.color23 {background:#B266FF;border:none;}
+.color24 {background:#FF66FF;border:none;}
+.color25 {background:#FF66B2;border:none;}
+.color26 {background:#C0C0C0;border:none;}
+
+
 @keyframes blink-animation {
    50% {
     opacity: 0;
@@ -97,7 +125,11 @@ function plotAddr(lands, style="plot2") {
         let y = lands[i].row;
         let key = x + "_" + y;
         if (key in forSale) {
-            spot = makeSpot(x, y, style + "_white blink", forSale[key].currentPrice);
+            if (hash.indexOf("colors") == -1) {
+                spot = makeSpot(x, y, style + "_white blink", forSale[key].currentPrice);
+            } else {
+                spot = makeSpot(x, y, style + " blink", forSale[key].currentPrice);
+            }
         } else {
             makeSpot(x, y, style);
         }
@@ -118,8 +150,9 @@ function plotSales() {
 async function doAccount(accountParam, style="plot2") {
     let parameter = getQueryParameter(accountParam);
     if (!parameter) return;
-    let full = decodeURIComponent(parameter);
+    let full = decodeURIComponent(parameter).replace(/[\s\+]/g, "");
     let accounts = full.split(",");
+    cIdx = 1;
     for (let i in accounts) {
         raw = accounts[i].trim()
         let account = parseInt(raw);
@@ -132,11 +165,17 @@ async function doAccount(accountParam, style="plot2") {
                 $("#" + accountParam).val(full);
                 lands = await getLandsByAccountId(account);
             }
-            plotAddr(lands, style);
+            if (hash.indexOf("colors") == -1) {
+                plotAddr(lands, style);
+            } else {
+                plotAddr(lands, style + " color" + cIdx);
+                cIdx = ++cIdx % 26;
+            }
         }
     }
 }
 
+var hash = window.location.hash.substr(1);
 $( document ).ready(async function() {
     x = parseInt(getQueryParameter("x"));
     y = parseInt(getQueryParameter("y"));
