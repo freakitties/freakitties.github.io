@@ -147,12 +147,12 @@ function plotSales() {
     }
 }
 
+cIdx = 1;
 async function doAccount(accountParam, style="plot2") {
     let parameter = getQueryParameter(accountParam);
     if (!parameter) return;
     let full = decodeURIComponent(parameter).replace(/[\s\+]/g, "");
     let accounts = full.split(",");
-    cIdx = 1;
     for (let i in accounts) {
         raw = accounts[i].trim()
         let account = parseInt(raw);
