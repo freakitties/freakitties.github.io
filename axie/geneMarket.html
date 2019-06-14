@@ -46,7 +46,7 @@
             $("#loading").text("Loading..." + Math.round(percentage) + "%");
             for (let i in data.axies) {
                 if (data.axies[i].stage < 3) continue;
-                axies[data.axies[i].id] = {"id": data.axies[i].id, "genes": genesToBin(new BigNumber(data.axies[i].genes)), "owner": data.axies[i].owner, "class": data.class, "exp": data.axies[i].exp, "price": data.axies[i].auction.buyNowPrice/1e18, "stats": data.axies[i].stats};
+                axies[data.axies[i].id] = {"id": data.axies[i].id, "genes": genesToBin(new BigNumber(data.axies[i].genes)), "owner": data.axies[i].owner, "class": data.class, "exp": data.axies[i].exp, "price": data.axies[i].auction.buyNowPrice/1e18, "stats": data.axies[i].stats, "breedCount": data.axies[i].breedCount};
                 addRow(axies[data.axies[i].id]);
             }
             if (offset + 12 < MAX_AXIES && offset < data.totalAxies) {
@@ -90,7 +90,8 @@
         columns.push({title: "Price", data: "price", render: renderPrice});
         columns.push(owner);
         initTable();
-        axieTable.order([67, 'asc']).draw();
+        //order by price
+        axieTable.order([68, 'asc']).draw();    //adjust for new column
         getMarketAxies(0);
     }
 
@@ -167,7 +168,7 @@
                     <th colspan="7">Group 5 (Horn)</th>
                     <th colspan="7">Group 6 (Back)</th>
                     <th colspan="7">Group 7 (Tail)</th>
-                    <th colspan="14">Additional Info</th>
+                    <th colspan="15">Additional Info</th><!-- adjust for new column -->
                 </tr>
                 <tr>
                     <th></th>
@@ -241,6 +242,7 @@
                     <th></th>
                     <th></th>
                     <th></th>
+                    <th></th><!-- adjust for new column -->
                 </tr>
             </thead>
             <tbody>

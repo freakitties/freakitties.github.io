@@ -503,6 +503,7 @@
                 {title: "Tail R2", data: "group7", render: renderGroup28, searchable: true},
 
                 {title: "Exp", data: "exp", searchable: false},
+                {title: "Breeds", data: "breedCount", searchable: false},
                 {title: "Num Mystics", data: "mystics", searchable: false},
                 {title: "Num Beast", data: "beasts", searchable: false},
                 {title: "Num Bug", data: "bugs", searchable: false},
@@ -565,7 +566,8 @@
         } else {
             row['owner'] = "?";
         }
-        row['exp'] = axie['exp'];
+        row['exp'] = axie['exp'] ? axie['exp'] : 0;
+        row['breedCount'] = axie['breedCount'];
         row["beasts"] = numBeast;
         row["bugs"] = numBug;
         row["birds"] = numBird;
@@ -580,6 +582,8 @@
         row.stats.speed = parseInt(axie.stats.speed);
         row.stats.skill = parseInt(axie.stats.skill);
         row.stats.morale = parseInt(axie.stats.morale);
+
+        //add/adjust for new column
 
         axieTable.row.add(row);
         axieTable.draw();
