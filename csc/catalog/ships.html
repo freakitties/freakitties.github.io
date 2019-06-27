@@ -70,7 +70,11 @@ for (let i in x.hits.hits) {
 
     function renderDefault(data, type, full) {
         if (data == null) return "-";
-        return weakEscape(data);
+        if (typeof(data) == "string") {
+            return weakEscape(data);
+        } else {
+            return data;
+        }
     }
 
     function renderDefaultBP(data, type, full) {
@@ -85,36 +89,35 @@ for (let i in x.hits.hits) {
             data: ships,
             columns: [
                 {title: "ID", data: "itemID", render: renderID},
-                {title: "Name", data: "name"},
-                {title: "Class", data: "class"},
+                {title: "Name", data: "name", render: renderDefault},
+                {title: "Class", data: "class", render: renderDefault},
                 {title: "Status", data: "status", render: renderStatus},
-                {title: "Hard Points", data: "hardPointsLimit"},
-                {title: "Base FTL", data: "baseFTL"},
-                {title: "Base Cargo", data: "baseCargo"},
+                {title: "Hard Points", data: "hardPointsLimit", render: renderDefault},
+                {title: "Base FTL", data: "baseFTL", render: renderDefault},
+                {title: "Base Cargo", data: "baseCargo", render: renderDefault},
                 {title: "Unique", data: "webData.special", render: renderDefault},
-                {title: "Manufacturer", data: "gameData.manufacturer"},
-                {title: "Type", data: "gameData.type"},
-                {title: "arriveSpeed", data: "gameData.arriveSpeed"},
-                {title: "avoidancePrediction", data: "gameData.avoidancePrediction"},
-                {title: "decelerationSpeed", data: "gameData.decelerationSpeed"},
-                {title: "enginePowerBase", data: "gameData.enginePowerBase"},
-                {title: "hull", data: "gameData.hull"},
-                {title: "mass", data: "gameData.mass"},
-                {title: "maxRadarDistance", data: "gameData.maxRadarDistance"},
-                {title: "maxSlipStream", data: "gameData.maxSlipStream"},
-                {title: "powerRechargeInc", data: "gameData.powerRechargeInc"},
-                {title: "powerRechargeRate", data: "gameData.powerRechargeRate"},
-                {title: "powerTotal", data: "gameData.powerTotal"},
+                {title: "Manufacturer", data: "gameData.manufacturer", render: renderDefault},
+                {title: "Type", data: "gameData.type", render: renderDefault},
+                {title: "arriveSpeed", data: "gameData.arriveSpeed", render: renderDefault},
+                {title: "avoidancePrediction", data: "gameData.avoidancePrediction", render: renderDefault},
+                {title: "decelerationSpeed", data: "gameData.decelerationSpeed", render: renderDefault},
+                {title: "enginePowerBase", data: "gameData.enginePowerBase", render: renderDefault},
+                {title: "hull", data: "gameData.hull", render: renderDefault},
+                {title: "mass", data: "gameData.mass", render: renderDefault},
+                {title: "maxRadarDistance", data: "gameData.maxRadarDistance", render: renderDefault},
+                {title: "maxSlipStream", data: "gameData.maxSlipStream", render: renderDefault},
+                {title: "powerRechargeInc", data: "gameData.powerRechargeInc", render: renderDefault},
+                {title: "powerRechargeRate", data: "gameData.powerRechargeRate", render: renderDefault},
+                {title: "powerTotal", data: "gameData.powerTotal", render: renderDefault},
                 {title: "preLaunchBp", data: "gameData", render: renderDefaultBP},
-                {title: "shieldPowerBase", data: "gameData.shieldPowerBase"},
-                {title: "shieldRechargeInc", data: "gameData.shieldRechargeInc"},
-                {title: "shieldRechargeRate", data: "gameData.shieldRechargeRate"},
-                {title: "shields", data: "gameData.shields"},
-                {title: "weaponRechargeInc", data: "gameData.weaponRechargeInc"},
-                {title: "weaponRechargeRate", data: "gameData.weaponRechargeRate"}
+                {title: "shieldPowerBase", data: "gameData.shieldPowerBase", render: renderDefault},
+                {title: "shieldRechargeInc", data: "gameData.shieldRechargeInc", render: renderDefault},
+                {title: "shieldRechargeRate", data: "gameData.shieldRechargeRate", render: renderDefault},
+                {title: "shields", data: "gameData.shields", render: renderDefault},
+                {title: "weaponRechargeInc", data: "gameData.weaponRechargeInc", render: renderDefault},
+                {title: "weaponRechargeRate", data: "gameData.weaponRechargeRate", render: renderDefault}
             ],
             pageLength: 50,
-            searching: false,
             columnDefs: [
                 { className: "text-center", "targets": [0] }
             ]
