@@ -58,7 +58,7 @@ for (let i in x.hits.hits) {
     function renderID(data, type, full) {
         if(type === 'display'){
             let id = parseInt (data);
-            return '<a href="' + id + '"><img height="50" src="' + weakEscape(full.webData.imagelocation) + '"><br>' + id + "</a>";
+            return '<a target="_blank" href="https://csc-game.com/asset/' + id + '"><img height="50" src="' + weakEscape(full.webData.imagelocation) + '"><br>' + id + "</a>";
         }
         return data;
     }
