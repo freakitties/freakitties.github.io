@@ -58,7 +58,10 @@ for (let i in x.hits.hits) {
     function renderID(data, type, full) {
         if(type === 'display'){
             let id = parseInt (data);
-            return '<a target="_blank" href="https://csc-game.com/asset/' + id + '"><img height="50" src="' + weakEscape(full.webData.imagelocation) + '"><br>' + id + "</a>";
+            if (isNaN(id)) {
+                id = weakEscape(data);
+            }
+            return '<a target="_blank" href="https://csc-game.com/item/' + id + '"><img height="50" src="' + weakEscape(full.webData.imagelocation) + '"><br>' + id + "</a>";
         }
         return data;
     }

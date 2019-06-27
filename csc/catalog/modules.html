@@ -50,7 +50,10 @@
     function renderID(data, type, full) {
         if(type === 'display'){
             let id = parseInt (data);
-            return '<a target="_blank" href="https://csc-game.com/asset/' + id + '"><img height="50" src="' + weakEscape(full.iconURL) + '"><br>' + id + "</a>";
+            if (isNaN(id)) {
+                id = weakEscape(data);
+            }
+            return '<a target="_blank" href="https://csc-game.com/item/' + id + '"><img height="50" src="' + weakEscape(full.iconURL) + '"><br>' + id + "</a>";
         }
         return data;
     }
@@ -155,9 +158,6 @@
 
                 {title: "repairRate", data: "gameData.repairRate", render: renderDefault},
                 {title: "repairValue", data: "gameData.repairValue", render: renderDefault},
-                {title: "rigStabilityMax", data: "gameData.rigStabilityMax", render: renderDefault},
-                {title: "rigStabilityMin", data: "gameData.rigStabilityMin", render: renderDefault},
-                {title: "rigStabilityOptimal", data: "gameData.rigStabilityOptimal", render: renderDefault},
 
                 {title: "scanAngle", data: "gameData.scanAngle", render: renderDefault},
                 {title: "scanEnhancement", data: "gameData.scanEnhancement", render: renderDefault},
@@ -168,6 +168,10 @@
                 {title: "scanRes", data: "gameData.scanRes", render: renderDefault},
                 {title: "scanTrackingLossTime", data: "gameData.scanTrackingLossTime", render: renderDefault},
                 {title: "scanType", data: "gameData.scanType", render: renderDefault},
+
+                {title: "rigStabilityMax", data: "gameData.rigStabilityMax", render: renderDefault},
+                {title: "rigStabilityMin", data: "gameData.rigStabilityMin", render: renderDefault},
+                {title: "rigStabilityOptimal", data: "gameData.rigStabilityOptimal", render: renderDefault},
 
                 {title: "screenVibrationMax", data: "gameData.screenVibrationMax", render: renderDefault},
                 {title: "screenVibrationMin", data: "gameData.screenVibrationMin", render: renderDefault},
