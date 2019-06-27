@@ -1,7 +1,7 @@
 
 ## Crypto Space Commander
 
-Sign-up to play [Crypto Space Commander](https://www.csc-game.com/enlist/q7NrOrEP7)
+Sign-up to play [Crypto Space Commander](https://www.csc-game.com/?cmdRef=435625e6fb3067)
 
 [Ships table](/csc/catalog/ships.html)
 

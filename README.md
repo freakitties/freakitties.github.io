@@ -72,7 +72,7 @@ Live site: [https://freakitties.github.io/](https://freakitties.github.io/)
 
 ## Crypto Space Commander
 
-Tools for [Crypto Space Commander](https://www.csc-game.com/enlist/q7NrOrEP7)
+Tools for [Crypto Space Commander](https://www.csc-game.com/?cmdRef=435625e6fb3067)
 
 [Ships table](/csc/catalog/ships.html)
 
