@@ -48,14 +48,21 @@
     }
 
     function renderID(data, type, full) {
+        let id = parseInt (data);
         if(type === 'display'){
-            let id = parseInt (data);
             if (isNaN(id)) {
                 id = weakEscape(data);
             }
-            return '<a target="_blank" href="https://csc-game.com/item/' + id + '"><img height="50" src="' + weakEscape(full.iconURL) + '"><br>' + id + "</a>";
+            if (full.iconURL) {
+                return '<a target="_blank" href="https://csc-game.com/item/' + id + '"><img height="50" src="' + weakEscape(full.iconURL) + '"><br>' + id + "</a>";
+            } else {
+                return id;
+            }
         }
-        return data;
+        if (isNaN(id)) {
+            return 99999999;
+        }
+        return id;
     }
 
     function renderSize(data, type, full) {
@@ -88,15 +95,54 @@
                 {title: "category", data: "gameData.category", render: renderDefault},
                 {title: "type", data: "gameData.type", render: renderDefault},
                 {title: "subType", data: "gameData.subType", render: renderDefault},
+
+
+                {title: "augmentInput", data: "gameData.augmentInput", render: renderDefault},
+                {title: "augmentTime", data: "gameData.augmentTime", render: renderDefault},
+                {title: "augmentYield", data: "gameData.augmentYield", render: renderDefault},
+                {title: "beamDPS", data: "gameData.beamDPS", render: renderDefault},
+                {title: "beamDuration", data: "gameData.beamDuration", render: renderDefault},
+                {title: "beamPulseRate", data: "gameData.beamPulseRate", render: renderDefault},
+                {title: "cargoSize", data: "gameData.cargoSize", render: renderDefault},
+
+                {title: "cloakType", data: "gameData.cloakType", render: renderDefault},
+                {title: "colonistCount", data: "gameData.colonistCount", render: renderDefault},
+                {title: "coolDown", data: "gameData.coolDown", render: renderDefault},
+                {title: "craftingAmounts", data: "gameData.craftingAmounts", render: renderDefault},
+                {title: "craftingRecipe", data: "gameData.craftingRecipe", render: renderDefault},
+                {title: "craftingResources", data: "gameData.craftingResources", render: renderDefault},
                 {title: "craftingTime", data: "gameData.craftingTime", render: renderDefault},
+                {title: "curveToTargetTime", data: "gameData.curveToTargetTime", render: renderDefault},
+                {title: "curvetoTargetSpeed", data: "gameData.curvetoTargetSpeed", render: renderDefault},
+                {title: "damageEffectiveness", data: "gameData.damageEffectiveness", render: renderDefault},
+                {title: "damageType", data: "gameData.damageType", render: renderDefault},
+                {title: "delayPerShot", data: "gameData.delayPerShot", render: renderDefault},
+                {title: "description", data: "gameData.description", render: renderDefault},
+                {title: "detachVelocity", data: "gameData.detachVelocity", render: renderDefault},
+                {title: "durability", data: "gameData.durability", render: renderDefault},
+                {title: "duration", data: "gameData.duration", render: renderDefault},
+                {title: "effectiveTargetingSpeed", data: "gameData.effectiveTargetingSpeed", render: renderDefault},
+                {title: "effectivenessOnArmor", data: "gameData.effectivenessOnArmor", render: renderDefault},
+                {title: "effectivenessOnHull", data: "gameData.effectivenessOnHull", render: renderDefault},
+                {title: "effectivenessOnShield", data: "gameData.effectivenessOnShield", render: renderDefault},
+                {title: "ftlActiveJumpRange", data: "gameData.ftlActiveJumpRange", render: renderDefault},
+                {title: "ftlBoostMultiply", data: "gameData.ftlBoostMultiply", render: renderDefault},
+                {title: "ftlBoostValue", data: "gameData.ftlBoostValue", render: renderDefault},
+                {title: "ftlDisruptionTime", data: "gameData.ftlDisruptionTime", render: renderDefault},
+                {title: "ftlJumpRange", data: "gameData.ftlJumpRange", render: renderDefault},
+                {title: "hull", data: "gameData.hull", render: renderDefault},
+                {title: "isActive", data: "gameData.isActive", render: renderDefault},
+                {title: "manufacturer", data: "gameData.manufacturer", render: renderDefault},
+                {title: "maxTargetLockRange", data: "gameData.maxTargetLockRange", render: renderDefault},
+                {title: "mineType", data: "gameData.mineType", render: renderDefault},
+                {title: "missileDelayTime", data: "gameData.missileDelayTime", render: renderDefault},
+                {title: "modulestoAffect", data: "gameData.modulestoAffect", render: renderDefault},
+                {title: "movementBoost", data: "gameData.movementBoost", render: renderDefault},
+                {title: "notes", data: "gameData.notes", render: renderDefault},
                 {title: "powerBase", data: "gameData.powerBase", render: renderDefault},
                 {title: "powerDraw", data: "gameData.powerDraw", render: renderDefault},
                 {title: "powerRechargeRate", data: "gameData.powerRechargeRate", render: renderDefault},
-
-                {title: "damageEffectiveness", data: "gameData.damageEffectiveness", render: renderDefault},
-                {title: "beamDPS", data: "gameData.beamDPS", render: renderDefault},
-                {title: "weaponRange", data: "gameData.weaponRange", render: renderDefault},
-                {title: "damageType", data: "gameData.damageType", render: renderDefault},
+                {title: "prefab", data: "gameData.prefab", render: renderDefault},
                 {title: "projectileDamageAmount", data: "gameData.projectileDamageAmount", render: renderDefault},
                 {title: "projectileDamageBleedAmount", data: "gameData.projectileDamageBleedAmount", render: renderDefault},
                 {title: "projectileDamageBleedRate", data: "gameData.projectileDamageBleedRate", render: renderDefault},
@@ -104,61 +150,14 @@
                 {title: "projectileLifetime", data: "gameData.projectileLifetime", render: renderDefault},
                 {title: "projectileShoutCount", data: "gameData.projectileShoutCount", render: renderDefault},
                 {title: "projectileSpeed", data: "gameData.projectileSpeed", render: renderDefault},
-                {title: "beamDuration", data: "gameData.beamDuration", render: renderDefault},
-                {title: "beamPulseRate", data: "gameData.beamPulseRate", render: renderDefault},
-                {title: "delayPerShot", data: "gameData.delayPerShot", render: renderDefault},
-                {title: "effectiveTargetingSpeed", data: "gameData.effectiveTargetingSpeed", render: renderDefault},
-                {title: "effectivenessOnArmor", data: "gameData.effectivenessOnArmor", render: renderDefault},
-                {title: "effectivenessOnHull", data: "gameData.effectivenessOnHull", render: renderDefault},
-                {title: "effectivenessOnShield", data: "gameData.effectivenessOnShield", render: renderDefault},
-
-                {title: "hull", data: "gameData.hull", render: renderDefault},
-                {title: "shieldPowerBase", data: "gameData.shieldPowerBase", render: renderDefault},
-                {title: "shieldRechargeInc", data: "gameData.shieldRechargeInc", render: renderDefault},
-                {title: "shieldRechargeRate", data: "gameData.shieldRechargeRate", render: renderDefault},
-                {title: "shields", data: "gameData.shields", render: renderDefault},
-
-                {title: "augmentInput", data: "gameData.augmentInput", render: renderDefault},
-                {title: "augmentTime", data: "gameData.augmentTime", render: renderDefault},
-                {title: "augmentYield", data: "gameData.augmentYield", render: renderDefault},
-
-                {title: "cargoSize", data: "gameData.cargoSize", render: renderDefault},
-
-                {title: "cloakType", data: "gameData.cloakType", render: renderDefault},
-                {title: "colonistCount", data: "gameData.colonistCount", render: renderDefault},
-
-                {title: "coolDown", data: "gameData.coolDown", render: renderDefault},
-
-                {title: "craftingRecipe", data: "gameData.craftingRecipe", render: renderDefault},
-                {title: "craftingResources", data: "gameData.craftingResources", render: renderDefault},
-
-                {title: "durability", data: "gameData.durability", render: renderDefault},
-
-                {title: "movementBoost", data: "gameData.movementBoost", render: renderDefault},
-                {title: "ftlActiveJumpRange", data: "gameData.ftlActiveJumpRange", render: renderDefault},
-                {title: "ftlBoostMultiply", data: "gameData.ftlBoostMultiply", render: renderDefault},
-                {title: "ftlBoostValue", data: "gameData.ftlBoostValue", render: renderDefault},
-                {title: "ftlDisruptionTime", data: "gameData.ftlDisruptionTime", render: renderDefault},
-                {title: "ftlJumpRange", data: "gameData.ftlJumpRange", render: renderDefault},
-
-                {title: "isActive", data: "gameData.isActive", render: renderDefault},
-
-                {title: "maxTargetLockRange", data: "gameData.maxTargetLockRange", render: renderDefault},
-                {title: "mineType", data: "gameData.mineType", render: renderDefault},
-                {title: "modulestoAffect", data: "gameData.modulestoAffect", render: renderDefault},
-
-                {title: "prefab", data: "gameData.prefab", render: renderDefault},
-
                 {title: "radarData", data: "gameData.radarData", render: renderDefault},
                 {title: "radarRange", data: "gameData.radarRange", render: renderDefault},
-                {title: "visibleToShip", data: "gameData.visibleToShip", render: renderDefault},
-                {title: "visibleToSonar", data: "gameData.visibleToSonar", render: renderDefault},
-
                 {title: "refineTime", data: "gameData.refineTime", render: renderDefault},
-
                 {title: "repairRate", data: "gameData.repairRate", render: renderDefault},
                 {title: "repairValue", data: "gameData.repairValue", render: renderDefault},
-
+                {title: "rigStabilityMax", data: "gameData.rigStabilityMax", render: renderDefault},
+                {title: "rigStabilityMin", data: "gameData.rigStabilityMin", render: renderDefault},
+                {title: "rigStabilityOptimal", data: "gameData.rigStabilityOptimal", render: renderDefault},
                 {title: "scanAngle", data: "gameData.scanAngle", render: renderDefault},
                 {title: "scanEnhancement", data: "gameData.scanEnhancement", render: renderDefault},
                 {title: "scanPingDuration", data: "gameData.scanPingDuration", render: renderDefault},
@@ -168,29 +167,27 @@
                 {title: "scanRes", data: "gameData.scanRes", render: renderDefault},
                 {title: "scanTrackingLossTime", data: "gameData.scanTrackingLossTime", render: renderDefault},
                 {title: "scanType", data: "gameData.scanType", render: renderDefault},
-
-                {title: "rigStabilityMax", data: "gameData.rigStabilityMax", render: renderDefault},
-                {title: "rigStabilityMin", data: "gameData.rigStabilityMin", render: renderDefault},
-                {title: "rigStabilityOptimal", data: "gameData.rigStabilityOptimal", render: renderDefault},
-
                 {title: "screenVibrationMax", data: "gameData.screenVibrationMax", render: renderDefault},
                 {title: "screenVibrationMin", data: "gameData.screenVibrationMin", render: renderDefault},
                 {title: "screenVibrationOptimal", data: "gameData.screenVibrationOptimal", render: renderDefault},
-
                 {title: "separatorValueMax", data: "gameData.separatorValueMax", render: renderDefault},
                 {title: "separatorValueMin", data: "gameData.separatorValueMin", render: renderDefault},
                 {title: "separatorValueOptimal", data: "gameData.separatorValueOptimal", render: renderDefault},
+                {title: "shieldPowerBase", data: "gameData.shieldPowerBase", render: renderDefault},
+                {title: "shieldRechargeInc", data: "gameData.shieldRechargeInc", render: renderDefault},
+                {title: "shieldRechargeRate", data: "gameData.shieldRechargeRate", render: renderDefault},
+                {title: "shields", data: "gameData.shields", render: renderDefault},
 
                 {title: "toggleable", data: "gameData.toggleable", render: renderDefault},
-
                 {title: "transportCount", data: "gameData.transportCount", render: renderDefault},
 
                 {title: "typeClass", data: "gameData.typeClass", render: renderDefault},
-
+                {title: "visibleToShip", data: "gameData.visibleToShip", render: renderDefault},
+                {title: "visibleToSonar", data: "gameData.visibleToSonar", render: renderDefault},
                 {title: "SluiceOperationMax", data: "gameData.SluiceOperationMax", render: renderDefault},
                 {title: "SluiceOperationMin", data: "gameData.SluiceOperationMin", render: renderDefault},
-                {title: "SluiceOperationOptimal", data: "gameData.SluiceOperationOptimal", render: renderDefault}
-                //{title: "description", data: "gameData.description", render: renderDefault, searchable: false}
+                {title: "SluiceOperationOptimal", data: "gameData.SluiceOperationOptimal", render: renderDefault},
+
             ],
             pageLength: 50,
             columnDefs: [
