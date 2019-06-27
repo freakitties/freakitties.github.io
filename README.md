@@ -74,10 +74,15 @@ Live site: [https://freakitties.github.io/](https://freakitties.github.io/)
 
 Tools for [Crypto Space Commander](https://www.csc-game.com/enlist/q7NrOrEP7)
 
+[Ships table](/csc/catalog/ships.html)
+
+[Module table](/csc/catalog/modules.html)
+
+<!--
 [List of MEA stars and ship launching tool](/csc/stars.html)
 
 [List of your ships](/csc/ships.html)
-
+-->
 
 
 
