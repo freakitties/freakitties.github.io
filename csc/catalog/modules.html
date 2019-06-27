@@ -50,7 +50,7 @@
     function renderID(data, type, full) {
         if(type === 'display'){
             let id = parseInt (data);
-            return '<a href="https://csc-game.com/asset/' + id + '"><img height="50" src="' + weakEscape(full.iconURL) + '"><br>' + id + "</a>";
+            return '<a target="_blank" href="https://csc-game.com/asset/' + id + '"><img height="50" src="' + weakEscape(full.iconURL) + '"><br>' + id + "</a>";
         }
         return data;
     }
