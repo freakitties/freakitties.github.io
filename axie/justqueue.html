@@ -15,7 +15,7 @@
         //use local web3 instead of metamask's. A bug in 0.20.7 breaks CORS request to infura.
         if (window.Web3) {
             let w = new Web3();
-            if (w.version.api === "0.20.7") {
+            if (navigator.userAgent.includes("Firefox") && w.version.api === "0.20.7") {
                 window.Web3 = void 0;
             }
         }
