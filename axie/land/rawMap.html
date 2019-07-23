@@ -9,13 +9,13 @@
 <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
 
 <style>
-.axieMap img{width:1200px;height:1200px;position:absolute;}
-.plot{width:4px; height:4px;position:absolute;display:none; z-index:100;background:#90610c; border:1px solid #968566; cursor: pointer;}
-.plot2{width:4px; height:4px;position:absolute;display:none; z-index:100;background:#5c1cd9; border:1px solid #916cd8; cursor: pointer;}
-.plot2_white{width:4px; height:4px;position:absolute;display:none; z-index:100;background:#5c1cd9; border:1px solid #ffffff; cursor: pointer;}
-.plot3{width:4px; height:4px;position:absolute;display:none; z-index:100;background:#33f5b6; border:1px solid #2cdca3; cursor: pointer;}
-.plot3_white{width:4px; height:4px;position:absolute;display:none; z-index:100;background:#33f5b6; border:1px solid #ffffff; cursor: pointer;}
-.plot-wraper{position:relative; width:4px; height:4px; left:600px; top:600px;}
+.axieMap img{width:1505px;height:1505px;position:absolute;}
+.plot{width:5px; height:5px;position:absolute;display:none; z-index:100;background:#90610c; border:1px solid #968566; cursor: pointer;}
+.plot2{width:5px; height:5px;position:absolute;display:none; z-index:100;background:#5c1cd9; border:1px solid #916cd8; cursor: pointer;}
+.plot2_white{width:5px; height:5px;position:absolute;display:none; z-index:100;background:#5c1cd9; border:1px solid #ffffff; cursor: pointer;}
+.plot3{width:5px; height:5px;position:absolute;display:none; z-index:100;background:#33f5b6; border:1px solid #2cdca3; cursor: pointer;}
+.plot3_white{width:5px; height:5px;position:absolute;display:none; z-index:100;background:#33f5b6; border:1px solid #ffffff; cursor: pointer;}
+.plot-wraper{position:relative; width:5px; height:5px; left:750px; top:750px;}
 .xy{padding:10px;}
 .blink {
   animation: blink-animation 1s steps(5, start) infinite;
@@ -82,8 +82,8 @@
 <script>
 
 function makeSpot(x, y, cls, price) {
-    plotx = x*4 - 1;
-    ploty = y*4 - 2;
+    plotx = x*5;
+    ploty = y*5;
     let tip = x + ", " + y;
     if (price) {
         tip += "<br>" + Number((parseFloat(price)/1e18).toFixed(3)) + " ETH";
