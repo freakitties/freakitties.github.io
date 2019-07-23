@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Axie Map</title>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+<script src="/axie/js/utils.js"></script>
+<script src="/axie/js/landUtils.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.bundle.min.js" integrity="sha384-xrRywqdh3PHs8keKZN+8zzc5TX0GRTLCcmivcbNJWm2rs5C8PRhcEn3czEjhAO9o" crossorigin="anonymous"></script>
+<link href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+
+<style>
+.axieMap img{width:1806px;height:1806px;position:absolute;}
+.clearPlot{width:6px; height:6px;position:absolute;display:none; z-index:100; border:1px solid; border-color: rgba(128,128,128,0.25); cursor: pointer;}
+.plot{width:6px; height:6px;position:absolute;display:none; z-index:100;background:#90610c; border:1px solid #968566; cursor: pointer;}
+.plot2{width:6px; height:6px;position:absolute;display:none; z-index:100;background:#5c1cd9; border:1px solid #916cd8; cursor: pointer;}
+.plot2_white{width:6px; height:6px;position:absolute;display:none; z-index:100;background:#5c1cd9; border:1px solid #ffffff; cursor: pointer;}
+.plot3{width:6px; height:6px;position:absolute;display:none; z-index:100;background:#33f5b6; border:1px solid #2cdca3; cursor: pointer;}
+.plot3_white{width:6px; height:6px;position:absolute;display:none; z-index:100;background:#33f5b6; border:1px solid #ffffff; cursor: pointer;}
+.plot-wraper{position:relative; width:6px; height:6px; left:900px; top:900px;}
+.xy{padding:10px;}
+.blink {
+  animation: blink-animation 1s steps(5, start) infinite;
+  -webkit-animation: blink-animation 1s steps(5, start) infinite;
+}
+.color1 {background:#FF0000;border:none;}
+.color2 {background:#FF8000;border:none;}
+.color3 {background:#FFFF00;border:none;}
+.color4 {background:#80FF00;border:none;}
+.color5 {background:#00FF00;border:none;}
+.color6 {background:#00FF80;border:none;}
+.color7 {background:#00FFFF;border:none;}
+.color8 {background:#0080FF;border:none;}
+.color9 {background:#0000FF;border:none;}
+.color10 {background:#7F00FF;border:none;}
+.color11 {background:#FF00FF;border:none;}
+.color12 {background:#FF007F;border:none;}
+.color13 {background:#808080;border:none;}
+.color14 {background:#FF6666;border:none;}
+.color15 {background:#FFB266;border:none;}
+.color16 {background:#FFFF66;border:none;}
+.color17 {background:#B2FF66;border:none;}
+.color18 {background:#66FF66;border:none;}
+.color19 {background:#66FFB2;border:none;}
+.color20 {background:#66FFFF;border:none;}
+.color21 {background:#66B2FF;border:none;}
+.color22 {background:#6666FF;border:none;}
+.color23 {background:#B266FF;border:none;}
+.color24 {background:#FF66FF;border:none;}
+.color25 {background:#FF66B2;border:none;}
+.color26 {background:#C0C0C0;border:none;}
+
+
+@keyframes blink-animation {
+   50% {
+    opacity: 0;
+  }
+}
+@-webkit-keyframes blink-animation {
+   50% {
+    opacity: 0;
+  }
+}
+</style>
+
+</head>
+<body >
+<div class="xy">
+    <form>
+        <input placeholder="X" id="x" name="x" />
+        <input placeholder="Y" id="y" name="y"/><br>
+        <input placeholder="ETH Addr (also CSV)" id="accountId" name="accountId" size="50"/>
+        <input placeholder="ETH Addr2 (also CSV)" id="accountId2" name="accountId2" size="50"/>
+        <input type="submit" value="go" id="Go" />
+    </form>
+</div>
+<div class="axieMap">
+<img src="/axie/images/lunacia_map.png"></img>
+<div class="plot-wraper" id="map">
+
+</div>
+</div>
+
+<script>
+
+function makeSpot(x, y, cls, price, mark=true) {
+    plotx = x*6;
+    ploty = y*6;
+    let tip = x + ", " + y;
+    if (price) {
+        tip += "<br>" + Number((parseFloat(price)/1e18).toFixed(3)) + " ETH";
+    }
+    let spot = $("<div/>", {class: cls, title: tip, "data-toggle": "tooltip", "data-html": "true"});
+    spot.css({ top: ploty });
+    spot.css({ left: plotx });;
+    spot.css({"display" : "block" } );
+    let url = "https://land.axieinfinity.com/land/" + x + "/" + y;
+    spot.on("click", () => {
+        window.open(url, "_blank");
+    });
+    $("#map").append(spot);
+    if (mark === true && x + 150 < MAX_X && y + 150 < MAX_Y) {
+        console.log(x+150,y+150);
+        markMap(x, y, 1);
+    }
+    return spot;
+}
+
+function plot(x, y) {
+    makeSpot(x, y, "plot blink");
+}
+
+allItems = {};
+
+async function getLandsByAccountId(accountId) {
+    r = await fetch("https://axieinfinity.com/land-api/profile/land/" + accountId);
+    lands = await r.json();
+    return lands;
+}
+
+async function getLandsByETHAddr(address) {
+    r = await fetch("https://axieinfinity.com/land-api/profile/" + address + "/land");
+    lands = await r.json();
+    return lands;
+}
+
+
+function plotAddr(lands, style="plot2") {
+    for (let i in lands) {
+        let x = lands[i].col;
+        let y = lands[i].row;
+        let key = x + "_" + y;
+        if (key in forSale) {
+            if (hash.indexOf("colors") == -1) {
+                spot = makeSpot(x, y, style + "_white blink", forSale[key].currentPrice);
+            } else {
+                spot = makeSpot(x, y, style + " blink", forSale[key].currentPrice);
+            }
+        } else {
+            makeSpot(x, y, style);
+        }
+    }
+}
+
+var forSale = {};
+function plotSales() {
+    for (let i in allItems) {
+        let land = allItems[i];
+        let x = land.col;
+        let y = land.row;
+        forSale[x + "_" + y] = land;
+        makeSpot(x, y, "plot", land.currentPrice);
+    }
+}
+
+cIdx = 1;
+async function doAccount(accountParam, style="plot2") {
+    let parameter = getQueryParameter(accountParam);
+    if (!parameter) return;
+    let full = decodeURIComponent(parameter).replace(/[\s\+]/g, "");
+    let accounts = full.split(",");
+    for (let i in accounts) {
+        raw = accounts[i].trim()
+        let account = parseInt(raw);
+        if (account) {
+            let lands;
+            if (raw.startsWith("0x")) {
+                $("#" + accountParam).val(full);
+                lands = await getLandsByETHAddr(raw);
+            } else {
+                $("#" + accountParam).val(full);
+                lands = await getLandsByAccountId(account);
+            }
+            if (hash.indexOf("colors") == -1) {
+                plotAddr(lands, style);
+            } else {
+                plotAddr(lands, style + " color" + cIdx);
+                cIdx = ++cIdx % 26;
+            }
+        }
+    }
+}
+
+const MAX_X = 140;
+const MAX_Y = 181;
+var allMap = new Array(MAX_X);
+for (let i = 0; i < MAX_X; i++) {
+    allMap[i] = new Array(MAX_Y);
+    allMap[i].fill(0);
+}
+//-150,-150     150,-150
+//-150,150.     150,150
+
+function markMap(x, y, value) {
+    allMap[x + 150][y + 150] = value;
+}
+
+function plotAll() {
+     for (let x = 0; x < MAX_X; x++) {
+        for (let y = 0; y < MAX_Y; y++) {
+            if (allMap[x][y] === 0) {
+                makeSpot(x-150, y-150, "clearPlot", null, false);
+            }
+        }
+    }
+};
+
+var hash = window.location.hash.substr(1);
+$( document ).ready(async function() {
+    x = parseInt(getQueryParameter("x"));
+    y = parseInt(getQueryParameter("y"));
+
+    if (x && y) {
+        $("#x").val(x);
+        $("#y").val(y);
+        plot(x, y);
+        forSale[x + "_" + "y"] = {};    //hack to make single plot blink if owned by accounts
+    } else {
+        await getItems();
+        plotSales();
+    }
+    await doAccount("accountId");
+    await doAccount("accountId2", "plot3");
+    plotAll();
+    $('[data-toggle="tooltip"]').tooltip();
+});
+</script>
+
+</body>
+</html>

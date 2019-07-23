@@ -1,0 +1,57 @@
+<html>
+    <head>
+        <title>Axie Sales Map</title>
+        <script async src="https://www.googletagmanager.com/gtag/js?id=UA-116189657-1"></script>
+        <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'UA-116189657-1');
+        </script>
+        <!--web3 v0.20.6-->
+        <script src="/js/web3.min.js" integrity="sha384-rXHfd7f1o1jpr3t+dYI17CkzUY3Wswo1OGbiXPGSbg4s2E42+jkRgllwt7ss2Vlq"></script>
+        <script src="/js/jquery.min.js" integrity="sha384-tsQFqpEReu7ZLhBV2VZlAu7zcOV+rXbYlF2cqB8txI/8aZajjp4Bqd+V6D5IgvKT"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+        <script src="/axie/js/utils.js"></script>
+        <style>
+            .noborder {
+                border: none;
+            }
+        </style>
+    </head>
+    <script>
+
+        function init() {
+            clearInterval(intID);
+            $.ajax({
+                url: "../../header.html",
+                cache: false,
+                dataType: "html",
+                success: function(data) {
+                    $("#headerDiv").html(data);
+                }
+            });
+        }
+        var intID;
+        $( document ).ready(async function() {
+            intID = setInterval(init, 100);
+            let page = "rawMap2.html" + window.location.search + window.location.hash;
+            $("#mapFrame").prop("src", page);
+        });
+
+        var fresh = true;
+        function updateFrame(url) {
+            if (fresh) {
+                fresh = false;
+                return;
+            }
+            let newUrl = window.location.origin + window.location.pathname + url.search + window.location.hash;
+            history.pushState({}, "Axie Sales Map", newUrl);
+        }
+    </script>
+    <body>
+        <div id="headerDiv"></div>
+        <iframe class="noborder" width="100%" height="100%" src="" id="mapFrame" onLoad="updateFrame(this.contentWindow.location);"></iframe>
+    </body>
+</html>
