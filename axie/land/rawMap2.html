@@ -89,7 +89,12 @@ function makeSpot(x, y, cls, price, mark=true) {
     if (price) {
         tip += "<br>" + Number((parseFloat(price)/1e18).toFixed(3)) + " ETH";
     }
-    let spot = $("<div/>", {class: cls, title: tip, "data-toggle": "tooltip", "data-html": "true"});
+    let spot;
+    if (mark) {
+        spot = $("<div/>", {class: cls, title: tip, "data-toggle": "tooltip", "data-html": "true"});
+    } else {
+        spot = $("<div/>", {class: cls, title: tip});
+    }
     spot.css({ top: ploty });
     spot.css({ left: plotx });;
     spot.css({"display" : "block" } );
