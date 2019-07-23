@@ -17,7 +17,6 @@
 .plot3{width:6px; height:6px;position:absolute;display:none; z-index:100;background:#33f5b6; border:1px solid #2cdca3; cursor: pointer;}
 .plot3_white{width:6px; height:6px;position:absolute;display:none; z-index:100;background:#33f5b6; border:1px solid #ffffff; cursor: pointer;}
 .plot-wraper{position:relative; width:6px; height:6px; left:900px; top:900px;}
-.xy{padding:10px;}
 .blink {
   animation: blink-animation 1s steps(5, start) infinite;
   -webkit-animation: blink-animation 1s steps(5, start) infinite;
@@ -63,23 +62,33 @@
 </style>
 
 </head>
-<body >
-<div class="xy">
-    <form>
-        <input placeholder="X" id="x" name="x" />
-        <input placeholder="Y" id="y" name="y"/><br>
-        <input placeholder="ETH Addr (also CSV)" id="accountId" name="accountId" size="50"/>
-        <input placeholder="ETH Addr2 (also CSV)" id="accountId2" name="accountId2" size="50"/>
-        <input type="submit" value="go" id="Go" />
-    </form>
-</div>
-<div class="axieMap">
-<img src="/axie/images/lunacia_map.png"></img>
-<div class="plot-wraper" id="map">
+<body>
+<br>
+<div class="container ml-0">
+    <div class="container ">
+        <form>
+            <div class="form-group row">
+                <input class="form-control col-3" placeholder="X" id="x" name="x" />
+                <input class="form-control col-3" placeholder="Y" id="y" name="y"/><br>
+            </div>
+            <div class="form-group row">
+                <input class="form-control col-6" placeholder="ETH Addr (also CSV)" id="accountId" name="accountId" size="50"/>
+                <input class="form-control col-6" placeholder="ETH Addr2 (also CSV)" id="accountId2" name="accountId2" size="50"/>
+                <input class="btn btn-primary mt-1" type="submit" value="Go" id="Go" />
+            </div>
+        </form>
+    </div>
+    <div class="pb-1">
+        <button id="toolTipButton" class="btn btn-secondary">Turn on fancy coordinates</button>
+        <div id="loading" class="spinner-border spinner-border-sm"></div>
+    </div>
+    <div class="axieMap">
+    <img src="/axie/images/lunacia_map.png"></img>
+    <div class="plot-wraper" id="map">
 
+    </div>
+    </div>
 </div>
-</div>
-
 <script>
 
 function makeSpot(x, y, cls, price, mark=true) {
@@ -93,7 +102,7 @@ function makeSpot(x, y, cls, price, mark=true) {
     if (mark) {
         spot = $("<div/>", {class: cls, title: tip, "data-toggle": "tooltip", "data-html": "true"});
     } else {
-        spot = $("<div/>", {class: cls, title: tip});
+        spot = $("<div/>", {class: cls, title: tip, "data-toggle": "tooltip", "data-html": "true"});
     }
     spot.css({ top: ploty });
     spot.css({ left: plotx });;
@@ -211,6 +220,7 @@ function plotAll() {
 
 var hash = window.location.hash.substr(1);
 $( document ).ready(async function() {
+    $("#loading").hide();
     x = parseInt(getQueryParameter("x"));
     y = parseInt(getQueryParameter("y"));
 
@@ -225,8 +235,14 @@ $( document ).ready(async function() {
     }
     await doAccount("accountId");
     await doAccount("accountId2", "plot3");
-    plotAll();
     $('[data-toggle="tooltip"]').tooltip();
+    plotAll();
+    $("#toolTipButton").on("click", () => {
+        $("#loading").show(() => {
+            $('[data-toggle="tooltip"]').tooltip();
+            $("#loading").hide();
+        });
+    });
 });
 </script>
 
