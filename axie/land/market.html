@@ -60,7 +60,7 @@
         $( document ).ready(async function() {
             intID = setInterval(init, 250);
             await getItems();
-            let byType = {"genesis": [], "mystic": [], "arctic": [], "forest": [], "savannah": []};
+            byType = {"genesis": [], "mystic": [], "arctic": [], "forest": [], "savannah": []};
             for (let i in allItems) {
                 switch (allItems[i].landType) {
                     case "mystic":

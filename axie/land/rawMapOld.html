@@ -9,14 +9,14 @@
 <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
 
 <style>
-.axieMap img{width:1806px;height:1806px;position:absolute;}
-.clearPlot{width:6px; height:6px;position:absolute;display:none; z-index:100; border:1px solid; border-color: rgba(128,128,128,0.25); cursor: pointer;}
-.plot{width:6px; height:6px;position:absolute;display:none; z-index:100;background:#90610c; border:1px solid #968566; cursor: pointer;}
-.plot2{width:6px; height:6px;position:absolute;display:none; z-index:100;background:#5c1cd9; border:1px solid #916cd8; cursor: pointer;}
-.plot2_white{width:6px; height:6px;position:absolute;display:none; z-index:100;background:#5c1cd9; border:1px solid #ffffff; cursor: pointer;}
-.plot3{width:6px; height:6px;position:absolute;display:none; z-index:100;background:#33f5b6; border:1px solid #2cdca3; cursor: pointer;}
-.plot3_white{width:6px; height:6px;position:absolute;display:none; z-index:100;background:#33f5b6; border:1px solid #ffffff; cursor: pointer;}
-.plot-wraper{position:relative; width:6px; height:6px; left:900px; top:900px;}
+.axieMap img{width:1505px;height:1505px;position:absolute;}
+.plot{width:5px; height:5px;position:absolute;display:none; z-index:100;background:#90610c; border:1px solid #968566; cursor: pointer;}
+.plot2{width:5px; height:5px;position:absolute;display:none; z-index:100;background:#5c1cd9; border:1px solid #916cd8; cursor: pointer;}
+.plot2_white{width:5px; height:5px;position:absolute;display:none; z-index:100;background:#5c1cd9; border:1px solid #ffffff; cursor: pointer;}
+.plot3{width:5px; height:5px;position:absolute;display:none; z-index:100;background:#33f5b6; border:1px solid #2cdca3; cursor: pointer;}
+.plot3_white{width:5px; height:5px;position:absolute;display:none; z-index:100;background:#33f5b6; border:1px solid #ffffff; cursor: pointer;}
+.plot-wraper{position:relative; width:5px; height:5px; left:750px; top:750px;}
+.xy{padding:10px;}
 .blink {
   animation: blink-animation 1s steps(5, start) infinite;
   -webkit-animation: blink-animation 1s steps(5, start) infinite;
@@ -62,48 +62,33 @@
 </style>
 
 </head>
-<body>
-<br>
-<div class="container ml-0">
-    <div class="container ">
-        <form>
-            <div class="form-group row">
-                <input class="form-control col-3" placeholder="X" id="x" name="x" />
-                <input class="form-control col-3" placeholder="Y" id="y" name="y"/><br>
-            </div>
-            <div class="form-group row">
-                <input class="form-control col-6" placeholder="ETH Addr (also CSV)" id="accountId" name="accountId" size="50"/>
-                <input class="form-control col-6" placeholder="ETH Addr2 (also CSV)" id="accountId2" name="accountId2" size="50"/>
-                <input class="btn btn-primary mt-1" type="submit" value="Go" id="Go" />
-            </div>
-        </form>
-    </div>
-    <div class="pb-1">
-        <button id="toolTipButton" class="btn btn-secondary">Turn on fancy coordinates</button>
-        <div id="loading" class="spinner-border spinner-border-sm"></div>
-    </div>
-    <div class="axieMap">
-    <img src="/axie/images/lunacia_map.png"></img>
-    <div class="plot-wraper" id="map">
-
-    </div>
-    </div>
+<body >
+<div class="xy">
+    <form>
+        <input placeholder="X" id="x" name="x" />
+        <input placeholder="Y" id="y" name="y"/><br>
+        <input placeholder="ETH Addr (also CSV)" id="accountId" name="accountId" size="50"/>
+        <input placeholder="ETH Addr2 (also CSV)" id="accountId2" name="accountId2" size="50"/>
+        <input type="submit" value="go" id="Go" />
+    </form>
 </div>
+<div class="axieMap">
+<img src="/axie/images/lunacia_map.png"></img>
+<div class="plot-wraper" id="map">
+
+</div>
+</div>
+
 <script>
 
-function makeSpot(x, y, cls, price, mark=true) {
-    plotx = x*6;
-    ploty = y*6;
+function makeSpot(x, y, cls, price) {
+    plotx = x*5;
+    ploty = y*5;
     let tip = x + ", " + y;
     if (price) {
         tip += "<br>" + Number((parseFloat(price)/1e18).toFixed(3)) + " ETH";
     }
-    let spot;
-    if (mark) {
-        spot = $("<div/>", {class: cls, title: tip, "data-toggle": "tooltip", "data-html": "true"});
-    } else {
-        spot = $("<div/>", {class: cls, title: tip, "data-toggle": "tooltip", "data-html": "true"});
-    }
+    let spot = $("<div/>", {class: cls, title: tip, "data-toggle": "tooltip", "data-html": "true"});
     spot.css({ top: ploty });
     spot.css({ left: plotx });;
     spot.css({"display" : "block" } );
@@ -112,10 +97,6 @@ function makeSpot(x, y, cls, price, mark=true) {
         window.open(url, "_blank");
     });
     $("#map").append(spot);
-    if (mark === true && x + 150 < MAX_X && y + 150 < MAX_Y) {
-        console.log(x+150,y+150);
-        markMap(x, y, 1);
-    }
     return spot;
 }
 
@@ -194,36 +175,10 @@ async function doAccount(accountParam, style="plot2") {
     }
 }
 
-const MAX_X = 140;
-const MAX_Y = 181;
-var allMap = new Array(MAX_X);
-for (let i = 0; i < MAX_X; i++) {
-    allMap[i] = new Array(MAX_Y);
-    allMap[i].fill(0);
-}
-//-150,-150     150,-150
-//-150,150.     150,150
-
-function markMap(x, y, value) {
-    allMap[x + 150][y + 150] = value;
-}
-
-function plotAll() {
-     for (let x = 0; x < MAX_X; x++) {
-        for (let y = 0; y < MAX_Y; y++) {
-            if (allMap[x][y] === 0) {
-                makeSpot(x-150, y-150, "clearPlot", null, false);
-            }
-        }
-    }
-};
-
 var hash = window.location.hash.substr(1);
 $( document ).ready(async function() {
-    $("#loading").hide();
     x = parseInt(getQueryParameter("x"));
     y = parseInt(getQueryParameter("y"));
-
     if (x && y) {
         $("#x").val(x);
         $("#y").val(y);
@@ -236,13 +191,6 @@ $( document ).ready(async function() {
     await doAccount("accountId");
     await doAccount("accountId2", "plot3");
     $('[data-toggle="tooltip"]').tooltip();
-    plotAll();
-    $("#toolTipButton").on("click", () => {
-        $("#loading").show(() => {
-            $('[data-toggle="tooltip"]').tooltip();
-            $("#loading").hide();
-        });
-    });
 });
 </script>
 
