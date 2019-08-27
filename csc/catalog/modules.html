@@ -16,7 +16,6 @@
         gtag('config', 'UA-116189657-1');
         </script>
         <script src="../../axie/js/utils.js"></script>
-        <script src="../js/mods.js"></script>
         <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.16/css/jquery.dataTables.min.css" integrity="sha384-1UXhfqyOyO+W+XsGhiIFwwD3hsaHRz2XDGMle3b8bXPH5+cMsXVShDoHA3AH/y/p" crossorigin="anonymous">
         <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js" integrity="sha384-Z9D45cp3elqajO+xEyjRTIK1Gr3eYsXiyCPIKNog1sIQzpo2fqFDqFdADGiJjzOv" crossorigin="anonymous"></script>
         <style>
@@ -29,7 +28,8 @@
 
 <script>
 
-    function init() {
+    var modules = [];
+    async function init() {
         $.ajax({
             url: "../../header.html",
             cache: false,
@@ -38,6 +38,14 @@
                 $("#headerDiv").html(data);
             }
         });
+        let r = await fetch("NFTMasterData.json");
+        let nfts = await r.json();
+        for (let i in nfts) {
+            if (nfts[i].type == "module") {
+                modules.push(nfts[i])
+            }
+        }
+        modules.sort(function(a, b){return parseInt(a.itemID)-parseInt(b.itemID)});
     }
 
     function renderStatus(data, type, row, meta) {
@@ -79,8 +87,8 @@
     }
 
     var modTable;
-    $(document).ready(function(){
-        init();
+    $(document).ready(async function(){
+        await init();
         modTable = $('#modTable').DataTable({
             data: modules,
             columns: [
