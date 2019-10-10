@@ -53,7 +53,8 @@
         </nav>
         <script>
             var donationAddress = '0x209045cfe98445d6541d4fdf560d0d63fad77753';
-            const BLOCKS_SEC = 15;
+            //const BLOCKS_SEC = 15;
+            const BLOCKS_SEC = 13.6;
             const BLOCKS_MONTH = (30 * 24 * 60 * 60)/BLOCKS_SEC;
             const LIMIT = 100;
 
@@ -77,24 +78,15 @@
 
             var totalDonated = 0;
             function getTransactions(url, page, callback) {
-                let pagedUrl = url + "&page=" + page;
-                $.get({url: pagedUrl}, function(txData) {
-                    let totalTx = txData.total;
-                    let pages = txData.pages;
-                    let transactions = txData.docs;
-                    //console.log("page: " + page)
-                    //console.log(txData);
+                $.get({url: url}, function(txData) {
+                    //used to use trustwallet API that provided total # of TXes, but etherscan doesn't provide total records. It just dumps them all up to the last 10k which should not be a problem for the foreseeable future.
+                    let transactions = txData.result;
                     for (let i = 0; i < transactions.length; i++) {
                         if (transactions[i].to == donationAddress) {
                             totalDonated += parseInt(transactions[i].value)/1e18;
                         }
                     }
-                    //console.log(totalDonated);
-                    if (page < pages) {
-                        getTransactions(url, page + 1, callback);
-                    } else {
-                        callback();
-                    }
+                    callback();
                 }).fail(function( jqXHR, textStatus, errorThrown ) {
                     console.log("Failed getting Transactions: " + textStatus + " " + errorThrown);
                 });
@@ -103,7 +95,7 @@
             $.get({url: 'https://api.blockcypher.com/v1/eth/main', dataType: 'json'}, function(data) {
                 let currentBlock = data.height;
                 let start = currentBlock - BLOCKS_MONTH;
-                let url = 'https://api.trustwalletapp.com/transactions?address=' + donationAddress + '&startBlock=' + start + '&endBlock=' + currentBlock + '&limit=' + LIMIT;
+                let url = 'https://api.etherscan.io/api?apikey=&module=account&action=txlist&address=' + donationAddress + '&startBlock=' + start + '&endBlock=' + currentBlock;
                 getTransactions(url, 1, function() {
                     $("#donated").text("Donations this month: " + totalDonated.toFixed(3));
                 });
