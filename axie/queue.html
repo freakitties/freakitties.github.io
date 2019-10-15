@@ -302,7 +302,8 @@ function renderAxie(data, type, full, meta) {
                 let out = htmlRenderAxie(data, divId);
                 $("#" + divId).empty();
                 $("#" + divId).html(out);
-                if (axies[id].owner != web3.eth.accounts[0]) {
+                let address = web3.eth.accounts[0];
+                if (axies[id].owner != address) {
                     $("#" + divId).addClass("rela");
                     $("#" + divId).append($("<div/>", {class: "notYourAxie pointer"}).on('click', () => {window.open('https://axieinfinity.com/axie/' + id + '?r=freak', '_blank');}));
                     let hash = window.location.hash.substr(1);
@@ -617,10 +618,13 @@ function init(){
     }
     if (navigator.userAgent.match(/iPhone|iPad|iPod/i)) {
         pageLength = 10;
-        expCheckpointContract = web3.eth.contract(expCheckpointABI);
-    } else {
+        //expCheckpointContract = web3.eth.contract(expCheckpointABI);
+    }
+    /*else {
         expCheckpointContract = web3query.eth.contract(expCheckpointABI);
     }
+    */
+    expCheckpointContract = web3.eth.contract(expCheckpointABI);
     expCheckpointInstance = expCheckpointContract.at(expCheckpointAddress);
 
     storageKey = "freakitties.github.io" + "_MATCHES_" + web3.eth.accounts[0];
@@ -662,7 +666,6 @@ window.addEventListener('load', async () => {
     // Modern dapp browsers...
     if (window.ethereum) {
         window.web3 = new Web3(ethereum);
-        window.web3query = new Web3(new Web3.providers.HttpProvider('https://mainnet.infura.io/v3/e9394133a3824a4d8ececb4384c3b1a2'));
         BigNumber = web3.BigNumber;
         try {
             // Request account access if needed
@@ -676,7 +679,6 @@ window.addEventListener('load', async () => {
     // Legacy dapp browsers...
     else if (window.web3) {
         window.web3 = await new Web3(web3.currentProvider);
-        window.web3query = await new Web3(new Web3.providers.HttpProvider('https://mainnet.infura.io/v3/e9394133a3824a4d8ececb4384c3b1a2'));
         BigNumber = web3.BigNumber;
         // Acccounts always exposed
         console.log("legacy dapp browser");
@@ -707,7 +709,8 @@ window.addEventListener('load', async () => {
 
 var beansActive = false;
 function checkBlessing() {
-    let url = "https://api.axieinfinity.com/v1/battle/battle/check-charm/" + web3.eth.accounts[0];
+    let address = web3.eth.accounts[0];
+    let url = "https://api.axieinfinity.com/v1/battle/battle/check-charm/" + address;
     $.getJSON(url, function(data) {
 
         if (!data.isCharmActivated) {
