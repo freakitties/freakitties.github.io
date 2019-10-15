@@ -613,17 +613,9 @@ function init(){
             $("#account").text("Your Account: " + web3.eth.accounts[0]);
         }
     }
-    if (navigator.userAgent.match(/Android/i)) {
+    if (navigator.userAgent.match(/Android/i) || navigator.userAgent.match(/iPhone|iPad|iPod/i)) {
         pageLength = 10;
     }
-    if (navigator.userAgent.match(/iPhone|iPad|iPod/i)) {
-        pageLength = 10;
-        //expCheckpointContract = web3.eth.contract(expCheckpointABI);
-    }
-    /*else {
-        expCheckpointContract = web3query.eth.contract(expCheckpointABI);
-    }
-    */
     expCheckpointContract = web3.eth.contract(expCheckpointABI);
     expCheckpointInstance = expCheckpointContract.at(expCheckpointAddress);
 
