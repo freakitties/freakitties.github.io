@@ -400,7 +400,7 @@
         $("#loading").text("Calculating...");
         $("#loading").append('<div class="spinner-border spinner-border-sm"></div>');
         $("#loading").show();
-        calcWorker.postMessage({selectedParts: selectedParts, axies: axies, ignoreList: ignoreList});
+        calcWorker.postMessage({selectedParts: selectedParts, axies: axies, ignoreList: ignoreList, traitMapping: traitMapping});
     }
 
     var numToDisplay = 10;
