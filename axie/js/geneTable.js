@@ -98,9 +98,36 @@
         return bin;
     }
 
-    function renderGroup04(data, type, row, meta) {
-        let bin = data.slice(18, 32);
+    function renderBodySkin(data, type, row, meta) {
+        let bin = data.slice(18, 22);
         if(type === 'display'){
+            //Temporary until more bodies appear
+            if (bin == "0001") {
+                return '<div class="binary">' + bin + '</div>Frosty';
+            }
+            return '<div class="binary">' + bin + '</div>';
+        }
+        return bin;
+    }
+
+    //Temporary map. Just represent parts (yes/no) for now.
+    //TODO: consider breaking this up into 2 bit chunks
+    var skinMap = {"eyes": parseInt("010000000000", 2), "mouth": parseInt("000100000000", 2), "ears": parseInt("000001000000", 2), "horn": parseInt("000000010000", 2), "back": parseInt("000000000100", 2), "tail": parseInt("000000000001", 2)}
+    var skinMapNames = {"eyes": {"010000000000": "Icy Gaze"}, "mouth": {"000100000000": "Tiny Carrot"}, "ears": {"000001000000": "Pinecones"}, "horn": {"000000010000": "Santa's Gift"}, "back": {"000000000100": "Frozen Bucket"}, "tail": {"000000000001": "Fir Trunk"}}
+    function renderPartSkin(data, type, row, meta) {
+        let bin = data.slice(22, 34);
+        if(type === 'display'){
+            let binVal = parseInt(bin, 2)
+            let skinned = [];
+            for (let part in skinMap) {
+                //TODO: fix this when skinned value overflows into the 2nd bit
+                if (skinMap[part] & binVal) {
+                    skinned.push(part);
+                }
+            }
+            if (skinned.length > 0) {
+                return '<div class="binary">' + bin + '</div>' + skinned.join(", ");
+            }
             return '<div class="binary">' + bin + '</div>';
         }
         return bin;
@@ -119,7 +146,7 @@
     //bigyak 33 + 34 = 49
     var patternMap = {"000001": "greyfuzzy","000010": "(0, 0, 64, 130)", "000011": "(0, 0, 61, 107)", "000100": "(0, 0, 82, 74)", "000101": "(0, 0, 66, 101)", "000110": "(0, 0, 51, 134)", "000111": "(0, 0, 57, 117)", "001000": "(0, 0, 59, 67)", "001001": "(0, 0, 51, 104)", "001010": "(0, 0, 63, 131)", "001011": "(0, 0, 73, 153)", "001100": "(0, 0, 78, 127)", "001101": "(0, 0, 63, 99)", "001110": "(0, 0, 65, 55)", "011101": "greyspiky", "011110": "greycurly", "100001": "greywetdog", "100010": "greychubby", "110001": "greybigyak"};
     function renderPatternD(data, type, row, meta) {
-        let bin = data.slice(2, 8);
+        let bin = data.slice(0, 6);
         if(type === 'display'){
             let pattern = patternMap[bin];
             if (pattern) {
@@ -133,7 +160,7 @@
     }
 
     function renderPatternR1(data, type, row, meta) {
-        let bin = data.slice(8, 14);
+        let bin = data.slice(6, 12);
         if(type === 'display'){
             let pattern = patternMap[bin];
             if (pattern) {
@@ -147,7 +174,7 @@
     }
 
     function renderPatternR2(data, type, row, meta) {
-        let bin = data.slice(14, 20);
+        let bin = data.slice(12, 18);
         if(type === 'display'){
             let pattern = patternMap[bin];
             if (pattern) {
@@ -174,7 +201,7 @@
     "1010": {"0010": "62c5c3", "0011": "389ec6","0100": "1bc4c4"}};
 
     function renderGroup16(data, type, row, meta) {
-        let bin = data.slice(20, 24);
+        let bin = data.slice(18, 22);
         let color = "";
         if(type === 'display'){
             if (bin == "0000") {
@@ -191,7 +218,7 @@
     }
 
     function renderGroup17(data, type, row, meta) {
-        let bin = data.slice(24, 28);
+        let bin = data.slice(22, 26);
         let color = "";
         if(type === 'display'){
             if (bin == "0000") {
@@ -209,7 +236,7 @@
     }
 
     function renderGroup18(data, type, row, meta) {
-        let bin = data.slice(28, 32);
+        let bin = data.slice(26, 30);
         let color = "";
         if(type === 'display'){
             if (bin == "0000") {
@@ -260,7 +287,7 @@
     }
 
     //skinBinary is the first 2 bits of the group (e.g. mystic is 11). It's same skinBinary for all 3 D, R1, R2
-    function getTraitName(row, skinBinary, classBinary, traitBinary, type, checkMystic = false) {
+    function getTraitName(row, skinBinary, classBinary, traitBinary, type, checkMystic = false, newSkinBinary = null) {
 
         let region = getRegion(row);
         if (region == null) {
@@ -273,6 +300,14 @@
         }
         if (!(traitBinary in traitMapping[classGeneMap[classBinary]][type])) return "UNKNOWN";
         let name = "";
+        if (newSkinBinary != null) {
+            //TODO: fix this when skinned value overflows into the 2nd bit
+            for (skinBin in skinMapNames[type]) {
+                if (parseInt(skinBin, 2) & parseInt(newSkinBinary, 2)) {
+                    return skinMapNames[type][skinBin];
+                }
+            }
+        }
         if (skinBinary == "11" && checkMystic) {
             let isMystic = skinBinary == "11";
             name = traitMapping[classGeneMap[classBinary]][type][traitBinary]["mystic"];
@@ -300,7 +335,7 @@
 
     function renderGroup22(data, type, row, meta) {
         let bin = data.slice(6, 12);
-        name = getTraitName(row, data.slice(0, 2), data.slice(2, 6), bin, meta.settings.aoColumns[meta.col].sTitle.toLowerCase(), true);
+        name = getTraitName(row, data.slice(0, 2), data.slice(2, 6), bin, meta.settings.aoColumns[meta.col].sTitle.toLowerCase(), true, row.group0.slice(22, 34));
         if(type === 'display'){
             //name = getTraitName(row, data.slice(0, 6), bin, meta.settings.aoColumns[meta.col].sTitle.toLowerCase(), true);
             return '<div class="text-primary"><b><div class="binary">' + bin + "</div>" + name + "</b></div>";
@@ -404,8 +439,9 @@
                 let classBinary = row[group].slice(2, 6);
                 let cls = classGeneMap[classBinary];
                 let bin = row[group].slice(6, 12);
+                let newSkinBinary = row["group0"].slice(22, 34);
                 let html = "<tr><td>" + getTypeImage(cls, type) + "</td>";
-                name = getTraitName(row, skinBinary, classBinary, bin, type, true);
+                name = getTraitName(row, skinBinary, classBinary, bin, type, true, newSkinBinary);
                 if (skinBinary == "11") {
                     name += "*";
                 }
@@ -440,13 +476,12 @@
 
                 {title: "Class", data: "group0", render: renderGroup0, searchable: false},
                 {title: "0.1", data: "group0", render: renderGroup01, searchable: false},
-//                {title: "0.2", data: "group0", render: renderGroup02, searchable: false},
                 {title: "Region", data: "group0", render: renderRegion, searchable: false},
-//                {title: "0.4", data: "group0", render: renderGroup04, searchable: false},
                 {title: "Tag", data: "group0", render: renderTag, searchable: false},
-                {title: "0.4", data: "group0", render: renderGroup04, searchable: false},
+                {title: "Body Skin", data: "group0", render: renderBodySkin, searchable: false},
+                {title: "Part Skin", data: "group0", render: renderPartSkin, searchable: false},
+                //{title: "1.0", data: "group0", render: renderGroup1, searchable: false},
 
-                {title: "1.0", data: "group1", render: renderGroup1, searchable: false},
                 {title: "Pattern", data: "group1", render: renderPatternD, searchable: false},
                 {title: "Pattern R1", data: "group1", render: renderPatternR1, searchable: false},
                 {title: "Pattern R2", data: "group1", render: renderPatternR2, searchable: false},
@@ -530,7 +565,16 @@
         let numReptile = 0;
 
         for (let i = 0; i < 8; i++) {
-            row["group" + i] = axie.genes.slice(i * 32, i * 32 + 32);
+            if (i < 2 ) {
+                if (i == 0) {
+                    row["group" + i] = axie.genes.slice(0, 34);
+                } else {
+                    row["group" + i] = axie.genes.slice(34, 64);
+                }
+            } else {
+                row["group" + i] = axie.genes.slice(i * 32, i * 32 + 32);
+            }
+
             if (i > 1) {
                 if (row["group" + i].slice(0, 2) == "11") {
                     numMystic++;
