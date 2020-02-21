@@ -113,7 +113,6 @@ function makeSpot(x, y, cls, price, mark=true) {
     });
     $("#map").append(spot);
     if (mark === true && x + 150 < MAX_X && y + 150 < MAX_Y) {
-        console.log(x+150,y+150);
         markMap(x, y, 1);
     }
     return spot;
