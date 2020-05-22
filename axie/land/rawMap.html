@@ -107,7 +107,7 @@ function makeSpot(x, y, cls, price, mark=true) {
     spot.css({ top: ploty });
     spot.css({ left: plotx });;
     spot.css({"display" : "block" } );
-    let url = "https://land.axieinfinity.com/land/" + x + "/" + y;
+    let url = "https://marketplace.axieinfinity.com/land/" + x + "/" + y;
     spot.on("click", () => {
         window.open(url, "_blank");
     });
