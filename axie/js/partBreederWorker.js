@@ -50,12 +50,17 @@ function offThreadCalc(selectedParts, axies, ignoreList, traitMapping) {
     for (let id in axies) {
         if (ignoreList.has(parseInt(id))) continue;
         let axie = axies[id];
-        for (let typ in typePartMap) {
-            if (selectedIds.includes(axie.traits[typ].d.partId) || selectedIds.includes(axie.traits[typ].r1.partId) || selectedIds.includes(axie.traits[typ].r2.partId)) {
-                matchingParts[axie.id] = axie;
-                numMatched++;
-                break;
+        if (axies.length > 300) {
+            for (let typ in typePartMap) {
+                if (selectedIds.includes(axie.traits[typ].d.partId) || selectedIds.includes(axie.traits[typ].r1.partId) || selectedIds.includes(axie.traits[typ].r2.partId)) {
+                    matchingParts[axie.id] = axie;
+                    numMatched++;
+                    break;
+                }
             }
+        } else {
+            matchingParts[axie.id] = axie;
+            numMatched++;
         }
     }
     if (numMatched > 300) {
