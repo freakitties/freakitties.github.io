@@ -11,6 +11,7 @@
         <!-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js" integrity="sha384-tsQFqpEReu7ZLhBV2VZlAu7zcOV+rXbYlF2cqB8txI/8aZajjp4Bqd+V6D5IgvKT" crossorigin="anonymous"></script> -->
         <!-- jquery 3.3.1-->
         <script src="/js/jquery.min.js" integrity="sha384-tsQFqpEReu7ZLhBV2VZlAu7zcOV+rXbYlF2cqB8txI/8aZajjp4Bqd+V6D5IgvKT"></script>
+        <script src="/axie/js/api.js"></script>
         <script src="../../bignumber.min.js"></script>
         <script src="traitmapping.js"></script>
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
@@ -253,17 +254,18 @@
         return {cls: cls, region: region, pattern: pattern, color: color, eyes: eyes, mouth: mouth, ears: ears, horn: horn, back: back, tail: tail};
     }
 
-    function getAxie(id, callback) {
-        $.get({url: "https://axieinfinity.com/api/v2/axies/" + parseInt(id)}, function(data, status, xhr) {
-            if (data.stage < 3) {
-                callback(null);
-                return;
-            }
-            var axie = {"id": id, "sireId": data.sireId, "matronId": data.matronId, "genes": genesToBin(new BigNumber(data.genes))}; //, "owner": data.owner, "class": data.class, "exp": data.exp};
-            if (callback != null) {
-                callback(axie);
-            }
-        });
+    async function getAxie(id, callback) {
+        let data = await getAxieDetails(id);
+
+        if (data.stage < 3) {
+            //callback(null);
+            return null;
+        }
+        var axie = {"id": id, "sireId": data.sireId, "matronId": data.matronId, "genes": genesToBin(new BigNumber(data.genes))}; //, "owner": data.owner, "class": data.class, "exp": data.exp};
+        return axie;
+        if (callback != null) {
+            callback(axie);
+        }
     }
 
     function getTypeImage(type) {
@@ -272,7 +274,7 @@
 
     function setImage(breeder, axieID) {
         let link = $("<a/>");
-        link.prop('href', 'https://axieinfinity.com/axie/' + axieID + '?r=freak');
+        link.prop('href', 'https://marketplace.axieinfinity.com/axie/' + axieID + '?r=freak');
         link.prop('target', '_blank');
         var img = $("#" + breeder + "Img");
         img.attr('src', 'https://storage.googleapis.com/assets.axieinfinity.com/axies/' + axieID + '/axie/axie-full.png');
@@ -281,6 +283,7 @@
         $("#" + breeder + "Link").append(link); //a little funky but ok
     }
 
+    /*
     var bodyPartsMap = {};
     function getBodyParts(callback) {
         $.getJSON("https://axieinfinity.com/api/v2/body-parts?withMoveDetails=true", (parts) => {
@@ -293,6 +296,7 @@
             console.log("Failed to get body parts from the API");
         });
     }
+    */
 
     function doIt() {
         let sireId = parseInt(getQueryParameter("sireId"));
@@ -322,9 +326,7 @@
                 $("#headerDiv").html(data);
             }
         });
-        getBodyParts(() => {
-            doIt();
-        });
+        doIt();
     }
 
     function getQueryParameter(name) {
@@ -399,8 +401,9 @@
                 let color = sorted[i][0];
                 out += '<div class="col-7 col-lg-6 mt-1 mb-1"><img width="35" src="colors/' + color + '-body.png"></div><div class="col-5 col-lg-6">' + percentage + (parseInt(percentage) ? "%" : "") + "</div>";
             } else {
-                out += '<div class="col-7 col-lg-6 mt-1 mb-1" ';
+                out += '<div class="col-7 col-lg-6 mt-1 mb-1" >';
                 let traitId = trait.toLowerCase() + "-" + partName.toLowerCase().replace(/\s/g, "-").replace(/[\?']/g, "");
+                /*
                 let part = bodyPartsMap[traitId];
                 let tipText = "";
                 if (part.hasOwnProperty("move")) {
@@ -410,6 +413,7 @@
                     }
                 }
                 out += 'data-toggle="tooltip" title="' + tipText + '"' + ">";
+                */
                 out += '<img width="18" src="' + images[partsClassMap[sorted[i][0] + " " + trait]] + '"> &nbsp;' + weakEscape(partName) + '</div><div class="col-5 col-lg-6">' + percentage + (parseInt(percentage) ? "%" : "") + "</div>";
 
             }
@@ -461,59 +465,57 @@
         return true;
     }
 
-    function calc(sireId, matronId) {
+    async function calc(sireId, matronId) {
         if (!sireId || !matronId) {
             setError("Invalid axie ID");
             return;
         }
-        getAxie(sireId, function(sire) {
-            if (!sire) {
-                $("#result").text(sireId + " has no genes");
-                return;
+        let sire = await getAxie(sireId);
+        if (!sire) {
+            $("#result").text(sireId + " has no genes");
+            return;
+        }
+        let matron = await getAxie(matronId);
+        let sireTraits = getTraits(sire.genes);
+        let matronTraits = getTraits(matron.genes);
+
+        if (sireId == matronId) {
+            var patternProbs = traitsToProb(sireTraits.pattern);
+            var colorProbs = traitsToProb(sireTraits.color);
+            var eyesProbs = traitsToProb(sireTraits.eyes);
+            var mouthProbs = traitsToProb(sireTraits.mouth);
+            var earsProbs = traitsToProb(sireTraits.ears);
+            var hornProbs = traitsToProb(sireTraits.horn);
+            var backProbs = traitsToProb(sireTraits.back);
+            var tailProbs = traitsToProb(sireTraits.tail);
+        } else {
+            var patternProbs = sumProbs(sireTraits.pattern, matronTraits.pattern);
+            var colorProbs = sumProbs(sireTraits.color, matronTraits.color);
+            var eyesProbs = sumProbs(sireTraits.eyes, matronTraits.eyes);
+            var mouthProbs = sumProbs(sireTraits.mouth, matronTraits.mouth);
+            var earsProbs = sumProbs(sireTraits.ears, matronTraits.ears);
+            var hornProbs = sumProbs(sireTraits.horn, matronTraits.horn);
+            var backProbs = sumProbs(sireTraits.back, matronTraits.back);
+            var tailProbs = sumProbs(sireTraits.tail, matronTraits.tail);
+            if (!isBreedable(sire, matron)) {
+                $("#result").prepend('<span class="text-warning">WARNING: These two axies are related and cannot be bred.</span><br><br>');
             }
-            getAxie(matronId, function(matron) {
-                let sireTraits = getTraits(sire.genes);
-                let matronTraits = getTraits(matron.genes);
+        }
 
-                if (sireId == matronId) {
-                    var patternProbs = traitsToProb(sireTraits.pattern);
-                    var colorProbs = traitsToProb(sireTraits.color);
-                    var eyesProbs = traitsToProb(sireTraits.eyes);
-                    var mouthProbs = traitsToProb(sireTraits.mouth);
-                    var earsProbs = traitsToProb(sireTraits.ears);
-                    var hornProbs = traitsToProb(sireTraits.horn);
-                    var backProbs = traitsToProb(sireTraits.back);
-                    var tailProbs = traitsToProb(sireTraits.tail);
-                } else {
-                    var patternProbs = sumProbs(sireTraits.pattern, matronTraits.pattern);
-                    var colorProbs = sumProbs(sireTraits.color, matronTraits.color);
-                    var eyesProbs = sumProbs(sireTraits.eyes, matronTraits.eyes);
-                    var mouthProbs = sumProbs(sireTraits.mouth, matronTraits.mouth);
-                    var earsProbs = sumProbs(sireTraits.ears, matronTraits.ears);
-                    var hornProbs = sumProbs(sireTraits.horn, matronTraits.horn);
-                    var backProbs = sumProbs(sireTraits.back, matronTraits.back);
-                    var tailProbs = sumProbs(sireTraits.tail, matronTraits.tail);
-                    if (!isBreedable(sire, matron)) {
-                        $("#result").prepend('<span class="text-warning">WARNING: These two axies are related and cannot be bred.</span><br><br>');
-                    }
-                }
+        renderProbs("eyes", eyesProbs, "row1");
+        $("#row1").append('<div class="col-1"></div>');
+        renderProbs("ears", earsProbs, "row1");
+        renderProbs("mouth", mouthProbs, "row2");
+        $("#row2").append('<div class="col-1"></div>');
+        renderProbs("horn", hornProbs, "row2");
+        renderProbs("back", backProbs, "row3");
+        $("#row3").append('<div class="col-1"></div>');
+        renderProbs("tail", tailProbs, "row3");
+        renderProbs("pattern", patternProbs, "row4");
+        $("#row4").append('<div class="col-1"></div>');
+        renderProbs("color", colorProbs, "row4");
 
-                renderProbs("eyes", eyesProbs, "row1");
-                $("#row1").append('<div class="col-1"></div>');
-                renderProbs("ears", earsProbs, "row1");
-                renderProbs("mouth", mouthProbs, "row2");
-                $("#row2").append('<div class="col-1"></div>');
-                renderProbs("horn", hornProbs, "row2");
-                renderProbs("back", backProbs, "row3");
-                $("#row3").append('<div class="col-1"></div>');
-                renderProbs("tail", tailProbs, "row3");
-                renderProbs("pattern", patternProbs, "row4");
-                $("#row4").append('<div class="col-1"></div>');
-                renderProbs("color", colorProbs, "row4");
-
-                $('[data-toggle="tooltip"]').tooltip();
-            });
-        })
+        $('[data-toggle="tooltip"]').tooltip();
     }
 
 </script>

@@ -18,6 +18,7 @@
         <script src="https://cdn.datatables.net/buttons/1.5.2/js/dataTables.buttons.min.js" integrity="sha384-zOjU8Lmrn7aY/0op2Zr4DRXhg0el3XJ4SEMVakZ7bni+KP5F9geHOJ0cWYSvj0HN" crossorigin="anonymous"></script>
         <script src="https://cdn.datatables.net/buttons/1.5.2/js/buttons.html5.min.js" integrity="sha384-EzXZHFRG/n4Omd1nQTNbrErjupvcy1TetvtLCAR9wX6U7/CnXYYe8Ea6l6n1KtM5" crossorigin="anonymous"></script>
         <script src="traitmapping.js"></script>
+        <script src="/axie/js/api.js"></script>
         <script src="js/utils.js"></script>
         <script src="js/geneTable.js"></script>
         <script src="js/axieChainUtils.js"></script>
@@ -171,68 +172,67 @@
         return bodyPartsMap[traitId];
     }
 
-    function getAxies(offset, address) {
-        let baseUrl = "https://axieinfinity.com/api/v2/addresses/" + address + "/axies?stage=3&stage=4";
-        let part = getQueryParameter("part");
-        if (part) {
-            baseUrl += "&part=" + part.replace(/[^a-zA-Z0-9\-]/g, "");
-        }
-        baseUrl += "&offset=";
-        let url = baseUrl + offset;
+    async function getAxies(offset, address) {
         var numSkipped = 0;
-        $.get(url, function(data, status, xhr) {
-            let percentage = (offset + 12)/data.totalAxies * 100;
-            $("#loading").text("Loading..." + Math.round(percentage) + "%");
-            for (let i in data.axies) {
-                if (data.axies[i].stage < 3) {
-                    numSkipped++;
-                    continue;
-                }
-                axies[data.axies[i].id] = {"id": data.axies[i].id, "genes": genesToBin(new BigNumber(data.axies[i].genes)), "owner": data.axies[i].owner, "class": data.axies[i].class, "exp": data.axies[i].exp, "sireId": data.axies[i].sireId, "matronId": data.axies[i].matronId, "stats": data.axies[i].stats, "name": data.axies[i].name, "breedCount": data.axies[i].breedCount, "expForBreeding": expForBreeding[data.axies[i].breedCount], "stage": data.axies[i].stage};    //update 3 places
-                let axie = axies[data.axies[i].id];
-                axie.traits = getTraits(axie.genes);
-                addRow(axies[data.axies[i].id]);
+        let data = await getAxiesByAddress(address, 0);
+        let percentage = (offset + AXIE_QUERY_SIZE)/data.total * 100;
+        $("#loading").text("Loading..." + Math.round(percentage) + "%");
+        for (let i in data.results) {
+            if (data.results[i].stage < 3) {
+                numSkipped++;
+                continue;
             }
-            let totalAxies = data.totalAxies;
-            if (totalAxies > 12) {
-                for (let i = 12; i < totalAxies; i+=12) {
-                    let url = baseUrl + i;
-                    $.get(url, function(data, status, xhr) {
-                        let percentage = (Object.keys(axies).length + 12)/data.totalAxies * 100;
-                        $("#loading").text("Loading..." + Math.round(percentage) + "%");
-                        for (let i in data.axies) {
-                            if (data.axies[i].stage < 3) {
-                                numSkipped++;
-                                continue;
-                            }
-                            axies[data.axies[i].id] = {"id": data.axies[i].id, "genes": genesToBin(new BigNumber(data.axies[i].genes)), "owner": data.axies[i].owner, "class": data.axies[i].class, "exp": data.axies[i].exp, "sireId": data.axies[i].sireId, "matronId": data.axies[i].matronId, "stats": data.axies[i].stats, "name": data.axies[i].name, "breedCount": data.axies[i].breedCount, "expForBreeding": expForBreeding[data.axies[i].breedCount], "stage": data.axies[i].stage};    //update 3 places
-                            let axie = axies[data.axies[i].id];
-                            axie.traits = getTraits(axie.genes);
-                            addRow(axies[data.axies[i].id]);
-                        }
-                        if (Object.keys(axies).length + numSkipped >= totalAxies) { //fudge incase over for some reason
-                            $("#loading").text("Done.")
-                            $("#loading").fadeOut(3500);
-                        }
-                    });
+            axies[data.results[i].id] = {"id": data.results[i].id, "genes": genesToBin(new BigNumber(data.results[i].genes)),  "class": data.results[i].class, "sireId": data.results[i].sireId, "matronId": data.results[i].matronId, "stats": data.results[i].stats, "name": data.results[i].name, "breedCount": data.results[i].breedCount, "stage": data.results[i].stage, "owner": data.results[i].owner};    //update 3 places
+            //"exp": data.results[i].exp,
+            //"expForBreeding": expForBreeding[data.results[i].breedCount],
+            let axie = axies[data.results[i].id];
+            axie.traits = getTraits(axie.genes);
+            addRow(axies[data.results[i].id]);
+        }
+        let totalAxies = data.total;
+        if (totalAxies > AXIE_QUERY_SIZE) {
+            for (let i = AXIE_QUERY_SIZE; i < totalAxies; i+=AXIE_QUERY_SIZE) {
+                let data = await getAxiesByAddress(address, i);
+                let percentage = (Object.keys(axies).length + AXIE_QUERY_SIZE)/data.total * 100;
+                $("#loading").text("Loading..." + Math.round(percentage) + "%");
+                for (let i in data.results) {
+                    if (data.results[i].stage < 3) {
+                        numSkipped++;
+                        continue;
+                    }
+                    axies[data.results[i].id] = {"id": data.results[i].id, "genes": genesToBin(new BigNumber(data.results[i].genes)), "class": data.results[i].class, "sireId": data.results[i].sireId, "matronId": data.results[i].matronId, "stats": data.results[i].stats, "name": data.results[i].name, "breedCount": data.results[i].breedCount, "stage": data.results[i].stage, "owner": data.results[i].owner};    //update 3 places
+                    //"exp": data.results[i].exp,
+                    //"expForBreeding": expForBreeding[data.results[i].breedCount],
+
+                    let axie = axies[data.results[i].id];
+                    axie.traits = getTraits(axie.genes);
+                    addRow(axies[data.results[i].id]);
                 }
-            } else {
-                $("#loading").text("Done.")
-                $("#loading").fadeOut(3500);
+                if (Object.keys(axies).length + numSkipped >= totalAxies) { //fudge incase over for some reason
+                    $("#loading").text("Done.")
+                    $("#loading").fadeOut(3500);
+                }
             }
-        });
+        } else {
+            $("#loading").text("Done.")
+            $("#loading").fadeOut(3500);
+        }
     }
 
-    function getAxie(id) {
-        $.get("https://axieinfinity.com/api/v2/axies/" + parseInt(id), function(data, status, xhr) {
-            if (data.stage < 3) {
-                return;
-            }
-            axies[data.id] = {"id": data.id, "genes": genesToBin(new BigNumber(data.genes)), "owner": data.owner, "class": data.class, "exp": data.exp, "sireId": data.sireId, "matronId": data.matronId, "stats": data.stats, "name": data.name, "breedCount": data.breedCount, "expForBreeding": expForBreeding[data.breedCount], "stage": data.stage}; //update 3 places
-            let axie = axies[data.id];
-            axie.traits = getTraits(axie.genes);
-            addRow(axies[data.id]);
-        });
+    async function getAxie(id) {
+        let data = await getAxieDetails(id);
+        //$.get("https://axieinfinity.com/api/v2/axies/" + parseInt(id), function(data, status, xhr) {
+        if (data.stage < 3) {
+            return;
+        }
+        axies[data.id] = {"id": data.id, "genes": genesToBin(new BigNumber(data.genes)), "class": data.class, "sireId": data.sireId, "matronId": data.matronId, "stats": data.stats, "name": data.name, "breedCount": data.breedCount, "stage": data.stage, "owner": data.owner}; //update 3 places
+        //"exp": data.exp,
+        //"expForBreeding": expForBreeding[data.breedCount],
+
+        let axie = axies[data.id];
+        axie.traits = getTraits(axie.genes);
+        addRow(axies[data.id]);
+        //});
     }
 
     var calcWorker;
@@ -456,15 +456,17 @@
         var img = $("#" + tag);
         img.attr('src', axie.image);
         var dataTag = $("#" + tag + "_data");
-        dataTag.text("Exp: " + (axie.exp ? axie.exp : 0) + " + " + axie.truePending);
-        dataTag.append($("<br>"));
-        let breeds = $("<div/>", {class: "row justify-content-center", text: "Breeds: " + axie.breedCount + " ("});
+        //dataTag.text("Exp: " + (axie.exp ? axie.exp : 0) + " + " + axie.truePending);
+        //dataTag.append($("<br>"));
+        let breeds = $("<div/>", {class: "row justify-content-center", text: "Breeds: " + axie.breedCount}); // + " ("});
+        /*
         if (axie.stage < 4 || axie.exp + axie.truePending < axie.expForBreeding) {
              breeds.append($("<div/>", {class: "text-danger", text: axie.expForBreeding}));
         } else {
             breeds.append($("<div/>", {class: "text-success", text: axie.expForBreeding}));
         }
         breeds.append(")");
+        */
         dataTag.append(breeds);
     }
 
