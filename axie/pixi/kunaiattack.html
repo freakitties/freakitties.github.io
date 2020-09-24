@@ -13,6 +13,7 @@
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/pixi.js/4.7.1/pixi.min.js" integrity="sha384-xdEN7ies9cZm/l8HslPhg0lGG/uQuIW2KQ/EVt71QFjarfJWY95fAMqbqw/1C2rX" crossorigin="anonymous"></script>
         <script src="pixi-spine.js"></script>
+        <script src="../js/api.js"></script>
 
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
         <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
@@ -96,7 +97,7 @@
 
         }
 
-        function getAxie() {
+        async function getAxie() {
             oldID = axieID;
             axieID = parseInt($("#axieID").val());
             if (!axieID) {
@@ -105,106 +106,90 @@
             }
             //if (oldID == axieID) return;
             localStorage.setItem("storedAxieID", axieID);
-            console.log(axieID);
 
             //Test site
-            //$.get({url: "http://axie.axieinfinity.co/api/v1/figure/" + axieID}, function(data, status, xhr) {
-            $.get({url: "https://axieinfinity.com/api/axies/" + axieID}, function(data, status, xhr) {
-                if (data.stage < 3) {
-                    alert("This axie is either a larva or an egg.")
-                    return;
-                }
-                let imageName = axieID + ".png";
-                //prevent using cache...AI servers have wonky CORS config.
-                atlasURL = data["figure"]["atlas"];
-                imageURL =  data["figure"]["images"]["axie.png"];
-                modelURL = data["figure"]["model"];
+            data = await getAxieDetails(axieID)
+            if (data.stage < 3) {
+                alert("This axie is either a larva or an egg.")
+                return;
+            }
+            let imageName = axieID + ".png";
+            //prevent using cache...AI servers have wonky CORS config.
+            atlasURL = data["figure"]["atlas"];
+            imageURL =  data["figure"]["image"]
+            modelURL = data["figure"]["model"];
 
-//atlasURL = "https://axieinfinity.com/assets/models/ab19de2b119e811ae576b581ebb8d60d.atlas"
-//imageURL = "https://axieinfinity.com/assets/models/fe8e753a148b171a91580dc5ac45e4a1.png"
-//modelURL = "https://axieinfinity.com/assets/models/473c8a72f4c0747b7851eba14118307b.json"
-//imageName = "kotaro.png"
-//no CORS headers
+            //more data intensive, but fixes CORS problems (mainly in testing)
+            let breakCache = "?" + escape(new Date());
+            atlasURL +=  breakCache;
+            imageURL +=  breakCache;
+            modelURL +=  breakCache;
 
-
-                //more data intensive, but fixes CORS problems (mainly in testing)
-                let breakCache = "?" + escape(new Date());
-                atlasURL +=  breakCache;
-                imageURL +=  breakCache;
-                modelURL +=  breakCache;
-
-                /*
-                //Test site
-                let imageName = "axie.png";
-                atlasURL = data["axie"]["atlas"];
-                imageURL =  data["axie"]["image"];
-                modelURL = data["axie"]["spineModel"];
-                */
-                let realImageName = imageURL.slice(imageURL.lastIndexOf("/") + 1, imageURL.length);
-                PIXI.loader.reset();
-                PIXI.loader
-                    .add('axie_atlas', atlasURL)
-                    .add('axie_png', imageURL)
-                    .add('kunai', 'assets/kunai.png')
-                    .add('arena', 'assets/arena.png')
-                    .load(function (loader, resources) {
-                        //cache false to circumvent server's CORS caching. Server should use Vary: Origin ? or Access-Control-Allow-Origin: *
-                        $.get({url: modelURL, dataType: "json"}, function(rawSkeletonData) {
-                            const rawAtlasData = resources['axie_atlas'].data.replace(/(shadow\s*\n.*?size: )(.*?)(\n.*?\n\s*tail)/s, "$1" + "1, 1" + "$3"); //replace shadow with 1x1 pixel
-                            const spineAtlas = new PIXI.spine.core.TextureAtlas(rawAtlasData, function (line, callback) {
-                                //use hash name instead of name from file
-                                callback(PIXI.BaseTexture.from('axie_png'));
-                            });
-
-                            const spineAtlasLoader = new PIXI.spine.core.AtlasAttachmentLoader(spineAtlas);
-                            const spineJsonParser = new PIXI.spine.core.SkeletonJson(spineAtlasLoader);
-
-                            spineData = spineJsonParser.readSkeletonData(rawSkeletonData);
-
-                            axie = new PIXI.spine.Spine(spineData);
-
-                            //mirror image axie
-                            //axie.scale.x = -1;
-                            axie.scale.set(-SCALING_FACTOR, SCALING_FACTOR);
-
-                            axie.position.set(app.view.width/8 , app.view.height * 0.6);
-
-                            axie.stateData.setMix("action/idle", "action/appear", 0.2);
-                            axie.stateData.setMix("action/appear", "action/idle", 0.2);
-
-                            axie.stateData.setMix("attack/melee/mouth-bite", "action/idle", 0.2);
-                            axie.stateData.setMix("action/idle", "attack/melee/mouth-bite", 0.2);
-
-                            axie.state.setAnimation(0, 'action/idle', true);
-//axie.alpha = 0.3;
-                            app.stage.removeChildren();
-
-                            var arena = new PIXI.Sprite(PIXI.loader.resources.arena.texture)
-                            arena.alpha=0.75;
-                            let bgScale = app.view.width/arena.width;
-                            arena.scale.set(bgScale, bgScale);
-                            arena.position.y = - app.view.height/arena.height * app.view.height;
-                            app.stage.addChild(arena);
-
-                            app.stage.addChild(axie);
-                            PIXI.spine.Spine.globalAutoUpdate = true;
-
-                            if (!started) {
-                                startText = new PIXI.Text("Press Enter to start", {fontFamily : 'Comic Sans MS', fontSize: 75, fill : 0x7A81FF, align : 'center'});
-                                startText.position.x = app.view.width/2 - startText.width/2;
-                                startText.position.y = 50;
-                                app.stage.addChild(startText);
-                            }
-
-                            app.start();
-                            startGameStates();
-                        }).fail(function() {
-                            alert("Failed to get Axie info. Bad Server Config?");
-                            $("#axieID").val(oldID);
-                            axieID = oldID;
+            let realImageName = imageURL.slice(imageURL.lastIndexOf("/") + 1, imageURL.length);
+            PIXI.loader.reset();
+            PIXI.loader
+                .add('axie_atlas', atlasURL)
+                .add('axie_png', imageURL)
+                .add('kunai', 'assets/kunai.png')
+                .add('arena', 'assets/arena.png')
+                .load(function (loader, resources) {
+                    //cache false to circumvent server's CORS caching. Server should use Vary: Origin ? or Access-Control-Allow-Origin: *
+                    $.get({url: modelURL, dataType: "json"}, function(rawSkeletonData) {
+                        const rawAtlasData = resources['axie_atlas'].data.replace(/(shadow\s*\n.*?size: )(.*?)(\n.*?\n\s*tail)/s, "$1" + "1, 1" + "$3"); //replace shadow with 1x1 pixel
+                        const spineAtlas = new PIXI.spine.core.TextureAtlas(rawAtlasData, function (line, callback) {
+                            //use hash name instead of name from file
+                            callback(PIXI.BaseTexture.from('axie_png'));
                         });
+
+                        const spineAtlasLoader = new PIXI.spine.core.AtlasAttachmentLoader(spineAtlas);
+                        const spineJsonParser = new PIXI.spine.core.SkeletonJson(spineAtlasLoader);
+
+                        spineData = spineJsonParser.readSkeletonData(rawSkeletonData);
+
+                        axie = new PIXI.spine.Spine(spineData);
+
+                        //mirror image axie
+                        //axie.scale.x = -1;
+                        axie.scale.set(-SCALING_FACTOR, SCALING_FACTOR);
+
+                        axie.position.set(app.view.width/8 , app.view.height * 0.6);
+
+                        axie.stateData.setMix("action/idle", "action/appear", 0.2);
+                        axie.stateData.setMix("action/appear", "action/idle", 0.2);
+
+                        axie.stateData.setMix("attack/melee/mouth-bite", "action/idle", 0.2);
+                        axie.stateData.setMix("action/idle", "attack/melee/mouth-bite", 0.2);
+
+                        axie.state.setAnimation(0, 'action/idle', true);
+//axie.alpha = 0.3;
+                        app.stage.removeChildren();
+
+                        var arena = new PIXI.Sprite(PIXI.loader.resources.arena.texture)
+                        arena.alpha=0.75;
+                        let bgScale = app.view.width/arena.width;
+                        arena.scale.set(bgScale, bgScale);
+                        arena.position.y = - app.view.height/arena.height * app.view.height;
+                        app.stage.addChild(arena);
+
+                        app.stage.addChild(axie);
+                        PIXI.spine.Spine.globalAutoUpdate = true;
+
+                        if (!started) {
+                            startText = new PIXI.Text("Press Enter to start", {fontFamily : 'Comic Sans MS', fontSize: 75, fill : 0x7A81FF, align : 'center'});
+                            startText.position.x = app.view.width/2 - startText.width/2;
+                            startText.position.y = 50;
+                            app.stage.addChild(startText);
+                        }
+
+                        app.start();
+                        startGameStates();
+                    }).fail(function() {
+                        alert("Failed to get Axie info. Bad Server Config?");
+                        $("#axieID").val(oldID);
+                        axieID = oldID;
                     });
-            });
+                });
+
         }
 
 
