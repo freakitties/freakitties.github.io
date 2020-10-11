@@ -18,12 +18,22 @@ function validateAddress(address) {
 }
 
 var AXIE_QUERY_SIZE = 100;
-async function getAxiesByAddress(address, offset, parts="null") {
+const ALL_CLASSES = ["Beast", "Bug", "Bird", "Plant", "Aquatic", "Reptile"];
+//cls is single class, purenesses is a csv string of ints. TODO: validate purenesses
+async function getAxiesByAddress(address, offset, parts="null", cls="", purenesses="") {
+    if (cls != "") {
+      if (!ALL_CLASSES.includes(cls)) {
+        console.log("class not found " + cls);
+        cls = "";
+      } else {
+        cls = "\"" + cls + "\"";
+      }
+    }
     let response = await (await fetch("https://axieinfinity.com/graphql-server/graphql", {
       "headers": {
         "content-type": "application/json",
       },
-      "body": "{\"operationName\":\"GetAxieBriefList\",\"variables\":{\"from\":" + offset + ",\"size\":" + AXIE_QUERY_SIZE + ",\"sort\":\"IdDesc\",\"auctionType\":\"All\",\"owner\":\"" + validateAddress(address) + "\",\"criteria\":{\"region\":null,\"parts\":" + parts + ",\"bodyShapes\":null,\"classes\":null,\"stages\":null,\"numMystic\":null,\"pureness\":null,\"title\":null,\"breedable\":null,\"breedCount\":null,\"hp\":[],\"skill\":[],\"speed\":[],\"morale\":[]}},\"query\":\"query GetAxieBriefList($auctionType: AuctionType, $criteria: AxieSearchCriteria, $from: Int, $sort: SortBy, $size: Int, $owner: String) {\\n  axies(auctionType: $auctionType, criteria: $criteria, from: $from, sort: $sort, size: $size, owner: $owner) {\\n    total\\n    results {\\n      ...AxieBrief\\n      __typename\\n    }\\n    __typename\\n  }\\n}\\n\\nfragment AxieBrief on Axie {\\n  id\\n  name\\n  owner\\n  genes\\n  sireId\\n  matronId\\n  stage\\n  class\\n  breedCount\\n  image\\n  title\\n  battleInfo {\\n    banned\\n    __typename\\n  }\\n  auction {\\n    currentPrice\\n    currentPriceUSD\\n    __typename\\n  }\\n  parts {\\n    id\\n    name\\n    class\\n    type\\n    __typename\\n  }\\n  stats {\\n    ...AxieStats\\n    __typename\\n  }\\n  __typename\\n}\\n\\nfragment AxieStats on AxieStats {\\n  hp\\n  speed\\n  skill\\n  morale\\n  __typename\\n}\\n\"}",
+      "body": "{\"operationName\":\"GetAxieBriefList\",\"variables\":{\"from\":" + offset + ",\"size\":" + AXIE_QUERY_SIZE + ",\"sort\":\"IdDesc\",\"auctionType\":\"All\",\"owner\":\"" + validateAddress(address) + "\",\"criteria\":{\"region\":null,\"parts\":" + parts + ",\"bodyShapes\":null,\"classes\":[" + cls + "],\"stages\":null,\"numMystic\":null,\"pureness\":[" + purenesses + "],\"title\":null,\"breedable\":null,\"breedCount\":null,\"hp\":[],\"skill\":[],\"speed\":[],\"morale\":[]}},\"query\":\"query GetAxieBriefList($auctionType: AuctionType, $criteria: AxieSearchCriteria, $from: Int, $sort: SortBy, $size: Int, $owner: String) {\\n  axies(auctionType: $auctionType, criteria: $criteria, from: $from, sort: $sort, size: $size, owner: $owner) {\\n    total\\n    results {\\n      ...AxieBrief\\n      __typename\\n    }\\n    __typename\\n  }\\n}\\n\\nfragment AxieBrief on Axie {\\n  id\\n  name\\n  owner\\n  genes\\n  sireId\\n  matronId\\n  stage\\n  class\\n  breedCount\\n  image\\n  title\\n  battleInfo {\\n    banned\\n    __typename\\n  }\\n  auction {\\n    currentPrice\\n    currentPriceUSD\\n    __typename\\n  }\\n  parts {\\n    id\\n    name\\n    class\\n    type\\n    __typename\\n  }\\n  stats {\\n    ...AxieStats\\n    __typename\\n  }\\n  __typename\\n}\\n\\nfragment AxieStats on AxieStats {\\n  hp\\n  speed\\n  skill\\n  morale\\n  __typename\\n}\\n\"}",
       "method": "POST",
     })).json();
     return response.data.axies;

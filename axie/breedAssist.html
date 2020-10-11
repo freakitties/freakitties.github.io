@@ -14,12 +14,15 @@
         <!-- jquery 3.3.1-->
         <script src="/js/jquery.min.js" integrity="sha384-tsQFqpEReu7ZLhBV2VZlAu7zcOV+rXbYlF2cqB8txI/8aZajjp4Bqd+V6D5IgvKT"></script>
         <script src="/js/combinatorics.js"></script>
+        <script src="/axie/js/api.js"></script>
         <script src="traitmapping.js"></script>
         <script src="js/axieChainUtils.js"></script>
         <script src="js/constants.js"></script>
-        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
-        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
-        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.bundle.min.js" integrity="sha384-feJI7QwhOS+hwpX2zkaeJQjeiwlhOP+SdQDqhgvvo1DsjtiSQByFdThsxO669S2D" crossorigin="anonymous"></script>
+
+        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js" integrity="sha384-B4gt1jrGC7Jh4AgTPSdUtOBvfO8shuf57BaghqFfPlYxofvL8/KUEfYiJOMMV+rV" crossorigin="anonymous"></script>
+
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
+        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js" integrity="sha384-LtrjvnR4Twt/qOuYxE721u19sVFLVSA4hf/rRt6PrZTmiPltdZcI7q7PXQBYTKyf" crossorigin="anonymous"></script>
         <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.5.0/css/all.css" integrity="sha384-B4dIYHKNBt8Bc12p+WXckhzcICo0wtJAoU8YZTY5qE0Id1GSseTk6S+L3BlXeVIU" crossorigin="anonymous">
         <style>
             body {
@@ -180,15 +183,7 @@
         var img = $("#" + tag);
         img.attr('src', axie.image);
         var dataTag = $("#" + tag + "_data");
-        dataTag.text("Exp: " + (axie.exp ? axie.exp : 0) + " + " + axie.truePending);
-        dataTag.append($("<br>"));
-        let breeds = $("<div/>", {class: "row justify-content-center", text: "Breeds: " + axie.breedCount + " ("});
-        if (axie.stage < 4 || axie.exp + axie.truePending < axie.expForBreeding) {
-             breeds.append($("<div/>", {class: "text-danger", text: axie.expForBreeding}));
-        } else {
-            breeds.append($("<div/>", {class: "text-success", text: axie.expForBreeding}));
-        }
-        breeds.append(")");
+        let breeds = $("<div/>", {class: "row justify-content-center", text: "Breeds: " + axie.breedCount});
         dataTag.append(breeds);
     }
 
@@ -402,9 +397,7 @@
                             checkPure.push(i);
                         }
                     }
-                    if (checkPure.length == 1 && checkPure[0] > 0) {
-                        filterOptions.pureness = checkPure[0];
-                    }
+                    filterOptions.pureness = checkPure;
                     getFromAllAddresses(addresses, 0, filterOptions, () => {
                         for (let id in axies) {
                             let traits = getTraits(axies[id].genes);
@@ -426,10 +419,10 @@
 
                         allProbs = [];
                         let pairs = [];
-                        $("#loading").text("Calculating...");
+                        $("#loading").text("Calculating for " + Object.keys(axies).length + " axies...");
+                        $("#loading").append('<div class="spinner-border spinner-border-sm text-light"></div>');
                         //TODO: use web worker
-                        let calcId = setInterval(() => {
-                            clearInterval(calcId);
+                        setTimeout(() => {
                             for (let i in axies) {
                                 for (let j in axies) {
                                     let pair = Math.min(i, j) + "_" + Math.max(i, j);
@@ -660,62 +653,65 @@
 
     var axies = {};
 
-    function getAxies(address, filterOptions, callback) {
+    const capitalize = (s) => {
+        if (typeof s !== 'string') return '';
+        return s.charAt(0).toUpperCase() + s.slice(1);
+    }
+
+    async function getAxies(address, filterOptions, callback) {
         if (!web3.isAddress(address)) {
             alert("not a valid address");
             return;
         }
         let options = [];
-        for (let opt in filterOptions) {
-            options.push(opt + "=" + filterOptions[opt]);
+        cls = capitalize(filterOptions.class);
+        purenesses = filterOptions.pureness.join(",");
 
-        }
         let numAdded = 0;
-        let url = "https://axieinfinity.com/api/v2/addresses/" + address + "/axies?" + options.join("&") + "&offset=0";
         let numSkipped = 0;
+
         $("#loading").text("Loading axies for " + address + "...");
-        $.get(url, function(data, status, xhr) {
-            for (let i in data.axies) {
-                //XXX: consider optionalizing inclusion of petites
-                if (data.axies[i].stage < 3) {      //include petites
-                    numSkipped++;
-                    continue;
-                }
-                axies[data.axies[i].id.toString()] = {"id": data.axies[i].id, "genes": genesToBin(new BigNumber(data.axies[i].genes)), "class": data.axies[i].class, "exp": data.axies[i].exp, "breedCount": data.axies[i].breedCount, "expForBreeding": expForBreeding[data.axies[i].breedCount], "parts": data.axies[i].parts, "sireId": data.axies[i].sireId, "matronId": data.axies[i].matronId, "auction": data.axies[i].auction, "stage": data.axies[i].stage};
-                numAdded++;
+        let data = await getAxiesByAddress(address, 0, "null", cls, purenesses);
+        let percentage = (AXIE_QUERY_SIZE)/data.total * 100;
+        $("#loading").text("Loading axies for " + address + "..." + Math.round(percentage) + "%");
+
+        for (let i in data.results) {
+            if (data.results[i].stage < 3) {
+                numSkipped++;
+                continue;
             }
-            let percentage = numAdded/data.totalAxies * 100;
-            $("#loading").text("Loading axies for " + address + "..." + Math.round(percentage) + "%");
-            let totalAxies = data.totalAxies;
-            if (totalAxies > 12) {
-                for (let i = 12; i < totalAxies; i+=12) {
-                    let url = "https://axieinfinity.com/api/v2/addresses/" + address + "/axies?" + options.join("&") + "&offset=" + i;
-                    $.get(url, function(data, status, xhr) {
-                        let percentage = numAdded/data.totalAxies * 100;
-                        $("#loading").text("Loading axies for " + address + "..." + Math.round(percentage) + "%");
-                        for (let i in data.axies) {
-                            if (data.axies[i].stage < 3) {      //include petites
-                                numSkipped++;
-                                continue;
-                            }
-                            axies[data.axies[i].id.toString()] = {"id": data.axies[i].id, "genes": genesToBin(new BigNumber(data.axies[i].genes)), "class": data.axies[i].class, "exp": data.axies[i].exp, "breedCount": data.axies[i].breedCount, "expForBreeding": expForBreeding[data.axies[i].breedCount], "parts": data.axies[i].parts, "sireId": data.axies[i].sireId, "matronId": data.axies[i].matronId, "auction": data.axies[i].auction, "stage": data.axies[i].stage};
-                            numAdded++;
-                        }
-                        if (numAdded + numSkipped >= totalAxies) { //fudge incase over for some reason
-                            if (callback != null) {
-                                $("#loading").text("Done loading axies.");
-                                callback();
-                            }
-                        }
-                    });
+            axies[data.results[i].id] = {"id": data.results[i].id, "genes": genesToBin(new BigNumber(data.results[i].genes)),  "class": data.results[i].class, "sireId": data.results[i].sireId, "matronId": data.results[i].matronId, "stats": data.results[i].stats, "name": data.results[i].name, "breedCount": data.results[i].breedCount, "stage": data.results[i].stage, "owner": data.results[i].owner};
+            numAdded++;
+        }
+        let totalAxies = data.total;
+        if (totalAxies > AXIE_QUERY_SIZE) {
+            for (let i = AXIE_QUERY_SIZE; i < totalAxies; i+=AXIE_QUERY_SIZE) {
+                let data = await getAxiesByAddress(address, i, "null", cls, purenesses);
+                let percentage = (Object.keys(axies).length + AXIE_QUERY_SIZE)/data.total * 100;
+                $("#loading").text("Loading axies for " + address + "..." + Math.round(percentage) + "%");
+                for (let i in data.results) {
+                    if (data.results[i].stage < 3) {
+                        numSkipped++;
+                        continue;
+                    }
+                    axies[data.results[i].id] = {"id": data.results[i].id, "genes": genesToBin(new BigNumber(data.results[i].genes)), "class": data.results[i].class, "sireId": data.results[i].sireId, "matronId": data.results[i].matronId, "stats": data.results[i].stats, "name": data.results[i].name, "breedCount": data.results[i].breedCount, "stage": data.results[i].stage, "owner": data.results[i].owner};
+                    numAdded++;
+                    if (numAdded + numSkipped >= totalAxies) { //fudge incase over for some reason. new egg?
+                        break;
+                    }
                 }
-            } else {
-                $("#loading").text("Done loading axies.");
-                callback();
+                if (Object.keys(axies).length + numSkipped >= totalAxies) { //fudge incase over for some reason. new egg?
+                    $("#loading").text("Done.")
+                    $("#loading").fadeOut(3500);
+                    console.log("Loaded " + Object.keys(axies).length + " axies");
+                    break;
+                }
             }
-        }).fail(() => {
-            console.log("Failed load axies..");
-        });
+        } else {
+            $("#loading").text("Done.")
+            $("#loading").fadeOut(3500);
+        }
+        callback();
     }
 
     function getFromAllAddresses(addresses, index, filterOptions, callback) {
@@ -822,15 +818,15 @@
             Pureness:
             <div class="row col-5 col-sm-5 col-lg-4" id="purenessChecks">
                 <div class="form-check col-1">
-                    <input class="form-check-input-inline" type="checkbox" value="true" name="purenessCheck[]" id="purenessCheck0" checked>
+                    <input class="form-check-input-inline" type="checkbox" value="true" name="purenessCheck[]" id="purenessCheck0">
                     <label for="purenessCheck0" class="pl-1">0</label>
                 </div>
                 <div class="form-check col-1">
-                    <input class="form-check-input-inline" type="checkbox" value="true" name="purenessCheck[]" id="purenessCheck1" checked>
+                    <input class="form-check-input-inline" type="checkbox" value="true" name="purenessCheck[]" id="purenessCheck1">
                     <label for="purenessCheck1" class="pl-1">1</label>
                 </div>
                 <div class="form-check col-1">
-                    <input class="form-check-input-inline" type="checkbox" value="true" name="purenessCheck[]" id="purenessCheck2" checked>
+                    <input class="form-check-input-inline" type="checkbox" value="true" name="purenessCheck[]" id="purenessCheck2">
                     <label for="purenessCheck2" class="pl-1">2</label>
                 </div>
                 <div class="form-check col-1">

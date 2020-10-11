@@ -221,7 +221,6 @@
 
     async function getAxie(id) {
         let data = await getAxieDetails(id);
-        //$.get("https://axieinfinity.com/api/v2/axies/" + parseInt(id), function(data, status, xhr) {
         if (data.stage < 3) {
             return;
         }
@@ -232,7 +231,6 @@
         let axie = axies[data.id];
         axie.traits = getTraits(axie.genes);
         addRow(axies[data.id]);
-        //});
     }
 
     var calcWorker;
