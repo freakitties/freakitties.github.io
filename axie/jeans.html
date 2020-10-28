@@ -554,7 +554,7 @@
         } else if ($.isNumeric(text)) {
             axies = {};
             if (text.startsWith("0x")) {
-                getAxies(0, [text]);
+                getAxies(0, text);
             } else {
                 getAxie(text);
             }
