@@ -5,7 +5,7 @@ const expCheckpointAddress = "0x71FfC95Ca3BcEbF26024f689F40006182916167f";
 //var expCheckpointInstance = expCheckpointContract.at(expCheckpointAddress);
 
 function getExtendedAxieData(axie, callback) {
-    $.get("https://axieinfinity.com/api/axies/" + axie.id, function(data) {
+    //$.get("https://axieinfinity.com/api/axies/" + axie.id, function(data) {
         axie.image = 'https://storage.googleapis.com/assets.axieinfinity.com/axies/' + parseInt(axie.id) + '/axie/axie-full.png';
         callback(axie);
         /*
@@ -20,7 +20,7 @@ function getExtendedAxieData(axie, callback) {
             callback(axie);
         });
         */
-    }).fail(() => {
-        console.log("Failed to get axie details: " + axie.id);
-    });
+    //}).fail(() => {
+    //    console.log("Failed to get axie details: " + axie.id);
+    //});
 }
