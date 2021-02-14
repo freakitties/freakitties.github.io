@@ -91,12 +91,16 @@
 </div>
 <script>
 
-function makeSpot(x, y, cls, price, mark=true) {
+function makeSpot(x, y, cls, price, saleType, mark=true) {
     plotx = x*6;
     ploty = y*6;
     let tip = x + ", " + y;
     if (price) {
-        tip += "<br>" + Number((parseFloat(price)/1e18).toFixed(3)) + " ETH";
+        if (saleType == "bundle") {
+            tip += "<br>" + Number((parseFloat(price)/1e18).toFixed(3)) + " ETH (bundle)";
+        } else {
+            tip += "<br>" + Number((parseFloat(price)/1e18).toFixed(3)) + " ETH";
+        }
     }
     let spot;
     if (mark) {
@@ -144,9 +148,9 @@ function plotAddr(lands, style="plot2") {
         let key = x + "_" + y;
         if (key in forSale) {
             if (hash.indexOf("colors") == -1) {
-                spot = makeSpot(x, y, style + "_white blink", forSale[key].currentPrice);
+                spot = makeSpot(x, y, style + "_white blink", forSale[key].auction.currentPrice, forSale[key].auction.saleType);
             } else {
-                spot = makeSpot(x, y, style + " blink", forSale[key].currentPrice);
+                spot = makeSpot(x, y, style + " blink", forSale[key].auction.currentPrice, forSale[key].auction.saleType);
             }
         } else {
             makeSpot(x, y, style);
@@ -161,7 +165,7 @@ function plotSales() {
         let x = land.col;
         let y = land.row;
         forSale[x + "_" + y] = land;
-        makeSpot(x, y, "plot", land.currentPrice);
+        makeSpot(x, y, "plot", land.auction.currentPrice, land.saleType);
     }
 }
 
@@ -211,7 +215,7 @@ function plotAll() {
      for (let x = 0; x < MAX_X; x++) {
         for (let y = 0; y < MAX_Y; y++) {
             if (allMap[x][y] === 0) {
-                makeSpot(x-150, y-150, "clearPlot", null, false);
+                makeSpot(x-150, y-150, "clearPlot", null, null, false);
             }
         }
     }
@@ -229,7 +233,7 @@ $( document ).ready(async function() {
         plot(x, y);
         forSale[x + "_" + "y"] = {};    //hack to make single plot blink if owned by accounts
     } else {
-        await getItems();
+        await getLandSales();
         plotSales();
     }
     await doAccount("accountId");
