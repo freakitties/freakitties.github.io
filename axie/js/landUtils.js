@@ -9,19 +9,27 @@ async function getLandSales() {
       "method": "POST"
     })).json();
 
+
+    var promises = [];
+
     //get individual land sales
     let lands = response.data.lands;
     let total = parseInt(lands.total);
     for (let offset = 0; offset < total; offset += 100) {
-        let response = await (await fetch("https://axieinfinity.com/graphql-server-v2/graphql?r=freak", {
-          "headers": {
-            "content-type": "application/json",
-          },
-          "body": queryBody.replace("{OFFSET}", offset).replace("{SIZE}", "100"),
-          "method": "POST"
-        })).json();
-
-        let items = response.data.lands.results;
+          let response = fetch("https://axieinfinity.com/graphql-server-v2/graphql?r=freak", {
+              "headers": {
+                "content-type": "application/json",
+              },
+              "body": queryBody.replace("{OFFSET}", offset).replace("{SIZE}", "100"),
+            "method": "POST"
+          });
+          promises.push(response);
+    }
+    let ps = await Promise.all(promises);
+    for (let p in ps) {
+        let result = ps[p];
+        let res = await result.json();
+        let items = res.data.lands.results;
         for (let i in items) {
             //if (items[i].assetType != "land") continue;
             id = items[i].tokenId;
@@ -30,9 +38,10 @@ async function getLandSales() {
         }
     }
 
+    promises = [];
     queryBody = "{\"operationName\":\"GetBundleList\",\"variables\":{\"from\":{OFFSET},\"size\":{SIZE},\"sort\":\"PriceAsc\",\"criteria\":{\"itemRarity\":[],\"landType\":[\"Genesis\",\"Arctic\",\"Savannah\",\"Mystic\",\"Forest\"],\"itemType\":[],\"totalItems\":[2,20],\"itemAlias\":[]}},\"query\":\"query GetBundleList($from: Int!, $size: Int!, $sort: SortBy, $seller: String, $criteria: BundleSearchCriteria) {\\n  bundles(from: $from, size: $size, criteria: $criteria, sort: $sort, seller: $seller) {\\n    total\\n    results {\\n      name\\n      listingIndex\\n      auction {\\n        currentPrice\\n        currentPriceUSD\\n        __typename\\n      }\\n      items {\\n        ... on LandItem {\\n          realTokenId\\n          figureURL\\n          rarity\\n          __typename\\n        }\\n        ... on LandPlot {\\n          realTokenId\\n          landType\\n          col\\n          row\\n          __typename\\n        }\\n        __typename\\n      }\\n      __typename\\n    }\\n    __typename\\n  }\\n}\\n\"}";
     //get bundles with lands
-    response = await (await fetch("https://axieinfinity.com/graphql-server-v2/graphql", {
+    response = await (await fetch("https://axieinfinity.com/graphql-server-v2/graphql?r=freak", {
       "headers": {
         "content-type": "application/json",
       },
@@ -42,15 +51,22 @@ async function getLandSales() {
 
     total = parseInt(response.data.bundles.total);
     for (let offset = 0; offset < total; offset += 100) {
-        response = await (await fetch("https://axieinfinity.com/graphql-server-v2/graphql", {
-        "headers": {
-            "content-type": "application/json",
-        },
-        "body": queryBody.replace("{OFFSET}", offset).replace("{SIZE}", "100"),
-        "method": "POST",
-        })).json();
+        response = fetch("https://axieinfinity.com/graphql-server-v2/graphql?r=freak", {
+            "headers": {
+                "content-type": "application/json",
+            },
+            "body": queryBody.replace("{OFFSET}", offset).replace("{SIZE}", "100"),
+            "method": "POST",
+        });
+        promises.push(response);
+    }
 
-        let bundles = response.data.bundles.results;
+    ps = await Promise.all(promises);
+
+    for (let p in ps) {
+        let result = ps[p];
+        res = await result.json();
+        let bundles = res.data.bundles.results;
         for (let i in bundles) {
             for (let j in bundles[i].items) {
                 if (!bundles[i].items[j].hasOwnProperty("landType")) continue;
@@ -60,7 +76,6 @@ async function getLandSales() {
                 allItems[id].saleType = "bundle";
             }
         }
-
     }
 }
 
