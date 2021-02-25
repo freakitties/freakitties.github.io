@@ -146,7 +146,6 @@ async function getLandsByRoninAddr(address) {
 
     let allLand = resp.data.lands.results;
     let total = parseInt(resp.data.lands.total);
-console.log("total " + total);
     for (let offset = 100; offset < total; offset += 100) {
         let r = await fetch("https://axieinfinity.com/graphql-server-v2/graphql", {
                 "headers": {
@@ -157,9 +156,7 @@ console.log("total " + total);
             });
         resp = await r.json();
         allLand = allLand.concat(resp.data.lands.results);
-console.log(resp.data.lands.results)
     }
-console.log("num land: " + allLand.length);
     return allLand;
 }
 
@@ -171,9 +168,9 @@ function plotAddr(lands, style="plot2") {
         let key = x + "_" + y;
         if (key in forSale) {
             if (hash.indexOf("colors") == -1) {
-                spot = makeSpot(x, y, style + "_white blink", forSale[key].auction.currentPrice, forSale[key].auction.saleType);
+                spot = makeSpot(x, y, style + "_white blink", forSale[key].auction.currentPrice, forSale[key].saleType);
             } else {
-                spot = makeSpot(x, y, style + " blink", forSale[key].auction.currentPrice, forSale[key].auction.saleType);
+                spot = makeSpot(x, y, style + " blink", forSale[key].auction.currentPrice, forSale[key].saleType);
             }
         } else {
             makeSpot(x, y, style);
