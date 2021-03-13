@@ -1,0 +1,58 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Genesis Mooncats</title>
+  <script src="mooncatparser.js"></script>
+  <style>
+    body{
+      background-color: rgb(24, 23, 23);
+      background-image: url('https://mooncatrescue.com/img/bg2.png');
+      color: white;
+    }
+  </style>
+</head>
+<body>
+  <h1>Genesis Moon cats</h1>
+  <br>
+<script>
+var gens = ["0xff00000ca7", "0xff01000ca7", "0xff02000ca7", "0xff03000ca7", "0xff04000ca7", "0xff05000ca7", "0xff06000ca7", "0xff07000ca7", "0xff08000ca7", "0xff09000ca7", "0xff0a000ca7", "0xff0b000ca7", "0xff0c000ca7", "0xff0d000ca7", "0xff0e000ca7", "0xff0f000ca7", "0xff10000ca7", "0xff11000ca7", "0xff12000ca7", "0xff13000ca7", "0xff14000ca7", "0xff15000ca7", "0xff16000ca7", "0xff17000ca7", "0xff18000ca7", "0xff19000ca7", "0xff1a000ca7", "0xff1b000ca7", "0xff1c000ca7", "0xff1d000ca7", "0xff1e000ca7", "0xff1f000ca7", "0xff20000ca7", "0xff21000ca7", "0xff22000ca7", "0xff23000ca7", "0xff24000ca7", "0xff25000ca7", "0xff26000ca7", "0xff27000ca7", "0xff28000ca7", "0xff29000ca7", "0xff2a000ca7", "0xff2b000ca7", "0xff2c000ca7", "0xff2d000ca7", "0xff2e000ca7", "0xff2f000ca7", "0xff30000ca7", "0xff31000ca7", "0xff32000ca7", "0xff33000ca7", "0xff34000ca7", "0xff35000ca7", "0xff36000ca7", "0xff37000ca7", "0xff38000ca7", "0xff39000ca7", "0xff3a000ca7", "0xff3b000ca7", "0xff3c000ca7", "0xff3d000ca7", "0xff3e000ca7", "0xff3f000ca7", "0xff40000ca7", "0xff41000ca7", "0xff42000ca7", "0xff43000ca7", "0xff44000ca7", "0xff45000ca7", "0xff46000ca7", "0xff47000ca7", "0xff48000ca7", "0xff49000ca7", "0xff4a000ca7", "0xff4b000ca7", "0xff4c000ca7", "0xff4d000ca7", "0xff4e000ca7", "0xff4f000ca7", "0xff50000ca7", "0xff51000ca7", "0xff52000ca7", "0xff53000ca7", "0xff54000ca7", "0xff55000ca7", "0xff56000ca7", "0xff57000ca7", "0xff58000ca7", "0xff59000ca7", "0xff5a000ca7", "0xff5b000ca7", "0xff5c000ca7", "0xff5d000ca7", "0xff5e000ca7", "0xff5f000ca7"]
+
+for (let i=0; i < gens.length; i++) {
+  generateMoonCatImage(gens[i], 10)
+}
+
+function generateMoonCatImage(catId, size){
+  console.log('meow')
+  size = size || 10;
+  var data = mooncatparser(catId);
+  var div = document.createElement("div");
+  var canvas = document.createElement("canvas");
+  canvas.width = size * data.length;
+  canvas.height = size * data[1].length;
+  var ctx = canvas.getContext("2d");
+
+  for(var i = 0; i < data.length; i++){
+    for(var j = 0; j < data[i].length; j++){
+      var color = data[i][j];
+      if(color){
+        ctx.fillStyle = color;
+        ctx.fillRect(i * size, j * size, size, size);
+      }
+    }
+  }
+  div.append(canvas);
+  var span = document.createElement("span");
+  span.textContent = catId;
+  div.append(document.createElement("br"));
+  div.append(span);
+
+  document.body.append(div)
+  return canvas.toDataURL();
+}
+</script>
+</body>
+</html>
