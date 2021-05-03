@@ -196,7 +196,7 @@ async function doAccount(accountParam, style="plot2") {
     let full = decodeURIComponent(parameter).replace(/[\s\+]/g, "");
     let accounts = full.split(",");
     for (let i in accounts) {
-        raw = accounts[i].trim()
+        raw = accounts[i].trim().replace("ronin:", "0x");
         let account = parseInt(raw);
         if (account) {
             let lands;
