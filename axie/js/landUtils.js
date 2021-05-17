@@ -15,8 +15,8 @@ async function getLandSales() {
     //get individual land sales
     let lands = response.data.lands;
     let total = parseInt(lands.total);
-    for (let offset = 0; offset < total; offset += 100) {
-          let response = fetch("https://axieinfinity.com/graphql-server-v2/graphql?r=freak", {
+        for (let offset = 0; offset < total; offset += 100) {
+          let response = await fetch("https://axieinfinity.com/graphql-server-v2/graphql?r=freak", {
               "headers": {
                 "content-type": "application/json",
               },
@@ -25,7 +25,10 @@ async function getLandSales() {
           });
           promises.push(response);
     }
-    let ps = await Promise.all(promises);
+    //TEMP: workaround. Axie servers no longer seemed to be able to handle concurrent requests. Added an await for the previous fetch() and commenting out Promise.all
+    //let ps = await Promise.all(promises);
+    ps = promises;
+
     for (let p in ps) {
         let result = ps[p];
         let res = await result.json();
@@ -51,7 +54,7 @@ async function getLandSales() {
 
     total = parseInt(response.data.bundles.total);
     for (let offset = 0; offset < total; offset += 100) {
-        response = fetch("https://axieinfinity.com/graphql-server-v2/graphql?r=freak", {
+        response = await fetch("https://axieinfinity.com/graphql-server-v2/graphql?r=freak", {
             "headers": {
                 "content-type": "application/json",
             },
@@ -60,8 +63,10 @@ async function getLandSales() {
         });
         promises.push(response);
     }
+    //TEMP: workaround. Axie servers no longer seemed to be able to handle concurrent requests. Added an await for the previous fetch() and commenting out Promise.all
+    //ps = await Promise.all(promises);
+    ps = promises;
 
-    ps = await Promise.all(promises);
 
     for (let p in ps) {
         let result = ps[p];
