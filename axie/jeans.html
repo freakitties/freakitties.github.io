@@ -256,17 +256,21 @@
                         $("#loading").text("")
                         $("#loading").fadeOut(1);
                     } else {
-                        $("#account").text("Your Account: " + web3.eth.accounts[0]);
                         if (window.location.hash.substr(1) == "noAuto") {
                             $("#loading").text("");
+                            getBodyParts(cb);
                         } else {
-                            cb = () => {
-                                getAxies(0, web3.eth.accounts[0]);
-                            }
+                            let profile = getProfileByEthAddress(web3.eth.accounts[0]).then((profile) => {
+                                let address = profile.data.publicProfileWithEthereumAddress.addresses.ronin;
+                                $("#account").text("Your Account: " + address);
+                                cb = () => {
+                                    getAxies(0, address);
+                                }
+                                getBodyParts(cb);
+                            });
                         }
                     }
                 }
-                getBodyParts(cb);
                 calcWorker = new Worker('js/partBreederWorker.js');
                 calcWorker.onmessage = receiveCalc;
             }
@@ -434,8 +438,8 @@
             let id2 = "axie" + axieId2 + "_" + i;
             images.push({tagId: id1, axieId: pair[0]})
             images.push({tagId: id2, axieId: pair[1]})
-            out += '<div class="col-4 text-center d-flex justify-content-center flex-column"><div class="row justify-content-center"><i id="' + id1 + '_ign" class="fas fa-eye-slash pointer" title="Ignore"></i><a target="_blank" href="https://axieinfinity.com/axie/' + axieId1 + '?r=freak"><img id="' + id1 + '" height="80" data-toggle="tooltip" data-placement="top"><br>#' + axieId1 + '</a></div><div id="' + id1 + '_data"></div></div>';
-            out += '<div class="col-4 text-center d-flex justify-content-center flex-column"><div class="row justify-content-center"><i id="' + id2 + '_ign" class="fas fa-eye-slash pointer" title="Ignore"></i><a target="_blank" href="https://axieinfinity.com/axie/' + axieId2 + '?r=freak"><img id="' + id2 + '" height="80" data-toggle="tooltip" data-placement="top"><br>#' + axieId2 + '</a></div><div id="' + id2 + '_data"></div></div>';
+            out += '<div class="col-4 text-center d-flex justify-content-center flex-column"><div class="row justify-content-center"><i id="' + id1 + '_ign" class="fas fa-eye-slash pointer" title="Ignore"></i><a target="_blank" href="https://marketplace.axieinfinity.com/axie/' + axieId1 + '?r=freak"><img id="' + id1 + '" height="80" data-toggle="tooltip" data-placement="top"><br>#' + axieId1 + '</a></div><div id="' + id1 + '_data"></div></div>';
+            out += '<div class="col-4 text-center d-flex justify-content-center flex-column"><div class="row justify-content-center"><i id="' + id2 + '_ign" class="fas fa-eye-slash pointer" title="Ignore"></i><a target="_blank" href="https://marketplace.axieinfinity.com/axie/' + axieId2 + '?r=freak"><img id="' + id2 + '" height="80" data-toggle="tooltip" data-placement="top"><br>#' + axieId2 + '</a></div><div id="' + id2 + '_data"></div></div>';
             out += '</div>';
         }
         out += "</div>"
@@ -538,9 +542,13 @@
             let ids = [];
             for (let i in splits) {
                 if (splits[i] == "") continue;
-                if (!$.isNumeric(splits[i])) continue;
-                if (splits[i].startsWith("0x")) {
-                    addresses.push(splits[i]);
+
+                //if (splits[i].startsWith("0x")) {
+                if (splits[i].startsWith("ronin:")) {
+                    addresses.push(splits[i].replace("ronin:", "0x"));
+                }
+                else if (!$.isNumeric(splits[i])) {
+                    continue;
                 } else {
                     ids.push(splits[i]);
                 }
@@ -551,13 +559,10 @@
                 getAxies(0, addresses[a]);
             }
 
+        } else if (text.startsWith("ronin:")) {
+            getAxies(0, text.replace("ronin:", "0x"));
         } else if ($.isNumeric(text)) {
-            axies = {};
-            if (text.startsWith("0x")) {
-                getAxies(0, text);
-            } else {
-                getAxie(text);
-            }
+            getAxie(text);
         } else {
             //TODO: do this more elegantly
             alert("invalid search criteria");
@@ -586,7 +591,7 @@
 
         <div class="row">
             <div  class="text-left col-6" id="account"></div><br/>
-            <input class="text-right col-5 form-control" id="search" size="55" placeholder="ID, address or comma separated list of IDs and/or addresses" disabled/>&nbsp;
+            <input class="text-right col-5 form-control" id="search" size="55" placeholder="ID, ronin address or comma separated list of IDs and/or addresses" disabled/>&nbsp;
             <button type="submit" class="btn btn-dark" onclick="search();" id="searchButton0">Search</button>
         </div>
         <div class="row">

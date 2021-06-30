@@ -38,3 +38,14 @@ async function getAxiesByAddress(address, offset, parts="null", cls="", pureness
     })).json();
     return response.data.axies;
 }
+
+async function getProfileByEthAddress(address) {
+    let response = await fetch("https://axieinfinity.com/graphql-server-v2/graphql", {
+        "headers": {
+        "content-type": "application/json",
+        },
+        "body": "{\"operationName\":\"GetProfileByEthAddress\",\"variables\":{\"ethereumAddress\":\"" + address + "\"},\"query\":\"query GetProfileByEthAddress($ethereumAddress: String!) {\\n  publicProfileWithEthereumAddress(ethereumAddress: $ethereumAddress) {\\n    ...Profile\\n    __typename\\n  }\\n}\\n\\nfragment Profile on PublicProfile {\\n  accountId\\n  name\\n  addresses {\\n    ...Addresses\\n    __typename\\n  }\\n  __typename\\n}\\n\\nfragment Addresses on NetAddresses {\\n  ethereum\\n  tomo\\n  loom\\n  ronin\\n  __typename\\n}\\n\"}",
+        "method": "POST",
+    });
+    return await response.json();
+}
