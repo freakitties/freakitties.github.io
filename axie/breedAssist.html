@@ -336,8 +336,8 @@
     }
 
     function renderAccounts() {
-        if (addresses.length == 1) {
-            $("#account").text("Your Account: " + web3.eth.accounts[0]);
+        if (account != "DEFAULT" && addresses.length == 1) {
+            $("#account").text("Your Account: " + account);
         } else {
             $("#account").html("Your Accounts: <br>" + addresses.join("<br>"));
         }
@@ -347,8 +347,8 @@
     var classToCheck;
     var targetPureness = 6;
     var allProbs;
-    function init() {
-        clearInterval(intID);
+    var account = "DEFAULT";
+    async function init() {
         $.ajax({
             url: "../header.html",
             cache: false,
@@ -360,18 +360,20 @@
 
         if (typeof web3 == 'undefined') {
             $("#account").text("Web3 enabled browser not detected.");
-            return;
+            //return;
         } else {
             if (typeof web3.eth.accounts[0] == "undefined") {
                 $("#account").text("Can't detect your account. Unlock your wallet or try reloading the page and waiting a few seconds.");
-                return;
+                //return;
             } else {
-                let storageKey = "freakitties.github.io" + "_BREEDASSIST_" + web3.eth.accounts[0];
+                let profile = await getProfileByEthAddress(web3.eth.accounts[0]);
+                account = profile.data.publicProfileWithEthereumAddress.addresses.ronin;
+                let storageKey = "freakitties.github.io" + "_BREEDASSIST_" + account;
                 let stored = localStorage.getItem(storageKey);
                 if (stored) {
                     addresses = JSON.parse(stored);
                 } else {
-                    addresses.push(web3.eth.accounts[0]);
+                    addresses.push(account);
                 }
                 renderAccounts();
             }
@@ -485,14 +487,16 @@
     function addAddress() {
         let newAddr = $("#addAddress").val();
         $("#addAddress").val("");
-        if (!web3.isAddress(newAddr)) {
+        //if (!web3.isAddress(newAddr)) {
+        if (!newAddr.startsWith("ronin:")) {
             alert("Not a valid address");
             return;
         }
+        newAddr = newAddr.replace("ronin:", "0x");
         if (!addresses.includes(newAddr)) {
             addresses.push(newAddr);
         }
-        let storageKey = "freakitties.github.io" + "_BREEDASSIST_" + web3.eth.accounts[0];
+        let storageKey = "freakitties.github.io" + "_BREEDASSIST_" + account;
         localStorage.setItem(storageKey, JSON.stringify(addresses));
         renderAccounts();
         clearSelections();
@@ -500,9 +504,9 @@
     }
 
     function clearAddresses() {
-        let storageKey = "freakitties.github.io" + "_BREEDASSIST_" + web3.eth.accounts[0];
+        let storageKey = "freakitties.github.io" + "_BREEDASSIST_" + account;
         localStorage.removeItem(storageKey);
-        addresses = [web3.eth.accounts[0]];
+        addresses = account != "DEFAULT" ? [account] : [];
         renderAccounts();
         clearSelections();
         $('#addAddressModal').modal('hide');
@@ -588,7 +592,6 @@
         return false;
     }
 
-    var intID;
     window.addEventListener('load', async function() {
         // Modern dapp browsers...
         if (window.ethereum) {
@@ -618,7 +621,7 @@
             BigNumber = w3.BigNumber;
         }
         //defer init until accounts are loaded
-        intID = setInterval(init, 250);
+         await new Promise(resolve => setTimeout(init, 250));
     });
 
     function isBreedable(axie1, axie2) {
@@ -659,7 +662,8 @@
     }
 
     async function getAxies(address, filterOptions, callback) {
-        if (!web3.isAddress(address)) {
+        //if (!web3.isAddress(address)) {
+        if (!address.startsWith("0x")) {
             alert("not a valid address");
             return;
         }
@@ -746,7 +750,7 @@
                 </button>
               </div>
               <div class="modal-body">
-                <input type="text" class="form-control" id="addAddress" placeholder="0x..." />
+                <input type="text" class="form-control" id="addAddress" placeholder="ronin:..." />
               </div>
               <div class="modal-footer">
                 <button type="button" class="btn btn-primary" id="addAddressButton">Add</button>
