@@ -1,5 +1,5 @@
 async function getAxieDetails(id) {
-    let response = await (await fetch("https://axieinfinity.com/graphql-server/graphql", {
+    let response = await (await fetch("https://axieinfinity.com/graphql-server-v2/graphql?r=freak", {
       "headers": {
         "content-type": "application/json",
       },
@@ -29,7 +29,7 @@ async function getAxiesByAddress(address, offset, parts="null", cls="", pureness
         cls = "\"" + cls + "\"";
       }
     }
-    let response = await (await fetch("https://axieinfinity.com/graphql-server/graphql", {
+    let response = await (await fetch("https://axieinfinity.com/graphql-server-v2/graphql?r=freak", {
       "headers": {
         "content-type": "application/json",
       },
