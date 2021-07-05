@@ -50,6 +50,10 @@
                     let response = await getItemBriefList(address, count * ITER_SIZE, ITER_SIZE);
                     count++;
                     proccessResults(response, addressItems);
+
+                    let percentage = addressItems.items.length/first.data.items.total * 100;
+                    $("#loading").text("Loading..." + Math.round(percentage) + "%");
+
                 }
                 return addressItems;
             }
@@ -68,10 +72,12 @@
             async function getInv(e) {
                 e.preventDefault();
 
+                $("#loading").text("Loading...");
                 quals = {"common": new Set(), "rare": new Set(), "epic": new Set(), "mystic": new Set()};
                 items = {};
                 let address = $("#address").val();
                 let x = await getAllItems(address);
+                $("#loading").text("");
                 for (let i in x.items) {
                     if (items.hasOwnProperty(x.items[i].name)) {
                         items[x.items[i].name].count++;
@@ -219,6 +225,7 @@
                 <label for="address">Ronin Address: </label>
                 <input class="form-control" id="address" type="text"/>
                 <button class="btn btn-primary" id="button" type="text">Get inventory count</button>
+                <div id="loading" class="col-8"></div><div id="spacer">&nbsp;</div>
             </form>
         </div>
     </body>
