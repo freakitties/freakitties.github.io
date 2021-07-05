@@ -16,6 +16,44 @@
     </head>
     <body>
         <script>
+            async function getItemBriefList(owner, offset, size) {
+                owner = owner.replace("ronin:", "0x");
+                let r = await fetch("https://axieinfinity.com/graphql-server-v2/graphql", {
+                  "headers": {
+                    "content-type": "application/json",
+                  },
+                  "body": "{\"operationName\":\"GetItemBriefList\",\"variables\":{\"from\":" + parseInt(offset) + ",\"size\":" + parseInt(size) + ",\"sort\":\"PriceAsc\",\"owner\":\"" + owner + "\",\"auctionType\":\"All\",\"criteria\":{\"landType\":[],\"rarity\":[],\"itemAlias\":[]}},\"query\":\"query GetItemBriefList($from: Int, $size: Int, $sort: SortBy, $auctionType: AuctionType, $owner: String, $criteria: ItemSearchCriteria) {\\n  items(from: $from, size: $size, sort: $sort, auctionType: $auctionType, owner: $owner, criteria: $criteria) {\\n    total\\n    results {\\n      ...ItemBrief\\n      __typename\\n    }\\n    __typename\\n  }\\n}\\n\\nfragment ItemBrief on LandItem {\\n  itemId\\n  tokenType\\n  tokenId\\n  itemId\\n  landType\\n  name\\n  itemAlias\\n  rarity\\n  figureURL\\n  auction {\\n    ...AxieAuction\\n    __typename\\n  }\\n  __typename\\n}\\n\\nfragment AxieAuction on Auction {\\n  startingPrice\\n  endingPrice\\n  startingTimestamp\\n  endingTimestamp\\n  duration\\n  timeLeft\\n  currentPrice\\n  currentPriceUSD\\n  suggestedPrice\\n  seller\\n  listingIndex\\n  state\\n  __typename\\n}\\n\"}",
+                  "method": "POST",
+                });
+                let list = await r.json();
+                return list;
+            }
+
+            function proccessResults(results, addressItems) {
+                if (results && results.data && results.data.items && results.data.items.results) {
+                    for(let i=0; i < results.data.items.results.length; i++) {
+                        addressItems.items.push(results.data.items.results[i]);
+                    }
+                } else {
+                    console.log("Missing data for " + address + ": " + results);
+                }
+            }
+
+            const ITER_SIZE = 100;
+            async function getAllItems(address) {
+                let addressItems = {items: []};
+                let first = await getItemBriefList(address, 0, ITER_SIZE);
+                proccessResults(first, addressItems);
+                let count = 1;
+                //TODO: infinite if # items change
+                while (addressItems.items.length < first.data.items.total) {
+                    let response = await getItemBriefList(address, count * ITER_SIZE, ITER_SIZE);
+                    count++;
+                    proccessResults(response, addressItems);
+                }
+                return addressItems;
+            }
+
             var quals;
             var items;
             const CRYPTON = "CyptoTon";
@@ -23,107 +61,130 @@
             const CHIMERA = "Chimera";
             const TANUKI = "Tanuki";
             const KITSUNE = "Kitsune";
-            function getInv(e) {
+            const AAVE = "Aave Phantom Altar";
+            const MAKER_GOLD = "MakerDao Gold";
+            const MAKER_SILVER = "MakerDao Silver";
+            const MAKER_BRONZE = "MakerDao Bronze";
+            async function getInv(e) {
                 e.preventDefault();
 
                 quals = {"common": new Set(), "rare": new Set(), "epic": new Set(), "mystic": new Set()};
                 items = {};
                 let address = $("#address").val();
-                $.getJSON("https://axieinfinity.com/land-api/profile/" + address + "/inventory", (x) => {
-                    for (let i in x.items) {
-                        if (items.hasOwnProperty(x.items[i].name)) {
-                            items[x.items[i].name].count++;
-                        } else {
-                            items[x.items[i].name] = {};
-                            items[x.items[i].name].count = 1;
-                            items[x.items[i].name].details = x.items[i];
-                        }
-                    }
-                    let otherItems = {"common": new Set(), "rare": new Set(), "epic": new Set(), "mystic": new Set()};
-                    for (let i in items) {
-                        switch(items[i].details.rarity) {
-                            case "common":
-                                quals.common.add(items[i].details.name);
-                            break;
-                            case "rare":
-                                quals.rare.add(items[i].details.name);
-                            break;
-                            case "epic":
-
-                                if ("CoinGecko" == items[i].details.name) {
-                                    otherItems.epic.add(COINGECKO);
-                                } else if ("Ganbaru CrypTon" == items[i].details.name) {
-                                    otherItems.epic.add(CRYPTON);
-                                } else {
-                                    quals.epic.add(items[i].details.name);
-                                }
-                            break;
-                            case "mystic":
-                                if ([CHIMERA, TANUKI, KITSUNE].includes(items[i].details.name)) {
-                                    otherItems.mystic.add(items[i].details.name);
-                                } else {
-                                    quals.mystic.add(items[i].details.name);
-                                }
-                            break;
-                        }
-                    }
-                    let out = [];
-                    let missing = {};
-                    for (let i in quals) {
-
-                        if (i == "mystic" && otherItems.mystic.size > 0) {
-                            let str = capitalize(i) + ":" + quals[i].size;
-                            if (otherItems.mystic.has(CHIMERA)) {
-                                str += " + 1 " + CHIMERA;
-                            } else if (otherItems.mystic.has(TANUKI)) {
-                                str += " + 1 " + TANUKI;
-                            } else if (otherItems.mystic.has(KITSUNE)) {
-                                str += " + 1 " + KITSUNE;
-                            }
-                            out.push(str);
-                        } else if (i == "epic" && otherItems.epic.size > 0) {
-                            let str = capitalize(i) + ":" + quals[i].size;
-                            if (otherItems.epic.has(COINGECKO)) {
-                                str += " + 1 " + COINGECKO;
-                            }
-                            if (otherItems.epic.has(CRYPTON)) {
-                                str += " + 1 " + CRYPTON;
-                            }
-                            out.push(str);
-                        } else {
-                            out.push(capitalize(i) + ":" + quals[i].size);
-                        }
-
-                        //TODO: inefficient
-                        for (let j in allItems) {
-                            if (i == allItems[j].rarity && !quals[i].has(allItems[j].name)) {
-                                missing[j] = allItems[j];
-                            }
-                        }
-                    }
-
-                    $("#output").text("");
-                    for (let i = 0; i < out.length; i++) {
-                        $("#output").append(out[i] + "<br>");
-                    }
-                    //$("#output").text(out.join(", "));
-                    $("#missing").text("Missing: ").append("<br>");
-                    if (Object.keys(missing).length == 0) {
-                        $("#missing").append("None");
+                let x = await getAllItems(address);
+                for (let i in x.items) {
+                    if (items.hasOwnProperty(x.items[i].name)) {
+                        items[x.items[i].name].count++;
                     } else {
-                        for (let i in missing) {
-                            $("#missing").append(capitalize(weakEscape(missing[i].rarity) + ": " + missing[i].name) + "<br>");
+                        items[x.items[i].name] = {};
+                        items[x.items[i].name].count = 1;
+                        items[x.items[i].name].details = x.items[i];
+                    }
+                }
+                otherItems = {"common": new Set(), "rare": new Set(), "epic": new Set(), "mystic": new Set()};
+                for (let i in items) {
+                    switch(items[i].details.rarity.toLowerCase()) {
+                        case "common":
+                            quals.common.add(items[i].details.name);
+                        break;
+                        case "rare":
+                            if ([AAVE, MAKER_BRONZE].includes(items[i].details.name)) {
+                                otherItems.rare.add(items[i].details.name);
+                            } else {
+                                quals.rare.add(items[i].details.name);
+                            }
+                        break;
+                        case "epic":
+                            if ([CRYPTON, COINGECKO, MAKER_SILVER].includes(items[i].details.name)) {
+                                otherItems.epic.add(items[i].details.name);
+                            } else {
+                                quals.epic.add(items[i].details.name);
+                            }
+                        break;
+                        case "mystic":
+                            if ([CHIMERA, TANUKI, KITSUNE, MAKER_GOLD].includes(items[i].details.name)) {
+                                otherItems.mystic.add(items[i].details.name);
+                            } else {
+                                quals.mystic.add(items[i].details.name);
+                            }
+                        break;
+                    }
+                }
+                let out = [];
+                let missing = {};
+                for (let i in quals) {
+
+                    if (i == "mystic" && otherItems.mystic.size > 0) {
+                        let str = capitalize(i) + ":" + quals[i].size;
+                        if (otherItems.mystic.has(CHIMERA)) {
+                            str += " + 1 " + CHIMERA;
+                        }
+                        if (otherItems.mystic.has(TANUKI)) {
+                            str += " + 1 " + TANUKI;
+                        }
+                        if (otherItems.mystic.has(KITSUNE)) {
+                            str += " + 1 " + KITSUNE;
+                        }
+                        if (otherItems.mystic.has(MAKER_GOLD)) {
+                            str += " + 1 " + MAKER_GOLD;
+                        }
+                        out.push(str);
+                    } else if (i == "epic" && otherItems.epic.size > 0) {
+                        let str = capitalize(i) + ":" + quals[i].size;
+                        if (otherItems.epic.has(COINGECKO)) {
+                            str += " + 1 " + COINGECKO;
+                        }
+                        if (otherItems.epic.has(CRYPTON)) {
+                            str += " + 1 " + CRYPTON;
+                        }
+                        if (otherItems.epic.has(MAKER_SILVER)) {
+                            str += " + 1 " + MAKER_SILVER;
+                        }
+                        out.push(str);
+                    } else if (i == "rare" && otherItems.rare.size > 0) {
+                        let str = capitalize(i) + ":" + quals[i].size;
+                        if (otherItems.rare.has(AAVE)) {
+                            str += " + 1 " + AAVE;
+                        }
+                        if (otherItems.rare.has(MAKER_BRONZE)) {
+                            str += " + 1 " + MAKER_BRONZE;
+                        }
+                        out.push(str);
+                    } else {
+                        out.push(capitalize(i) + ":" + quals[i].size);
+                    }
+
+                    //TODO: inefficient
+                    for (let j in allItems) {
+                        if (allItems[j].rarity.toLowerCase() == "rare") {
+                            console.log((!quals[i].has(allItems[j].name) || !otherItems[i].has(allItems[j].name)))
+                        }
+                        if (i == allItems[j].rarity.toLowerCase() && !quals[i].has(allItems[j].name) && !otherItems[i].has(allItems[j].name)) {
+                            missing[j] = allItems[j];
                         }
                     }
+                }
+
+                $("#output").text("");
+                for (let i = 0; i < out.length; i++) {
+                    $("#output").append(out[i] + "<br>");
+                }
+                //$("#output").text(out.join(", "));
+                $("#missing").text("Missing: ").append("<br>");
+                if (Object.keys(missing).length == 0) {
+                    $("#missing").append("None");
+                } else {
+                    for (let i in missing) {
+                        $("#missing").append(capitalize(weakEscape(missing[i].rarity) + ": " + missing[i].name) + "<br>");
+                    }
+                }
                     /*
                     niceOut = {};
                     for (let i in items) {
                         niceOut[i] = items[i].details;
                         delete niceOut[i].itemId
                     }
-                    console.log(JSON.stringify(niceOut));
                     */
-            });
         }
 
         function init() {
@@ -155,7 +216,7 @@
             <div id="missing">
             </div><br><br>
             <form id="invForm" class="col-5 pl-0">
-                <label for="address">Address: </label>
+                <label for="address">Ronin Address: </label>
                 <input class="form-control" id="address" type="text"/>
                 <button class="btn btn-primary" id="button" type="text">Get inventory count</button>
             </form>
