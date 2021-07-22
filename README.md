@@ -55,6 +55,8 @@ Live site: [https://freakitties.github.io/](https://freakitties.github.io/)
 
 [Real-time new axie auction listings](/axie/newaxieauctions.html)
 
+[Scholar tracker](https://scholar.axie.management/#/)
+
 [Download images of your axie in your favorite pose](/axie/pixi/images.html)
 
 [Personal History of Axie Sales](/axie/myauctions.html)

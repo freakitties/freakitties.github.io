@@ -27,6 +27,8 @@
 
 [Axies by purebredness](top.html)
 
+[Scholar tracker](https://scholar.axie.management/#/)
+
 [Real-time new axie auction listings](newaxieauctions.html)
 
 [Download images of your axie in your favorite pose](pixi/images.html)
