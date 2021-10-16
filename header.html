@@ -29,7 +29,8 @@
                     -->
                     </div>
 
-                    <div id="navContentRight" class="text-white text-small col-sm-6 col-md-6 mt-0 header-font-size">
+                    <div id="navContentRight" class="text-white text-lg col-sm-6 col-md-6 mt-0 header-font-size">
+                        FREAK'S TOOLS
                         <!--
                         <div class="">Support the tools:</div>
                         <div class="row">
@@ -50,27 +51,13 @@
                     </div>
                 </div>
                 <div id="donationDiv" class="text-right col-sm-4 col-md-3">
-                    <div class="text-right mt-0 mb-1"><a id="donated" class="text-white small" target="_blank" href="https://etherscan.io/address/0x209045cFE98445D6541D4FDf560d0d63fAd77753"></a></div>
                 </div>
 
             </div>
         </nav>
         <script>
-            var donationAddress = '0x209045cfe98445d6541d4fdf560d0d63fad77753';
-            //const BLOCKS_SEC = 15;
-            const BLOCKS_SEC = 13.6;
-            const BLOCKS_MONTH = (30 * 24 * 60 * 60)/BLOCKS_SEC;
-            const LIMIT = 100;
 
             $('.dropdown-toggle').dropdown();
-
-            if (typeof web3 != 'undefined') {
-                let html = '<input id="donateValue" class="form-control-sm col-md-4 col-lg-4 col-xl-3" type="text" value="0.002"> ' +
-                           '<button class="btn btn-sm btn-primary" onclick="donate()">Donate</button>';
-                $("#donationDiv").append(html);
-            } else {
-                $("#donationDiv").append('<div id="donation" class="text-white">Donations: ' + donationAddress + ' &nbsp;</div>');
-            }
 
             /*
             if (window.location.pathname.match(/^\/axie\//)) {
@@ -80,44 +67,4 @@
             }
             */
 
-            var totalDonated = 0;
-            function getTransactions(url, page, callback) {
-                $.get({url: url}, function(txData) {
-                    //used to use trustwallet API that provided total # of TXes, but etherscan doesn't provide total records. It just dumps them all up to the last 10k which should not be a problem for the foreseeable future.
-                    let transactions = txData.result;
-                    for (let i = 0; i < transactions.length; i++) {
-                        if (transactions[i].to == donationAddress) {
-                            totalDonated += parseInt(transactions[i].value)/1e18;
-                        }
-                    }
-                    callback();
-                }).fail(function( jqXHR, textStatus, errorThrown ) {
-                    console.log("Failed getting Transactions: " + textStatus + " " + errorThrown);
-                });
-            }
-
-            $.get({url: 'https://api.blockcypher.com/v1/eth/main', dataType: 'json'}, function(data) {
-                let currentBlock = data.height;
-                let start = currentBlock - BLOCKS_MONTH;
-                let url = 'https://api.etherscan.io/api?apikey=&module=account&action=txlist&address=' + donationAddress + '&startBlock=' + start + '&endBlock=' + currentBlock;
-                getTransactions(url, 1, function() {
-                    $("#donated").text("Donations this month: " + totalDonated.toFixed(3));
-                });
-            }).fail(function( jqXHR, textStatus, errorThrown ) {
-                console.log("Failed getting Chain info: " + textStatus + " " + errorThrown);
-            });;
-
-            function donate() {
-                let value = parseFloat($("#donateValue").val());
-                if (value && typeof web3 != 'undefined') {
-                    value = value * 1e18;
-                    web3.eth.sendTransaction({to: donationAddress, value: value}, (error, result) => {
-                        if (error) {
-                            console.log("Error: " + error);
-                            return;
-                        }
-                        alert("Thanks for the donation!");
-                    });
-                }
-            }
         </script>
