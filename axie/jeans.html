@@ -256,6 +256,7 @@
                         $("#account").text("Can't detect your account. Unlock your wallet or try reloading the page and waiting a few seconds.");
                         $("#loading").text("")
                         $("#loading").fadeOut(1);
+                        getBodyParts(cb);
                     } else {
                         if (window.location.hash.substr(1) == "noAuto") {
                             $("#loading").text("");
