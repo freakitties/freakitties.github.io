@@ -250,6 +250,7 @@
                     $("#account").text("Web3 enabled browser not detected. Use the search box.");
                     $("#loading").text("")
                     $("#loading").fadeOut(1);
+                    getBodyParts(cb);
                 } else {
                     if (typeof web3.eth.accounts[0] == "undefined") {
                         $("#account").text("Can't detect your account. Unlock your wallet or try reloading the page and waiting a few seconds.");
@@ -296,11 +297,6 @@
     function getBodyParts(callback) {
         $.getJSON("https://axieinfinity.com/api/v2/body-parts", (parts) => {
             initBodyParts(parts);
-        }).always(() => {
-            $("#search").prop("disabled", false);
-            if (callback) {
-                callback();
-            }
         }).fail(() => {
             console.log("Failed to get body parts from the API");
             //API is unreliable. fall back to hard-coded local copy.
@@ -311,6 +307,11 @@
                 $("#searchParts").prop("disabled", true);
                 $("#searchParts").prop("placeholder", "Error connecting to Axie API");
             });
+        }).always(() => {
+            $("#search").prop("disabled", false);
+            if (callback) {
+                callback();
+            }
         });
     }
 
