@@ -1,7 +1,7 @@
 async function getLandSales() {
     let queryBody = "{\"operationName\":\"GetLandsGrid\",\"variables\":{\"from\":{OFFSET},\"size\":{SIZE},\"sort\":\"PriceAsc\",\"auctionType\":\"Sale\",\"owner\":null,\"criteria\":{\"landType\":[]}},\"query\":\"query GetLandsGrid($from: Int!, $size: Int!, $sort: SortBy!, $owner: String, $criteria: LandSearchCriteria, $auctionType: AuctionType) {\\n  lands(criteria: $criteria, from: $from, size: $size, sort: $sort, owner: $owner, auctionType: $auctionType) {\\n    total\\n    results {\\n      ...LandBriefV2\\n      __typename\\n    }\\n    __typename\\n  }\\n}\\n\\nfragment LandBriefV2 on LandPlot {\\n  tokenId\\n  owner\\n  landType\\n  row\\n  col\\n  auction {\\n    currentPrice\\n    startingTimestamp\\n    currentPriceUSD\\n    __typename\\n  }\\n  ownerProfile {\\n    name\\n    __typename\\n  }\\n  __typename\\n}\\n\"}";
     //get count
-    let response = await (await fetch("https://axieinfinity.com/graphql-server-v2/graphql?r=freak", {
+    let response = await (await fetch("https://graphql-gateway.axieinfinity.com/graphql?r=freak", {
       "headers": {
         "content-type": "application/json",
       },
@@ -16,7 +16,7 @@ async function getLandSales() {
     let lands = response.data.lands;
     let total = parseInt(lands.total);
         for (let offset = 0; offset < total; offset += 100) {
-          let response = await fetch("https://axieinfinity.com/graphql-server-v2/graphql?r=freak", {
+          let response = await fetch("https://graphql-gateway.axieinfinity.com/graphql?r=freak", {
               "headers": {
                 "content-type": "application/json",
               },
@@ -44,7 +44,7 @@ async function getLandSales() {
     promises = [];
     queryBody = "{\"operationName\":\"GetBundleList\",\"variables\":{\"from\":{OFFSET},\"size\":{SIZE},\"sort\":\"PriceAsc\",\"criteria\":{\"itemRarity\":[],\"landType\":[\"Genesis\",\"Arctic\",\"Savannah\",\"Mystic\",\"Forest\"],\"itemType\":[],\"totalItems\":[2,40],\"itemAlias\":[]}},\"query\":\"query GetBundleList($from: Int!, $size: Int!, $sort: SortBy, $seller: String, $criteria: BundleSearchCriteria) {\\n  bundles(from: $from, size: $size, criteria: $criteria, sort: $sort, seller: $seller) {\\n    total\\n    results {\\n      name\\n      listingIndex\\n      auction {\\n        currentPrice\\n        currentPriceUSD\\n        __typename\\n      }\\n      items {\\n        ... on LandItem {\\n          realTokenId\\n          figureURL\\n          rarity\\n          __typename\\n        }\\n        ... on LandPlot {\\n          realTokenId\\n          landType\\n          col\\n          row\\n          __typename\\n        }\\n        __typename\\n      }\\n      __typename\\n    }\\n    __typename\\n  }\\n}\\n\"}";
     //get bundles with lands
-    response = await (await fetch("https://axieinfinity.com/graphql-server-v2/graphql?r=freak", {
+    response = await (await fetch("https://graphql-gateway.axieinfinity.com/graphql?r=freak", {
       "headers": {
         "content-type": "application/json",
       },
@@ -54,7 +54,7 @@ async function getLandSales() {
 
     total = parseInt(response.data.bundles.total);
     for (let offset = 0; offset < total; offset += 100) {
-        response = await fetch("https://axieinfinity.com/graphql-server-v2/graphql?r=freak", {
+        response = await fetch("https://graphql-gateway.axieinfinity.com/graphql?r=freak", {
             "headers": {
                 "content-type": "application/json",
             },

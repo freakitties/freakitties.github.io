@@ -18,7 +18,7 @@
         <script>
             async function getItemBriefList(owner, offset, size) {
                 owner = owner.replace("ronin:", "0x");
-                let r = await fetch("https://axieinfinity.com/graphql-server-v2/graphql", {
+                let r = await fetch("https://graphql-gateway.axieinfinity.com/graphql?r=freak", {
                   "headers": {
                     "content-type": "application/json",
                   },

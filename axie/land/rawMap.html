@@ -135,7 +135,8 @@ async function getLandsByAccountId(accountId) {
 }
 
 async function getLandsByRoninAddr(address) {
-    let r = await fetch("https://axieinfinity.com/graphql-server-v2/graphql?r=freak", {
+
+    let r = await fetch("https://graphql-gateway.axieinfinity.com/graphql?r=freak", {
         "headers": {
             "content-type": "application/json",
         },
@@ -147,7 +148,7 @@ async function getLandsByRoninAddr(address) {
     let allLand = resp.data.lands.results;
     let total = parseInt(resp.data.lands.total);
     for (let offset = 100; offset < total; offset += 100) {
-        let r = await fetch("https://axieinfinity.com/graphql-server-v2/graphql", {
+        let r = await fetch("https://graphql-gateway.axieinfinity.com/graphql?r=freak", {
                 "headers": {
                     "content-type": "application/json",
                 },
