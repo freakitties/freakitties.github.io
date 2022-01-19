@@ -80,14 +80,15 @@
             if (oldID == axieID) return;
             console.log(axieID);
 
-            atlasURL = "https://storage.googleapis.com/assets.axieinfinity.com/axies/" + axieID + "/axie/axie.atlas";
+            baseURL = "https://assets.axieinfinity.com/axies/";
+            atlasURL = baseURL + axieID + "/axie/axie.atlas";
             //atlasURL = "https://storage.googleapis.com/assets.axieinfinity.com/axies/" + axieID + "/petite/petite.atlas";
             //imageURL =  data["figure"]["images"][imageName];
             //imageURL =  data["figure"]["axie"]["image"];
-            imageURL = "https://storage.googleapis.com/assets.axieinfinity.com/axies/" + axieID + "/axie/axie.png";
+            imageURL = baseURL + axieID + "/axie/axie.png";
             //imageURL = "https://storage.googleapis.com/assets.axieinfinity.com/axies/" + axieID + "/petite/petite.png";
             //modelURL = data["figure"]["axie"]["spineModel"];
-            modelURL = "https://storage.googleapis.com/assets.axieinfinity.com/axies/" + axieID + "/axie/axie.json";
+            modelURL = baseURL + axieID + "/axie/axie.json";
             //modelURL = "https://storage.googleapis.com/assets.axieinfinity.com/axies/" + axieID + "/petite/petite.json";
 
 //atlasURL = "https://axieinfinity.com/assets/models/ab19de2b119e811ae576b581ebb8d60d.atlas"
