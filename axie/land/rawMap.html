@@ -5,6 +5,7 @@
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
 <script src="/axie/js/utils.js"></script>
 <script src="/axie/js/landUtils.js"></script>
+<script src="/js/web3.min-1.7.4.js" integrity="sha384-776+xIgGZ3BUOF8hKsI9bd6WgiJln6EdmdZ6winEpykttx/B9xjae1lxMVMkYKba"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.bundle.min.js" integrity="sha384-xrRywqdh3PHs8keKZN+8zzc5TX0GRTLCcmivcbNJWm2rs5C8PRhcEn3czEjhAO9o" crossorigin="anonymous"></script>
 <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
 
@@ -90,6 +91,13 @@
     </div>
 </div>
 <script>
+
+roninW3 = new Web3(new Web3.providers.HttpProvider('https://api.roninchain.com/rpc'));
+landStakingAbi = [{"inputs":[{"internalType":"address","name":"_user","type":"address"}],"name":"getStakedLands","outputs":[{"internalType":"uint256[]","name":"","type":"uint256[]"}],"stateMutability":"view","type":"function"}]
+//Land staking contract
+landStaking = new roninW3.eth.Contract(landStakingAbi, '0xb2a5110f163ec592f8f0d4207253d8cbc327d9fb');
+
+
 
 function makeSpot(x, y, cls, price, saleType, mark=true) {
     plotx = x*6;
@@ -190,6 +198,26 @@ function plotSales() {
     }
 }
 
+function getColFromLandID(landID) {
+    return roninW3.utils.BN("0x" + roninW3.utils.BN(landID).toString(16).slice(32,48)).fromTwos(64).toNumber()
+}
+
+function getRowFromLandID(landID) {
+    return roninW3.utils.BN("0x" + roninW3.utils.BN(landID).toString(16).slice(16,32)).fromTwos(64).toNumber()
+}
+
+async function getStakedLands(address) {
+    let staked = await landStaking.methods.getStakedLands(address).call();
+    let stakedDetails = [];
+    for (let i = 0; i < staked.length; i++) {
+        let landID = staked[i];
+        let col = getColFromLandID(landID);
+        let row = getRowFromLandID(landID);
+        stakedDetails.push({tokenId: landID, col: col, row: row, owner: address, landType: null})
+    }
+    return stakedDetails;
+}
+
 cIdx = 1;
 async function doAccount(accountParam, style="plot2") {
     let parameter = getQueryParameter(accountParam);
@@ -203,7 +231,9 @@ async function doAccount(accountParam, style="plot2") {
             let lands;
             if (raw.startsWith("0x")) {
                 $("#" + accountParam).val(full);
-                lands = await getLandsByRoninAddr(raw);
+                let unstakedLands = await getLandsByRoninAddr(raw);
+                let stakedLands = await getStakedLands(raw);
+                lands = unstakedLands.concat(stakedLands);
             } else {
                 //$("#" + accountParam).val(full);
                 //lands = getLandsByAccountId(account);
