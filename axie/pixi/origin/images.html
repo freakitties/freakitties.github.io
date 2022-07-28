@@ -290,9 +290,8 @@ pages/lunacian-express-0f054897dd3d0ac5.js
 
         numChecked = 0;
         function checkLoaded() {
-            let nextDiv = document.getElementById("__next");
-            if (numChecked > 8 || (nextDiv && nextDiv.children && nextDiv.children.length > 2)) {
-                console.log("next div loaded. clearing");
+            if (numChecked > 15 || window.PIXI) {
+                console.log("PIXI class loaded. clearing");
                 clearInterval(intervalID);
                 removeDivs();
                 $.ajax({
@@ -306,7 +305,7 @@ pages/lunacian-express-0f054897dd3d0ac5.js
                 init();
                 getAxie();
             } else {
-                console.log("next div not loaded yet")
+                console.log("PIXI class not loaded yet")
                 numChecked++;
                 console.log("num checked " + numChecked);
             }
