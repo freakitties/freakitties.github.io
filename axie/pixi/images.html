@@ -35,12 +35,6 @@
                 }
             }
         </style>
-        <script>
-            prefersDarkScheme = window.matchMedia('(prefers-color-scheme: dark)');
-            if (prefersDarkScheme.matches) {
-                app.renderer.backgroundColor=0x202124;
-            }
-        </script>
     </head>
     <body>
         <div id="headerDiv"></div><br/>
@@ -82,6 +76,7 @@
         }
 
         function init() {
+            prefersDarkScheme = window.matchMedia('(prefers-color-scheme: dark)');
             let backgroundColor = 0xffffff;
             if (prefersDarkScheme.matches) {
                 backgroundColor = 0x202124;
