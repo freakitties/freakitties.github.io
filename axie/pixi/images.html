@@ -18,6 +18,32 @@
 
         <meta content="text/html;charset=utf-8" http-equiv="Content-Type">
         <meta content="utf-8" http-equiv="encoding">
+        <style>
+            @media (prefers-color-scheme: dark) {
+                body {
+                    color: #bdc1c6;
+                    background: #202124;
+                }
+                canvas {
+                    background-color: #202124;
+                }
+
+                select {
+                    color: #fff;
+                    background: #6c757d;
+                    border-radius: 0.25rem;
+                }
+            }
+        </style>
+        <script>
+            prefersDarkScheme = window.matchMedia('(prefers-color-scheme: dark)');
+            if (prefersDarkScheme.matches) {
+                document.body.classList.add('dark-theme');
+                app.renderer.backgroundColor=0x202124;
+            } else {
+                document.body.classList.remove('dark-theme');
+            }
+        </script>
     </head>
     <body>
         <div id="headerDiv"></div><br/>
@@ -57,7 +83,11 @@
         }
 
         function init() {
-            app = new PIXI.Application(2048, 1024, {backgroundColor : 0xffffff /*,  transparent: true*/ });
+            let backgroundColor = 0xffffff;
+            if (prefersDarkScheme.matches) {
+                backgroundColor = 0x202124;
+            }
+            app = new PIXI.Application(2048, 1024, {backgroundColor : backgroundColor /*,  transparent: true*/ });
             app.view.id = "canvas";
             app.view.style.height = 480;
             app.view.style.border = "1px solid #d9d9d9";
