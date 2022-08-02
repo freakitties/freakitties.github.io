@@ -38,10 +38,7 @@
         <script>
             prefersDarkScheme = window.matchMedia('(prefers-color-scheme: dark)');
             if (prefersDarkScheme.matches) {
-                document.body.classList.add('dark-theme');
                 app.renderer.backgroundColor=0x202124;
-            } else {
-                document.body.classList.remove('dark-theme');
             }
         </script>
     </head>
@@ -60,6 +57,8 @@
             </div>
             <div>
             Fun stuff: Use arrows keys to move the axie around. 'x' to bite. spacebar to "jump".
+            <br>
+            Click here for animated <a href="origin/images.html">Origin Axies</a>.
             </div>
         </div>
 
