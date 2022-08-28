@@ -1,5 +1,6 @@
 async function getLandSales() {
-    let queryBody = "{\"operationName\":\"GetLandsGrid\",\"variables\":{\"from\":{OFFSET},\"size\":{SIZE},\"sort\":\"PriceAsc\",\"auctionType\":\"Sale\",\"owner\":null,\"criteria\":{\"landType\":[]}},\"query\":\"query GetLandsGrid($from: Int!, $size: Int!, $sort: SortBy!, $owner: String, $criteria: LandSearchCriteria, $auctionType: AuctionType) {\\n  lands(criteria: $criteria, from: $from, size: $size, sort: $sort, owner: $owner, auctionType: $auctionType) {\\n    total\\n    results {\\n      ...LandBriefV2\\n      __typename\\n    }\\n    __typename\\n  }\\n}\\n\\nfragment LandBriefV2 on LandPlot {\\n  tokenId\\n  owner\\n  landType\\n  row\\n  col\\n  auction {\\n    currentPrice\\n    startingTimestamp\\n    currentPriceUSD\\n    __typename\\n  }\\n  ownerProfile {\\n    name\\n    __typename\\n  }\\n  __typename\\n}\\n\"}";
+
+    let queryBody =  "{\"operationName\":\"GetLandsGrid\",\"variables\":{\"from\":{OFFSET},\"size\":{SIZE},\"sort\":\"PriceAsc\",\"auctionType\":\"Sale\",\"owner\":null,\"criteria\":{\"landType\":[]}},\"query\":\"query GetLandsGrid($from: Int!, $size: Int!, $sort: SortBy!, $owner: String, $criteria: LandSearchCriteria, $auctionType: AuctionType) {\\n  lands(\\n    criteria: $criteria\\n    from: $from\\n    size: $size\\n    sort: $sort\\n    owner: $owner\\n    auctionType: $auctionType\\n  ) {\\n    total\\n    results {\\n      ...LandBriefV2\\n      __typename\\n    }\\n    __typename\\n  }\\n}\\n\\nfragment LandBriefV2 on LandPlot {\\n  tokenId\\n  owner\\n  landType\\n  row\\n  col\\n  order {\\n    id\\n    currentPrice\\n    startedAt\\n    currentPriceUsd\\n    __typename\\n  }\\n  ownerProfile {\\n    name\\n    __typename\\n  }\\n  __typename\\n}\\n\"}";
     //get count
     let response = await (await fetch("https://graphql-gateway.axieinfinity.com/graphql?r=freak", {
       "headers": {
@@ -42,7 +43,7 @@ async function getLandSales() {
     }
 
     promises = [];
-    queryBody = "{\"operationName\":\"GetBundleList\",\"variables\":{\"from\":{OFFSET},\"size\":{SIZE},\"sort\":\"PriceAsc\",\"criteria\":{\"itemRarity\":[],\"landType\":[\"Genesis\",\"Arctic\",\"Savannah\",\"Mystic\",\"Forest\"],\"itemType\":[],\"totalItems\":[2,40],\"itemAlias\":[]}},\"query\":\"query GetBundleList($from: Int!, $size: Int!, $sort: SortBy, $seller: String, $criteria: BundleSearchCriteria) {\\n  bundles(from: $from, size: $size, criteria: $criteria, sort: $sort, seller: $seller) {\\n    total\\n    results {\\n      name\\n      listingIndex\\n      auction {\\n        currentPrice\\n        currentPriceUSD\\n        __typename\\n      }\\n      items {\\n        ... on LandItem {\\n          realTokenId\\n          figureURL\\n          rarity\\n          __typename\\n        }\\n        ... on LandPlot {\\n          realTokenId\\n          landType\\n          col\\n          row\\n          __typename\\n        }\\n        __typename\\n      }\\n      __typename\\n    }\\n    __typename\\n  }\\n}\\n\"}";
+    queryBody = "{\"operationName\":\"GetBundleList\",\"variables\":{\"from\":{OFFSET},\"size\":{SIZE},\"sort\":\"PriceAsc\",\"criteria\":{\"itemRarity\":[],\"landType\":[],\"itemType\":[],\"totalItems\":[2,40],\"itemAlias\":[]}},\"query\":\"query GetBundleList($from: Int!, $size: Int!, $sort: SortBy, $seller: String, $criteria: BundleSearchCriteria) {\\n  bundles(from: $from, size: $size criteria: $criteria,  sort: $sort, seller: $seller) {\\n    total\\n    results {\\n      name\\n      listingIndex\\n      order {\\n        id\\n        currentPrice\\n        currentPriceUsd\\n        __typename\\n      }\\n      items {\\n        ... on LandItem {\\n          tokenId\\n          figureURL\\n          rarity\\n          itemAlias\\n          __typename\\n        }\\n        ... on LandPlot {\\n          tokenId\\n          landType\\n          col\\n          row\\n          __typename\\n        }\\n        __typename\\n      }\\n      __typename\\n    }\\n    __typename\\n  }\\n}\\n\"}";
     //get bundles with lands
     response = await (await fetch("https://graphql-gateway.axieinfinity.com/graphql?r=freak", {
       "headers": {
@@ -75,9 +76,9 @@ async function getLandSales() {
         for (let i in bundles) {
             for (let j in bundles[i].items) {
                 if (!bundles[i].items[j].hasOwnProperty("landType")) continue;
-                id = bundles[i].items[j].realTokenId;
+                id = bundles[i].items[j].tokenId;
                 allItems[id] = bundles[i].items[j];
-                allItems[id].auction = bundles[i].auction;
+                allItems[id].order = bundles[i].order;
                 allItems[id].saleType = "bundle";
             }
         }

@@ -148,7 +148,7 @@ async function getLandsByRoninAddr(address) {
         "headers": {
             "content-type": "application/json",
         },
-        "body": "{\"operationName\":\"GetLandsGrid\",\"variables\":{\"from\":0,\"size\":100,\"sort\":\"PriceAsc\",\"auctionType\":\"All\",\"owner\":\"" + address + "\",\"criteria\":{\"landType\":[]}},\"query\":\"query GetLandsGrid($from: Int!, $size: Int!, $sort: SortBy!, $owner: String, $criteria: LandSearchCriteria, $auctionType: AuctionType) {\\n  lands(criteria: $criteria, from: $from, size: $size, sort: $sort, owner: $owner, auctionType: $auctionType) {\\n    total\\n    results {\\n      ...LandBriefV2\\n      __typename\\n    }\\n    __typename\\n  }\\n}\\n\\nfragment LandBriefV2 on LandPlot {\\n  tokenId\\n  owner\\n  landType\\n  row\\n  col\\n  auction {\\n    currentPrice\\n    startingTimestamp\\n    currentPriceUSD\\n    __typename\\n  }\\n  ownerProfile {\\n    name\\n    __typename\\n  }\\n  __typename\\n}\\n\"}",
+        "body": "{\"operationName\":\"GetLandsGrid\",\"variables\":{\"from\":0,\"size\":100,\"sort\":\"PriceAsc\",\"auctionType\":\"All\",\"owner\":\"" + address + "\",\"criteria\":{\"landType\":[]}},\"query\":\"query GetLandsGrid($from: Int!, $size: Int!, $sort: SortBy!, $owner: String, $criteria: LandSearchCriteria, $auctionType: AuctionType) {\\n  lands(criteria: $criteria, from: $from, size: $size, sort: $sort, owner: $owner, auctionType: $auctionType) {\\n    total\\n    results {\\n      ...LandBriefV2\\n      __typename\\n    }\\n    __typename\\n  }\\n}\\n\\nfragment LandBriefV2 on LandPlot {\\n  tokenId\\n  owner\\n  landType\\n  row\\n  col\\n  order {\\n    id\\n    currentPrice\\n    startedAt\\n    currentPriceUsd\\n    __typename\\n  }\\n  ownerProfile {\\n    name\\n    __typename\\n  }\\n  __typename\\n}\\n\"}",
         "method": "POST",
     });
     resp = await r.json();
@@ -160,7 +160,7 @@ async function getLandsByRoninAddr(address) {
                 "headers": {
                     "content-type": "application/json",
                 },
-                "body": "{\"operationName\":\"GetLandsGrid\",\"variables\":{\"from\":" + offset + ",\"size\":100,\"sort\":\"PriceAsc\",\"auctionType\":\"All\",\"owner\":\"" + address + "\",\"criteria\":{\"landType\":[]}},\"query\":\"query GetLandsGrid($from: Int!, $size: Int!, $sort: SortBy!, $owner: String, $criteria: LandSearchCriteria, $auctionType: AuctionType) {\\n  lands(criteria: $criteria, from: $from, size: $size, sort: $sort, owner: $owner, auctionType: $auctionType) {\\n    total\\n    results {\\n      ...LandBriefV2\\n      __typename\\n    }\\n    __typename\\n  }\\n}\\n\\nfragment LandBriefV2 on LandPlot {\\n  tokenId\\n  owner\\n  landType\\n  row\\n  col\\n  auction {\\n    currentPrice\\n    startingTimestamp\\n    currentPriceUSD\\n    __typename\\n  }\\n  ownerProfile {\\n    name\\n    __typename\\n  }\\n  __typename\\n}\\n\"}",
+                "body": "{\"operationName\":\"GetLandsGrid\",\"variables\":{\"from\":" + offset + ",\"size\":100,\"sort\":\"PriceAsc\",\"auctionType\":\"All\",\"owner\":\"" + address + "\",\"criteria\":{\"landType\":[]}},\"query\":\"query GetLandsGrid($from: Int!, $size: Int!, $sort: SortBy!, $owner: String, $criteria: LandSearchCriteria, $auctionType: AuctionType) {\\n  lands(criteria: $criteria, from: $from, size: $size, sort: $sort, owner: $owner, auctionType: $auctionType) {\\n    total\\n    results {\\n      ...LandBriefV2\\n      __typename\\n    }\\n    __typename\\n  }\\n}\\n\\nfragment LandBriefV2 on LandPlot {\\n  tokenId\\n  owner\\n  landType\\n  row\\n  col\\n  order {\\n    id\\n    currentPrice\\n    startedAt\\n    currentPriceUsd\\n    __typename\\n  }\\n  ownerProfile {\\n    name\\n    __typename\\n  }\\n  __typename\\n}\\n\"}",
                 "method": "POST",
             });
         resp = await r.json();
@@ -177,9 +177,9 @@ function plotAddr(lands, style="plot2") {
         let key = x + "_" + y;
         if (key in forSale) {
             if (hash.indexOf("colors") == -1) {
-                spot = makeSpot(x, y, style + "_white blink", forSale[key].auction.currentPrice, forSale[key].saleType);
+                spot = makeSpot(x, y, style + "_white blink", forSale[key].order.currentPrice, forSale[key].saleType);
             } else {
-                spot = makeSpot(x, y, style + " blink", forSale[key].auction.currentPrice, forSale[key].saleType);
+                spot = makeSpot(x, y, style + " blink", forSale[key].order.currentPrice, forSale[key].saleType);
             }
         } else {
             makeSpot(x, y, style);
@@ -194,7 +194,7 @@ function plotSales() {
         let x = land.col;
         let y = land.row;
         forSale[x + "_" + y] = land;
-        makeSpot(x, y, "plot", land.auction.currentPrice, land.saleType);
+        makeSpot(x, y, "plot", land.order.currentPrice, land.saleType);
     }
 }
 
@@ -274,6 +274,18 @@ function plotAll() {
 
 var hash = window.location.hash.substr(1);
 $( document ).ready(async function() {
+    if (hash.indexOf("noBlink") != -1) {
+        for (let i = 0; i < document.styleSheets.length; i++) {
+            if (document.styleSheets[i].href) continue;
+            for (let j = 0; j < document.styleSheets[i].rules.length; j++) {
+                if (document.styleSheets[i].rules[j].selectorText == ".blink") {
+                    document.styleSheets[i].rules[j].style=null;
+                    console.log("Blinking disabled")
+                    break;
+                }
+            }
+        }
+    }
     $("#loading").hide();
     x = parseInt(getQueryParameter("x"));
     y = parseInt(getQueryParameter("y"));
