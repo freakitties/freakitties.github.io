@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta name="viewport" content="width=device-width"/>
+        <meta charSet="utf-8"/>
+        <title>Freak's Axie Image Grabber</title>
+        <meta name="twitter:card" content="summary"/>
+        <meta property="og:site_name" content="Freak's Axie Image Grabber"/>
+        <meta name="og:image" content="https://storage.googleapis.com/axie-cdn/banner.png"/>
+        <meta property="og:title" content="Freak's Axie Image Grabber"/>
+        <meta name="og:description" content="Freak's Axie Image Grabber"/>
+        <meta property="og:site_name" content="Freak's Axie Image Grabber"/>
+<meta name="next-head-count" content="0" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+        <!--
+        <link rel="preload" href="../../../cdn.axieinfinity.com/marketplace-website/_next/static/css/d2982dcb1a093713.css" as="style"/>
+        <link rel="stylesheet" href="../../../cdn.axieinfinity.com/marketplace-website/_next/static/css/d2982dcb1a093713.css" data-n-g=""/>
+        <link rel="preload" href="../../../cdn.axieinfinity.com/marketplace-website/_next/static/css/2035bca250bf0461.css" as="style"/>
+        <link rel="stylesheet" href="../../../cdn.axieinfinity.com/marketplace-website/_next/static/css/2035bca250bf0461.css" data-n-p=""/>
+        <link rel="preload" href="../../../cdn.axieinfinity.com/marketplace-website/_next/static/css/428681e8dac7ccad.css" as="style"/>
+        <link rel="stylesheet" href="../../../cdn.axieinfinity.com/marketplace-website/_next/static/css/428681e8dac7ccad.css" data-n-p=""/>
+    -->
+        <noscript data-n-css=""></noscript>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js" integrity="sha384-tsQFqpEReu7ZLhBV2VZlAu7zcOV+rXbYlF2cqB8txI/8aZajjp4Bqd+V6D5IgvKT" crossorigin="anonymous"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+        <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+<!--
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pixi.js/4.7.1/pixi.min.js" integrity="sha384-xdEN7ies9cZm/l8HslPhg0lGG/uQuIW2KQ/EVt71QFjarfJWY95fAMqbqw/1C2rX" crossorigin="anonymous"></script>
+-->
+
+        <!-- from axie/<id> -->
+        <script defer="" nomodule="" src="./cdn.axieinfinity.com/marketplace-website/_next/static/chunks/polyfills-5cd94c89d3acac5f.js"></script>
+        <script src="./cdn.axieinfinity.com/marketplace-website/_next/static/chunks/webpack-625f5f5e4d1f529e.js" defer=""></script>
+        <script src="./cdn.axieinfinity.com/marketplace-website/_next/static/chunks/framework-74755b63994040ec.js" defer=""></script>
+        <script src="./cdn.axieinfinity.com/marketplace-website/_next/static/chunks/main-8feedc56cc1e0d1e.js" defer=""></script>
+        <script src="./cdn.axieinfinity.com/marketplace-website/_next/static/chunks/pages/_app-e15a68ce19c479fa.js" defer=""></script>
+        <script src="./cdn.axieinfinity.com/marketplace-website/_next/static/chunks/75fc9c18-561610f32fe0af9f.js" defer=""></script>
+        <script src="./cdn.axieinfinity.com/marketplace-website/_next/static/chunks/ae42c805-6747cc608eec1ced.js" defer=""></script>
+        <script src="./cdn.axieinfinity.com/marketplace-website/_next/static/chunks/05c932f0-1a95e635490d6daa.js" defer=""></script>
+        <script src="./cdn.axieinfinity.com/marketplace-website/_next/static/chunks/5759-44370e7fbce051bb.js" defer=""></script>
+        <script src="./cdn.axieinfinity.com/marketplace-website/_next/static/chunks/2881-0a4b42370831d67c.js" defer=""></script>
+        <script src="./cdn.axieinfinity.com/marketplace-website/_next/static/chunks/9089-7de711647df97de2.js" defer=""></script>
+        <script src="./cdn.axieinfinity.com/marketplace-website/_next/static/chunks/9906-fb5ca8fc0b12a9bf.js" defer=""></script>
+        <script src="./cdn.axieinfinity.com/marketplace-website/_next/static/chunks/4460-03c01f33cdbe923d.js" defer=""></script>
+        <script src="./cdn.axieinfinity.com/marketplace-website/_next/static/chunks/6446-50236fe18677eddb.js" defer=""></script>
+        <script src="./cdn.axieinfinity.com/marketplace-website/_next/static/chunks/1437-7420f21a6091dca1.js" defer=""></script>
+        <script src="./cdn.axieinfinity.com/marketplace-website/_next/static/chunks/1716-705f55d864c8c995.js" defer=""></script>
+        <script src="./cdn.axieinfinity.com/marketplace-website/_next/static/chunks/6523-9d197433f0d4e8e5.js" defer=""></script>
+        <script src="./cdn.axieinfinity.com/marketplace-website/_next/static/chunks/2846-647cbe19d7feebda.js" defer=""></script>
+        <script src="./cdn.axieinfinity.com/marketplace-website/_next/static/chunks/9910-aa87df84c09aa9be.js" defer=""></script>
+        <script src="./cdn.axieinfinity.com/marketplace-website/_next/static/chunks/1779-715d79076790f845.js" defer=""></script>
+        <script src="./cdn.axieinfinity.com/marketplace-website/_next/static/chunks/2613-7a78b0adbd3960e9.js" defer=""></script>
+        <script src="./cdn.axieinfinity.com/marketplace-website/_next/static/chunks/9953-623ea2a215b7ba7e.js" defer=""></script> <!-- edit -->
+        <script src="./cdn.axieinfinity.com/marketplace-website/_next/static/chunks/pages/axie/%5Bid%5D-2ac3d0f7a504bc64.js" defer=""></script>
+        <script src="./cdn.axieinfinity.com/marketplace-website/_next/static/NdXf4Pb_FIZxviJEzCNhy/_buildManifest.js" defer=""></script>
+        <script src="./cdn.axieinfinity.com/marketplace-website/_next/static/NdXf4Pb_FIZxviJEzCNhy/_ssgManifest.js" defer=""></script>
+        <script src="./cdn.axieinfinity.com/marketplace-website/_next/static/NdXf4Pb_FIZxviJEzCNhy/_middlewareManifest.js" defer=""></script>
+<!-- 5083.eb4b2d9654b60a77.js
+ae42c805-6747cc608eec1ced.js
+9891-9a3751fdc4d35dcb.js
+pages/login-2f9b68349580d7ed.js
+615-eee7962f390d1a97.js
+pages/index-75479a0f6a191a2b.js
+4216-6fce629a483325b4.js
+pages/axie-3aee88b30cf1597b.js
+pages/lunacian-express-0f054897dd3d0ac5.js
+9680-ae8924444ed6d7ea.js
+-->
+
+        <script src="/axie/js/api.js"></script>
+        <style>
+            .StoreNavigationBar_Container__xsKNP {
+                display: none;
+            }
+            .NavigationDrawer_Drawer__A4D3Q {
+                display: none;
+            }
+            .NavigationBar_Content__TO6Pq {
+                display: none;
+            }
+            @media (prefers-color-scheme: dark) {
+                body {
+                    color: #bdc1c6;
+                    background: #202124;
+                }
+                canvas {
+                    background-color: #202124;
+                }
+
+                select {
+                    color: #fff;
+                    background: #6c757d;
+                    border-radius: 0.25rem;
+                }
+            }
+        </style>
+    </head>
+    <script>
+        //$('div').css('display','none');
+
+        //const VARIANT_LIST = ["aquatic-08.mouth", "aquatic-08.mouth-bite", "aquatic-08.mouth-smile", "aquatic-08.mouth-open", "bird-04.mouth", "bird-04.mouth-bite", "bird-04.ear-right", "bird-04.ear-left", "bird-04.mouth-smile", "bird-04.mouth-open", "xmas-01.mouth", "xmas-01.mouth-bite", "xmas-01.eyes-happy", "xmas-01.eyes-shut", "xmas-01.mouth-blink", "xmas-01.eyes-angry", "xmas-01.mouth-smile", "xmas-01.eyes", "xmas-01.mouth-open", "aquatic-06.ear-right", "aquatic-06.ear-left", "aquatic-06.tail", "plant-02.mouth", "plant-02.mouth-bite", "plant-02.eyes-happy", "plant-02.eyes-shut", "plant-02.eyes-angry", "plant-02.mouth-smile", "plant-02.eyes", "plant-02.mouth-open", "beast-04.mouth", "beast-04.mouth-bite", "beast-04.eyes-happy", "beast-04.ear-right", "beast-04.eyes-shut", "beast-04.ear-left", "beast-04.eyes-angry", "beast-04.mouth-smile", "beast-04.eyes", "beast-04.mouth-open", "body-spiky.body-spiky", "bird-02.mouth", "bird-02.mouth-bite", "bird-02.mouth-smile", "bird-02.mouth-open", "beast-02.mouth", "beast-02.mouth-bite", "beast-02.eyes-happy", "beast-02.ear-right", "beast-02.eyes-shut", "beast-02.ear-left", "beast-02.eyes-angry", "beast-02.mouth-smile", "beast-02.eyes", "beast-02.mouth-open", "beast-02.back", "reptile-06.ear-right", "reptile-06.ear-left", "reptile-06.tail", "reptile-06.horn", "reptile-08.mouth", "reptile-08.mouth-bite", "reptile-08.eyes-happy", "reptile-08.ear-right", "reptile-08.eyes-shut", "reptile-08.ear-left", "reptile-08.eyes-angry", "reptile-08.mouth-smile", "reptile-08.eyes", "reptile-08.mouth-open", "reptile-08.horn", "body-curly.body-curly", "plant-04.mouth", "plant-04.mouth-bite", "plant-04.eyes-happy", "plant-04.eyes-shut", "plant-04.eyes-angry", "plant-04.mouth-smile", "plant-04.mouth-open", "reptile-mystic-02.mouth-bite", "reptile-mystic-02.eyes-shut", "reptile-mystic-02.eyes-angry", "japan-03.eyes-happy", "japan-03.eyes-angry", "japan-03.eyes", "plant-mystic-02.mouth-bite", "plant-mystic-02.eyes-happy", "plant-mystic-02.eyes-shut", "plant-mystic-02.eyes-angry", "plant-mystic-02.mouth-smile", "plant-mystic-02.eyes", "plant-mystic-02.mouth-open", "plant-mystic-02.horn", "japan-02.mouth", "japan-02.mouth-bite", "japan-02.eyes-happy", "japan-02.eyes-shut", "japan-02.eyes-angry", "japan-02.mouth-smile", "japan-02.eyes", "japan-02.mouth-open", "bug-10.ear-right", "bug-10.ear-left", "bug-10.horn", "bug-04.ear-right", "bug-04.ear-left", "body-bigyak.body-braid", "body-bigyak.body-bigyak", "body-bigyak.body-braid2", "bug-02.mouth", "bug-02.mouth-bite", "bug-02.eyes-happy", "bug-02.ear-right", "bug-02.eyes-shut", "bug-02.ear-left", "bug-02.eyes-angry", "bug-02.mouth-smile", "bug-02.eyes", "bug-02.mouth-open", "bug-02.horn", "beast-mystic-02.mouth", "beast-mystic-02.mouth-bite", "beast-mystic-02.eyes-happy", "beast-mystic-02.eyes-shut", "beast-mystic-02.eyes-angry", "beast-mystic-02.mouth-smile", "beast-mystic-02.eyes", "beast-mystic-02.mouth-open", "beast-mystic-02.back", "reptile-12.ear-right", "reptile-12.ear-left", "reptile-12.back", "reptile-12.horn", "body-normal.leg-back-left-long", "body-normal.sumo-leg-back-left-stretch", "body-normal.sumo-leg-front-right-long", "body-normal.leg-front-left-stretch", "body-normal.sumo-leg-front-right-stretch", "body-normal.sumo-leg-front-left", "body-normal.body-class-beast", "body-normal.body", "body-normal.sumo-leg-back-left-long", "body-normal.body-class-aquatic", "body-normal.leg-front-right", "body-normal.sumo-leg-front-right", "body-normal.sumo-leg-front-left-long", "body-normal.body-class-bug", "body-normal.body-class-bird", "body-normal.body-class-reptile", "body-normal.leg-front-right-stretch", "body-normal.leg-back-left", "body-normal.body-class-plant", "body-normal.leg-front-right-long", "body-normal.leg-back-left-stretch", "body-normal.sumo-leg-front-left-stretch", "body-normal.leg-front-left-long", "body-normal.leg-front-left", "body-normal.sumo-leg-back-left", "plant-10.mouth", "plant-10.mouth-bite", "plant-10.mouth-smile", "plant-10.mouth-open", "beast-10.mouth", "beast-10.mouth-bite", "beast-10.eyes-happy", "beast-10.ear-right", "beast-10.eyes-shut", "beast-10.ear-left", "beast-10.eyes-angry", "beast-10.mouth-smile", "beast-10.eyes", "beast-10.mouth-open", "beast-10.horn", "body-mystic-normal.body-mystic", "body-mystic-fuzzy.body-mfuzzy", "body-mystic-fuzzy.body-mystic", "aquatic-12.ear-right", "aquatic-12.ear-left", "bird-10.ear-right", "bird-10.ear-left", "bird-10.tail", "plant-08.eyes-happy", "plant-08.eyes-shut", "plant-08.eyes-angry", "plant-08.eyes", "reptile-04.mouth", "reptile-04.mouth-bite", "reptile-04.eyes-happy", "reptile-04.ear-right", "reptile-04.eyes-shut", "reptile-04.ear-left", "reptile-04.eyes-angry", "reptile-04.mouth-smile", "reptile-04.eyes", "reptile-04.mouth-open", "reptile-04.back", "xmas-02.mouth-bite", "xmas-02.mouth-smile", "xmas-02.mouth-open", "aquatic-02.mouth", "aquatic-02.eyes-happy", "aquatic-02.eyes-shut", "aquatic-02.eyes-angry", "aquatic-02.eyes", "beast-06.ear-right", "beast-06.ear-left", "beast-06.back", "reptile-02.mouth", "reptile-02.mouth-bite", "reptile-02.ear-right", "reptile-02.ear-left", "reptile-02.eyes-angry", "reptile-02.mouth-smile", "reptile-02.mouth-open", "beast-08.mouth-bite", "beast-08.eyes-happy", "beast-08.ear-right", "beast-08.eyes-shut", "beast-08.ear-left", "beast-08.eyes-angry", "beast-08.tail", "beast-08.mouth-smile", "beast-08.eyes", "beast-08.mouth-open", "bird-06.ear-right", "bird-06.ear-left", "bird-06.tail", "aquatic-04.mouth", "aquatic-04.mouth-bite", "aquatic-04.mouth-smile", "aquatic-04.mouth-open", "bird-08.mouth", "bird-08.mouth-bite", "bird-08.mouth-smile", "bird-08.mouth-open", "bird-08.horn", "bug-12.back", "japan-01.mouth", "japan-01.mouth-bite", "japan-01.mouth-smile", "japan-01.mouth-open", "body-wetdog.body-braid", "body-wetdog.body-wetdog", "bug-08.mouth-bite", "bug-08.mouth-open", "bug-06.ear-left", "aquatic-mystic-02.mouth", "aquatic-mystic-02.eyes-happy", "aquatic-mystic-02.eyes-shut", "aquatic-mystic-02.eyes-angry", "aquatic-mystic-02.eyes", "aquatic-10.eyes-happy", "aquatic-10.eyes-shut", "aquatic-10.ear-left", "aquatic-10.eyes-angry", "aquatic-10.eyes", "bird-12.back", "bird-12.horn", "beast-12.back", "body-fuzzy.body-fuzzy", "bird-mystic-02.mouth-bite", "bird-mystic-02.mouth-smile", "bird-mystic-02.mouth-open", "body-sumo.body-sumo", "reptile-10.mouth", "reptile-10.mouth-bite", "reptile-10.ear-left", "reptile-10.mouth-smile", "reptile-10.mouth-open", "reptile-10.horn", ];
+        const VARIANT_LIST = ["aquatic-08.mouth","aquatic-08.mouth-bite","aquatic-08.mouth-smile","aquatic-08.mouth-open","body-summer.body","bird-04.mouth","bird-04.mouth-bite","bird-04.ear-right","bird-04.ear-left","bird-04.mouth-smile","bird-04.mouth-open","xmas-01.mouth","xmas-01.mouth-bite","xmas-01.eyes-happy","xmas-01.eyes-shut","xmas-01.mouth-blink","xmas-01.eyes-angry","xmas-01.mouth-smile","xmas-01.eyes","xmas-01.mouth-open","aquatic-06.ear-right","aquatic-06.ear-left","aquatic-06.tail","plant-02.mouth","plant-02.mouth-bite","plant-02.eyes-happy","plant-02.eyes-shut","plant-02.eyes-angry","plant-02.mouth-smile","plant-02.eyes","plant-02.mouth-open","beast-04.mouth","beast-04.mouth-bite","beast-04.eyes-happy","beast-04.ear-right","beast-04.eyes-shut","beast-04.ear-left","beast-04.eyes-angry","beast-04.mouth-smile","beast-04.eyes","beast-04.mouth-open","body-spiky.body-spiky","bird-02.mouth","bird-02.mouth-bite","bird-02.mouth-smile","bird-02.mouth-open","beast-02.mouth","beast-02.mouth-bite","beast-02.eyes-happy","beast-02.ear-right","beast-02.eyes-shut","beast-02.ear-left","beast-02.eyes-angry","beast-02.mouth-smile","beast-02.eyes","beast-02.mouth-open","beast-02.back","reptile-06.ear-right","reptile-06.ear-left","reptile-06.tail","reptile-06.horn","reptile-08.mouth","reptile-08.mouth-bite","reptile-08.eyes-happy","reptile-08.ear-right","reptile-08.eyes-shut","reptile-08.ear-left","reptile-08.eyes-angry","reptile-08.mouth-smile","reptile-08.eyes","reptile-08.mouth-open","reptile-08.horn","body-curly.body-curly","plant-04.mouth","plant-04.mouth-bite","plant-04.eyes-happy","plant-04.eyes-shut","plant-04.eyes-angry","plant-04.mouth-smile","plant-04.mouth-open","reptile-mystic-02.mouth-bite","reptile-mystic-02.eyes-shut","reptile-mystic-02.eyes-angry","japan-03.eyes-happy","japan-03.eyes-angry","japan-03.eyes","plant-mystic-02.mouth-bite","plant-mystic-02.eyes-happy","plant-mystic-02.eyes-shut","plant-mystic-02.eyes-angry","plant-mystic-02.mouth-smile","plant-mystic-02.eyes","plant-mystic-02.mouth-open","plant-mystic-02.horn","japan-02.mouth","japan-02.mouth-bite","japan-02.eyes-happy","japan-02.eyes-shut","japan-02.eyes-angry","japan-02.mouth-smile","japan-02.eyes","japan-02.mouth-open","bug-10.ear-right","bug-10.ear-left","bug-10.horn","bug-04.ear-right","bug-04.ear-left","body-bigyak.body-braid","body-bigyak.body-bigyak","body-bigyak.body-braid2","bug-02.mouth","bug-02.mouth-bite","bug-02.eyes-happy","bug-02.ear-right","bug-02.eyes-shut","bug-02.ear-left","bug-02.eyes-angry","bug-02.mouth-smile","bug-02.eyes","bug-02.mouth-open","bug-02.horn","beast-mystic-02.mouth","beast-mystic-02.mouth-bite","beast-mystic-02.eyes-happy","beast-mystic-02.eyes-shut","beast-mystic-02.eyes-angry","beast-mystic-02.mouth-smile","beast-mystic-02.eyes","beast-mystic-02.mouth-open","beast-mystic-02.back","reptile-12.ear-right","reptile-12.ear-left","reptile-12.back","reptile-12.horn","body-normal.summer-leg-back-left-long","body-normal.leg-back-left-long","body-normal.sumo-leg-back-left-stretch","body-normal.summer-leg-back-left-stretch","body-normal.summer-leg-front-right-long","body-normal.sumo-leg-front-right-long","body-normal.leg-front-left-stretch","body-normal.sumo-leg-front-right-stretch","body-normal.sumo-leg-front-left","body-normal.body-class-beast","body-normal.body","body-normal.sumo-leg-back-left-long","body-normal.body-class-aquatic","body-normal.leg-front-right","body-normal.sumo-leg-front-right","body-normal.sumo-leg-front-left-long","body-normal.summer-leg-back-left","body-normal.summer-leg-front-left-long","body-normal.body-class-bug","body-normal.summer-leg-front-left","body-normal.body-class-bird","body-normal.summer-leg-front-left-stretch","body-normal.body-class-reptile","body-normal.leg-front-right-stretch","body-normal.leg-back-left","body-normal.body-class-plant","body-normal.leg-front-right-long","body-normal.leg-back-left-stretch","body-normal.sumo-leg-front-left-stretch","body-normal.leg-front-left-long","body-normal.summer-leg-front-right-stretch","body-normal.leg-front-left","body-normal.summer-leg-front-right","body-normal.sumo-leg-back-left","plant-10.mouth","plant-10.mouth-bite","plant-10.mouth-smile","plant-10.mouth-open","beast-10.mouth","beast-10.mouth-bite","beast-10.eyes-happy","beast-10.ear-right","beast-10.eyes-shut","beast-10.ear-left","beast-10.eyes-angry","beast-10.mouth-smile","beast-10.eyes","beast-10.mouth-open","beast-10.horn","body-mystic-normal.body-mystic","body-mystic-fuzzy.body-mfuzzy","body-mystic-fuzzy.body-mystic","aquatic-12.ear-right","aquatic-12.ear-left","bird-10.ear-right","bird-10.ear-left","bird-10.tail","plant-08.eyes-happy","plant-08.eyes-shut","plant-08.eyes-angry","plant-08.eyes","reptile-04.mouth","reptile-04.mouth-bite","reptile-04.eyes-happy","reptile-04.ear-right","reptile-04.eyes-shut","reptile-04.ear-left","reptile-04.eyes-angry","reptile-04.mouth-smile","reptile-04.eyes","reptile-04.mouth-open","reptile-04.back","xmas-02.mouth-bite","xmas-02.mouth-smile","xmas-02.mouth-open","aquatic-02.mouth","aquatic-02.eyes-happy","aquatic-02.eyes-shut","aquatic-02.eyes-angry","aquatic-02.eyes","beast-06.ear-right","beast-06.ear-left","beast-06.back","reptile-02.mouth","reptile-02.mouth-bite","reptile-02.ear-right","reptile-02.ear-left","reptile-02.eyes-angry","reptile-02.mouth-smile","reptile-02.mouth-open","beast-08.mouth-bite","beast-08.eyes-happy","beast-08.ear-right","beast-08.eyes-shut","beast-08.ear-left","beast-08.eyes-angry","beast-08.tail","beast-08.mouth-smile","beast-08.eyes","beast-08.mouth-open","bird-06.ear-right","bird-06.ear-left","bird-06.tail","aquatic-04.mouth","aquatic-04.mouth-bite","aquatic-04.mouth-smile","aquatic-04.mouth-open","bird-08.mouth","bird-08.mouth-bite","bird-08.mouth-smile","bird-08.mouth-open","bird-08.horn","bug-12.back","japan-01.mouth","japan-01.mouth-bite","japan-01.mouth-smile","japan-01.mouth-open","body-wetdog.body-braid","body-wetdog.body-wetdog","bug-08.mouth-bite","bug-08.mouth-open","bug-06.ear-left","aquatic-mystic-02.mouth","aquatic-mystic-02.eyes-happy","aquatic-mystic-02.eyes-shut","aquatic-mystic-02.eyes-angry","aquatic-mystic-02.eyes","aquatic-10.eyes-happy","aquatic-10.eyes-shut","aquatic-10.ear-left","aquatic-10.eyes-angry","aquatic-10.eyes","bird-12.back","bird-12.horn","beast-12.back","body-fuzzy.body-fuzzy","bird-mystic-02.mouth-bite","bird-mystic-02.mouth-smile","bird-mystic-02.mouth-open","body-sumo.body-sumo","reptile-10.mouth","reptile-10.mouth-bite","reptile-10.ear-left","reptile-10.mouth-smile","reptile-10.mouth-open","reptile-10.horn"];
+
+        function init() {
+            prefersDarkScheme = window.matchMedia('(prefers-color-scheme: dark)');
+            let backgroundColor = 0xffffff;
+            if (prefersDarkScheme.matches) {
+                backgroundColor = 0x202124;
+            }
+            app = new PIXI.Application(2048, 1024, {backgroundColor : backgroundColor /*,  transparent: true*/ });
+            app.view.id = "canvas";
+            app.view.style.height = "480px";
+            app.view.style.border = "1px solid #d9d9d9";
+            document.getElementById("freakImageLoc").appendChild(app.view);
+        }
+
+        async function getAxie() {
+            oldID = axieID;
+            axieID = parseInt($("#axieID").val());
+            if (!axieID) {
+                alert("bad axie ID");
+                return;
+            }
+            if (oldID == axieID) return;
+            console.log(axieID);
+
+            if (axieID == 2595) {
+                genes = "0x2800000000000300024080d00410000000000088082040020001001410604104000100081820c00200010000100041060001001408a0c0020000008008204502";
+            } else {
+                axie = await getAxieDetails(axieID);
+                genes = axie.newGenes;
+            }
+
+            PIXI.loader.reset();
+
+            var b = new myMixer.AxieMixer(genes.substring(2));
+            c = {
+                json: b.spine,
+                images: {
+                    "axie-2d-v3-stuff.png": "https://axiecdn.axieinfinity.com/mixer-stuffs/v2/"
+                },
+                variant: b.variant
+            }
+
+            g = PIXI.loader
+            s = {};
+            attachments = c.json.skins[0].attachments;
+            for (var t in attachments) {
+                var r = attachments[t];
+                for (var u in r) {
+                    var e = r[u].path
+                      , i = void 0;
+                    i = VARIANT_LIST.includes(e) ? "https://axiecdn.axieinfinity.com/mixer-stuffs/v2/".concat(e.replace(".", "/"), "/").concat(c.variant, ".png") : "https://axiecdn.axieinfinity.com/mixer-stuffs/v2/".concat(e.replace(".", "/"), ".png"),
+
+                    //naked mystic
+                    i = i.replaceAll("body-mystic", "body")
+                    if (i.indexOf("body-light") != -1) {
+                        i = "https://freakitties.github.io/axie/pixi/origin/static/image/1x1.png";
+                    }
+//https://axiecdn.axieinfinity.com/mixer-stuffs/v2/body-normal/body-light-breath.png
+//https://axiecdn.axieinfinity.com/mixer-stuffs/v2/body-normal/body-light-pulse.png
+//https://axiecdn.axieinfinity.com/mixer-stuffs/v2/body-normal/body-light-life.png
+//console.log(i);
+                    s[e] = PIXI.Texture.from(i);
+                    try {
+                        g.add(e, i)
+                    } catch (v) {
+                        console.log("AxieFigure_SkinAttachments", v)
+                    }
+                }
+            }
+            g.add("floor", "/static/image/floor.png").on("complete", function() {
+
+                if (b) {
+                    var c, d = g.resources.floor.texture, a = new PIXI.Sprite(d);
+                    a.width = 320,
+                    a.height = 200,
+                    a.pivot.set(.5),
+                    a.position.set(app.renderer.screen.width / 2 - 160, app.renderer.screen.height - 230),
+                    a.name = "floor",
+                    null == b || null === (c = b.stage) || void 0 === c || c.addChild(a)
+                }
+
+            });
+            g.load();
+            g.once("complete", function() {
+                var d, e = new PIXI.spine.core.TextureAtlas;
+                e.addTextureHash(s, !1);
+                var spineAtlasLoader = new PIXI.spine.core.AtlasAttachmentLoader(e)
+                  , spineJsonParser = new PIXI.spine.core.SkeletonJson(spineAtlasLoader)
+                  , spineData = spineJsonParser.readSkeletonData(c.json);
+
+                animation = new PIXI.spine.Spine(spineData);
+
+                animation.name = "axie",
+                animation.position.set(app.view.width/2, app.view.height * 0.75),
+                animation.scale.set(.65),
+                //animation.pivot.set(-21, 0),
+                animation.state.setAnimation(0, 'action/idle/normal', true);
+
+                /*
+                animation.state.setAnimation(0, j, !1).onComplete = function() {
+                    p(a)
+                }
+                */
+
+                app.stage.removeChildren();
+                app.stage.addChild(animation)
+                //null == app || null === (d = app.stage) || void 0 === d || d.addChild(animation)
+
+                let animationList = document.getElementById("animationList");
+                while (animationList.options.length > 0) {
+                    animationList.remove(0);
+                }
+                for (let i = 0; i < spineData.animations.length; i++) {
+                    let name = spineData.animations[i].name;
+                    let option = document.createElement("option");
+                    option.setAttribute("value", name);
+                    option.append(document.createTextNode(name));
+                    if (i == 0) option.setAttribute("selected", "selected");
+                    animationList.append(option);
+                }
+
+                animationList.onchange = function(e) {
+                    var animationName = e.target.value;
+                    animation.state.setAnimation(0, animationName, true);
+                }
+            });
+        }
+
+        function stopAllPartAnimations() {
+            animation.state.clearTrack(1);
+            animation.state.clearTrack(2);
+            animation.state.clearTrack(3);
+            animation.skeleton.setToSetupPose();
+        }
+
+        function animateAllParts() {
+            //start multiple animations on multiple tracks
+            animation.state.setAnimation(1, "action/mix/ear-animation", true);
+            animation.state.setAnimation(2, "action/mix/eyes-animation", true);
+            animation.state.setAnimation(3, "action/mix/normal-mouth-animation", true);
+
+            //animation.state.setAnimation(0, "action/mix/normal-body-animation", true);
+        }
+
+        function handleCheckbox(cb) {
+            if (cb.checked) {
+                animateAllParts();
+            } else {
+                stopAllPartAnimations();
+            }
+        }
+
+        function togglePause() {
+            PIXI.spine.Spine.globalAutoUpdate = !PIXI.spine.Spine.globalAutoUpdate;
+        }
+
+        function downloadImage() {
+            var button = document.getElementById('IDButton');
+            let canvas = document.getElementById("canvas");
+            let dataURL = app.renderer.extract.canvas(app.stage).toDataURL();
+            button.href = dataURL;
+            button.download = axieID + ".png";
+        }
+
+    </script>
+    <body>
+        <div id="__next" data-reactroot="" style="display:none">
+
+        </div>
+        <!--<div id="marketplacePortal"></div>-->
+
+        <div id="freakHeaderDiv"></div><br/>
+        <div class="container" id="freakImageDiv">
+            <div class="row ml-0" id="freakControls">
+                <input id="axieID" class="form-inline form-control-sm col-1" placeholder="Axie ID" value="2595"/>
+                <button type="button" class="btn btn-secondary btn-sm" onclick="getAxie()">Get Axie Image</button>&nbsp;
+                <span class="pt-2">Animation:&nbsp;</span><select class="" id="animationList"></select>&nbsp;
+                <i class="material-icons btn" style="font-size:24px" onclick="togglePause();">pause_circle_outline</i>&nbsp;
+                <a href="#" class="btn btn-secondary" id="IDButton" onclick="downloadImage()">Download</a>
+                &nbsp;&nbsp;&nbsp;<span class="pt-2">Animate Parts (Summer Skins)&nbsp;</span>
+                <input type="checkbox" id="animatePartsCheckbox" name="animatePartsCheckbox" value="animate" onChange="handleCheckbox(this);" >
+            </div>
+            <br/>
+            <div id="freakImageLoc">
+            </div>
+            <div id="freakFun">
+            Fun stuff: Use arrows keys to move the axie around. 'x' to bite. spacebar to "jump".
+            </div>
+        </div>
+
+        <script id="__NEXT_DATA__" type="application/json">
+            {"props":{"pageProps":{"axie":null},"apolloState":{},"apollo":null,"__N_SSG":true},"page":"/axie/[id]","query":{"id":"2595"},"buildId":"E9W3RUP_cs4ZdMq3y2qGn","assetPrefix":"cdn.axieinfinity.com/marketplace-website","isFallback":false,"gsp":true,"appGip":true,"scriptLoader":[]}
+        </script>
+        <script>
+            /*
+            let next = document.getElementById("__next");
+            next.onload(() => {
+                alert(1);
+            })
+*/
+            //document.clear();
+        </script>
+    <script>
+        function removeDivs() {
+            let divs = document.getElementsByTagName("div")
+            let toRemove = [];  //maybe just iter in reverse
+            for (let i=0; i < divs.length; i++) {
+               if (!divs[i].id || divs[i].id == '' || divs[i].id.indexOf("freak") == -1) {
+                //console.log("removing " + divs[i].id);
+                toRemove.push(divs[i]);
+               }
+            }
+            for (let i=0; i < toRemove.length; i++) {
+                toRemove[i].remove();
+            }
+        }
+
+        numChecked = 0;
+        function checkLoaded() {
+            if (numChecked > 15 || window.PIXI) {
+                console.log("PIXI class loaded. clearing");
+                clearInterval(intervalID);
+                removeDivs();
+                $.ajax({
+                    url: "/header.html",
+                    cache: false,
+                    dataType: "html",
+                    success: function(data) {
+                        $("#freakHeaderDiv").html(data);
+                    }
+                });
+                init();
+                getAxie();
+            } else {
+                console.log("PIXI class not loaded yet")
+                numChecked++;
+                console.log("num checked " + numChecked);
+            }
+        }
+
+        intervalID = setInterval(checkLoaded, 1000)
+
+
+    document.onkeydown = function (event) {
+        const keyName = event.key;
+        let incrementX = Math.round(app.view.width * 0.05);
+        let incrementY = Math.round(app.view.height * 0.05);
+        switch (event.keyCode) {
+            case 37:
+            case 65:
+                //alert('left');
+                let startingPositionLeft = animation.position.x;
+                //animation.position.x -= incrementX;
+                //if (animation.position.x < 0) animation.position.x = 0;
+                let tickerLeft  =  new PIXI.ticker.Ticker();
+                tickerLeft.add(function () {
+                    //console.log("loopL");
+                    animation.position.x -= 5;
+                    if (animation.position.x < 0) {
+                        animation.position.x = 0;
+                        tickerLeft.destroy();
+                    } else if(animation.position.x <= startingPositionLeft - incrementX) {
+                        tickerLeft.destroy();
+                    }
+                });
+                tickerLeft.start();
+
+                break;
+            case 38:
+            case 87:
+                //alert('up');
+                let startingPositionUp = animation.position.y;
+                let tickerUp  =  new PIXI.ticker.Ticker();
+                tickerUp.add(function () {
+                    //console.log("loopU");
+                    animation.position.y -= 5;
+                    if (animation.position.y <= 0) {
+                        animation.position.y = 0;
+                        tickerUp.destroy();
+                    } else if(animation.position.y <= startingPositionUp - incrementY) {
+                        tickerUp.destroy();
+                    }
+                });
+                tickerUp.start();
+                break;
+            case 39:
+            case 68:
+                //alert('right');
+                let startingPositionRight = animation.position.x;
+                let tickerRight  =  new PIXI.ticker.Ticker();
+                tickerRight.add(function () {
+                    //console.log("loopR");
+                    animation.position.x += 5;
+                    if (animation.position.x > app.view.width) {
+                        animation.position.x = app.view.width;
+                        tickerRight.destroy();
+                    } else if(animation.position.x >= startingPositionRight + incrementX) {
+                        tickerRight.destroy();
+                    }
+                });
+                tickerRight.start();
+                break;
+            case 40:
+            case 83:
+                //alert('down');
+                let startingPositionDown = animation.position.y;
+                let tickerDown  =  new PIXI.ticker.Ticker();
+                tickerDown.add(function () {
+                    //console.log("loopD");
+                    animation.position.y += 5;
+                    if (animation.position.y > app.view.height) {
+                        animation.position.y = app.view.height;
+                        tickerDown.destroy();
+                    } else if(animation.position.y >= startingPositionDown + incrementY) {
+                        tickerDown.destroy();
+                    }
+                });
+                tickerDown.start();
+                break;
+            case 32:
+                animation.state.setAnimation(0, 'activity/appear', false);
+                animation.state.addAnimation(0, 'action/idle/normal', true, 0);
+                /*
+                let startingPositionSpace = animation.position.y;
+                let tickerSpace  =  new PIXI.ticker.Ticker();
+                tickerSpace.add(function () {
+                    //console.log("loopR");
+                    animation.position.y -= 5;
+                    if (animation.position.y < 0) {
+                        animation.position.y = 0;
+                        tickerSpace.destroy();
+                    } else if(animation.position.y <= startingPositionSpace - incrementY) {
+                        tickerSpace.destroy();
+                    }
+                });
+                tickerSpace.start();
+                */
+                break;
+            case 88:
+                animation.state.setAnimation(0, 'attack/melee/mouth-bite', false);
+                animation.state.addAnimation(0, 'action/idle/normal', true, 0);
+                break;
+        }
+    };
+    </script>
+
+    </body>
+</html>
