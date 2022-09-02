@@ -154,14 +154,21 @@ pages/lunacian-express-0f054897dd3d0ac5.js
                     i = VARIANT_LIST.includes(e) ? "https://axiecdn.axieinfinity.com/mixer-stuffs/v2/".concat(e.replace(".", "/"), "/").concat(c.variant, ".png") : "https://axiecdn.axieinfinity.com/mixer-stuffs/v2/".concat(e.replace(".", "/"), ".png"),
 
                     //naked mystic
-                    i = i.replaceAll("body-mystic", "body")
+                    i = i.replaceAll("body-mystic", "body");
+                    if (i.indexOf("mystic-leg") != -1) {
+                        i = i.replaceAll("mystic-leg", "leg");
+                        i = i.replace(".png", "/" + c.variant + ".png");
+                        //https://axiecdn.axieinfinity.com/mixer-stuffs/v2/body-normal/mystic-leg-back-left.png
+                        //https://axiecdn.axieinfinity.com/mixer-stuffs/v2/body-normal/leg-back-left-long/aquatic-02.png
+                    }
+
                     if (i.indexOf("body-light") != -1) {
                         i = "https://freakitties.github.io/axie/pixi/origin/static/image/1x1.png";
+                        //https://axiecdn.axieinfinity.com/mixer-stuffs/v2/body-normal/body-light-breath.png
+                        //https://axiecdn.axieinfinity.com/mixer-stuffs/v2/body-normal/body-light-pulse.png
+                        //https://axiecdn.axieinfinity.com/mixer-stuffs/v2/body-normal/body-light-life.png
+                        //TODO: replace class emblem
                     }
-//https://axiecdn.axieinfinity.com/mixer-stuffs/v2/body-normal/body-light-breath.png
-//https://axiecdn.axieinfinity.com/mixer-stuffs/v2/body-normal/body-light-pulse.png
-//https://axiecdn.axieinfinity.com/mixer-stuffs/v2/body-normal/body-light-life.png
-//console.log(i);
                     s[e] = PIXI.Texture.from(i);
                     try {
                         g.add(e, i)
