@@ -1,5 +1,6 @@
+graphURL = "https://inlbopit6dzanouihbjvavgwfe0iorww.lambda-url.us-west-1.on.aws?url=https://graphql-gateway.axieinfinity.com/graphql%3fr%3dfreak";
 async function getAxieDetails(id) {
-    let response = await (await fetch("https://graphql-gateway.axieinfinity.com/graphql?r=freak", {
+    let response = await (await fetch(graphURL, {
       "headers": {
         "content-type": "application/json",
       },
@@ -29,7 +30,7 @@ async function getAxiesByAddress(address, offset, parts="null", cls="", pureness
         cls = "\"" + cls + "\"";
       }
     }
-    let response = await (await fetch("https://graphql-gateway.axieinfinity.com/graphql?r=freak", {
+    let response = await (await fetch(graphURL, {
       "headers": {
         "content-type": "application/json",
       },
@@ -40,7 +41,7 @@ async function getAxiesByAddress(address, offset, parts="null", cls="", pureness
 }
 
 async function getProfileByEthAddress(address) {
-    let response = await fetch("https://graphql-gateway.axieinfinity.com/graphql?r=freak", {
+    let response = await fetch(graphURL, {
         "headers": {
         "content-type": "application/json",
         },
