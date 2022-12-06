@@ -59,9 +59,10 @@
             });
 
             async function main() {
-                accounts = unescape(getQueryParameter("accounts"));
-                document.getElementById("accounts").value = accounts;
+                accounts = getQueryParameter("accounts");
                 if (accounts) {
+                    accounts = unescape(accounts);
+                    document.getElementById("accounts").value = accounts;
                     let output = document.getElementById("output");
                     accountBalances = {};
                     total = 0;
