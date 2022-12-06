@@ -67,7 +67,7 @@
                     accountBalances = {};
                     total = 0;
                     totalPending = 0;
-                    accounts = accounts.replace(" ", "").replace("ronin:", "0x").split(",");
+                    accounts = accounts.replace(" ", "").replaceAll("ronin:", "0x").split(",");
                     for (const account of accounts) {
                         let axsBalance = await AXSContract.methods.balanceOf(account).call();
                         let stakedAXS = await AXSStakingPoolContract.methods.getStakingAmount(account).call();
