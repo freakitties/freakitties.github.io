@@ -91,15 +91,15 @@
                         output.appendChild(document.createElement("br"));
                         output.appendChild(document.createTextNode("Staked AXS: " + accountBalances[account].stakedAXS.toFixed(2)));
                         output.appendChild(document.createElement("br"));
-                        output.appendChild(document.createTextNode("Pending Staked AXS: " + accountBalances[account].pendingStaked.toFixed(2)));
+                        output.appendChild(document.createTextNode("Pending AXS from staking: " + accountBalances[account].pendingStaked.toFixed(2)));
                         output.appendChild(document.createElement("br"));
-                        output.appendChild(document.createTextNode("Pending AXS from Land: " + accountBalances[account].pendingLand.toFixed(2)));
+                        output.appendChild(document.createTextNode("Pending AXS from staked LAND: " + accountBalances[account].pendingLand.toFixed(2)));
                         output.appendChild(document.createElement("br"));
                         output.appendChild(document.createTextNode("Number of land staked: " + accountBalances[account].totalLand));
                         output.appendChild(document.createElement("br"));
                         output.appendChild(document.createElement("br"));
                     }
-                    output.appendChild(document.createTextNode("Total AXS: " + total.toFixed(2)));
+                    output.appendChild(document.createTextNode("Total controlled AXS: " + total.toFixed(2)));
                     output.appendChild(document.createElement("br"));
                     output.appendChild(document.createTextNode("Total unclaimed AXS: " + totalPending.toFixed(2)));
                     output.appendChild(document.createElement("br"));
