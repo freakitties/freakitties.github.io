@@ -9,7 +9,7 @@
         gtag('js', new Date());
         gtag('config', 'UA-116189657-1');
         </script>
-        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js" integrity="sha384-tsQFqpEReu7ZLhBV2VZlAu7zcOV+rXbYlF2cqB8txI/8aZajjp4Bqd+V6D5IgvKT" crossorigin="anonymous"></script>
+        <script src="https://code.jquery.com/jquery-3.6.4.min.js" integrity="sha256-oP6HI9z1XaZNBrJURtCoUT5SUnxFr8s3BzRl+cbzUq8=" crossorigin="anonymous"></script>
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/pixi.js/4.7.1/pixi.min.js" integrity="sha384-xdEN7ies9cZm/l8HslPhg0lGG/uQuIW2KQ/EVt71QFjarfJWY95fAMqbqw/1C2rX" crossorigin="anonymous"></script>
         <script src="pixi-spine.js"></script>
@@ -108,7 +108,17 @@
             localStorage.setItem("storedAxieID", axieID);
 
             //Test site
-            data = await getAxieDetails(axieID)
+            storedData = localStorage.getItem("axieData");
+            try {
+                data = JSON.parse(storedData);
+            } catch (e) {
+                data = await getAxieDetails(axieID)
+                localStorage.setItem("axieData", JSON.stringify(data));
+            }
+            if (!storedData || parseInt(data.id) != axieID) {
+                data = await getAxieDetails(axieID)
+                localStorage.setItem("axieData", JSON.stringify(data));
+            }
             if (data.stage < 3) {
                 alert("This axie is either a larva or an egg.")
                 return;
@@ -353,7 +363,6 @@
                 break;
             case 82:
                 getAxie();
-                break;
             case 13:
                 if (!started) {
                     kunaiSpawner();
@@ -474,6 +483,7 @@
                     togglePause();
 
                 }});
+                started = false;
             }
 
             if (debug) {
