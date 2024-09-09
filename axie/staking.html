@@ -106,8 +106,9 @@
             async function main() {
                 accounts = getQueryParameter("accounts");
                 if (accounts) {
-                    blockProducers = await roninValidatorSetContract.methods.getBlockProducers().call();
+                    //blockProducers = await roninValidatorSetContract.methods.getBlockProducers().call();
                     //Assume we're not staked in candidates
+                    blockProducers = await roninValidatorSetContract.methods.getValidatorCandidates().call();
 
                     accounts = unescape(accounts);
                     document.getElementById("accounts").value = accounts;
